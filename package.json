@@ -1,0 +1,130 @@
+{
+  "name": "@language-lit/material3-expressive",
+  "version": "0.1.0",
+  "description": "Material 3 Expressive design system components for React",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/romulloqueiroz/material3-expressive.git"
+  },
+  "type": "module",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./components/buttons": {
+      "types": "./dist/components/buttons.d.ts",
+      "import": "./dist/components/buttons.js",
+      "default": "./dist/components/buttons.js"
+    },
+    "./components/navigation": {
+      "types": "./dist/components/navigation.d.ts",
+      "import": "./dist/components/navigation.js",
+      "default": "./dist/components/navigation.js"
+    },
+    "./components/inputs": {
+      "types": "./dist/components/inputs.d.ts",
+      "import": "./dist/components/inputs.js",
+      "default": "./dist/components/inputs.js"
+    },
+    "./components/feedback": {
+      "types": "./dist/components/feedback.d.ts",
+      "import": "./dist/components/feedback.js",
+      "default": "./dist/components/feedback.js"
+    },
+    "./components/modals": {
+      "types": "./dist/components/modals.d.ts",
+      "import": "./dist/components/modals.js",
+      "default": "./dist/components/modals.js"
+    },
+    "./components/display": {
+      "types": "./dist/components/display.d.ts",
+      "import": "./dist/components/display.js",
+      "default": "./dist/components/display.js"
+    },
+    "./hooks": {
+      "types": "./dist/hooks.d.ts",
+      "import": "./dist/hooks.js",
+      "default": "./dist/hooks.js"
+    },
+    "./utils": {
+      "types": "./dist/utils.d.ts",
+      "import": "./dist/utils.js",
+      "default": "./dist/utils.js"
+    },
+    "./context/Material3Provider": {
+      "types": "./dist/context/Material3Provider.d.ts",
+      "import": "./dist/context/Material3Provider.js",
+      "default": "./dist/context/Material3Provider.js"
+    },
+    "./showcase": {
+      "types": "./dist/showcase.d.ts",
+      "import": "./dist/showcase.js",
+      "default": "./dist/showcase.js"
+    },
+    "./tailwind-preset": {
+      "types": "./dist/tailwind.preset.d.ts",
+      "import": "./dist/tailwind.preset.js",
+      "default": "./dist/tailwind.preset.js"
+    },
+    "./styles": "./dist/styles/main.css"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup && node scripts/add-directives.mjs && npm run build:styles",
+    "build:styles": "node -e \"require('fs').cpSync('src/styles','dist/styles',{recursive:true,filter:(s)=>!s.includes('.test.')})\"",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest --run",
+    "prepare": "npm run build"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0",
+    "tailwindcss": "^3.0.0"
+  },
+  "dependencies": {
+    "@floating-ui/react-dom": "^2.1.2",
+    "@react-aria/button": "^3.14.2",
+    "@react-aria/listbox": "^3.15.0",
+    "@react-aria/select": "^3.17.0",
+    "@react-stately/collections": "^3.12.0",
+    "@react-stately/list": "^3.13.0",
+    "@react-stately/select": "^3.8.0",
+    "@react-types/shared": "^3.32.0",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.1",
+    "framer-motion": "^11.3.19",
+    "tailwind-merge": "^2.0.0 || ^3.0.0",
+    "tailwind-variants": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "fast-check": "^3.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tailwindcss": "^3.4.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0",
+    "vitest": "^2.0.0"
+  },
+  "keywords": [
+    "material-design",
+    "material-3",
+    "react",
+    "components",
+    "ui",
+    "design-system"
+  ]
+}
