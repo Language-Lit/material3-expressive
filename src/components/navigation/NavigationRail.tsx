@@ -23,6 +23,11 @@ export interface NavigationRailProps {
   onPrefetch?: (link: string) => void
   /** Optional handler for the bottom settings button; the button renders only when provided. */
   onSettingsClick?: () => void
+  /**
+   * Optional FAB rendered docked at the top of the rail, above the
+   * destinations — Material 3 spec position for a rail FAB.
+   */
+  fab?: React.ReactNode
 }
 
 export const NavigationRail = ({
@@ -31,6 +36,7 @@ export const NavigationRail = ({
   onNavigate,
   onPrefetch,
   onSettingsClick,
+  fab,
 }: NavigationRailProps) => {
   const { Link } = useMaterial3()
   const [activeIndex, setActiveIndex] = useState<number | null>(null)
@@ -59,6 +65,8 @@ export const NavigationRail = ({
   return (
     <div className='w-[80px] h-full bg-[var(--md-sys-color-surface-container-low)] flex flex-col pt-[44px] items-center'>
       <div className='flex flex-col pt-[40px] items-center h-screen'>
+        {/* FAB docked at the top of the rail - Material 3 spec */}
+        {fab && <div className='mt-[4px]'>{fab}</div>}
         <div className='mt-[40px] flex flex-col gap-[12px]'>
           {navigationItems.map((item, index) => (
             <Link
