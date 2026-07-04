@@ -9,6 +9,8 @@ export interface navigationItemsProps {
   iconName: (typeof iconNames)[number]
   label: string
   link: string
+  /** M3 badge on the icon: `true` = dot, number/string = labeled badge (0/false/undefined = none). */
+  badge?: boolean | number | string
 }
 
 export interface NavigationBarProps {
@@ -61,6 +63,7 @@ export const NavigationBar = ({
             <NavigationItem
               iconName={item.iconName}
               label={item.label}
+              badge={item.badge}
               isActive={activeIndex === index}
               onClick={() => handleItemClick(item.link, index)}
             />

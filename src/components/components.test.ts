@@ -60,6 +60,7 @@ describe('Property 1: All Generic Components Exported', () => {
 
   // Feedback components (Requirement 3.5)
   const feedbackComponents = [
+    'Badge',
     'CircularProgress',
     'LinearProgress',
     'EmptyState',

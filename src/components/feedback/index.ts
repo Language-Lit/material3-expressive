@@ -1,4 +1,7 @@
 // Feedback components barrel export
+export { Badge } from './Badge'
+export type { BadgeProps } from './Badge'
+
 export { CircularProgress } from './CircularProgress'
 export type { CircularProgressProps } from './CircularProgress'
 
