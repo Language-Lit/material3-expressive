@@ -28,7 +28,7 @@ export const Card = ({
     <div
       onMouseEnter={onMouseEnter}
       className={cn(
-        'block rounded-[var(--md-sys-shape-corner-small)] overflow-hidden w-full',
+        'block overflow-hidden w-full',
         variant === 'book' ? 'medium:max-w-48' : 'medium:max-w-80',
         'bg-[var(--md-sys-color-surface-container-highest)]',
         'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary',
