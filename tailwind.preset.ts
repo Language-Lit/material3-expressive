@@ -1,13 +1,13 @@
 import type { Config } from 'tailwindcss'
 
 /**
- * Material 3 Expressive dp (density-independent pixel) values
- * These follow the Material 3 spacing scale
+ * Material 3 Expressive dp (density-independent pixel) values.
+ * Includes spacing tokens and fixed component dimensions used by the library.
  */
 export const dpValues = [
-  0, 4,                                       // Base and half-step
-  8, 12, 16, 24, 32, 40, 48, 56, 64, 72, 80,  // Small increments (8dp grid)
-  88, 96, 112, 128, 144, 160, 192, 224, 256,  // Medium increments
+  0, 2, 4,                                    // Base and fine component dimensions
+  8, 12, 16, 18, 20, 24, 32, 40, 48, 56, 64, 72, 80,
+  88, 96, 112, 128, 144, 160, 192, 200, 224, 256,
   320, 384, 512,                              // Large increments
   600, 840, 1200, 1600                        // Breakpoints
 ]

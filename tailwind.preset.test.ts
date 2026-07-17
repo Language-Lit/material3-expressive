@@ -121,17 +121,14 @@ describe('Property 8: Tailwind Preset Contains DP Spacing', () => {
 
   it('should include all dpValues in the exported constant', () => {
     // Verify the dpValues array contains expected standard values
-    const standardDpValues = [0, 4, 8, 12, 16, 24, 32, 40, 48, 56, 64, 72, 80]
+    // Includes every fixed dp dimension currently used by library components.
+    // In particular, Radio requires 20dp for its visible ring.
+    const standardDpValues = [
+      0, 2, 4, 8, 12, 16, 18, 20, 24, 32, 40, 48, 56, 64, 72, 80, 200,
+    ]
     
-    fc.assert(
-      fc.property(
-        fc.constantFrom(...standardDpValues),
-        (standardValue) => {
-          expect(dpValues).toContain(standardValue)
-          return true
-        }
-      ),
-      { numRuns: 100 }
-    )
+    for (const standardValue of standardDpValues) {
+      expect(dpValues).toContain(standardValue)
+    }
   })
 })
