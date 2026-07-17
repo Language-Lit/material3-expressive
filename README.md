@@ -82,6 +82,20 @@ navigation callback:
 />
 ```
 
+## Visual workbench
+
+Run the local component gallery while developing the library:
+
+```bash
+npm install
+npm run playground
+```
+
+Then open `http://localhost:5173`. The workbench imports components directly
+from `src`, so edits are reflected immediately with Vite Fast Refresh. Its UI
+lives in `playground/`; production package builds continue to use `src/` and
+`tsup.config.ts`.
+
 ## Build
 
 ```bash

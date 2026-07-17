@@ -89,6 +89,8 @@
     "build": "tsup && node scripts/add-directives.mjs && npm run build:styles",
     "build:styles": "node -e \"require('fs').cpSync('src/styles','dist/styles',{recursive:true,filter:(s)=>!s.includes('.test.')})\"",
     "dev": "tsup --watch",
+    "playground": "vite --config vite.config.ts",
+    "playground:build": "vite build --config vite.config.ts",
     "typecheck": "tsc --noEmit",
     "test": "vitest --run",
     "prepare": "npm run build"
@@ -116,12 +118,14 @@
   "devDependencies": {
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.3.4",
     "fast-check": "^3.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "tailwindcss": "^3.4.0",
     "tsup": "^8.0.0",
     "typescript": "^5.0.0",
+    "vite": "^5.4.21",
     "vitest": "^2.0.0"
   },
   "keywords": [
