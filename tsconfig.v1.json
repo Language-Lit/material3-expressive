@@ -5,6 +5,10 @@
     "baseUrl": ".",
     "paths": {}
   },
-  "include": ["src/v1/**/*.ts", "src/v1/**/*.tsx"],
+  "include": [
+    "src/v1/**/*.ts",
+    "src/v1/**/*.tsx",
+    "tests/v1/components/**/*.types.tsx"
+  ],
   "exclude": ["node_modules", "dist"]
 }

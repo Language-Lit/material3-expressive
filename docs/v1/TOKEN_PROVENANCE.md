@@ -123,3 +123,14 @@ source supplies its 56px final container, 28px corner, 20px icon,
 primary/on-primary selected colors, logical top-end alignment, and
 fast-spatial progress. The web API keeps its native button name stable and uses
 `aria-pressed` rather than importing menu semantics before T24.
+
+`Card` registers current AndroidX Material 3 revision
+`0be207d91046b7376beeef5544d331a02d6fa87c`. `Card.kt` plus generated
+`FilledCardTokens` and `ElevatedCardTokens` v0_210 and `OutlinedCardTokens`
+v0_192 supply the medium corner; surface-container-highest, surface-container-low,
+and surface containers; on-surface content; outline-variant/on-surface borders;
+disabled composition; and Levels 0/1/2 state elevations. The source also
+contains dragged Levels 3/4/3, but T10 owns no drag operation and makes no
+dragged-state claim. Current first-party Card has no separate Expressive size or
+shape overload, so the web component preserves current geometry and consumes
+the shared Expressive effects motion projection for interactive state changes.

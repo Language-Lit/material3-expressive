@@ -1,6 +1,7 @@
 import type { FoundationTokenSet } from '../schema'
 import { parseTokenSet } from '../validation'
 import { defaultButtonTokens } from './button'
+import { defaultCardTokens } from './card'
 import { defaultDarkColorScheme, defaultLightColorScheme, defaultPalette } from './color'
 import { defaultDensity } from './density'
 import { defaultElevation } from './elevation'
@@ -62,6 +63,7 @@ const defaultTokenSetInput = {
     defaultButtonTokens,
     defaultIconButtonTokens,
     defaultFloatingActionButtonTokens,
+    defaultCardTokens,
   ],
 } satisfies FoundationTokenSet
 

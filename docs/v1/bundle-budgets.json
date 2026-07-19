@@ -1,35 +1,35 @@
 {
   "schemaVersion": 1,
-  "baselineCommit": "d919142ed2e3d4d6bd0b6720cb1f9dca3de5159f",
-  "measuredForTask": "T09",
+  "baselineCommit": "cea87cb179dc62490dda64406b9760ac32bd33b5",
+  "measuredForTask": "T10",
   "artifacts": {
     "packedPackage": {
-      "baselineBytes": 247582,
-      "maxBytes": 285000
+      "baselineBytes": 255218,
+      "maxBytes": 294000
     },
     "dist/v1/index.js": {
-      "baselineBytes": 114204,
-      "maxBytes": 132000,
-      "baselineGzipBytes": 22736,
-      "maxGzipBytes": 26500
+      "baselineBytes": 124365,
+      "maxBytes": 144000,
+      "baselineGzipBytes": 24094,
+      "maxGzipBytes": 28000
     },
     "dist/v1/index.d.ts": {
-      "baselineBytes": 34120,
-      "maxBytes": 40500,
-      "baselineGzipBytes": 9288,
-      "maxGzipBytes": 11500
+      "baselineBytes": 36294,
+      "maxBytes": 43000,
+      "baselineGzipBytes": 9725,
+      "maxGzipBytes": 12000
     },
     "dist/v1/styles.css": {
-      "baselineBytes": 158798,
-      "maxBytes": 183000,
-      "baselineGzipBytes": 13354,
-      "maxGzipBytes": 15800
+      "baselineBytes": 170444,
+      "maxBytes": 197000,
+      "baselineGzipBytes": 14314,
+      "maxGzipBytes": 17000
     },
     "dist/v1/tokens.css": {
-      "baselineBytes": 80547,
-      "maxBytes": 93000,
-      "baselineGzipBytes": 6829,
-      "maxGzipBytes": 8200
+      "baselineBytes": 83969,
+      "maxBytes": 97000,
+      "baselineGzipBytes": 7053,
+      "maxGzipBytes": 8500
     }
   }
 }

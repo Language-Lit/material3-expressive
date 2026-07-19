@@ -71,6 +71,24 @@
   gap: 1rem;
 }
 
+.card-example {
+  display: grid;
+  gap: 1rem;
+  margin-block-start: 2rem;
+  padding: 1.5rem;
+}
+
+.card-example__grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+}
+
+.card-example__item {
+  gap: 0.75rem;
+  padding: 1rem;
+}
+
 .icon-button-example__row,
 .icon-button-example__sizes {
   align-items: center;

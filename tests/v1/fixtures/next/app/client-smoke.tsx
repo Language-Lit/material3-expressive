@@ -2,6 +2,7 @@
 
 import {
   Button,
+  Card,
   FloatingActionButton,
   Icon,
   IconButton,
@@ -28,6 +29,8 @@ export function ClientSmoke() {
   const textRef = useRef<HTMLParagraphElement | null>(null)
   const iconRef = useRef<HTMLSpanElement | null>(null)
   const buttonRef = useRef<HTMLButtonElement | null>(null)
+  const cardRef = useRef<HTMLElementTagNameMap['article'] | null>(null)
+  const cardButtonRef = useRef<HTMLButtonElement | null>(null)
   const iconButtonRef = useRef<HTMLButtonElement | null>(null)
   const fabRef = useRef<HTMLButtonElement | null>(null)
   return (
@@ -51,6 +54,18 @@ export function ClientSmoke() {
       >
         Client action
       </Button>
+      <Card ref={cardRef} variant="filled">
+        <Text as="h2" variant="titleMedium">Fixture card</Text>
+        <Text as="p" variant="bodySmall">Passive rich content</Text>
+      </Card>
+      <Card
+        interactive
+        ref={cardButtonRef}
+        variant="outlined"
+        onClick={() => cardButtonRef.current?.setAttribute('data-activated', 'true')}
+      >
+        <span>Open fixture card</span>
+      </Card>
       <IconButton
         ref={iconButtonRef}
         aria-label="Favorite"

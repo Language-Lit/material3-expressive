@@ -169,6 +169,15 @@ root preserves forms and stable naming; shared event/state primitives preserve
 cancelable controlled/uncontrolled selection. ADR 0009 records the public mode,
 accessibility, motion, and elevation decisions.
 
+`Card` establishes the coherent-content and whole-card action boundary. One
+discriminated API renders a passive `article`/bounded semantic container for
+rich content or a native `button` for a single whole-card action. Filled,
+elevated, and outlined variants own current container, outline, disabled, and
+state-elevation tokens without imposing content slots or padding. Interactive
+children follow the HTML button phrasing-content model; nested controls and rich
+flow structure belong inside passive cards. ADR 0010 records the semantic split,
+content boundary, and use of the shared Expressive effects projection.
+
 ## Styling
 
 Component CSS is authored beside the component. `src/v1/styles/styles.css`
