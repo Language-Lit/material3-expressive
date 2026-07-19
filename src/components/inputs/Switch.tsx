@@ -338,7 +338,7 @@ export const Switch = forwardRef<HTMLInputElement, SwitchProps>(({
           {isSelected && icon && (
             <span
               className={cn(
-                'relative z-10 transition-opacity [transition-duration:67ms] ease-linear motion-reduce:transition-none',
+                'relative z-10 flex h-16dp w-16dp items-center justify-center leading-none transition-opacity [transition-duration:67ms] ease-linear motion-reduce:transition-none',
                 isDisabled ? 'opacity-[0.38] forced-colors:opacity-100' : 'opacity-100'
               )}
             >
@@ -353,7 +353,7 @@ export const Switch = forwardRef<HTMLInputElement, SwitchProps>(({
           {!isSelected && unselectedIcon && (
             <span
               className={cn(
-                'relative z-10 transition-opacity [transition-duration:67ms] ease-linear motion-reduce:transition-none',
+                'relative z-10 flex h-16dp w-16dp items-center justify-center leading-none transition-opacity [transition-duration:67ms] ease-linear motion-reduce:transition-none',
                 isDisabled ? 'opacity-[0.38] forced-colors:opacity-100' : 'opacity-100'
               )}
             >

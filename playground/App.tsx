@@ -134,8 +134,9 @@ export function App() {
 
           <div className="theme-control">
             <Icon name={theme === 'light' ? 'light_mode' : 'dark_mode'} fill={1} />
-            <span>{theme === 'light' ? 'Light' : 'Dark'} theme</span>
+            <span>Dark theme</span>
             <Switch
+              aria-label="Dark theme"
               checked={theme === 'dark'}
               onChange={(next) => setTheme(next ? 'dark' : 'light')}
               icon="check"

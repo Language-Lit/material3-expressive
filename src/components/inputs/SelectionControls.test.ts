@@ -145,6 +145,23 @@ describe('Switch', () => {
     expect(unchecked).not.toContain('translate-x-8dp')
     expect(checked).not.toContain('translate-x-24dp')
   })
+
+  it('centers selected and unselected icons in a fixed 16dp box', () => {
+    const checked = renderToStaticMarkup(createElement(Switch, {
+      checked: true,
+      icon: 'check',
+      'aria-label': 'Checked',
+    }))
+    const unchecked = renderToStaticMarkup(createElement(Switch, {
+      checked: false,
+      unselectedIcon: 'close',
+      'aria-label': 'Unchecked',
+    }))
+
+    for (const markup of [checked, unchecked]) {
+      expect(markup).toContain('flex h-16dp w-16dp items-center justify-center leading-none')
+    }
+  })
 })
 
 describe('Radio', () => {
