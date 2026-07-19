@@ -237,6 +237,26 @@ plain sibling combinator from the control and neither can change without
 this component re-rendering. ADR 0014 records the shared-foundation
 decision, the native-truth label float, and the fieldset/legend notch.
 
+`SegmentedButtonGroup` establishes the data-driven-group boundary: one
+`segments` array replaces the pinned source's two row composables plus a
+child-scope `SegmentedButton`, computing each item's own index/count
+directly instead of through `Children.map`/context indirection. Each
+segment is one native `<input type="radio">` (single-choice, sharing one
+`name` for native mutual exclusivity and roving-tabindex) or
+`<input type="checkbox">` (multi-choice, independent), wrapped in its own
+native `<label>`. Shape is driven by a computed `data-m3e-position` through
+logical corner-radius properties; stacking order is an ordinal flattening
+of the source's `interactionCount + (checked ? CheckedZIndexFactor : 0)`
+z-index, driven by `:has(:checked)`/`:hover`/`:active`/
+`:has(:focus-visible)` instead of literally counting interactions. Checked,
+hover, press, and focus visuals read from the native control's own
+pseudo-classes, extending the same native-truth precedent Radio and
+TextField already rely on; `disabled` is the only state mirrored onto a
+segment root as a `data-m3e-*` attribute, for the same re-render-safety
+reason TextField's `error`/`disabled` are. ADR 0015 records the data-driven
+API, the `:has()`-based stacking flattening, and a bundle-budget ceiling
+raise.
+
 ## Styling
 
 Component CSS is authored beside the component. `src/v1/styles/styles.css`

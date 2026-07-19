@@ -245,3 +245,34 @@ text-field color as true alpha (`fromToken(...).copy(alpha = ...)`), not
 `color-mix(..., transparent)` technique reproduces the pinned source's own
 semantics exactly rather than correcting away from a baked-backdrop
 assumption.
+
+`SegmentedButtonGroup` registers the same AndroidX Material 3 branch
+revision `225f50d42bf0adeb2abf4b6109befb5ab6ce4efc`, `SegmentedButton.kt`
+blob `295bc3889b25193473d4e4670b98c1d33aaa2663`, and generated
+`OutlinedSegmentedButtonTokens` blob `2530ef60381d2ab54edb097c1a35dcc97d6c391c`
+at `VERSION: v0_162`. `defaultSegmentedButtonColors()` reads the identical
+`OutlineColor` constant for both the active and inactive border, and the
+identical `DisabledLabelTextColor`/`DisabledLabelTextOpacity` pair for both
+the disabled active and disabled inactive content color — not two
+distinctly-named constants that happen to match, the exact same call both
+times — so each is registered once here instead of as an active/inactive
+pair, matching the T14 content-color consolidation precedent. The disabled
+active container reuses the enabled `SelectedContainerColor` undimmed and
+the disabled inactive container reuses the same `Color.Transparent` literal
+the enabled inactive container already expresses directly in the
+stylesheet: the token file defines no disabled container role at all, so a
+disabled selected segment keeps its full tonal fill and no disabled
+container token exists. Every `Hover*`/`Focus*`/`Pressed*`-suffixed role,
+and even the base `SelectedIconColor`/`UnselectedIconColor`/
+`DisabledIconColor`/`DisabledIconOpacity` roles, are unread:
+`SegmentedButtonContent` never tints its `Icon` explicitly, so the icon
+always inherits the same `LocalContentColor` the label text resolves from
+the label-text tokens above — extending the unread-role precedent from
+every prior selection control to roles the source defines but never
+connects to any color-resolution path at all. `LabelTextFont` is unread by
+name for the same reason as TextField's typography roles: it is pulled live
+from the theme's own `label-large` typescale role directly in component
+CSS. The pinned source applies no `minimumInteractiveComponentSize`-
+equivalent modifier to `SegmentedButton`, unlike Checkbox/Radio/Switch, so
+this registration carries no `minimum-interactive-target` token at all —
+the 40px `ContainerHeight` is the real, undilated interactive height.

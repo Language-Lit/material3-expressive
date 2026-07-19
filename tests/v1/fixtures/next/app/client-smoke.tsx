@@ -8,6 +8,7 @@ import {
   Icon,
   IconButton,
   Radio,
+  SegmentedButtonGroup,
   Surface,
   Switch,
   Text,
@@ -43,6 +44,7 @@ export function ClientSmoke() {
   const fabRef = useRef<HTMLButtonElement | null>(null)
   const textFieldRef = useRef<HTMLInputElement | null>(null)
   const textAreaRef = useRef<HTMLTextAreaElement | null>(null)
+  const segmentedButtonGroupRef = useRef<HTMLDivElement | null>(null)
   return (
     <Surface as="article" ref={surfaceRef} color="surface-container" shape="medium">
       <Text as="p" ref={textRef} variant="bodyMedium">
@@ -155,6 +157,19 @@ export function ClientSmoke() {
         rows={3}
         onChange={(event) =>
           textAreaRef.current?.setAttribute('data-fixture-value', event.currentTarget.value)
+        }
+      />
+      <SegmentedButtonGroup
+        ref={segmentedButtonGroupRef}
+        aria-label="Fixture view"
+        name="fixture-view"
+        segments={[
+          { value: 'day', label: 'Day' },
+          { value: 'week', label: 'Week' },
+        ]}
+        defaultValue="day"
+        onValueChange={(value) =>
+          segmentedButtonGroupRef.current?.setAttribute('data-fixture-value', value)
         }
       />
     </Surface>
