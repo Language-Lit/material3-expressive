@@ -15,6 +15,10 @@ import { FloatingActionButtonExample } from '../examples/FloatingActionButton.ex
 import { IconExample } from '../examples/Icon.example'
 import { IconButtonExample } from '../examples/IconButton.example'
 import { MenuExample } from '../examples/Menu.example'
+import { NavigationBarExample } from '../examples/NavigationBar.example'
+import { NavigationDrawerExample } from '../examples/NavigationDrawer.example'
+import { NavigationRailExample } from '../examples/NavigationRail.example'
+import { NavigationSuiteExample } from '../examples/NavigationSuite.example'
 import { RadioExample } from '../examples/Radio.example'
 import { SegmentedButtonGroupExample } from '../examples/SegmentedButtonGroup.example'
 import { SelectExample } from '../examples/Select.example'
@@ -62,6 +66,10 @@ createRoot(root).render(
         <TooltipExample />
         <SnackbarExample />
         <TabsExample />
+        <NavigationBarExample />
+        <NavigationRailExample />
+        <NavigationDrawerExample />
+        <NavigationSuiteExample />
       </main>
     </Material3Provider>
   </React.StrictMode>,

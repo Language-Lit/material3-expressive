@@ -280,3 +280,69 @@
   margin-block-start: 2rem;
   padding: 1.5rem;
 }
+
+.navigation-bar-example {
+  display: grid;
+  gap: 1rem;
+  margin-block-start: 2rem;
+  padding: 1.5rem;
+}
+
+.navigation-bar-example__bar {
+  border: 1px solid rgb(0 0 0 / 12%);
+  border-radius: 0.75rem;
+  inline-size: min(400px, 100%);
+  overflow: hidden;
+}
+
+.navigation-rail-example {
+  display: grid;
+  gap: 1rem;
+  margin-block-start: 2rem;
+  padding: 1.5rem;
+}
+
+.navigation-rail-example__frame {
+  block-size: 420px;
+  border: 1px solid rgb(0 0 0 / 12%);
+  border-radius: 0.75rem;
+  display: flex;
+  overflow: hidden;
+}
+
+.navigation-drawer-example {
+  display: grid;
+  gap: 1rem;
+  margin-block-start: 2rem;
+  padding: 1.5rem;
+}
+
+.navigation-drawer-example__row {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.navigation-drawer-example__frame {
+  block-size: 360px;
+  border: 1px solid rgb(0 0 0 / 12%);
+  border-radius: 0.75rem;
+  display: flex;
+  overflow: hidden;
+}
+
+.navigation-suite-example {
+  display: grid;
+  gap: 1rem;
+  margin-block-start: 2rem;
+  padding: 1.5rem;
+}
+
+.navigation-suite-example__frame {
+  block-size: 420px;
+  border: 1px solid rgb(0 0 0 / 12%);
+  border-radius: 0.75rem;
+  display: flex;
+  overflow: hidden;
+}

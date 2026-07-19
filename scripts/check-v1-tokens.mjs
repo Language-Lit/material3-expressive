@@ -125,6 +125,15 @@ if (!tabsRegistration || tabsRegistration.task !== 'T19') {
   errors.push('Default component-token registry is missing the sourced T19 Tabs registration')
 }
 
+for (const component of ['navigation-bar', 'navigation-rail', 'navigation-drawer']) {
+  const registration = api.defaultTokenSet.componentTokens.find(
+    (candidate) => candidate.component === component,
+  )
+  if (!registration || registration.task !== 'T20') {
+    errors.push(`Default component-token registry is missing the sourced T20 ${component} registration`)
+  }
+}
+
 if (errors.length > 0) {
   console.error('v1 token check failed:')
   for (const error of errors) console.error(`- ${error}`)

@@ -12,6 +12,9 @@ import { defaultIconTokens } from './icon'
 import { defaultIconButtonTokens } from './icon-button'
 import { defaultMenuTokens } from './menu'
 import { defaultMotion } from './motion'
+import { defaultNavigationBarTokens } from './navigation-bar'
+import { defaultNavigationDrawerTokens } from './navigation-drawer'
+import { defaultNavigationRailTokens } from './navigation-rail'
 import { defaultRadioTokens } from './radio'
 import { defaultSegmentedButtonGroupTokens } from './segmented-button-group'
 import { defaultShape } from './shape'
@@ -84,6 +87,9 @@ const defaultTokenSetInput = {
     defaultTooltipTokens,
     defaultSnackbarTokens,
     defaultTabsTokens,
+    defaultNavigationBarTokens,
+    defaultNavigationRailTokens,
+    defaultNavigationDrawerTokens,
   ],
 } satisfies FoundationTokenSet
 
