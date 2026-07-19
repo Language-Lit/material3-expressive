@@ -450,3 +450,71 @@ dimming every other v1 interactive component already uses. Label
 typography reuses the theme's own `title-small` typescale role directly
 (`LabelTextFont`, unread by name for the same reason as every prior
 component's typography roles).
+
+`NavigationBar` registers the same pinned revision,
+`NavigationBarTokens.kt` blob `352fe47c0f6d4a1cd90a3ae670cb45446adc5c5d`
+and `NavigationBarVerticalItemTokens.kt` blob
+`c901af76dc7832de7279cdb50d569951f2a50bf4`, both at `VERSION: v0_11_0`.
+Container color/elevation/height come from `NavigationBarTokens`
+(`ContainerColor` surfaceContainer, `ContainerElevation` level2,
+`ContainerHeight` 64dp). Item pill geometry/color come from
+`NavigationBarVerticalItemTokens` (`ActiveIndicatorWidth`/`Height`
+56×32dp) and `NavigationBarTokens` (`ItemActiveIndicatorShape` cornerFull,
+`ItemActiveIndicatorColor` secondaryContainer). Active icon tints
+`onSecondaryContainer`; active **label** tints `secondary` — a genuine
+sourced split (`ItemActiveIconColor` vs `ItemActiveLabelTextColor`), not a
+simplification. Inactive icon/label both tint `onSurfaceVariant`. `4px`
+icon-label gap (`ItemActiveIndicatorIconLabelSpace`), `24px` icon size,
+`labelMedium` typography. `disabled-*` (onSurface at 0.38 opacity) has no
+source — the pinned `enabled` param removes interactivity only.
+
+`NavigationRail` registers the same pinned revision,
+`NavigationRailColorTokens.kt` blob
+`68a5be19f8abe4004509360421f597fd0a6f6e94`,
+`NavigationRailVerticalItemTokens.kt` blob
+`c398fc68e8c4cefc0ff1cf319fc3afccce1f344c`, and
+`NavigationRailBaselineItemTokens.kt` blob
+`7e5c0b335781c27a18351fe9633a9f255db07314`, all at `VERSION: v0_11_0`.
+Reuses `NavigationBar`'s own item pill geometry/color and active/inactive
+icon/label split unchanged. Container color/width come from
+`NavigationRailColorTokens`/`NavigationRailCollapsedTokens`
+(`ContainerColor` surface, `96px` `ContainerWidth`); `44px` top padding
+(`TopSpace`), `4px` item gap (`ItemVerticalSpace`), and `80px` item width
+(`NarrowContainerWidth`) also come from `NavigationRailCollapsedTokens`.
+`8px` header-to-items gap (`NavigationRailHeaderPadding`) comes straight
+from `NavigationRail.kt` itself, the same plain-layout-constant status
+Tabs'/Tooltip's own sizing constants have.
+
+`NavigationDrawer` registers the same pinned revision,
+`NavigationDrawerTokens.kt` blob
+`ce3cd3664365006164807d5c2c72be967d6d5cb6`. `ModalContainerColor`/
+`ModalContainerElevation` (surfaceContainerLow, level1) apply to the
+`'modal'` variant only; `StandardContainerColor`/`StandardContainerElevation`
+(plain surface, level0) apply to both `'dismissible'` and `'permanent'` —
+the source uses the same "standard" pair for both non-modal variants.
+`360px` container width (`ContainerWidth`), `cornerLargeEnd` shape
+(`ContainerShape`, `'modal'` only). Item: full-width `336×56px` pill
+(`ActiveIndicatorWidth`/`Height`, `cornerFull`, `secondaryContainer`),
+`onSecondaryContainer` for **both** icon and label when selected (unlike
+`NavigationBar`/`NavigationRail`, which split icon/label color) —
+`onSurfaceVariant` inactive, `labelLarge` typography (larger than
+`NavigationBar`/`NavigationRail`'s `labelMedium`). `16px`/`24px`
+asymmetric inline padding and `12px` icon-label gap come straight from
+`NavigationDrawerItem`'s own `Modifier.padding(start=16dp, end=24dp)`/
+`Spacer(width=12dp)` in `NavigationDrawer.kt`, not a token-file value;
+`12px` item-list inline padding comes from `NavigationDrawerItemDefaults.
+ItemPadding`. `FocusIndicatorColor` (secondary) is a deliberate web
+addition for a visible keyboard-focus ring, the same accessibility-driven
+registration Menu's own `item-focus-ring-color` already made.
+`scrim-color`/`scrim-opacity` (0.32) reuse Dialog's own cross-validated
+scrim value (ADR 0016) for the `'modal'` variant's backdrop, since the
+pinned source's own modal scrim is an Android platform default, not a
+component token. `disabled-*` has no source (no disabled color axis in
+the source's `selected`-only color model), the same universal web-added
+dimming every other v1 interactive component already uses.
+
+`NavigationSuite` registers no component tokens of its own — it composes
+`NavigationBar`/`NavigationRail`/`NavigationDrawer` directly and reuses
+whichever of their registrations applies to the currently active tier, the
+same "reuses an existing domain entirely" precedent `Select` already set
+for `text-field`/`menu`.

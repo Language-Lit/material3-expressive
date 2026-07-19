@@ -9,6 +9,10 @@ import {
   Icon,
   IconButton,
   Menu,
+  NavigationBar,
+  NavigationDrawer,
+  NavigationRail,
+  NavigationSuite,
   Radio,
   SegmentedButtonGroup,
   Select,
@@ -59,6 +63,10 @@ export function ClientSmoke() {
   const tooltipRef = useRef<HTMLDivElement | null>(null)
   const snackbarRef = useRef<HTMLDivElement | null>(null)
   const tabsRef = useRef<HTMLDivElement | null>(null)
+  const navigationBarRef = useRef<HTMLElement | null>(null)
+  const navigationRailRef = useRef<HTMLElement | null>(null)
+  const navigationDrawerRef = useRef<HTMLElement | null>(null)
+  const navigationSuiteRef = useRef<HTMLDivElement | null>(null)
   return (
     <Surface as="article" ref={surfaceRef} color="surface-container" shape="medium">
       <Text as="p" ref={textRef} variant="bodyMedium">
@@ -245,6 +253,43 @@ export function ClientSmoke() {
           { value: 'two', label: 'Two', panel: <span>Two content</span> },
         ]}
         onValueChange={(value) => tabsRef.current?.setAttribute('data-fixture-value', value)}
+      />
+      <NavigationBar
+        ref={navigationBarRef}
+        aria-label="Fixture navigation bar"
+        items={[
+          { value: 'one', label: 'One', icon: <Icon source="home" /> },
+          { value: 'two', label: 'Two', icon: <Icon source="favorite" /> },
+        ]}
+        onValueChange={(value) => navigationBarRef.current?.setAttribute('data-fixture-value', value)}
+      />
+      <NavigationRail
+        ref={navigationRailRef}
+        aria-label="Fixture navigation rail"
+        items={[
+          { value: 'one', label: 'One', icon: <Icon source="home" /> },
+          { value: 'two', label: 'Two', icon: <Icon source="favorite" /> },
+        ]}
+        onValueChange={(value) => navigationRailRef.current?.setAttribute('data-fixture-value', value)}
+      />
+      <NavigationDrawer
+        ref={navigationDrawerRef}
+        aria-label="Fixture navigation drawer"
+        variant="permanent"
+        items={[
+          { value: 'one', label: 'One', icon: <Icon source="home" /> },
+          { value: 'two', label: 'Two', icon: <Icon source="favorite" /> },
+        ]}
+        onValueChange={(value) => navigationDrawerRef.current?.setAttribute('data-fixture-value', value)}
+      />
+      <NavigationSuite
+        ref={navigationSuiteRef}
+        aria-label="Fixture navigation suite"
+        items={[
+          { value: 'one', label: 'One', icon: <Icon source="home" /> },
+          { value: 'two', label: 'Two', icon: <Icon source="favorite" /> },
+        ]}
+        onValueChange={(value) => navigationSuiteRef.current?.setAttribute('data-fixture-value', value)}
       />
     </Surface>
   )

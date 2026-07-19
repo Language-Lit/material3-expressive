@@ -343,6 +343,29 @@ with `panel` gets one `role="tabpanel"` region for the selected item only,
 and no tabpanel region exists at all when no item defines one. ADR 0019
 records the indicator infrastructure and the link/panel API.
 
+`NavigationBar`, `NavigationRail`, and `NavigationDrawer` share one
+`NavigationItem` data type (canonically defined in `NavigationBar.types.ts`
+and re-exported by the other two through their own public barrels — the
+first cross-component-folder type reuse in v1, since these components are
+explicitly designed to interoperate rather than merely sharing styling).
+All three render web-native `<nav>`/`aria-current` navigation semantics
+instead of the pinned source's ported `role="tab"` — a persistent app-
+navigation region is a different pattern from `Tabs`' own in-page
+panel-switching, so no roving `tabindex` or arrow-key model exists here;
+items sit in normal tab order like any navigation link list. `NavigationDrawer`'s
+`'modal'` variant independently duplicates Dialog's own small native-
+`<dialog>` lifecycle rather than sharing an extracted primitive, sliding in
+by animating `inset-inline-start` (not `transform`) so the direction
+auto-corrects under RTL with no JS branching. `NavigationSuite` is the
+first v1 component to render another public v1 component internally: it
+composes `NavigationBar`/`NavigationRail`/`NavigationDrawer` directly,
+switching between them with a new `window.matchMedia`-driven hook using
+the pinned source's own real Compact/Medium/Expanded width breakpoints —
+a deliberate 3-tier mapping that diverges from the pinned source's own
+2-tier `calculateFromAdaptiveInfo` (see ADR 0020 for why). Server
+rendering and pre-hydration always reflect the compact tier, corrected by
+a client effect once a real viewport exists to measure.
+
 ## Styling
 
 Component CSS is authored beside the component. `src/v1/styles/styles.css`
