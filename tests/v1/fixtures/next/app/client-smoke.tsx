@@ -8,8 +8,10 @@ import {
   FloatingActionButton,
   Icon,
   IconButton,
+  Menu,
   Radio,
   SegmentedButtonGroup,
+  Select,
   Surface,
   Switch,
   Text,
@@ -47,6 +49,9 @@ export function ClientSmoke() {
   const textAreaRef = useRef<HTMLTextAreaElement | null>(null)
   const segmentedButtonGroupRef = useRef<HTMLDivElement | null>(null)
   const dialogRef = useRef<HTMLDialogElement | null>(null)
+  const menuAnchorRef = useRef<HTMLButtonElement | null>(null)
+  const menuRef = useRef<HTMLDivElement | null>(null)
+  const selectRef = useRef<HTMLInputElement | null>(null)
   return (
     <Surface as="article" ref={surfaceRef} color="surface-container" shape="medium">
       <Text as="p" ref={textRef} variant="bodyMedium">
@@ -184,6 +189,30 @@ export function ClientSmoke() {
       >
         Fixture dialog content
       </Dialog>
+      <Button ref={menuAnchorRef} variant="outlined">
+        Fixture menu
+      </Button>
+      <Menu
+        ref={menuRef}
+        anchorRef={menuAnchorRef}
+        defaultOpen
+        items={[
+          { value: 'copy', label: 'Copy', onSelect: () => menuRef.current?.setAttribute('data-fixture-selected', 'copy') },
+          { value: 'paste', label: 'Paste', onSelect: () => menuRef.current?.setAttribute('data-fixture-selected', 'paste') },
+        ]}
+        onOpenChange={(open) => menuRef.current?.setAttribute('data-fixture-open', String(open))}
+      />
+      <Select
+        ref={selectRef}
+        label="Fixture select"
+        name="fixture-select"
+        options={[
+          { value: 'apple', label: 'Apple' },
+          { value: 'cherry', label: 'Cherry' },
+        ]}
+        defaultValue="apple"
+        onValueChange={(value) => selectRef.current?.setAttribute('data-fixture-value', value)}
+      />
     </Surface>
   )
 }

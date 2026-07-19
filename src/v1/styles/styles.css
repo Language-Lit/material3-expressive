@@ -7,8 +7,10 @@
 @import '../components/FloatingActionButton/FloatingActionButton.css';
 @import '../components/Icon/Icon.css';
 @import '../components/IconButton/IconButton.css';
+@import '../components/Menu/Menu.css';
 @import '../components/Radio/Radio.css';
 @import '../components/SegmentedButtonGroup/SegmentedButtonGroup.css';
+@import '../components/Select/Select.css';
 @import '../components/Surface/Surface.css';
 @import '../components/Switch/Switch.css';
 @import '../components/Text/Text.css';

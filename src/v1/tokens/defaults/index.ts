@@ -10,6 +10,7 @@ import { defaultElevation } from './elevation'
 import { defaultFloatingActionButtonTokens } from './floating-action-button'
 import { defaultIconTokens } from './icon'
 import { defaultIconButtonTokens } from './icon-button'
+import { defaultMenuTokens } from './menu'
 import { defaultMotion } from './motion'
 import { defaultRadioTokens } from './radio'
 import { defaultSegmentedButtonGroupTokens } from './segmented-button-group'
@@ -76,6 +77,7 @@ const defaultTokenSetInput = {
     defaultTextFieldTokens,
     defaultSegmentedButtonGroupTokens,
     defaultDialogTokens,
+    defaultMenuTokens,
   ],
 } satisfies FoundationTokenSet
 

@@ -306,3 +306,51 @@ instead — the same material-web source already cited above as this
 project's foundation-token authority, here corroborating a component-level
 value for the first time because the pinned Compose source has none of its
 own for this role.
+
+`Menu` registers the same AndroidX Material 3 branch revision
+`225f50d42bf0adeb2abf4b6109befb5ab6ce4efc`, `MenuTokens.kt` blob
+`512d25472ad549b911ca61641e1b5fa87eded5dc` at `VERSION: v0_210`,
+`ListTokens.kt` blob `9c1823f65873878d6b3e746cf0393522c0b980c2` at
+`VERSION: 29.0.0`, and `StandardMenuTokens.kt` blob
+`d4743d36238e15a38dc27f710889b24dd9fb2951` at `VERSION: 24.1.2`. Container
+color/shape/elevation come from `MenuTokens` (`ContainerColor`
+surfaceContainer, `ContainerShape` cornerExtraSmall, `ContainerElevation`
+level2). Plain item color comes from `ListTokens` (`ItemLabelTextColor`
+onSurface, `ItemLeadingIconColor`/`ItemTrailingIconColor` onSurfaceVariant,
+disabled-0.38 pair) — the values `defaultMenuItemColors` actually reads for
+the plain, non-selectable `DropdownMenuItemContent` this component ports,
+not the separate Expressive per-item hover/press shape-morph roles
+(`ItemHoveredContainerExpressiveShape`, etc.) that belong to the
+out-of-scope grouped/segmented-menu rendering path. Checked-item color
+comes from `StandardMenuTokens` (`ItemSelectedContainerColor`
+tertiaryContainer, `ItemSelected*Color` onTertiaryContainer, disabled-0.38
+pair) — the values `defaultMenuSelectableItemColors` actually reads, not
+the unread `MenuTokens.ListItemSelectedContainerColor`/secondaryContainer
+role the token file itself defines but no default color resolver ever
+reaches. `MenuDefaults`' own constants supply the `112`/`280px`
+`DropdownMenuItemDefaultMinWidth`/`MaxWidth`, `48px` menu-specific
+`MenuListItemContainerHeight`, `12px` `DropdownMenuItemHorizontalPadding`,
+and `8px` `DropdownMenuVerticalPadding`/`MenuHorizontalMargin` (the latter
+reused as this component's viewport clamp margin on both axes — Android's
+separate 48dp `MenuVerticalMargin` clears system status/navigation bars
+with no web equivalent, so it is not ported as a second value).
+`MenuItemColors`' own resolution takes only `(enabled, selected)` — no
+hover/focus/pressed axis exists in the source's color model — so
+hover/pressed feedback reuses the shared state-layer system every other v1
+interactive component already applies; `MenuTokens.FocusIndicatorColor`
+(secondary) is registered anyway for a visible keyboard-focus ring, the
+same accessibility-driven registration Checkbox/Radio already made for an
+upstream-unread role. Label typography reuses the theme's own
+`label-large` typescale role directly, the same unread-typography-role
+precedent every prior task established.
+
+`Select` registers no component tokens of its own. Its field chrome reuses
+`text-field`'s registration unchanged — the pinned `ExposedDropdownMenuBox`
+composes a real `TextField`/`OutlinedTextField` and reads the same
+`TextFieldColors`/`TextFieldTokens` with no distinct token file of its own —
+and its popup listbox reuses `menu`'s registration unchanged, since
+`ExposedDropdownMenuDefaults` itself resolves straight through to
+`MenuDefaults.shape`/`containerColor`/`TonalElevation`/`ShadowElevation`,
+the exact same values plain `DropdownMenu` uses. This extends the T14
+TextField/TextArea one-shared-domain precedent to a third and fourth public
+component.
