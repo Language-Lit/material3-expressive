@@ -129,6 +129,14 @@ and does not fetch fonts, generate token names, or subscribe to theme context.
 The explicit 30-style CSS table keeps every baseline/emphasized mapping
 searchable and distribution-checkable. ADR 0005 records the public contract.
 
+`Icon` establishes the icon-source/accessibility boundary. Its passive span
+owns decorative or meaningful semantics while a hidden visual child adapts
+either a consumer React SVG component or a Material Symbols glyph. The SVG
+source contract is deliberately minimal and the glyph adapter consumes literal
+component variables for all current symbol axes, including Expressive `ROND`.
+Icon inherits content color, loads no asset, and mirrors directional artwork
+only through an explicit RTL opt-in. ADR 0006 records the public contract.
+
 ## Styling
 
 Component CSS is authored beside the component. `src/v1/styles/styles.css`

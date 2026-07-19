@@ -34,13 +34,15 @@ describe('token CSS generation', () => {
     expect(css).toContain(
       '--m3e-comp-surface-container-shadow: var(--m3e-sys-elevation-level0-shadow);',
     )
+    expect(css).toContain('--m3e-comp-icon-size: 24px;')
+    expect(css).toContain('--m3e-comp-icon-symbol-roundness: 50;')
   })
 
   it('contains no unresolved custom-property references', () => {
     const definitions = new Set(
       [...css.matchAll(/(--m3e-[a-z0-9-]+)\s*:/g)].map((match) => match[1]),
     )
-    expect(definitions.size).toBe(746)
+    expect(definitions.size).toBe(755)
     for (const match of css.matchAll(/var\(\s*(--m3e-[a-z0-9-]+)/g)) {
       expect(definitions.has(match[1]), match[1]).toBe(true)
     }

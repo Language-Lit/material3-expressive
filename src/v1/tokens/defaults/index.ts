@@ -3,6 +3,7 @@ import { parseTokenSet } from '../validation'
 import { defaultDarkColorScheme, defaultLightColorScheme, defaultPalette } from './color'
 import { defaultDensity } from './density'
 import { defaultElevation } from './elevation'
+import { defaultIconTokens } from './icon'
 import { defaultMotion } from './motion'
 import { defaultShape } from './shape'
 import { defaultState } from './state'
@@ -52,7 +53,7 @@ const defaultTokenSetInput = {
     state: defaultState,
     density: defaultDensity,
   },
-  componentTokens: [defaultSurfaceTokens],
+  componentTokens: [defaultSurfaceTokens, defaultIconTokens],
 } satisfies FoundationTokenSet
 
 export const defaultTokenSet = parseTokenSet(defaultTokenSetInput)

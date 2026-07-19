@@ -29,7 +29,9 @@ describe('Surface theme integration', () => {
   })
 
   it('supports a scoped component-token override without runtime style injection', () => {
-    const surfaceTokens = defaultTheme.componentTokens[0]
+    const surfaceTokens = defaultTheme.componentTokens.find(
+      (registration) => registration.component === 'surface',
+    )!
     const theme = createTheme({
       componentTokens: [
         {

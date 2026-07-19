@@ -34,6 +34,12 @@ const surfaceRegistration = api.defaultTokenSet.componentTokens.find(
 if (!surfaceRegistration || surfaceRegistration.task !== 'T04') {
   errors.push('Default component-token registry is missing the sourced T04 Surface registration')
 }
+const iconRegistration = api.defaultTokenSet.componentTokens.find(
+  (registration) => registration.component === 'icon',
+)
+if (!iconRegistration || iconRegistration.task !== 'T06') {
+  errors.push('Default component-token registry is missing the sourced T06 Icon registration')
+}
 
 if (errors.length > 0) {
   console.error('v1 token check failed:')

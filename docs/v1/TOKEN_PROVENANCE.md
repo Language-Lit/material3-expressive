@@ -72,3 +72,12 @@ roles so custom themes remain authoritative.
 selected theme `TextStyle` and inherited content color, so the web adaptation
 maps directly to existing `sys.typography` and CSS color inheritance. Font
 loading remains consumer-owned and is not token-generation behavior.
+
+`Icon` registers its 24px default from current Android Compose icon guidance and
+its Material Symbols web defaults from Google's current guide. The glyph adapter
+models outlined, rounded, and sharp font-family hooks plus `FILL` 0, `wght` 400,
+`GRAD` 0, `opsz` 24, and `ROND` 50. The current guide documents the adjustable
+ranges and now includes `ROND` in its variable-font requests; T06 carries that
+Expressive axis even though the guide's introductory copy still describes the
+four original symbol axes. Font files, subsetting, and network delivery remain
+consumer-owned. SVG sources consume only Icon size and inherited `currentColor`.

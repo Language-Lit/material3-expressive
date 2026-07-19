@@ -39,12 +39,17 @@ describe('default token schema', () => {
     expect(defaultTokenSet.metadata.sources).toHaveLength(2)
     expect(defaultTokenSet.metadata.sources.every((source) => source.accessed === '2026-07-19')).toBe(true)
     expect(isDeeplyFrozen(defaultTokenSet)).toBe(true)
-    expect(defaultTokenSet.componentTokens).toHaveLength(1)
-    expect(defaultTokenSet.componentTokens[0]).toMatchObject({
+    expect(defaultTokenSet.componentTokens).toHaveLength(2)
+    expect(defaultTokenSet.componentTokens).toContainEqual(expect.objectContaining({
       component: 'surface',
       task: 'T04',
-      source: { accessed: '2026-07-19' },
-    })
+      source: expect.objectContaining({ accessed: '2026-07-19' }),
+    }))
+    expect(defaultTokenSet.componentTokens).toContainEqual(expect.objectContaining({
+      component: 'icon',
+      task: 'T06',
+      source: expect.objectContaining({ accessed: '2026-07-19' }),
+    }))
 
     const roundTrip = JSON.parse(JSON.stringify(defaultTokenSet))
     expect(validateTokenSet(roundTrip)).toEqual({ success: true, issues: [] })

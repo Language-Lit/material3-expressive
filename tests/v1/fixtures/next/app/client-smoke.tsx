@@ -1,18 +1,29 @@
 'use client'
 
 import {
+  Icon,
   Surface,
   Text,
   defaultTokenSet,
   useResolvedColorMode,
   validateTokenSet,
+  type IconSourceProps,
 } from '@language-lit/material3-expressive/v1'
 import { useRef } from 'react'
+
+function ClientMark(props: IconSourceProps) {
+  return (
+    <svg {...props} viewBox="0 0 24 24">
+      <path d="M4 4h16v16H4Z" />
+    </svg>
+  )
+}
 
 export function ClientSmoke() {
   const mode = useResolvedColorMode()
   const surfaceRef = useRef<HTMLElementTagNameMap['article'] | null>(null)
   const textRef = useRef<HTMLParagraphElement | null>(null)
+  const iconRef = useRef<HTMLSpanElement | null>(null)
   return (
     <Surface as="article" ref={surfaceRef} color="surface-container" shape="medium">
       <Text as="p" ref={textRef} variant="bodyMedium">
@@ -21,6 +32,10 @@ export function ClientSmoke() {
           {validateTokenSet(defaultTokenSet).success ? 'valid' : 'invalid'} ({mode})
         </output>
       </Text>
+      <Icon
+        ref={iconRef}
+        source={ClientMark}
+      />
     </Surface>
   )
 }

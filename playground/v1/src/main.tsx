@@ -7,6 +7,7 @@ import {
   validateTokenSet,
 } from '@language-lit/material3-expressive/v1'
 import '@language-lit/material3-expressive/v1/styles.css'
+import { IconExample } from '../examples/Icon.example'
 import { SurfaceExample } from '../examples/Surface.example'
 import { TextExample } from '../examples/Text.example'
 import './playground.css'
@@ -28,6 +29,7 @@ createRoot(root).render(
         </output>
         <SurfaceExample />
         <TextExample />
+        <IconExample />
       </main>
     </Material3Provider>
   </React.StrictMode>,

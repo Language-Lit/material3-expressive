@@ -29,3 +29,16 @@
 .text-example__inverse {
   padding: 1rem;
 }
+
+.icon-example {
+  align-items: center;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  margin-block-start: 2rem;
+  padding: 1.5rem;
+}
+
+.icon-example > .m3e-text:last-child {
+  grid-column: 1 / -1;
+}
