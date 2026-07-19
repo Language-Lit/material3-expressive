@@ -1,4 +1,5 @@
 import { defaultTokenSet, generateTokenCss } from '../../../src/v1/tokens'
+import { generateTokenStyle } from '../../../src/v1/tokens/css'
 
 describe('token CSS generation', () => {
   const css = generateTokenCss(defaultTokenSet)
@@ -15,6 +16,8 @@ describe('token CSS generation', () => {
     expect(css).toContain('--m3e-sys-color-primary: var(--m3e-ref-palette-primary-40);')
     expect(css).toContain('[data-m3e-color-mode="light"], [data-m3e-color-mode="system"]')
     expect(css).toContain('[data-m3e-color-mode="dark"]')
+    expect(css).toContain('.m3e-theme[data-m3e-color-mode="system"]')
+    expect(css).toContain('--m3e-theme-color-dark-primary: var(--m3e-ref-palette-primary-80);')
     expect(css).toContain('@media (prefers-color-scheme: dark)')
   })
 
@@ -32,9 +35,17 @@ describe('token CSS generation', () => {
     const definitions = new Set(
       [...css.matchAll(/(--m3e-[a-z0-9-]+)\s*:/g)].map((match) => match[1]),
     )
-    expect(definitions.size).toBe(643)
+    expect(definitions.size).toBe(741)
     for (const match of css.matchAll(/var\(\s*(--m3e-[a-z0-9-]+)/g)) {
       expect(definitions.has(match[1]), match[1]).toBe(true)
     }
+  })
+
+  it('creates deterministic React-free custom-property maps for a resolved mode', () => {
+    const style = generateTokenStyle(defaultTokenSet, 'dark')
+    expect(style['--m3e-sys-color-primary']).toBe('var(--m3e-ref-palette-primary-80)')
+    expect(style['--m3e-sys-density-scale']).toBe('0')
+    expect(Object.isFrozen(style)).toBe(true)
+    expect(generateTokenStyle(defaultTokenSet, 'dark')).toEqual(style)
   })
 })

@@ -86,6 +86,16 @@
       "import": "./dist/v1/index.js",
       "default": "./dist/v1/index.js"
     },
+    "./v1/theme": {
+      "types": "./dist/v1/theme.d.ts",
+      "import": "./dist/v1/theme.js",
+      "default": "./dist/v1/theme.js"
+    },
+    "./v1/tokens": {
+      "types": "./dist/v1/tokens.d.ts",
+      "import": "./dist/v1/tokens.js",
+      "default": "./dist/v1/tokens.js"
+    },
     "./v1/styles.css": "./dist/v1/styles.css"
   },
   "files": [

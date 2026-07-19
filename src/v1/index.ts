@@ -4,4 +4,5 @@
  * Components are added task-by-task only after their conformance gates pass.
  */
 export * from './tokens'
+export * from './theme'
 export type { JsonPrimitive, JsonValue } from './types'

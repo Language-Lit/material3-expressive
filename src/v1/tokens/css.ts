@@ -26,6 +26,8 @@ interface CssDeclaration {
   readonly value: string
 }
 
+export type TokenCustomProperties = Readonly<Record<`--m3e-${string}`, string>>
+
 const genericFontFamilies = new Set([
   'cursive',
   'emoji',
@@ -95,6 +97,26 @@ function colorDeclarations(
   return COLOR_ROLE_NAMES.map((role) => ({
     name: tokenPathToCssVariable(`sys.color.${role}`),
     value: referenceValue(tokenSet.system.color[mode][role].$ref),
+  }))
+}
+
+function scopedColorDeclarations(
+  tokenSet: FoundationTokenSet,
+  mode: 'light' | 'dark',
+): CssDeclaration[] {
+  return colorDeclarations(tokenSet, mode).map(({ name, value }) => ({
+    name,
+    value: `var(${name.replace('--m3e-sys-color-', `--m3e-theme-color-${mode}-`)})`,
+  }))
+}
+
+function themeColorDeclarations(
+  tokenSet: FoundationTokenSet,
+  mode: 'light' | 'dark',
+): CssDeclaration[] {
+  return colorDeclarations(tokenSet, mode).map(({ name, value }) => ({
+    name: name.replace('--m3e-sys-color-', `--m3e-theme-color-${mode}-`),
+    value,
   }))
 }
 
@@ -227,26 +249,61 @@ function renderRule(selector: string, declarations: readonly CssDeclaration[], i
   return `${indent}${selector} {\n${body}\n${indent}}`
 }
 
-export function generateTokenCss(value: unknown): string {
+export function generateTokenStyle(
+  value: unknown,
+  mode: 'light' | 'dark',
+): TokenCustomProperties {
   assertTokenSet(value)
   const tokenSet = value as FoundationTokenSet
-  const rootDeclarations = [
+  const declarations = [
     ...referenceDeclarations(tokenSet),
     ...remainingSystemDeclarations(tokenSet),
     ...componentDeclarations(tokenSet),
-    ...colorDeclarations(tokenSet, 'light'),
+    ...colorDeclarations(tokenSet, mode),
+  ]
+  return Object.freeze(
+    Object.fromEntries(
+      declarations
+        .sort((left, right) => left.name.localeCompare(right.name))
+        .map(({ name, value: declarationValue }) => [name, declarationValue]),
+    ),
+  ) as TokenCustomProperties
+}
+
+export function generateTokenCss(value: unknown): string {
+  assertTokenSet(value)
+  const tokenSet = value as FoundationTokenSet
+  const baseDeclarations = [
+    ...referenceDeclarations(tokenSet),
+    ...remainingSystemDeclarations(tokenSet),
+    ...componentDeclarations(tokenSet),
   ]
   const light = colorDeclarations(tokenSet, 'light')
   const dark = colorDeclarations(tokenSet, 'dark')
+  const themeScope = [
+    ...themeColorDeclarations(tokenSet, 'light'),
+    ...themeColorDeclarations(tokenSet, 'dark'),
+  ]
+  const scopedSystemLight = scopedColorDeclarations(tokenSet, 'light')
+  const scopedSystemDark = scopedColorDeclarations(tokenSet, 'dark')
   const systemDarkRule = renderRule('[data-m3e-color-mode="system"]', dark, '    ')
+  const scopedSystemDarkRule = renderRule(
+    '.m3e-theme[data-m3e-color-mode="system"]',
+    scopedSystemDark,
+    '    ',
+  )
 
   return [
     '@layer m3e.tokens {',
-    renderRule(':root', rootDeclarations),
+    renderRule(':root, .m3e-theme', baseDeclarations),
+    renderRule(':root', light),
+    renderRule('.m3e-theme', themeScope),
     renderRule('[data-m3e-color-mode="light"], [data-m3e-color-mode="system"]', light),
     renderRule('[data-m3e-color-mode="dark"]', dark),
+    renderRule('.m3e-theme[data-m3e-color-mode="system"]', scopedSystemLight),
     '  @media (prefers-color-scheme: dark) {',
     systemDarkRule,
+    scopedSystemDarkRule,
     '  }',
     '}',
     '',

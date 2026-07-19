@@ -29,7 +29,7 @@ for (const match of first.matchAll(/var\(\s*(--m3e-[a-z0-9-]+)/g)) {
   if (!definitions.has(match[1])) errors.push(`Unresolved generated CSS reference: ${match[1]}`)
 }
 if ([...first.matchAll(/--m3e-comp-/g)].length !== 0) {
-  errors.push('Default component-token registry must remain empty during T02')
+  errors.push('Default component-token registry must remain empty until a component task registers sourced defaults')
 }
 
 if (errors.length > 0) {

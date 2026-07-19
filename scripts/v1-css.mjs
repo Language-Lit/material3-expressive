@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { transform } from 'lightningcss'
+import { Features, transform } from 'lightningcss'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const browserSupport = JSON.parse(
@@ -34,5 +34,9 @@ export function compileV1Css(filename, source) {
     minify: true,
     sourceMap: true,
     targets: v1CssTargets,
+    // All supported v1 browsers implement color-scheme. Disabling the
+    // light-dark lowering avoids compiler-owned, unnamespaced helper variables
+    // in the library's public CSS contract.
+    exclude: Features.LightDark,
   })
 }

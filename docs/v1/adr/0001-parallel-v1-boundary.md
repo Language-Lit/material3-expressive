@@ -13,9 +13,11 @@ contracts.
 ## Decision
 
 All new runtime code lives under `src/v1/`. Before the separately approved stable
-cutover, consumers access it only through additive `./v1` and
-`./v1/styles.css` exports. Legacy runtime, type, export-map, and CSS contracts are
-captured by executable baselines.
+cutover, consumers access it only through approved additive `./v1`,
+`./v1/styles.css`, `./v1/theme`, and `./v1/tokens` exports. The two data subpaths
+were approved in T03 to keep theme and token creation callable from server
+modules while `./v1` exposes React client APIs. Legacy runtime, type, export-map,
+and CSS contracts are captured by executable baselines.
 
 v1 cannot import legacy implementation files. Reusable ideas must be
 reimplemented against the v1 specification and sources of truth rather than

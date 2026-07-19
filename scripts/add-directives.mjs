@@ -22,6 +22,7 @@ const clientEntries = [
   'hooks.js',
   'context/Material3Provider.js',
   'showcase.js',
+  'v1/index.js',
 ]
 
 const DIRECTIVE = "'use client';\n"

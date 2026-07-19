@@ -1,1 +1,16 @@
 @layer m3e.tokens, m3e.base, m3e.components, m3e.utilities;
+
+@layer m3e.base {
+  :root,
+  [data-m3e-color-mode="system"] {
+    color-scheme: light dark;
+  }
+
+  [data-m3e-color-mode="light"] {
+    color-scheme: light;
+  }
+
+  [data-m3e-color-mode="dark"] {
+    color-scheme: dark;
+  }
+}

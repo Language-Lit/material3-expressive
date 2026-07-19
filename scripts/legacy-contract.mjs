@@ -8,7 +8,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const dist = path.join(root, 'dist')
 const baselineDir = path.join(root, 'tests/v1/contracts/baselines')
 const update = process.argv.includes('--update')
-const approvedV1Exports = ['./v1', './v1/styles.css']
+const approvedV1Exports = ['./v1', './v1/styles.css', './v1/theme', './v1/tokens']
 
 async function exists(target) {
   try {
@@ -87,7 +87,7 @@ async function buildContract() {
     .sort()
 
   if (JSON.stringify(v1ExportNames) !== JSON.stringify(approvedV1Exports)) {
-    throw new Error(`Only ${approvedV1Exports.join(' and ')} may be added for v1; received ${v1ExportNames.join(', ')}`)
+    throw new Error(`Only approved v1 exports (${approvedV1Exports.join(', ')}) may be added; received ${v1ExportNames.join(', ')}`)
   }
 
   const legacyExports = stableObject(exportEntries.filter(([name]) => !name.startsWith('./v1')))

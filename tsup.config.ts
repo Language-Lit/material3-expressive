@@ -23,6 +23,8 @@ export default defineConfig({
     utils: 'src/utils/index.ts',
     'tailwind.preset': 'tailwind.preset.ts',
     'v1/index': 'src/v1/index.ts',
+    'v1/theme': 'src/v1/theme/data.ts',
+    'v1/tokens': 'src/v1/tokens/index.ts',
   },
   format: ['esm'],
   dts: true,

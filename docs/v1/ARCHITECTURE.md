@@ -66,6 +66,25 @@ This mapping is centralized rather than repeated in component code. The build
 regenerates token CSS from the validated public default and checks it byte for
 byte, so contributors do not manually edit generated output.
 
+## Theme runtime
+
+`src/v1/theme/theme.ts` is the only conversion boundary between public
+`Material3Theme` data and `FoundationTokenSet`. Theme creation and extension
+merge plain data, then validate and deep-freeze a detached result. This keeps
+React, browser globals, and provider concerns out of server-safe theme data.
+
+`Material3Provider/` renders the `.m3e-theme` token scope. The generated token
+stylesheet assigns a complete default foundation to both the root and provider
+scopes, while inline custom properties contain only validated differences.
+Light/dark aliases let CSS media queries resolve custom system themes before
+hydration. React tracks that browser preference only for the resolved-mode
+context, which is separate from the theme context.
+
+The main `./v1` entry is a client boundary. `./v1/theme` and `./v1/tokens` are
+React-free data entries for SSR and server modules. Architecture checks protect
+those files from React imports and protect the entire theme layer from upward
+component imports. ADR 0003 records the full decision and measured cost.
+
 ## Component layout
 
 Every public component uses the same mirrored layout:

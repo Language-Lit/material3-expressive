@@ -1,6 +1,6 @@
 # Active v1 task
 
-## T02 — Token schema and default data
+## T03 — Theme runtime
 
 Status: complete
 Approved: 2026-07-19
@@ -8,44 +8,48 @@ Completed: 2026-07-19
 
 ### Scope
 
-- Define canonical typed schemas for color, typography, shape, motion,
-  elevation, state, density, and component-token registrations.
-- Trace default data to current first-party Material sources with URLs and access
-  dates.
-- Provide complete light and dark system color roles with contrast validation.
-- Keep default token data immutable and serializable with runtime validation.
-- Generate deterministic namespaced `--m3e-ref-*`, `--m3e-sys-*`, and registered
-  `--m3e-comp-*` CSS custom properties.
-- Establish the component-token registration contract without guessing component
-  values that belong to later component tasks.
+- Define the public Material 3 theme model as a validated, serializable view of
+  the v1 reference, system, and component tokens.
+- Provide immutable default-theme creation and extension without mutating a base
+  theme or the token defaults.
+- Implement `Material3Provider` with light, dark, and system color modes,
+  element-scoped tokens, nested scopes, and a complete default theme.
+- Keep server markup deterministic and subscribe to the browser color preference
+  through React's SSR external-store contract.
+- Separate theme and resolved-mode contexts so mode consumers do not subscribe
+  to the complete theme object.
+- Provide an optional nonce-bearing initialization script without mutating the
+  document root.
 
-React components, providers, framework APIs, private downstream application concepts, and legacy
-implementation changes are out of scope.
+Seed-color generation, framework adapters, application persistence, private downstream application
+integration, public components beyond the provider, and legacy implementation
+changes are out of scope.
 
 ### Expected files
 
-- `src/v1/tokens/`, `src/v1/types/`, and `src/v1/styles/`.
-- Token-focused tests under `tests/v1/tokens/`.
-- Deterministic token generation and validation scripts.
-- Token provenance documentation and a cross-cutting architecture decision
-  record.
-- Package configuration and recorded bundle budgets where the new public token
-  surface requires them.
+- `src/v1/theme/`, including the canonical `Material3Provider/` ownership path.
+- Theme/provider tests under `tests/v1/theme/`.
+- v1 public exports, generated token CSS support, and Vite/Next consumer fixture
+  coverage required by the provider.
+- Theme architecture documentation, an ADR, inventory status, and any explicit
+  bundle-budget updates justified by the new public runtime.
 
 ### Acceptance checks
 
-- Token schemas cover every approved theme domain and reject incomplete,
-  malformed, non-serializable, or unresolved data.
-- The default data passes validation, is deeply immutable, and can be serialized
-  deterministically.
-- Light and dark color schemes contain the required Material roles and satisfy
-  documented role-pair contrast requirements.
-- Generated CSS is reproducible, fully namespaced, and contains no unresolved
-  custom-property references.
-- Component-token registrations are typed, validated, deterministic, and empty
-  by default until component tasks provide sourced values.
-- Public type declarations remain framework-neutral and do not expose a
-  validation-library implementation.
+- Theme parsing, creation, and extension reject incomplete or malformed data and
+  return independent deeply frozen themes.
+- Provider tokens are scoped to its own rendered element; nested providers do
+  not mutate or overwrite an ancestor or `document.documentElement`.
+- Server output is deterministic, hydration begins from the same configured
+  fallback, and system mode responds to `prefers-color-scheme` changes.
+- Light, dark, and system styling works from the static v1 stylesheet, including
+  custom and nested themes, without a required runtime stylesheet injection.
+- Theme and resolved-mode consumers use distinct contexts; omitting `theme`
+  applies the complete default.
+- The optional initialization script is absent by default and carries the
+  supplied nonce when enabled.
+- Public declarations remain React-generic and framework-neutral; no Next.js,
+  Vite, private downstream application, or legacy types leak into the v1 API.
 - Existing typecheck, tests, legacy contracts, packed Vite/Next fixtures, CSS
   checks, architecture checks, and bundle budgets remain green through
   `npm run verify:v1`.

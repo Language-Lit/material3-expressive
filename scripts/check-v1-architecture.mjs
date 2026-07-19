@@ -28,6 +28,11 @@ const forbiddenFrameworkImports = [
   'react-router-dom',
 ]
 const forbiddenFoundationImports = ['react', 'react-dom']
+const reactFreeThemeFiles = new Set([
+  'theme/data.ts',
+  'theme/theme.ts',
+  'theme/theme.types.ts',
+])
 
 async function exists(target) {
   try {
@@ -99,7 +104,9 @@ for (const file of sourceFiles) {
   const v1Relative = path.relative(v1Root, file)
   const isFoundationFile =
     v1Relative.startsWith(`tokens${path.sep}`) ||
-    v1Relative.startsWith(`types${path.sep}`)
+    v1Relative.startsWith(`types${path.sep}`) ||
+    reactFreeThemeFiles.has(v1Relative.split(path.sep).join('/'))
+  const isThemeFile = v1Relative.startsWith(`theme${path.sep}`)
   for (const match of source.matchAll(importPattern)) {
     const specifier = match[1]
     if (forbiddenFrameworkImports.some((entry) => specifier === entry || specifier.startsWith(entry))) {
@@ -127,6 +134,15 @@ for (const file of sourceFiles) {
       continue
     }
 
+    if (
+      isThemeFile &&
+      (resolved === path.join(v1Root, 'components') ||
+        resolved.startsWith(`${path.join(v1Root, 'components')}${path.sep}`))
+    ) {
+      errors.push(`${path.relative(root, file)} imports upward from the component layer: ${specifier}`)
+      continue
+    }
+
     const sourceComponent = path.relative(path.join(v1Root, 'components'), file).split(path.sep)[0]
     const targetParts = path.relative(path.join(v1Root, 'components'), resolved).split(path.sep)
     const targetComponent = targetParts[0]
@@ -149,10 +165,19 @@ for (const section of ['dependencies', 'peerDependencies']) {
   }
 }
 
+for (const publicPath of ['./v1', './v1/theme', './v1/tokens', './v1/styles.css']) {
+  if (!packageJson.exports?.[publicPath]) {
+    errors.push(`package exports is missing required v1 path: ${publicPath}`)
+  }
+}
+
 if (errors.length > 0) {
   console.error('v1 architecture check failed:')
   for (const error of errors) console.error(`- ${error}`)
   process.exitCode = 1
 } else {
-  console.log(`v1 architecture check passed (${inventory.components.length} planned public components)`)
+  const conformant = inventory.components.filter((component) => component.status === 'conformant').length
+  console.log(
+    `v1 architecture check passed (${inventory.components.length} inventory entries; ${conformant} conformant)`,
+  )
 }
