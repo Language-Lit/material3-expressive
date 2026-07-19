@@ -10,6 +10,7 @@ import '@language-lit/material3-expressive/v1/styles.css'
 import { ButtonExample } from '../examples/Button.example'
 import { CardExample } from '../examples/Card.example'
 import { CheckboxExample } from '../examples/Checkbox.example'
+import { DialogExample } from '../examples/Dialog.example'
 import { FloatingActionButtonExample } from '../examples/FloatingActionButton.example'
 import { IconExample } from '../examples/Icon.example'
 import { IconButtonExample } from '../examples/IconButton.example'
@@ -50,6 +51,7 @@ createRoot(root).render(
         <TextFieldExample />
         <TextAreaExample />
         <SegmentedButtonGroupExample />
+        <DialogExample />
       </main>
     </Material3Provider>
   </React.StrictMode>,

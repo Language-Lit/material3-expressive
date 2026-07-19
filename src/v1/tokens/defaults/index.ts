@@ -5,6 +5,7 @@ import { defaultCardTokens } from './card'
 import { defaultCheckboxTokens } from './checkbox'
 import { defaultDarkColorScheme, defaultLightColorScheme, defaultPalette } from './color'
 import { defaultDensity } from './density'
+import { defaultDialogTokens } from './dialog'
 import { defaultElevation } from './elevation'
 import { defaultFloatingActionButtonTokens } from './floating-action-button'
 import { defaultIconTokens } from './icon'
@@ -74,6 +75,7 @@ const defaultTokenSetInput = {
     defaultSwitchTokens,
     defaultTextFieldTokens,
     defaultSegmentedButtonGroupTokens,
+    defaultDialogTokens,
   ],
 } satisfies FoundationTokenSet
 

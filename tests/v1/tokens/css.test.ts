@@ -83,13 +83,20 @@ describe('token CSS generation', () => {
     expect(css).toContain(
       '--m3e-comp-segmented-button-group-border-color: var(--m3e-sys-color-outline);',
     )
+    expect(css).toContain(
+      '--m3e-comp-dialog-container-color: var(--m3e-sys-color-surface-container-high);',
+    )
+    expect(css).toContain(
+      '--m3e-comp-dialog-container-shape: var(--m3e-sys-shape-corner-extra-large);',
+    )
+    expect(css).toContain('--m3e-comp-dialog-scrim-opacity: 0.32;')
   })
 
   it('contains no unresolved custom-property references', () => {
     const definitions = new Set(
       [...css.matchAll(/(--m3e-[a-z0-9-]+)\s*:/g)].map((match) => match[1]),
     )
-    expect(definitions.size).toBe(1174)
+    expect(definitions.size).toBe(1192)
     for (const match of css.matchAll(/var\(\s*(--m3e-[a-z0-9-]+)/g)) {
       expect(definitions.has(match[1]), match[1]).toBe(true)
     }

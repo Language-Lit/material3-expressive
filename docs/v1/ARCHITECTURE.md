@@ -257,6 +257,33 @@ reason TextField's `error`/`disabled` are. ADR 0015 records the data-driven
 API, the `:has()`-based stacking flattening, and a bundle-budget ceiling
 raise.
 
+`Dialog` is the first overlay-kind component and establishes the
+native-`<dialog>`-as-primitive boundary: a single root element, driven
+imperatively by `showModal()`/`show()`/`close()` in an effect rather than a
+JSX-rendered `open` attribute, since a true modal only exists once
+`showModal()` runs. `modal` (default `true`) is a deliberate capability
+addition beyond the always-modal pinned source, mapping directly onto
+`showModal()` vs `show()`. Initial focus placement and close-time focus
+restoration are both native behavior for either mode, requiring no
+library-owned focus-management code — the same "the platform already does
+this" posture Radio's native mutual exclusivity and TextField's native
+label association already established, now extended to an entire modal
+lifecycle. `dismissOnOutsideClick` uses a manual bounding-rect click check
+rather than the native `closedby` attribute, which postdates this library's
+browser floor. Entrance/exit motion is the one deliberate exception to this
+library's hard floor-support commitment: `@starting-style`/
+`transition-behavior: allow-discrete` postdates the `:has()` floor, but
+because an unsupporting browser still produces a fully functional, correctly
+stateful instant show/hide, the trade is a pure progressive enhancement, not
+a functional regression. A controlled dialog's own native dismissal is
+reported through `onOpenChange` but is not forcibly reverted if unacknowledged,
+since nothing forces a further render absent an `open` prop change — this
+mirrors the native-truth precedent Radio/Checkbox/SegmentedButtonGroup
+already established, that platform state can move ahead of an
+unacknowledged controlled prop. ADR 0016 records the native-dialog adoption,
+the modal/non-modal mapping, and the `@starting-style` progressive
+enhancement.
+
 ## Styling
 
 Component CSS is authored beside the component. `src/v1/styles/styles.css`
