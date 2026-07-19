@@ -99,13 +99,25 @@ describe('token CSS generation', () => {
     expect(css).toContain(
       '--m3e-comp-menu-item-checked-container-color: var(--m3e-sys-color-tertiary-container);',
     )
+    expect(css).toContain(
+      '--m3e-comp-tooltip-plain-container-color: var(--m3e-sys-color-inverse-surface);',
+    )
+    expect(css).toContain(
+      '--m3e-comp-tooltip-rich-container-shape: var(--m3e-sys-shape-corner-medium);',
+    )
+    expect(css).toContain(
+      '--m3e-comp-snackbar-container-color: var(--m3e-sys-color-inverse-surface);',
+    )
+    expect(css).toContain(
+      '--m3e-comp-snackbar-action-label-color: var(--m3e-sys-color-inverse-primary);',
+    )
   })
 
   it('contains no unresolved custom-property references', () => {
     const definitions = new Set(
       [...css.matchAll(/(--m3e-[a-z0-9-]+)\s*:/g)].map((match) => match[1]),
     )
-    expect(definitions.size).toBe(1221)
+    expect(definitions.size).toBe(1251)
     for (const match of css.matchAll(/var\(\s*(--m3e-[a-z0-9-]+)/g)) {
       expect(definitions.has(match[1]), match[1]).toBe(true)
     }

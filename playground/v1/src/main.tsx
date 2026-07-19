@@ -18,11 +18,13 @@ import { MenuExample } from '../examples/Menu.example'
 import { RadioExample } from '../examples/Radio.example'
 import { SegmentedButtonGroupExample } from '../examples/SegmentedButtonGroup.example'
 import { SelectExample } from '../examples/Select.example'
+import { SnackbarExample } from '../examples/Snackbar.example'
 import { SurfaceExample } from '../examples/Surface.example'
 import { SwitchExample } from '../examples/Switch.example'
 import { TextExample } from '../examples/Text.example'
 import { TextAreaExample } from '../examples/TextArea.example'
 import { TextFieldExample } from '../examples/TextField.example'
+import { TooltipExample } from '../examples/Tooltip.example'
 import './playground.css'
 
 const root = document.getElementById('root')
@@ -56,6 +58,8 @@ createRoot(root).render(
         <DialogExample />
         <MenuExample />
         <SelectExample />
+        <TooltipExample />
+        <SnackbarExample />
       </main>
     </Material3Provider>
   </React.StrictMode>,

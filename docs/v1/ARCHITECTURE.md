@@ -306,6 +306,27 @@ native form-associated element can render Material's option rows. ADR 0017
 records the shared overlay primitives, the per-component focus-model
 divergence, and the token-reuse chain.
 
+`Tooltip` and `Snackbar` are transient-feedback components built on top of
+T17's overlay infrastructure. `useAnchoredOverlay` gained an optional
+`computePosition` override — used only by `Tooltip`, whose center-aligned,
+flip-on-collision, zero-margin placement (`computeTooltipPosition`) is a
+genuinely different algorithm from `Menu`/`Select`'s own, while still
+sharing the same portal/measure/dismiss lifecycle; `Menu`/`Select` are
+unaffected. Unlike `Menu`, `Tooltip` wires its own show/hide interaction
+directly on the consumer's `anchorRef` (hover, focus, `Escape`) rather than
+asking the consumer to, since hover/focus tooltip triggering is a single,
+standardized WAI-ARIA APG interaction with no app-specific ambiguity. It
+also imperatively sets/removes `aria-describedby` on the anchor while
+mounted — the first imperative ARIA-attribute technique in v1. Both
+`Tooltip` variants stay non-interactive (`role="tooltip"` disallows
+focusable content), so the pinned source's rich-tooltip action button has
+no web port. `Snackbar` is a single controlled component, not the pinned
+source's separate host/queue pair, and owns its own lightweight
+mount/measure/dismiss phase machine (no anchor, so it does not use
+`useAnchoredOverlay`) with a pausable auto-dismiss timer — the countdown
+pauses on hover/focus and resumes on leave, a deliberate WCAG 2.2.1
+addition. ADR 0018 records both design decisions.
+
 ## Styling
 
 Component CSS is authored beside the component. `src/v1/styles/styles.css`

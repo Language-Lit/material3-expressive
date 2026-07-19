@@ -12,11 +12,13 @@ import {
   Radio,
   SegmentedButtonGroup,
   Select,
+  Snackbar,
   Surface,
   Switch,
   Text,
   TextArea,
   TextField,
+  Tooltip,
   defaultTokenSet,
   useResolvedColorMode,
   validateTokenSet,
@@ -52,6 +54,9 @@ export function ClientSmoke() {
   const menuAnchorRef = useRef<HTMLButtonElement | null>(null)
   const menuRef = useRef<HTMLDivElement | null>(null)
   const selectRef = useRef<HTMLInputElement | null>(null)
+  const tooltipAnchorRef = useRef<HTMLButtonElement | null>(null)
+  const tooltipRef = useRef<HTMLDivElement | null>(null)
+  const snackbarRef = useRef<HTMLDivElement | null>(null)
   return (
     <Surface as="article" ref={surfaceRef} color="surface-container" shape="medium">
       <Text as="p" ref={textRef} variant="bodyMedium">
@@ -212,6 +217,23 @@ export function ClientSmoke() {
         ]}
         defaultValue="apple"
         onValueChange={(value) => selectRef.current?.setAttribute('data-fixture-value', value)}
+      />
+      <Button ref={tooltipAnchorRef} variant="outlined">
+        Fixture tooltip anchor
+      </Button>
+      <Tooltip
+        ref={tooltipRef}
+        anchorRef={tooltipAnchorRef}
+        content="Fixture tooltip content"
+        defaultOpen
+        onOpenChange={(open) => tooltipRef.current?.setAttribute('data-fixture-open', String(open))}
+      />
+      <Snackbar
+        ref={snackbarRef}
+        message="Fixture snackbar"
+        dismissible
+        defaultOpen
+        onOpenChange={(open) => snackbarRef.current?.setAttribute('data-fixture-open', String(open))}
       />
     </Surface>
   )
