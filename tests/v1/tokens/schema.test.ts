@@ -39,7 +39,7 @@ describe('default token schema', () => {
     expect(defaultTokenSet.metadata.sources).toHaveLength(2)
     expect(defaultTokenSet.metadata.sources.every((source) => source.accessed === '2026-07-19')).toBe(true)
     expect(isDeeplyFrozen(defaultTokenSet)).toBe(true)
-    expect(defaultTokenSet.componentTokens).toHaveLength(6)
+    expect(defaultTokenSet.componentTokens).toHaveLength(7)
     expect(defaultTokenSet.componentTokens).toContainEqual(expect.objectContaining({
       component: 'surface',
       task: 'T04',
@@ -76,6 +76,14 @@ describe('default token schema', () => {
       task: 'T10',
       source: expect.objectContaining({
         revision: '0be207d91046b7376beeef5544d331a02d6fa87c',
+        accessed: '2026-07-19',
+      }),
+    }))
+    expect(defaultTokenSet.componentTokens).toContainEqual(expect.objectContaining({
+      component: 'checkbox',
+      task: 'T11',
+      source: expect.objectContaining({
+        revision: '225f50d42bf0adeb2abf4b6109befb5ab6ce4efc',
         accessed: '2026-07-19',
       }),
     }))

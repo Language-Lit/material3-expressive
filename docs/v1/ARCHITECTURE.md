@@ -178,6 +178,17 @@ children follow the HTML button phrasing-content model; nested controls and rich
 flow structure belong inside passive cards. ADR 0010 records the semantic split,
 content boundary, and use of the shared Expressive effects projection.
 
+`Checkbox` establishes the native form-control boundary. A native
+`input type="checkbox"` owns semantics, naming, activation, forms, reset,
+disabled state, and the forwarded ref, while a decorative wrapper owns only the
+48px target, the resolved state attributes, and the consumer class and style. Its
+sibling container draws the sourced 18px box, inset outline, and state layer, and
+an SVG polyline reproduces the first-party check reveal and indeterminate
+gravitation from component tokens. Mixed state stays a controlled prop because
+the DOM property cannot be serialized. Ref composition joined the shared internal
+primitives for the remaining form controls. ADR 0011 records the tri-state
+model, geometry selection, and motion mapping.
+
 ## Styling
 
 Component CSS is authored beside the component. `src/v1/styles/styles.css`

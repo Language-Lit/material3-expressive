@@ -1,5 +1,6 @@
 export * from './Button'
 export * from './Card'
+export * from './Checkbox'
 export * from './FloatingActionButton'
 export * from './Icon'
 export * from './IconButton'

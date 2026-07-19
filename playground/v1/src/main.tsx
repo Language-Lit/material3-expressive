@@ -9,6 +9,7 @@ import {
 import '@language-lit/material3-expressive/v1/styles.css'
 import { ButtonExample } from '../examples/Button.example'
 import { CardExample } from '../examples/Card.example'
+import { CheckboxExample } from '../examples/Checkbox.example'
 import { FloatingActionButtonExample } from '../examples/FloatingActionButton.example'
 import { IconExample } from '../examples/Icon.example'
 import { IconButtonExample } from '../examples/IconButton.example'
@@ -38,6 +39,7 @@ createRoot(root).render(
         <FloatingActionButtonExample />
         <ButtonExample />
         <CardExample />
+        <CheckboxExample />
       </main>
     </Material3Provider>
   </React.StrictMode>,

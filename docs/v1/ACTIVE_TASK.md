@@ -1,6 +1,6 @@
 # Active v1 task
 
-## T10 — Card
+## T11 — Checkbox
 
 Status: complete
 Approved: 2026-07-19
@@ -8,70 +8,69 @@ Completed: 2026-07-19
 
 ### Scope
 
-- Implement one framework-neutral `Card` API with filled, elevated, and
-  outlined Material variants and generic consumer-owned content.
-- Keep passive and interactive behavior statically distinct. Passive cards
-  render an `article` by default and support a bounded set of passive block and
-  landmark elements. Interactive cards render a native `button`, default to
-  `type="button"`, and preserve native form, focus, disabled, ref, event, ARIA,
-  and keyboard activation behavior.
-- Use current first-party Card container colors, content colors, medium shape,
-  outline, disabled treatment, and per-state elevation. Interactive hover,
-  focus, and pressed states consume stable namespaced component tokens and
+- Implement one framework-neutral `Checkbox` built on a native
+  `input type="checkbox"` that forwards its ref to that input and preserves
+  native form participation, label association, activation, and disabled
+  behavior.
+- Support controlled `checked`, uncontrolled `defaultChecked`, and a
+  `indeterminate` visual/assistive state that mirrors first-party
+  `ToggleableState` without owning a cycling policy the pinned API does not own.
+- Map the sourced checkbox container, outline, checkmark, state-layer, shape,
+  and disabled roles to stable `--m3e-comp-checkbox-*` variables, including the
+  first-party asymmetry of one disabled checkmark role against three disabled
+  box and outline roles.
+- Reproduce the sourced check-draw reveal, the checkmark-to-indeterminate
+  gravitation, and the delayed snap when leaving the checked state using
   semantic motion tokens.
-- Preserve visible focus, forced-colors, logical RTL behavior, reduced-motion
-  outcomes, deterministic SSR/hydration, and default/custom/nested theme token
-  resolution.
-- Warn in development when runtime callers provide interactive-only props to a
-  passive card, combine `interactive` with `as`, or provide content that is
-  detectably unsafe inside a native button.
-- Document the web adaptation from Compose's passive and clickable overloads to
-  a discriminated React API and the HTML restriction that whole-card buttons
-  cannot contain nested interactive descendants.
+- Preserve a 48 by 48 CSS-pixel target, visible focus, forced-colors, logical
+  RTL behavior, reduced-motion outcomes, deterministic SSR/hydration, and
+  default/custom/nested theme token resolution.
+- Warn in development when runtime callers combine `checked` with
+  `defaultChecked` or supply a controlled value without any change handler.
+  Naming is not warned about because a wrapping `label` is a valid, undetectable
+  source of the accessible name.
+- Document the web adaptation from Compose's `Checkbox`/`TriStateCheckbox`
+  overloads to one React input, and the label, error, and size behavior that is
+  deliberately absent from the pinned first-party API.
 
-Link-card navigation, selection/toggle behavior, arbitrary polymorphic
-interactive elements, overlay-link patterns, nested action orchestration,
-card-specific content slots, media/image loading, drag behavior, swipe/dismiss
-behavior, loading, long-press, custom colors/shapes/elevations, framework
-adapters, private downstream application integration, and legacy implementation changes are out
-of scope.
+Label and supporting-text slots, error state, size variants, shape morphing,
+custom stroke overloads, parent/child group orchestration, framework adapters,
+private downstream application integration, and legacy implementation changes are out of scope.
 
 ### Expected files
 
-- `src/v1/components/Card/`, public component barrels, complete style assembly,
-  and sourced Card component-token defaults.
-- Card behavior, interaction, accessibility, theme, CSS, SSR, type-contract,
-  and conformance evidence under `tests/v1/`.
+- `src/v1/components/Checkbox/`, public component barrels, complete style
+  assembly, and sourced Checkbox component-token defaults.
+- Checkbox behavior, interaction, accessibility, theme, CSS, SSR,
+  type-contract, and conformance evidence under `tests/v1/`.
 - A mirrored example under `playground/v1/examples/`, playground usage, and
   packed Vite/Next fixture coverage.
-- Card documentation, a passive/interactive semantics ADR,
+- Checkbox documentation, a native tri-state semantics ADR,
   architecture/provenance notes, and the component inventory status/exports.
 - An explicit bundle-budget update only if justified by measured output.
 
 ### Acceptance checks
 
-- Filled, elevated, and outlined variants map to current sourced container,
-  content, medium-corner, outline, disabled, and elevation tokens through stable
-  `--m3e-comp-card-*` variables and `data-m3e-*` attributes.
-- Passive cards render no interactive role, focus behavior, disabled state, or
-  activation logic; `as` selects only a documented passive block or landmark
-  element and forwards the corresponding ref and native props.
-- Interactive cards render a native `button`, default to `type="button"`,
-  forward their ref, preserve forms and browser-owned Enter/Space activation,
-  and do not synthesize keyboard events.
-- Interactive cards omit `aria-pressed`, forward consumer click handlers
-  directly, and do not own selection or toggle state that is absent from the
-  pinned first-party Card API.
-- Filled elevation resolves to Level 0 at rest/focus/press and Level 1 on hover;
-  elevated resolves to Level 1 at rest/focus/press and Level 2 on hover;
-  outlined resolves to Level 0 at rest/focus/press and Level 1 on hover.
-- Disabled interactive cards do not activate or mutate selection and retain
-  sourced disabled container/content/outline/elevation treatment. Passive cards
-  never accept a disabled state.
-- Interactive cards reserve at least a 48 by 48 CSS-pixel target, expose visible
-  focus, and document that their children must not contain links, buttons, or
-  other interactive descendants.
-- Invalid mode combinations produce actionable development warnings without
+- The rendered control is one native `input type="checkbox"` that receives the
+  forwarded ref, participates in forms through `name`, `value`, `form`,
+  `required`, and reset, and is activated by the browser's own click and Space
+  handling without synthesized key events.
+- Controlled and uncontrolled checked state both work, consumer `onChange` and
+  `onCheckedChange` compose without replacing either, and a cancelled event
+  suppresses the library state change.
+- `indeterminate` renders `aria-checked="mixed"` and a deterministic state
+  attribute in server markup, sets the native `indeterminate` DOM property after
+  hydration, and resolves to the browser-owned checked value on user activation.
+- Sourced container, outline, checkmark, state-layer, shape, and disabled roles
+  resolve through stable `--m3e-comp-checkbox-*` variables and `data-m3e-*`
+  attributes, including all thirteen first-party color roles.
+- Disabled checkboxes do not activate or mutate state, retain sourced disabled
+  container/outline/checkmark treatment, and leave sequential focus.
+- The interactive target reserves at least 48 by 48 CSS pixels around the
+  sourced container size, and focus remains visible in forced colors.
+- Check-draw, indeterminate gravitation, and the delayed leave-to-unchecked snap
+  consume semantic motion tokens and become immediate under reduced motion.
+- Invalid prop combinations produce actionable development warnings without
   changing server markup; rendering and hydration remain deterministic and
   inject no styles.
 - Forced colors, RTL, reduced motion, default/custom/nested theme, CSS
