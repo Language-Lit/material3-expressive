@@ -13,3 +13,11 @@ directory is not exported from the package.
   supporting-text decoration shared by `TextField` and `TextArea` around a
   native `input`/`textarea` child, matching the one decoration layer the
   pinned Compose source reuses for both single- and multi-line fields.
+- `overlayPosition` is a pure function computing an anchored popover's
+  position (start/end/clamp horizontally, below/above/clamp vertically),
+  shared by `Menu` and `Select`'s popup.
+- `useAnchoredOverlay` owns the portal mount lifecycle, live repositioning,
+  outside-click/Escape dismissal, and deferred-unmount exit animation shared
+  by `Menu` and `Select`'s popup — see ADR 0017 for why this is needed at all
+  (neither component gets Dialog's native top-layer/backdrop/focus-restore
+  behavior for free).

@@ -97,6 +97,13 @@ if (!dialogRegistration || dialogRegistration.task !== 'T16') {
   errors.push('Default component-token registry is missing the sourced T16 Dialog registration')
 }
 
+const menuRegistration = api.defaultTokenSet.componentTokens.find(
+  (registration) => registration.component === 'menu',
+)
+if (!menuRegistration || menuRegistration.task !== 'T17') {
+  errors.push('Default component-token registry is missing the sourced T17 Menu registration')
+}
+
 if (errors.length > 0) {
   console.error('v1 token check failed:')
   for (const error of errors) console.error(`- ${error}`)

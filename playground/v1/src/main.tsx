@@ -14,8 +14,10 @@ import { DialogExample } from '../examples/Dialog.example'
 import { FloatingActionButtonExample } from '../examples/FloatingActionButton.example'
 import { IconExample } from '../examples/Icon.example'
 import { IconButtonExample } from '../examples/IconButton.example'
+import { MenuExample } from '../examples/Menu.example'
 import { RadioExample } from '../examples/Radio.example'
 import { SegmentedButtonGroupExample } from '../examples/SegmentedButtonGroup.example'
+import { SelectExample } from '../examples/Select.example'
 import { SurfaceExample } from '../examples/Surface.example'
 import { SwitchExample } from '../examples/Switch.example'
 import { TextExample } from '../examples/Text.example'
@@ -52,6 +54,8 @@ createRoot(root).render(
         <TextAreaExample />
         <SegmentedButtonGroupExample />
         <DialogExample />
+        <MenuExample />
+        <SelectExample />
       </main>
     </Material3Provider>
   </React.StrictMode>,

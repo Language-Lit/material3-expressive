@@ -284,6 +284,28 @@ unacknowledged controlled prop. ADR 0016 records the native-dialog adoption,
 the modal/non-modal mapping, and the `@starting-style` progressive
 enhancement.
 
+`Menu` and `Select` are the first components with no native top-layer
+primitive to lean on — neither the Popover API nor CSS anchor positioning is
+available across this library's browser floor — so a new, non-exported
+`overlayPosition`/`useAnchoredOverlay` pair in `src/v1/internal` owns portal
+mounting, live repositioning, outside-click/Escape dismissal, and
+deferred-unmount exit animation, the first such infrastructure in v1. Both
+are data-driven (`items`/`options` arrays), extending the SegmentedButtonGroup
+precedent. `Menu` follows the APG menu-button pattern with real roving-focus
+keyboard navigation and no focus trap; `Select` follows the APG select-only
+combobox pattern instead, keeping focus on its trigger and tracking the
+highlighted option with `aria-activedescendant` — a deliberate per-pattern
+divergence, not an inconsistency. `Select`'s visible trigger is a read-only
+input built on the same `TextFieldChrome` foundation `TextField`/`TextArea`
+already share, and its popup listbox reuses `Menu`'s own container/item
+classes and tokens unchanged, so `Select` registers no component tokens of
+its own — the T14 shared-token-domain precedent extended to a third and
+fourth component. A companion `<input type="hidden">`, rendered when `name`
+is supplied, is `Select`'s own new pattern for form participation, since no
+native form-associated element can render Material's option rows. ADR 0017
+records the shared overlay primitives, the per-component focus-model
+divergence, and the token-reuse chain.
+
 ## Styling
 
 Component CSS is authored beside the component. `src/v1/styles/styles.css`
