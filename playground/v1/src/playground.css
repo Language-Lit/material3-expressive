@@ -5,3 +5,13 @@
   padding: 2rem;
   font-family: system-ui, sans-serif;
 }
+
+.surface-example {
+  margin-block-start: 2rem;
+  padding: 1.5rem;
+}
+
+.surface-example__nested {
+  margin-block-start: 1rem;
+  padding: 1rem;
+}

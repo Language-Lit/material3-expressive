@@ -6,6 +6,7 @@ import { defaultElevation } from './elevation'
 import { defaultMotion } from './motion'
 import { defaultShape } from './shape'
 import { defaultState } from './state'
+import { defaultSurfaceTokens } from './surface'
 import { defaultTypography } from './typography'
 
 const defaultTokenSetInput = {
@@ -51,7 +52,7 @@ const defaultTokenSetInput = {
     state: defaultState,
     density: defaultDensity,
   },
-  componentTokens: [],
+  componentTokens: [defaultSurfaceTokens],
 } satisfies FoundationTokenSet
 
 export const defaultTokenSet = parseTokenSet(defaultTokenSetInput)

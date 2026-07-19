@@ -5,4 +5,5 @@
  */
 export * from './tokens'
 export * from './theme'
+export * from './components'
 export type { JsonPrimitive, JsonValue } from './types'

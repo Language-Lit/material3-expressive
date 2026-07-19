@@ -53,6 +53,11 @@ theme services; it does not replace the sourced default surface-container roles.
 - Material's 48dp minimum interactive target is represented as 48 CSS pixels at
   the component-token boundary, following the [Material 3 minimum interactive component size API](https://developer.android.com/reference/kotlin/androidx/compose/material3/package-summary#minimumInteractiveComponentSize()).
 
-The component-token registry intentionally has no defaults. Each later component
-task must cite its own current first-party token or specification source before
-adding values.
+## Component tokens
+
+The registry grows only as each component task reaches conformance. `Surface`
+is the first registration and cites the pinned AndroidX `Surface.kt` revision.
+Its defaults map the passive surface container, content color, rectangular
+shape, and zero tonal/shadow elevations to existing system tokens. Explicit
+Surface variants continue to resolve through system color, shape, and elevation
+roles so custom themes remain authoritative.

@@ -7,6 +7,7 @@ import {
   validateTokenSet,
 } from '@language-lit/material3-expressive/v1'
 import '@language-lit/material3-expressive/v1/styles.css'
+import { SurfaceExample } from '../examples/Surface.example'
 import './playground.css'
 
 const root = document.getElementById('root')
@@ -24,6 +25,7 @@ createRoot(root).render(
           Material {defaultTokenSet.metadata.materialVersion}:{' '}
           {validateTokenSet(defaultTokenSet).success ? 'valid' : 'invalid'}
         </output>
+        <SurfaceExample />
       </main>
     </Material3Provider>
   </React.StrictMode>,

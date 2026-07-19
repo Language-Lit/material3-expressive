@@ -3,7 +3,7 @@
   "schemaVersion": 1,
   "components": [
     { "name": "Material3Provider", "kind": "foundation", "task": "T03", "path": "src/v1/theme/Material3Provider", "status": "conformant", "dependencies": [], "publicExports": ["Material3Provider", "Material3ProviderProps"] },
-    { "name": "Surface", "kind": "foundation", "task": "T04", "path": "src/v1/components/Surface", "status": "planned", "dependencies": [], "publicExports": ["Surface", "SurfaceProps"] },
+    { "name": "Surface", "kind": "foundation", "task": "T04", "path": "src/v1/components/Surface", "status": "conformant", "dependencies": [], "publicExports": ["Surface", "SurfaceProps"] },
     { "name": "Text", "kind": "foundation", "task": "T05", "path": "src/v1/components/Text", "status": "planned", "dependencies": [], "publicExports": ["Text", "TextProps"] },
     { "name": "Icon", "kind": "foundation", "task": "T06", "path": "src/v1/components/Icon", "status": "planned", "dependencies": [], "publicExports": ["Icon", "IconProps"] },
     { "name": "Button", "kind": "action", "task": "T07", "path": "src/v1/components/Button", "status": "planned", "dependencies": [], "publicExports": ["Button", "ButtonProps"] },

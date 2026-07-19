@@ -1,5 +1,7 @@
 @layer m3e.tokens, m3e.base, m3e.components, m3e.utilities;
 
+@import '../components/Surface/Surface.css';
+
 @layer m3e.base {
   :root,
   [data-m3e-color-mode="system"] {

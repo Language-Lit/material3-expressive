@@ -115,12 +115,25 @@ consumer tests import from the v1 package entry. Conformance records contain
 primary Material references, access dates, supported states, tokens, semantics,
 keyboard behavior, and documented web deviations.
 
+`Surface` establishes the containment boundary for later component tasks. It is
+passive and accepts only a bounded set of non-interactive block/landmark
+elements. Components that own click, selection, toggle, focus, or form behavior
+must keep that behavior in their own semantic implementation rather than making
+Surface polymorphic to an interactive element. ADR 0004 records the elevation,
+color-pairing, and semantic decisions.
+
 ## Styling
 
 Component CSS is authored beside the component. `src/v1/styles/styles.css`
 assembles the complete supported stylesheet in a fixed cascade-layer order.
 Tokens and public selectors use the `m3e` namespace. Components use literal,
 searchable class names and stable `data-*` states.
+
+The authored style entry imports colocated component CSS with relative paths.
+The style build recursively inlines imports contained by `src/v1`, rejects
+cycles and path escapes, appends generated token CSS, and emits one compiled
+artifact. Source checks validate import boundaries; distribution checks require
+every custom-property reference to resolve in the assembled file.
 
 Legacy and v1 styles never import one another. v1 does not reset global elements
 or emit application selectors.

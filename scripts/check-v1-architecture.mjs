@@ -63,6 +63,9 @@ const inventory = JSON.parse(await readFile(inventoryPath, 'utf8'))
 const allowedStatuses = new Set(['planned', 'experimental', 'conformant', 'deprecated'])
 const names = new Set()
 const exports = new Set()
+const componentStyleEntryPath = path.join(root, 'src/v1/styles/styles.css')
+const componentBarrelPath = path.join(root, 'src/v1/components/index.ts')
+const v1EntryPath = path.join(root, 'src/v1/index.ts')
 
 if (inventory.schemaVersion !== 1 || !Array.isArray(inventory.components)) {
   errors.push('Component inventory must use schemaVersion 1 and contain a components array')
@@ -87,6 +90,61 @@ if (inventory.schemaVersion !== 1 || !Array.isArray(inventory.components)) {
     if (component.status !== 'planned' && !(await exists(path.join(root, component.path)))) {
       errors.push(`${label} is ${component.status} but its ownership path does not exist`)
     }
+
+    if (component.status !== 'planned' && component.path.startsWith('src/v1/components/')) {
+      const owner = path.join(root, component.path)
+      const canonicalFiles = [
+        path.join(owner, `${label}.tsx`),
+        path.join(owner, `${label}.types.ts`),
+        path.join(owner, `${label}.css`),
+        path.join(owner, 'index.ts'),
+        path.join(root, 'tests/v1/components', label, `${label}.test.tsx`),
+        path.join(root, 'tests/v1/components', label, `${label}.ssr.test.tsx`),
+        path.join(root, 'tests/v1/components', label, `${label}.a11y.test.tsx`),
+        path.join(root, 'tests/v1/components', label, `${label}.conformance.md`),
+        path.join(root, 'playground/v1/examples', `${label}.example.tsx`),
+        path.join(root, 'docs/v1/components', `${label}.md`),
+      ]
+      for (const canonicalFile of canonicalFiles) {
+        if (!(await exists(canonicalFile))) {
+          errors.push(`${label} is ${component.status} but is missing ${path.relative(root, canonicalFile)}`)
+        }
+      }
+
+      const publicIndex = path.join(owner, 'index.ts')
+      if (await exists(publicIndex)) {
+        const source = await readFile(publicIndex, 'utf8')
+        for (const publicExport of component.publicExports) {
+          if (!new RegExp(`\\b${publicExport}\\b`).test(source)) {
+            errors.push(`${label} public index does not name inventory export ${publicExport}`)
+          }
+        }
+      }
+
+      const styleEntry = await readFile(componentStyleEntryPath, 'utf8')
+      if (!styleEntry.includes(`../components/${label}/${label}.css`)) {
+        errors.push(`${label} stylesheet is not assembled by src/v1/styles/styles.css`)
+      }
+      const componentBarrel = await readFile(componentBarrelPath, 'utf8')
+      if (!componentBarrel.includes(`./${label}`)) {
+        errors.push(`${label} is missing from src/v1/components/index.ts`)
+      }
+
+      if (component.status === 'conformant') {
+        const conformancePath = path.join(
+          root,
+          'tests/v1/components',
+          label,
+          `${label}.conformance.md`,
+        )
+        if (await exists(conformancePath)) {
+          const conformance = await readFile(conformancePath, 'utf8')
+          if (!/^Status: conformant$/m.test(conformance)) {
+            errors.push(`${label} inventory is conformant but its conformance record is not`)
+          }
+        }
+      }
+    }
   }
 
   for (const component of inventory.components) {
@@ -94,6 +152,11 @@ if (inventory.schemaVersion !== 1 || !Array.isArray(inventory.components)) {
       if (!names.has(dependency)) errors.push(`${component.name} has unknown component dependency: ${dependency}`)
     }
   }
+}
+
+const v1EntrySource = await readFile(v1EntryPath, 'utf8')
+if (!v1EntrySource.includes("'./components'")) {
+  errors.push('src/v1/index.ts does not expose the public component barrel')
 }
 
 const sourceFiles = (await walk(v1Root)).filter((file) => /\.(?:ts|tsx|mts|cts)$/.test(file))
