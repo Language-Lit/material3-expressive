@@ -53,6 +53,13 @@ if (!floatingActionButtonRegistration || floatingActionButtonRegistration.task !
   errors.push('Default component-token registry is missing the sourced T09 FloatingActionButton registration')
 }
 
+const checkboxRegistration = api.defaultTokenSet.componentTokens.find(
+  (registration) => registration.component === 'checkbox',
+)
+if (!checkboxRegistration || checkboxRegistration.task !== 'T11') {
+  errors.push('Default component-token registry is missing the sourced T11 Checkbox registration')
+}
+
 if (errors.length > 0) {
   console.error('v1 token check failed:')
   for (const error of errors) console.error(`- ${error}`)

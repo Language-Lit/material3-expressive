@@ -3,6 +3,7 @@
 import {
   Button,
   Card,
+  Checkbox,
   FloatingActionButton,
   Icon,
   IconButton,
@@ -31,6 +32,7 @@ export function ClientSmoke() {
   const buttonRef = useRef<HTMLButtonElement | null>(null)
   const cardRef = useRef<HTMLElementTagNameMap['article'] | null>(null)
   const cardButtonRef = useRef<HTMLButtonElement | null>(null)
+  const checkboxRef = useRef<HTMLInputElement | null>(null)
   const iconButtonRef = useRef<HTMLButtonElement | null>(null)
   const fabRef = useRef<HTMLButtonElement | null>(null)
   return (
@@ -66,6 +68,19 @@ export function ClientSmoke() {
       >
         <span>Open fixture card</span>
       </Card>
+      <label>
+        <Checkbox
+          ref={checkboxRef}
+          name="fixture-preferences"
+          value="mixed"
+          indeterminate
+          defaultChecked={false}
+          onCheckedChange={(checked) =>
+            checkboxRef.current?.setAttribute('data-fixture-checked', String(checked))
+          }
+        />
+        Fixture checkbox
+      </label>
       <IconButton
         ref={iconButtonRef}
         aria-label="Favorite"

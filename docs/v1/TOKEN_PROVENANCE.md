@@ -134,3 +134,28 @@ contains dragged Levels 3/4/3, but T10 owns no drag operation and makes no
 dragged-state claim. Current first-party Card has no separate Expressive size or
 shape overload, so the web component preserves current geometry and consumes
 the shared Expressive effects motion projection for interactive state changes.
+
+`Checkbox` registers current AndroidX Material 3 branch revision
+`225f50d42bf0adeb2abf4b6109befb5ab6ce4efc`, `Checkbox.kt` blob
+`a8cb1c1edcbb50bcb4fe82dc2051b9656ee173a7`, and generated `CheckboxTokens` blob
+`90342356e6b7aa7571f15fb895c29900db75749b` at `VERSION: 14_1_0`. They supply the
+18px container, 2px corner, 2px outline and checkmark stroke, 40px state layer,
+primary/on-primary checked roles, on-surface-variant unchecked outline, surface
+disabled checkmark, and the 0.38 disabled opacities. The two opacity constants
+`SelectedDisabledContainerOpacity` and `UnselectedDisabledContainerOpacity` are
+equal but remain separate tokens because the source reads them under different
+names. The three transparent roles are `Color.Transparent` literals upstream and
+stay CSS `transparent` rather than becoming unthemed variables.
+
+Geometry follows the token-backed path that the source selects when
+`ComposeMaterial3Flags.isCheckboxStylingFixEnabled` is enabled; AndroidX still
+ships that flag disabled, retaining a 20dp box inside 2dp padding under the open
+`TODO(b/188529841)`. The checkmark coordinates are the sourced normalized
+polyline and its `checkCenterGravitationShiftFraction` endpoints. Two roles are
+deliberate web additions: the unchecked state layer uses the unselected outline
+role because the sourced `indicatorColor` returns a transparent color that cannot
+show hover, focus, or pressed feedback, and the focus ring uses the generated but
+upstream-unread `FocusIndicatorColor` secondary role because visible focus is
+required. The sourced springs need no substitution because Expressive default
+spatial 0.8/380, default effects 1.0/1600, and fast effects 1.0/3800 already
+match this library's scheme.
