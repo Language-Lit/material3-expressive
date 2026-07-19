@@ -152,6 +152,14 @@ elevation, and state layer, while public `Text` supplies sourced typography.
 Decorative leading/trailing visual slots do not alter the accessible name.
 ADR 0007 records the public contract and shared CSS spring projection.
 
+`IconButton` establishes the icon-only action/toggle boundary. Its named native
+button owns activation, forms, cancellation, disabled, focus, a 48px target,
+and optional `aria-pressed` state while one hidden visual subtree owns the four
+variants, five sizes, three widths, round/square/pressed/selected shapes, and
+alternate selected artwork. Controlled/uncontrolled state and consumer-first
+cancelable event composition live in named internal primitives for later
+controls. ADR 0008 records the web toggle semantics and API.
+
 ## Styling
 
 Component CSS is authored beside the component. `src/v1/styles/styles.css`

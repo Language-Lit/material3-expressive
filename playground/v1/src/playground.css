@@ -50,6 +50,26 @@
   padding: 1.5rem;
 }
 
+.icon-button-example {
+  display: grid;
+  gap: 1rem;
+  margin-block-start: 2rem;
+  padding: 1.5rem;
+}
+
+.icon-button-example__row,
+.icon-button-example__sizes {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.icon-button-example__sizes {
+  align-items: flex-start;
+  flex-direction: column;
+}
+
 .button-example__row,
 .button-example__sizes {
   align-items: center;

@@ -1,4 +1,5 @@
 export * from './Button'
 export * from './Icon'
+export * from './IconButton'
 export * from './Surface'
 export * from './Text'

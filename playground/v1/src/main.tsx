@@ -9,6 +9,7 @@ import {
 import '@language-lit/material3-expressive/v1/styles.css'
 import { ButtonExample } from '../examples/Button.example'
 import { IconExample } from '../examples/Icon.example'
+import { IconButtonExample } from '../examples/IconButton.example'
 import { SurfaceExample } from '../examples/Surface.example'
 import { TextExample } from '../examples/Text.example'
 import './playground.css'
@@ -31,6 +32,7 @@ createRoot(root).render(
         <SurfaceExample />
         <TextExample />
         <IconExample />
+        <IconButtonExample />
         <ButtonExample />
       </main>
     </Material3Provider>

@@ -3,6 +3,7 @@
 import {
   Button,
   Icon,
+  IconButton,
   Surface,
   Text,
   defaultTokenSet,
@@ -26,6 +27,7 @@ export function ClientSmoke() {
   const textRef = useRef<HTMLParagraphElement | null>(null)
   const iconRef = useRef<HTMLSpanElement | null>(null)
   const buttonRef = useRef<HTMLButtonElement | null>(null)
+  const iconButtonRef = useRef<HTMLButtonElement | null>(null)
   return (
     <Surface as="article" ref={surfaceRef} color="surface-container" shape="medium">
       <Text as="p" ref={textRef} variant="bodyMedium">
@@ -47,6 +49,19 @@ export function ClientSmoke() {
       >
         Client action
       </Button>
+      <IconButton
+        ref={iconButtonRef}
+        aria-label="Favorite"
+        variant="outlined"
+        toggle
+        defaultSelected
+        selectedIcon={<Icon source="favorite" fill={1} />}
+        onSelectedChange={(selected) =>
+          iconButtonRef.current?.setAttribute('data-fixture-selected', String(selected))
+        }
+      >
+        <Icon source="favorite" />
+      </IconButton>
     </Surface>
   )
 }

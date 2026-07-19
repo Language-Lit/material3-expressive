@@ -5,6 +5,7 @@ import { defaultDarkColorScheme, defaultLightColorScheme, defaultPalette } from 
 import { defaultDensity } from './density'
 import { defaultElevation } from './elevation'
 import { defaultIconTokens } from './icon'
+import { defaultIconButtonTokens } from './icon-button'
 import { defaultMotion } from './motion'
 import { defaultShape } from './shape'
 import { defaultState } from './state'
@@ -54,7 +55,12 @@ const defaultTokenSetInput = {
     state: defaultState,
     density: defaultDensity,
   },
-  componentTokens: [defaultSurfaceTokens, defaultIconTokens, defaultButtonTokens],
+  componentTokens: [
+    defaultSurfaceTokens,
+    defaultIconTokens,
+    defaultButtonTokens,
+    defaultIconButtonTokens,
+  ],
 } satisfies FoundationTokenSet
 
 export const defaultTokenSet = parseTokenSet(defaultTokenSetInput)

@@ -97,3 +97,16 @@ intentional no-bounce default-effects shape spring. Round CSS radii are exact
 half-heights so the sourced pill geometry interpolates rather than transitioning
 from an arbitrary 9999px value. The web root consumes the existing 48px density
 target independently from the visual height.
+
+`IconButton` registers current AndroidX Material 3 revision
+`f0793303999c933a40c10d79212e0580d21bdc68`. `IconButtonDefaults.kt`, the four
+variant token files, and the five generated size token files supply standard,
+filled, filled-tonal, and outlined action/toggle roles; heights
+32/40/56/96/136px; narrow/uniform/wide widths; icons 20/24/24/32/40px;
+outlines 1/1/1/2/3px; and round, square, pressed, and selected corner pairs.
+The implementation source confirms a 48px target and intentionally selects
+default-effects motion for corner morphs. Exact half-height CSS radii represent
+`CornerFull`, allowing the selected round/square inversion to interpolate. The
+web adaptation uses the recommended vibrant system roles where Compose also
+offers inherited-local-content overloads, and uses `aria-pressed` for native
+toggle-button semantics.
