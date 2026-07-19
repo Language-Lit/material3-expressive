@@ -168,3 +168,19 @@
   align-items: flex-start;
   flex-direction: column;
 }
+
+.text-field-example,
+.text-area-example {
+  display: grid;
+  gap: 1rem;
+  margin-block-start: 2rem;
+  padding: 1.5rem;
+}
+
+.text-field-example__row,
+.text-area-example__row {
+  align-items: start;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}

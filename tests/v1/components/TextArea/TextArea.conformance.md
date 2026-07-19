@@ -1,0 +1,89 @@
+# TextArea conformance
+
+Task: T14
+Status: conformant
+Reviewed: 2026-07-20
+
+## Primary references
+
+Shares its full primary-source basis with `TextField` — see
+`tests/v1/components/TextField/TextField.conformance.md` for the pinned
+revision, blob hashes, and reference URLs. `TextArea`'s own basis for being a
+thin multiline variant rather than a separately duplicated component:
+
+- Pinned `TextField.kt`/`OutlinedTextField.kt` at revision
+  `225f50d42bf0adeb2abf4b6109befb5ab6ce4efc` define **no distinct multiline
+  composable**. Multiline is `lineLimits = TextFieldLineLimits.MultiLine(...)`
+  (state-based overload) or `singleLine=false`/`maxLines`/`minLines` (legacy
+  overload) on the exact same `TextField`/`OutlinedTextField` composables,
+  sharing 100% of the label/cutout/indicator/icon/supporting-text decoration
+  machinery (`TextFieldDefaults`/`OutlinedTextFieldDefaults`,
+  `CommonDecorationBox`).
+- `SecureTextField.kt`/`OutlinedSecureTextField` (same revision) is the
+  pinned source's own precedent for this exact pattern: it builds a
+  specialized input mode by swapping `BasicTextField` for
+  `BasicSecureTextField` while reusing the identical decoration layer
+  unchanged. `TextArea` mirrors that precedent on the web: a native
+  `textarea` swapped in for `input` under the shared `TextFieldChrome`
+  primitive, not a separately duplicated component tree.
+
+Supported Material baseline: AndroidX Material 3 branch revision
+`225f50d42bf0adeb2abf4b6109befb5ab6ce4efc`, adapted to a native `textarea`
+associated with a native `label`.
+
+## Anatomy and content
+
+Identical to `TextField`'s anatomy (one label, one indicator or notched
+outline, optional leading/trailing icons, optional supporting/error text),
+substituting a native `textarea` for the native `input`, both rendered
+through the same internal `TextFieldChrome` primitive and the same
+`.m3e-text-field__input` class so all shared CSS applies unchanged. Height
+follows the native `rows` attribute and the browser's own vertical resize
+handle; auto-growing height is out of scope.
+
+## Variants, shape, color, and size
+
+Identical token mapping to `TextField` — both consume the single T14
+`text-field` component-token registration; there is no separate `text-area`
+registration, matching the pinned source having no separate token set for
+multiline. See `TextField.conformance.md` for the full mapping.
+
+## States and motion
+
+Identical to `TextField`. One addition: leading/trailing icons top-align to
+the first line (`TextArea.css`'s only geometry delta) rather than centering
+across the full multiline height, matching every other Material multiline
+field's icon placement; the pinned source leaves icon vertical alignment
+inside a multiline field to the caller's own icon composable, so this is a
+reasoned web-layout default, not a literal source constant.
+
+## Component token mapping
+
+Shares the T14 `text-field` registration with `TextField` in full. No
+TextArea-specific tokens exist.
+
+## DOM, forms, and behavior
+
+Identical structure to `TextField`, with `data-m3e-multiline="true"` on the
+root (driving the icon top-alignment delta above) and no `type` prop, since
+native `textarea` has no `type` attribute. `rows`, `cols`, `wrap`, and every
+other native `textarea` attribute forward directly. Native vertical resize
+(`resize: vertical`) is retained as a deliberate, native web affordance with
+no first-party equivalent to defer to.
+
+## Accessible name, description, role, state, and keyboard
+
+Identical to `TextField`: native `label`/`htmlFor` association,
+`aria-describedby` composition, and `aria-invalid` on `error`. Typing,
+selection, caret, and multiline navigation (Enter for newline) are entirely
+browser-owned.
+
+## Bidirectional, forced-color, and adaptive behavior
+
+Identical to `TextField`.
+
+## Web-specific deviations
+
+Shares every deviation already recorded for `TextField`. The only
+`TextArea`-specific addition is the top-aligned icon layout described above,
+which has no pinned-source counterpart to deviate from.

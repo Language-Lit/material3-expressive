@@ -208,3 +208,40 @@ whatever backdrop the control actually sits on. The sourced
 color animation need no substitution for the same reason as Checkbox's and
 Radio's springs; the press-triggered `SnapSpec` is reproduced as a
 zero-duration `transition-duration` scoped to `:active`.
+
+`TextField`/`TextArea` register the same AndroidX Material 3 branch
+revision `225f50d42bf0adeb2abf4b6109befb5ab6ce4efc`, generated
+`FilledTextFieldTokens` blob `431029bad8804cec683c3077744f8783ca0ced56` at
+`VERSION: v0_210` and `OutlinedTextFieldTokens` blob
+`13f1d6b644376e767ea30def343065ccc274f6ce` at `VERSION: v0_103`. Every
+content color role — input, placeholder, label, leading icon, trailing
+icon, and supporting text — is identical between the two token files, since
+Kotlin has no shared-token-file mechanism and AndroidX simply repeats each
+constant under both names; this registration keeps one unprefixed copy of
+each instead of a duplicated pair, and registers the container fill/shape
+and indicator/outline border per variant only where the source's values
+genuinely differ (including the outlined border's own 0.12 disabled opacity
+versus every other role's shared 0.38). Every `Hover*`-suffixed role in both
+files is unread — `TextFieldColors`' accessors take only
+`(enabled, isError, focused)`, with no fourth "hovered" axis anywhere in the
+resolved color model — matching the unread-role precedent from Checkbox,
+Radio, and Switch. `FilledTextFieldTokens.DisabledContainerColor`/
+`DisabledContainerOpacity` are unread too:
+`ColorScheme.defaultTextFieldColors()` resolves the filled container to the
+same full-opacity `ContainerColor` in every state including disabled, so
+this registration reproduces that actual behavior rather than the token
+file's documented, unapplied dimmed value. `InputFont`/`LabelFont`/
+`SupportingFont` and `LeadingIconSize`/`TrailingIconSize` are unread by name
+for the same reason as Switch's geometry duplicates: typography is pulled
+live from `MaterialTheme.typography.bodyLarge`/`.bodySmall`, so this port
+references the theme's own baseline body-large/body-small typescale roles
+directly in component CSS instead of re-registering them as component
+tokens.
+
+Unlike every prior selection control, disabled colors here are not a
+deliberate web deviation: the pinned source itself resolves every disabled
+text-field color as true alpha (`fromToken(...).copy(alpha = ...)`), not
+`compositeOver(colorScheme.surface)`, so this registration's
+`color-mix(..., transparent)` technique reproduces the pinned source's own
+semantics exactly rather than correcting away from a baked-backdrop
+assumption.

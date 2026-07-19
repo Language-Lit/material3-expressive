@@ -11,6 +11,8 @@ import {
   Surface,
   Switch,
   Text,
+  TextArea,
+  TextField,
   defaultTokenSet,
   useResolvedColorMode,
   validateTokenSet,
@@ -39,6 +41,8 @@ export function ClientSmoke() {
   const switchRef = useRef<HTMLInputElement | null>(null)
   const iconButtonRef = useRef<HTMLButtonElement | null>(null)
   const fabRef = useRef<HTMLButtonElement | null>(null)
+  const textFieldRef = useRef<HTMLInputElement | null>(null)
+  const textAreaRef = useRef<HTMLTextAreaElement | null>(null)
   return (
     <Surface as="article" ref={surfaceRef} color="surface-container" shape="medium">
       <Text as="p" ref={textRef} variant="bodyMedium">
@@ -131,6 +135,26 @@ export function ClientSmoke() {
         defaultSelected
         onSelectedChange={(selected) =>
           fabRef.current?.setAttribute('data-fixture-selected', String(selected))
+        }
+      />
+      <TextField
+        ref={textFieldRef}
+        variant="outlined"
+        label="Fixture field"
+        name="fixture-field"
+        leadingIcon={<Icon source="search" />}
+        supportingText="Fixture supporting text"
+        onChange={(event) =>
+          textFieldRef.current?.setAttribute('data-fixture-value', event.currentTarget.value)
+        }
+      />
+      <TextArea
+        ref={textAreaRef}
+        label="Fixture notes"
+        name="fixture-notes"
+        rows={3}
+        onChange={(event) =>
+          textAreaRef.current?.setAttribute('data-fixture-value', event.currentTarget.value)
         }
       />
     </Surface>

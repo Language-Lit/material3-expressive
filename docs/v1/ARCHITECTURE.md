@@ -216,6 +216,27 @@ the source attaching its ripple to the thumb element. ADR 0013 records the
 role mapping, the thumb-anchored ripple, and the pressed-shape snap/animate
 asymmetry.
 
+`TextField` and `TextArea` establish the shared-foundation boundary: an
+internal `TextFieldChrome` primitive under `src/v1/internal` renders the
+label, indicator/outline, icon, and supporting-text decoration once, and
+each public component supplies only its own native control (`input` or
+`textarea`) as that primitive's first child. This mirrors the pinned
+source's own architecture directly — `TextField`/`OutlinedTextField` have no
+distinct multiline composable, and `SecureTextField` establishes the
+precedent of swapping the underlying text-input primitive under one
+unchanged decoration layer. The floating label's position and type size are
+read from the control's own `:focus`/`:placeholder-shown` pseudo-classes,
+extending the checked-driven-CSS precedent from Radio and Switch from a
+discrete boolean to a continuous has-value signal. The outlined variant's
+label-notched border uses a native `fieldset`/`legend` in place of the
+source's canvas-drawn border and difference-mode clip, so the gap sizes
+itself to the legend's own intrinsic text width with no JS measurement.
+`error` and `disabled` are the only two states mirrored onto the root as
+`data-m3e-*` attributes, because they are the only states unreachable by a
+plain sibling combinator from the control and neither can change without
+this component re-rendering. ADR 0014 records the shared-foundation
+decision, the native-truth label float, and the fieldset/legend notch.
+
 ## Styling
 
 Component CSS is authored beside the component. `src/v1/styles/styles.css`

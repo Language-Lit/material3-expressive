@@ -74,6 +74,13 @@ if (!switchRegistration || switchRegistration.task !== 'T13') {
   errors.push('Default component-token registry is missing the sourced T13 Switch registration')
 }
 
+const textFieldRegistration = api.defaultTokenSet.componentTokens.find(
+  (registration) => registration.component === 'text-field',
+)
+if (!textFieldRegistration || textFieldRegistration.task !== 'T14') {
+  errors.push('Default component-token registry is missing the sourced T14 TextField registration')
+}
+
 if (errors.length > 0) {
   console.error('v1 token check failed:')
   for (const error of errors) console.error(`- ${error}`)
