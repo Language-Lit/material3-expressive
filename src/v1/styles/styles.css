@@ -8,6 +8,7 @@
 @import '../components/IconButton/IconButton.css';
 @import '../components/Radio/Radio.css';
 @import '../components/Surface/Surface.css';
+@import '../components/Switch/Switch.css';
 @import '../components/Text/Text.css';
 
 @layer m3e.base {

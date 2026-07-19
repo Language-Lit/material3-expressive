@@ -203,6 +203,19 @@ regardless of which one last re-rendered. ADR 0012 records the grouping
 model, the checked-driven CSS decision, and the motion asymmetry between the
 dot's unconditional scale and the disabled-snapped color transition.
 
+`Switch` establishes the native role-mapped boundary. A native `input
+type="checkbox" role="switch"` owns semantics, naming, activation, forms,
+reset, disabled state, and the forwarded ref; `role`, like `type`, is fixed
+and cannot be overridden by a caller. A decorative track and thumb draw the
+sourced 52×32px pill, sliding circle, and an optional icon slot. Every thumb
+inset is expressed with `calc()` directly on the registered track/handle
+dimension tokens, reproducing the source's own measure-function formulas
+instead of precomputed pixel offsets. The thumb's own state layer is
+anchored to its current position rather than the track's center, matching
+the source attaching its ripple to the thumb element. ADR 0013 records the
+role mapping, the thumb-anchored ripple, and the pressed-shape snap/animate
+asymmetry.
+
 ## Styling
 
 Component CSS is authored beside the component. `src/v1/styles/styles.css`

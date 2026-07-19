@@ -14,6 +14,7 @@ import { defaultRadioTokens } from './radio'
 import { defaultShape } from './shape'
 import { defaultState } from './state'
 import { defaultSurfaceTokens } from './surface'
+import { defaultSwitchTokens } from './switch'
 import { defaultTypography } from './typography'
 
 const defaultTokenSetInput = {
@@ -68,6 +69,7 @@ const defaultTokenSetInput = {
     defaultCardTokens,
     defaultCheckboxTokens,
     defaultRadioTokens,
+    defaultSwitchTokens,
   ],
 } satisfies FoundationTokenSet
 
