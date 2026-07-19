@@ -354,3 +354,54 @@ and its popup listbox reuses `menu`'s registration unchanged, since
 the exact same values plain `DropdownMenu` uses. This extends the T14
 TextField/TextArea one-shared-domain precedent to a third and fourth public
 component.
+
+`Tooltip` registers the same AndroidX Material 3 branch revision
+`225f50d42bf0adeb2abf4b6109befb5ab6ce4efc` (still the branch's current HEAD
+as of this task), `PlainTooltipTokens.kt` blob
+`0a3aa15fe2d33a30f06e3697013c95a2bcb5cf89` and `RichTooltipTokens.kt` blob
+`b327485a280348ed12ccd70384ae1e1fb7160064`, both at `VERSION: v0_210`.
+Plain container color/shape/supporting-text color come from
+`PlainTooltipTokens` (`ContainerColor` inverseSurface, `ContainerShape`
+cornerExtraSmall, `SupportingTextColor` inverseOnSurface). Rich container
+color/shape/elevation and subhead/supporting-text color come from
+`RichTooltipTokens` (`ContainerColor` surfaceContainer, `ContainerShape`
+cornerMedium, `ContainerElevation` level2, `SubheadColor`/
+`SupportingTextColor` onSurfaceVariant) — `ActionLabelText*`/
+`ActionFocusLabelTextColor`/`ActionHoverLabelTextColor`/
+`ActionPressedLabelTextColor` are not registered, since the rich-tooltip
+action button has no web port (`role="tooltip"` disallows interactive
+content; see ADR 0018). Sizing/spacing constants (`TooltipMinWidth`/
+`MinHeight`, `plainTooltipMaxWidth`/`richTooltipMaxWidth`,
+`PlainTooltipContentPadding`, `RichTooltipHorizontalPadding`,
+`SpacingBetweenTooltipAndAnchor`) come straight from `Tooltip.kt` itself,
+since Compose treats them as plain layout constants rather than
+`@Composable` color/shape roles — the same status they keep here.
+`rich-padding-block`/`rich-subhead-gap` approximate the source's
+baseline-relative padding constants as ordinary CSS block padding/margin, a
+documented simplification. Typography reuses the theme's own
+`body-small`/`title-small`/`body-medium` typescale roles directly.
+
+`Snackbar` registers the same pinned revision, `SnackbarTokens.kt` blob
+`45acfed8dae975007c068543cc3796d6b4556d40` at `VERSION: v0_103`. Container
+color/elevation/shape come from `SnackbarTokens` (`ContainerColor`
+inverseSurface, `ContainerElevation` level3, `ContainerShape`
+cornerExtraSmall); supporting-text/action-label/dismiss-icon color are
+`SupportingTextColor` (inverseOnSurface), `ActionLabelTextColor`
+(inversePrimary), and `IconColor` (inverseOnSurface) — the pinned source's
+public `Snackbar` composable has no separate leading status-icon slot, so
+`IconColor`/`IconSize` belong to the dismiss action only. Action/icon
+focus/hover/pressed colors all resolve to the same enabled role (confirmed
+against material-web's `_md-comp-snackbar.scss` at the `material-web-tokens`
+source's own pinned revision `b4de401eb665ec63474f39319a4ba8f2145974cc`, the
+first time this project's cross-validation source corroborates a
+component-level color role rather than a missing numeric value), so
+hover/press feedback reuses the shared `--m3e-sys-state-*` system via
+`currentColor`, the same `Menu`/`Select` precedent. `ContainerMaxWidth`,
+`HorizontalSpacing`, `HorizontalSpacingButtonSide`, and
+`SnackbarVerticalPadding` come straight from `Snackbar.kt` itself, the same
+plain-layout-constant status Tooltip's own sizing constants have. No
+viewport-offset token is registered: the pinned source leaves screen-edge
+placement to a consuming `Scaffold`, and material-web ships no snackbar
+implementation to cross-validate against either, so the bottom offset is a
+plain CSS value, not a claimed-sourced token — the same status Menu's own
+`z-index: 1000` already has.

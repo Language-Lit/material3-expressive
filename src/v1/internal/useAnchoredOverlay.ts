@@ -10,12 +10,33 @@ export interface AnchoredOverlayStyle {
   readonly width?: number
 }
 
+export interface AnchoredOverlayPositionArgs {
+  readonly anchor: { readonly top: number; readonly left: number; readonly width: number; readonly height: number }
+  readonly overlay: { readonly width: number; readonly height: number }
+  readonly viewport: { readonly width: number; readonly height: number }
+}
+
+export interface AnchoredOverlayComputedPosition {
+  readonly top: number
+  readonly left: number
+  readonly width?: number
+}
+
 export interface UseAnchoredOverlayOptions {
   readonly open: boolean
   readonly anchorRef: RefObject<HTMLElement | null>
   readonly onRequestClose: () => void
   readonly matchAnchorWidth?: boolean
   readonly gap?: number
+  /**
+   * Overrides the default `Menu`/`Select` positioning algorithm
+   * (`computeOverlayPosition`) entirely — used by `Tooltip`, whose
+   * center-aligned, flip-on-collision, zero-margin placement is a
+   * genuinely different algorithm (see `computeTooltipPosition`), not a
+   * parameterization of the default one. `Menu`/`Select` omit this and are
+   * unaffected.
+   */
+  readonly computePosition?: (args: AnchoredOverlayPositionArgs) => AnchoredOverlayComputedPosition
 }
 
 export interface UseAnchoredOverlayResult {
@@ -61,6 +82,7 @@ export function useAnchoredOverlay({
   onRequestClose,
   matchAnchorWidth = false,
   gap = 0,
+  computePosition,
 }: UseAnchoredOverlayOptions): UseAnchoredOverlayResult {
   const [phase, setPhase] = useState<Phase>('closed')
   const [style, setStyle] = useState<AnchoredOverlayStyle>({
@@ -84,10 +106,17 @@ export function useAnchoredOverlay({
     if (!anchor || !popover) return
     const anchorRect = anchor.getBoundingClientRect()
     const overlayRect = popover.getBoundingClientRect()
+    const overlay = { width: overlayRect.width, height: overlayRect.height }
+    const viewport = { width: window.innerWidth, height: window.innerHeight }
+    if (computePosition) {
+      const position = computePosition({ anchor: anchorRect, overlay, viewport })
+      setStyle({ position: 'fixed', top: position.top, left: position.left, width: position.width })
+      return
+    }
     const position = computeOverlayPosition({
       anchor: anchorRect,
-      overlay: { width: overlayRect.width, height: overlayRect.height },
-      viewport: { width: window.innerWidth, height: window.innerHeight },
+      overlay,
+      viewport,
       matchAnchorWidth,
       gap,
     })
@@ -97,7 +126,7 @@ export function useAnchoredOverlay({
       left: position.left,
       width: matchAnchorWidth ? position.width : undefined,
     })
-  }, [anchorRef, matchAnchorWidth, gap])
+  }, [anchorRef, matchAnchorWidth, gap, computePosition])
 
   // Open request: mount (closed -> entering). Close request: either an
   // immediate unmount (never finished entering) or a deferred one (closing).

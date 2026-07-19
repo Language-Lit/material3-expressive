@@ -15,10 +15,12 @@ import { defaultMotion } from './motion'
 import { defaultRadioTokens } from './radio'
 import { defaultSegmentedButtonGroupTokens } from './segmented-button-group'
 import { defaultShape } from './shape'
+import { defaultSnackbarTokens } from './snackbar'
 import { defaultState } from './state'
 import { defaultSurfaceTokens } from './surface'
 import { defaultSwitchTokens } from './switch'
 import { defaultTextFieldTokens } from './text-field'
+import { defaultTooltipTokens } from './tooltip'
 import { defaultTypography } from './typography'
 
 const defaultTokenSetInput = {
@@ -78,6 +80,8 @@ const defaultTokenSetInput = {
     defaultSegmentedButtonGroupTokens,
     defaultDialogTokens,
     defaultMenuTokens,
+    defaultTooltipTokens,
+    defaultSnackbarTokens,
   ],
 } satisfies FoundationTokenSet
 

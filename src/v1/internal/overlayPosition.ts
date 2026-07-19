@@ -105,3 +105,111 @@ export function computeOverlayPosition(options: OverlayPositionOptions): Overlay
 function clamp(value: number, min: number, max: number): number {
   return Math.min(Math.max(value, min), Math.max(min, max))
 }
+
+export type TooltipPlacement = 'top' | 'bottom' | 'start' | 'end'
+
+export interface TooltipPositionOptions {
+  readonly anchor: OverlayPositionRect
+  readonly overlay: OverlayPositionSize
+  readonly viewport: OverlayPositionSize
+  readonly placement: TooltipPlacement
+  /** Gap between the anchor's own edge and the tooltip's facing edge. */
+  readonly gap?: number
+}
+
+export interface TooltipPosition {
+  readonly top: number
+  readonly left: number
+  readonly placement: 'top' | 'bottom' | 'left' | 'right'
+}
+
+const TOOLTIP_DEFAULT_GAP = 4
+
+/**
+ * Reproduces `TooltipPositionProviderImpl`'s own above/below/left/right
+ * behavior: center-aligned on the cross axis, a single flip to the opposite
+ * side on collision, then clamped flush to the viewport edge with **zero**
+ * margin — the pinned source's own `coerceIn(0, ...)`, not a fabricated
+ * margin (contrast `computeOverlayPosition`'s sourced 8px `Menu` margin).
+ * `'start'`/`'end'` resolve to physical left/right unconditionally, the
+ * same no-RTL-branching precedent `computeOverlayPosition` already set.
+ */
+export function computeTooltipPosition(options: TooltipPositionOptions): TooltipPosition {
+  const { anchor, overlay, viewport } = options
+  const gap = options.gap ?? TOOLTIP_DEFAULT_GAP
+  const resolved: 'top' | 'bottom' | 'left' | 'right' =
+    options.placement === 'start' ? 'left' : options.placement === 'end' ? 'right' : options.placement
+
+  if (resolved === 'left' || resolved === 'right') {
+    return horizontalTooltipPlacement(resolved, anchor, overlay, viewport, gap)
+  }
+  return verticalTooltipPlacement(resolved, anchor, overlay, viewport, gap)
+}
+
+function verticalTooltipPlacement(
+  preferred: 'top' | 'bottom',
+  anchor: OverlayPositionRect,
+  overlay: OverlayPositionSize,
+  viewport: OverlayPositionSize,
+  gap: number,
+): TooltipPosition {
+  const left = clamp(
+    anchor.left + (anchor.width - overlay.width) / 2,
+    0,
+    Math.max(0, viewport.width - overlay.width),
+  )
+
+  let top: number
+  let placement: 'top' | 'bottom'
+  if (preferred === 'top') {
+    top = anchor.top - overlay.height - gap
+    placement = 'top'
+    if (top < 0) {
+      top = anchor.top + anchor.height + gap
+      placement = 'bottom'
+    }
+  } else {
+    top = anchor.top + anchor.height + gap
+    placement = 'bottom'
+    if (top + overlay.height > viewport.height) {
+      top = anchor.top - overlay.height - gap
+      placement = 'top'
+    }
+  }
+  top = clamp(top, 0, Math.max(0, viewport.height - overlay.height))
+  return { top, left, placement }
+}
+
+function horizontalTooltipPlacement(
+  preferred: 'left' | 'right',
+  anchor: OverlayPositionRect,
+  overlay: OverlayPositionSize,
+  viewport: OverlayPositionSize,
+  gap: number,
+): TooltipPosition {
+  const top = clamp(
+    anchor.top + (anchor.height - overlay.height) / 2,
+    0,
+    Math.max(0, viewport.height - overlay.height),
+  )
+
+  let left: number
+  let placement: 'left' | 'right'
+  if (preferred === 'left') {
+    left = anchor.left - overlay.width - gap
+    placement = 'left'
+    if (left < 0) {
+      left = anchor.left + anchor.width + gap
+      placement = 'right'
+    }
+  } else {
+    left = anchor.left + anchor.width + gap
+    placement = 'right'
+    if (left + overlay.width > viewport.width) {
+      left = anchor.left - overlay.width - gap
+      placement = 'left'
+    }
+  }
+  left = clamp(left, 0, Math.max(0, viewport.width - overlay.width))
+  return { top, left, placement }
+}

@@ -1,4 +1,4 @@
-import { computeOverlayPosition } from '../../../src/v1/internal/overlayPosition'
+import { computeOverlayPosition, computeTooltipPosition } from '../../../src/v1/internal/overlayPosition'
 
 const viewport = { width: 1000, height: 800 }
 
@@ -84,5 +84,93 @@ describe('computeOverlayPosition', () => {
     })
     expect(result.left).toBe(0)
     expect(result.top).toBe(20)
+  })
+})
+
+describe('computeTooltipPosition', () => {
+  it('centers on the cross axis and places above with the default 4px gap', () => {
+    const result = computeTooltipPosition({
+      anchor: { top: 300, left: 400, width: 100, height: 40 },
+      overlay: { width: 60, height: 30 },
+      viewport,
+      placement: 'top',
+    })
+    expect(result).toEqual({ top: 266, left: 420, placement: 'top' })
+  })
+
+  it('flips to below when above would collide with the top viewport edge', () => {
+    const result = computeTooltipPosition({
+      anchor: { top: 10, left: 400, width: 100, height: 40 },
+      overlay: { width: 60, height: 30 },
+      viewport,
+      placement: 'top',
+    })
+    expect(result).toEqual({ top: 54, left: 420, placement: 'bottom' })
+  })
+
+  it('flips to above when below would collide with the bottom viewport edge', () => {
+    const result = computeTooltipPosition({
+      anchor: { top: 780, left: 400, width: 100, height: 40 },
+      overlay: { width: 60, height: 30 },
+      viewport,
+      placement: 'bottom',
+    })
+    expect(result).toEqual({ top: 746, left: 420, placement: 'top' })
+  })
+
+  it("resolves 'start'/'end' to physical left/right", () => {
+    const anchor = { top: 300, left: 500, width: 40, height: 100 }
+    const overlay = { width: 60, height: 30 }
+    expect(computeTooltipPosition({ anchor, overlay, viewport, placement: 'start' })).toEqual({
+      top: 335,
+      left: 436,
+      placement: 'left',
+    })
+    expect(computeTooltipPosition({ anchor, overlay, viewport, placement: 'end' })).toEqual({
+      top: 335,
+      left: 544,
+      placement: 'right',
+    })
+  })
+
+  it('flips left to right when it would collide with the left viewport edge', () => {
+    const result = computeTooltipPosition({
+      anchor: { top: 300, left: 20, width: 40, height: 100 },
+      overlay: { width: 60, height: 30 },
+      viewport,
+      placement: 'left',
+    })
+    expect(result).toEqual({ top: 335, left: 64, placement: 'right' })
+  })
+
+  it('flips right to left when it would collide with the right viewport edge', () => {
+    const result = computeTooltipPosition({
+      anchor: { top: 300, left: 950, width: 40, height: 100 },
+      overlay: { width: 60, height: 30 },
+      viewport,
+      placement: 'right',
+    })
+    expect(result).toEqual({ top: 335, left: 886, placement: 'left' })
+  })
+
+  it('clamps flush to the viewport edge with zero margin when the overlay is larger than the viewport', () => {
+    const result = computeTooltipPosition({
+      anchor: { top: 300, left: 10, width: 20, height: 20 },
+      overlay: { width: 1200, height: 30 },
+      viewport,
+      placement: 'top',
+    })
+    expect(result).toEqual({ top: 266, left: 0, placement: 'top' })
+  })
+
+  it('respects a custom gap', () => {
+    const result = computeTooltipPosition({
+      anchor: { top: 100, left: 0, width: 0, height: 0 },
+      overlay: { width: 10, height: 10 },
+      viewport,
+      placement: 'bottom',
+      gap: 12,
+    })
+    expect(result.top).toBe(112)
   })
 })

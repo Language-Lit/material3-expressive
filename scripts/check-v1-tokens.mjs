@@ -104,6 +104,20 @@ if (!menuRegistration || menuRegistration.task !== 'T17') {
   errors.push('Default component-token registry is missing the sourced T17 Menu registration')
 }
 
+const tooltipRegistration = api.defaultTokenSet.componentTokens.find(
+  (registration) => registration.component === 'tooltip',
+)
+if (!tooltipRegistration || tooltipRegistration.task !== 'T18') {
+  errors.push('Default component-token registry is missing the sourced T18 Tooltip registration')
+}
+
+const snackbarRegistration = api.defaultTokenSet.componentTokens.find(
+  (registration) => registration.component === 'snackbar',
+)
+if (!snackbarRegistration || snackbarRegistration.task !== 'T18') {
+  errors.push('Default component-token registry is missing the sourced T18 Snackbar registration')
+}
+
 if (errors.length > 0) {
   console.error('v1 token check failed:')
   for (const error of errors) console.error(`- ${error}`)

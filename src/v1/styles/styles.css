@@ -11,11 +11,13 @@
 @import '../components/Radio/Radio.css';
 @import '../components/SegmentedButtonGroup/SegmentedButtonGroup.css';
 @import '../components/Select/Select.css';
+@import '../components/Snackbar/Snackbar.css';
 @import '../components/Surface/Surface.css';
 @import '../components/Switch/Switch.css';
 @import '../components/Text/Text.css';
 @import '../components/TextArea/TextArea.css';
 @import '../components/TextField/TextField.css';
+@import '../components/Tooltip/Tooltip.css';
 
 @layer m3e.base {
   :root,
