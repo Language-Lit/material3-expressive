@@ -90,6 +90,13 @@ if (!segmentedButtonGroupRegistration || segmentedButtonGroupRegistration.task !
   )
 }
 
+const dialogRegistration = api.defaultTokenSet.componentTokens.find(
+  (registration) => registration.component === 'dialog',
+)
+if (!dialogRegistration || dialogRegistration.task !== 'T16') {
+  errors.push('Default component-token registry is missing the sourced T16 Dialog registration')
+}
+
 if (errors.length > 0) {
   console.error('v1 token check failed:')
   for (const error of errors) console.error(`- ${error}`)

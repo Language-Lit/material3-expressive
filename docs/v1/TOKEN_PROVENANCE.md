@@ -276,3 +276,33 @@ CSS. The pinned source applies no `minimumInteractiveComponentSize`-
 equivalent modifier to `SegmentedButton`, unlike Checkbox/Radio/Switch, so
 this registration carries no `minimum-interactive-target` token at all —
 the 40px `ContainerHeight` is the real, undilated interactive height.
+
+`Dialog` registers the same AndroidX Material 3 branch revision
+`225f50d42bf0adeb2abf4b6109befb5ab6ce4efc`, `DialogTokens.kt` blob
+`ab467ec4329ecba62c406ad8355085abf20771a2` and `AlertDialog.kt` blob
+`5448ca3a52fdf66709ff713b81ea7a4f3641e39e`, both at `VERSION: v0_210`. Every
+`DialogTokens` color, shape, and elevation role that `AlertDialogContent`
+actually reads is registered directly: `ContainerColor`, `ContainerShape`,
+`ContainerElevation`, `IconColor`/`IconSize`, `HeadlineColor`,
+`SupportingTextColor`, `ActionLabelTextColor`. `HeadlineFont`/
+`SupportingTextFont`/`ActionLabelTextFont` are unread by name for the same
+reason as every prior typography role in this library: they are pulled live
+from the theme's own `headline-small`/`body-medium` typescale roles
+directly in component CSS. `AlertDialogDefaults.dialogPadding`/`textPadding`
+use the non-"precision pointer" branch (24px both), the same
+provisional-Expressive exclusion basis already applied to every prior task
+that hit a `shouldUsePrecisionPointerComponentSizing`-gated value.
+`DialogMinWidth`/`DialogMaxWidth` (280dp/560dp, from `AlertDialog.kt`) are
+registered as measured dimensions rather than `$ref`s, since they are not
+theme-scoped system values in the source either. The pinned Compose source
+defines no cross-platform Material3 scrim-opacity or viewport-margin value —
+window dimming there is an Android platform default, and the 280/560px width
+bounds have no accompanying viewport-margin or height-cap value of their
+own — so both the 32% scrim opacity and the 24px viewport margin are
+cross-validated against material-web's dialog CSS
+(`github.com/material-components/material-web`, `dialog/internal/_dialog.scss`,
+`.scrim { opacity: 32% }`, `max-width: min(560px, calc(100% - 48px))`)
+instead — the same material-web source already cited above as this
+project's foundation-token authority, here corroborating a component-level
+value for the first time because the pinned Compose source has none of its
+own for this role.

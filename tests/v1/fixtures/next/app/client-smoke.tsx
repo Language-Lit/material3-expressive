@@ -4,6 +4,7 @@ import {
   Button,
   Card,
   Checkbox,
+  Dialog,
   FloatingActionButton,
   Icon,
   IconButton,
@@ -45,6 +46,7 @@ export function ClientSmoke() {
   const textFieldRef = useRef<HTMLInputElement | null>(null)
   const textAreaRef = useRef<HTMLTextAreaElement | null>(null)
   const segmentedButtonGroupRef = useRef<HTMLDivElement | null>(null)
+  const dialogRef = useRef<HTMLDialogElement | null>(null)
   return (
     <Surface as="article" ref={surfaceRef} color="surface-container" shape="medium">
       <Text as="p" ref={textRef} variant="bodyMedium">
@@ -172,6 +174,16 @@ export function ClientSmoke() {
           segmentedButtonGroupRef.current?.setAttribute('data-fixture-value', value)
         }
       />
+      <Dialog
+        ref={dialogRef}
+        title="Fixture dialog"
+        defaultOpen
+        onOpenChange={(open) =>
+          dialogRef.current?.setAttribute('data-fixture-open', String(open))
+        }
+      >
+        Fixture dialog content
+      </Dialog>
     </Surface>
   )
 }
