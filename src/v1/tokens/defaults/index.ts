@@ -1,5 +1,6 @@
 import type { FoundationTokenSet } from '../schema'
 import { parseTokenSet } from '../validation'
+import { defaultButtonTokens } from './button'
 import { defaultDarkColorScheme, defaultLightColorScheme, defaultPalette } from './color'
 import { defaultDensity } from './density'
 import { defaultElevation } from './elevation'
@@ -53,7 +54,7 @@ const defaultTokenSetInput = {
     state: defaultState,
     density: defaultDensity,
   },
-  componentTokens: [defaultSurfaceTokens, defaultIconTokens],
+  componentTokens: [defaultSurfaceTokens, defaultIconTokens, defaultButtonTokens],
 } satisfies FoundationTokenSet
 
 export const defaultTokenSet = parseTokenSet(defaultTokenSetInput)

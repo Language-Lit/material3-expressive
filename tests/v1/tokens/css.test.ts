@@ -25,6 +25,11 @@ describe('token CSS generation', () => {
     expect(css).toContain('--m3e-sys-typescale-emphasized-display-large-font-weight')
     expect(css).toContain('--m3e-sys-shape-corner-extra-extra-large: 48px;')
     expect(css).toContain('--m3e-sys-motion-expressive-fast-spatial-damping-ratio: 0.6;')
+    expect(css).toContain('--m3e-sys-motion-expressive-default-effects-duration: 231ms;')
+    expect(css).toContain('--m3e-sys-motion-expressive-default-effects-easing: linear(')
+    expect(css).toMatch(
+      /--m3e-sys-motion-expressive-default-spatial-easing: linear\([^;]*1\.01/,
+    )
     expect(css).toContain('--m3e-sys-elevation-level0-shadow:')
     expect(css).toContain('--m3e-sys-state-hover: 0.08;')
     expect(css).toContain('--m3e-sys-density-minimum-interactive-target: 48px;')
@@ -36,13 +41,15 @@ describe('token CSS generation', () => {
     )
     expect(css).toContain('--m3e-comp-icon-size: 24px;')
     expect(css).toContain('--m3e-comp-icon-symbol-roundness: 50;')
+    expect(css).toContain('--m3e-comp-button-extra-small-container-height: 32px;')
+    expect(css).toContain('--m3e-comp-button-extra-large-container-height: 136px;')
   })
 
   it('contains no unresolved custom-property references', () => {
     const definitions = new Set(
       [...css.matchAll(/(--m3e-[a-z0-9-]+)\s*:/g)].map((match) => match[1]),
     )
-    expect(definitions.size).toBe(755)
+    expect(definitions.size).toBe(862)
     for (const match of css.matchAll(/var\(\s*(--m3e-[a-z0-9-]+)/g)) {
       expect(definitions.has(match[1]), match[1]).toBe(true)
     }

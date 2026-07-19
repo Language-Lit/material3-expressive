@@ -1,6 +1,6 @@
 # Active v1 task
 
-## T06 — Icon
+## T07 — Button
 
 Status: complete
 Approved: 2026-07-19
@@ -8,62 +8,73 @@ Completed: 2026-07-19
 
 ### Scope
 
-- Implement `Icon` as a passive, framework-neutral Material icon foundation for
-  React consumers.
-- Support SVG React component sources and Material Symbols glyph sources without
-  owning a vendor icon registry, loading a font, or importing a framework.
-- Make decorative versus meaningful semantics explicit: decorative icons are
-  hidden from assistive technology by default, while standalone meaningful icons
-  require an accessible label and expose one image role.
-- Apply inherited Material content color, a sourced 24px default size, consumer
-  sizing, and the current Material Symbols `FILL`, `wght`, `GRAD`, `opsz`, and
-  Expressive `ROND` axes through stable component variables.
-- Preserve consumer classes, styles, non-semantic native attributes, data
-  attributes, and a forwarded `HTMLSpanElement` ref while keeping visual source
-  content out of the accessibility tree.
-- Provide explicit opt-in RTL mirroring for directional artwork and keep icon
-  interaction in later purpose-built controls.
-- Document the web adaptation from Compose painter/vector sources to React SVG
-  source components and consumer-owned Material Symbols fonts.
+- Implement `Button` as a framework-neutral native HTML button for React
+  consumers, defaulting to `type="button"` while preserving submit/reset,
+  form-owner, naming, value, and disabled behavior.
+- Support the five current Material button variants: filled, filled tonal,
+  elevated, outlined, and text.
+- Support the current Material 3 Expressive extra-small, small, medium, large,
+  and extra-large size tiers with sourced container, padding, typography, icon,
+  spacing, outline, and shape values.
+- Provide intrinsic and full-width layout, round and square resting shapes, and
+  the sourced size-aware pressed shape.
+- Adapt the first-party no-bounce default-effects spring to deterministic CSS
+  motion tokens once, then use it for the pressed-shape morph and disable
+  nonessential transitions under reduced motion.
+- Preserve consumer classes, styles, native button attributes, ARIA/data
+  attributes, and event handlers while forwarding an `HTMLButtonElement` ref.
+- Provide explicit leading and trailing icon slots whose visual content is
+  hidden from assistive technology so the button label owns one accessible
+  name.
+- Preserve a minimum 48 by 48 CSS-pixel interaction target independently of the
+  smaller Expressive visual container sizes, with visible keyboard focus and
+  forced-colors behavior.
+- Document the web adaptation from Compose overloads and modifiers to one
+  stable React API with explicit variants, sizes, widths, and shapes.
 
-An icon-name registry, bundled icon set, font fetching, `@font-face`, arbitrary
-image rendering, animated state transitions, icon-button behavior, Next/Vite
-runtime adapters, private downstream application integration, and legacy implementation changes
-are out of scope.
+Link-button polymorphism, toggle state, icon-only controls, loading state,
+button groups, split buttons, routing adapters, arbitrary custom shape models,
+Next/Vite runtime adapters, private downstream application integration, and legacy implementation
+changes are out of scope.
 
 ### Expected files
 
-- `src/v1/components/Icon/`, the v1 component/public barrels, complete style
-  assembly, and sourced Icon component-token defaults.
-- Icon behavior, accessibility, theme, CSS, SSR, and conformance evidence under
-  `tests/v1/components/Icon/`.
+- `src/v1/components/Button/`, the v1 component/public barrels, complete style
+  assembly, and sourced Button component-token defaults.
+- A reusable, deterministic CSS spring projection in the v1 token/motion
+  boundary, with focused token serialization coverage.
+- Button behavior, interaction, accessibility, theme, CSS, SSR, and conformance
+  evidence under `tests/v1/components/Button/`.
 - A mirrored example under `playground/v1/examples/` and playground usage.
-- Icon documentation, a public-API ADR, architecture/provenance notes, and the
-  component inventory status/exports.
+- Button documentation, a public-API/motion ADR, architecture/provenance notes,
+  and the component inventory status/exports.
 - Vite/Next consumer fixture coverage and an explicit bundle-budget update only
   if justified by measured output.
 
 ### Acceptance checks
 
-- SVG component and Material Symbols glyph sources render through one stable,
-  framework-neutral contract; the library ships no icon registry, icon font, or
-  network behavior.
-- Decorative icons are the default and expose no accessible image; meaningful
-  icons require a non-empty label, expose exactly one named `img` role, and keep
-  source markup hidden from assistive technology.
-- The root remains a passive `span`, forwards an `HTMLSpanElement` ref, preserves
-  supported native consumer props, and adds no focusability, click behavior, or
-  interactive ARIA state.
-- Default size, inherited `currentColor`, SVG sizing, symbol font family, and all
-  five current Material Symbols axes resolve through stable component variables;
-  explicit consumer values stay deterministic and theme defaults stay scoped.
-- Optical size tracks visual size within the sourced 20–48 design range unless
-  explicitly selected, and invalid numeric axis/size combinations produce
-  actionable development warnings without changing server markup.
-- RTL mirroring occurs only when explicitly requested; source direction,
-  reduced-motion behavior, and forced-color behavior remain predictable.
-- Default, custom, and nested theme scopes prove token consumption; SSR and
-  hydration remain deterministic and rendering injects no styles.
+- All five Material variants and five Expressive sizes map to sourced colors,
+  dimensions, type roles, icon metrics, outlines, elevation, and resting/pressed
+  shapes through stable namespaced variables and data attributes.
+- Round and square shapes morph to the correct size-aware pressed shape using a
+  deterministic projection of the theme's Expressive default-effects spring;
+  reduced motion removes the transition without hiding pressed state.
+- Intrinsic width is the default, full width is explicit, content remains
+  logical-direction safe, and leading/trailing slots render in source order
+  while staying decorative to assistive technology.
+- The root is a native `button`, defaults to `type="button"`, forwards its ref,
+  preserves native form and consumer behavior, and does not add link, toggle,
+  loading, or framework semantics.
+- Native disabled behavior prevents activation and exposes the disabled state;
+  pointer, Enter, and Space activation remain browser-owned with no duplicate
+  callbacks or custom keyboard simulation.
+- Every size provides at least a 48 by 48 CSS-pixel target, focus remains visible,
+  and disabled, forced-colors, RTL, and reduced-motion outcomes are explicit.
+- Empty unnamed content produces an actionable development warning without
+  changing server markup; rendering and hydration remain deterministic and
+  inject no styles.
+- Default, custom, and nested theme scopes prove token consumption; production
+  CSS resolves every referenced custom property.
 - Documentation, current primary-source links, example, public exports,
   production stylesheet coverage, and inventory agree.
 - Existing typecheck, tests, legacy contracts, packed Vite/Next fixtures, CSS

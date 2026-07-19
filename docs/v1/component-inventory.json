@@ -6,7 +6,7 @@
     { "name": "Surface", "kind": "foundation", "task": "T04", "path": "src/v1/components/Surface", "status": "conformant", "dependencies": [], "publicExports": ["Surface", "SurfaceProps"] },
     { "name": "Text", "kind": "foundation", "task": "T05", "path": "src/v1/components/Text", "status": "conformant", "dependencies": [], "publicExports": ["Text", "TextProps"] },
     { "name": "Icon", "kind": "foundation", "task": "T06", "path": "src/v1/components/Icon", "status": "conformant", "dependencies": [], "publicExports": ["Icon", "IconProps", "IconSource", "IconSourceProps", "MaterialSymbolStyle"] },
-    { "name": "Button", "kind": "action", "task": "T07", "path": "src/v1/components/Button", "status": "planned", "dependencies": [], "publicExports": ["Button", "ButtonProps"] },
+    { "name": "Button", "kind": "action", "task": "T07", "path": "src/v1/components/Button", "status": "conformant", "dependencies": ["Text"], "publicExports": ["Button", "ButtonProps", "ButtonShape", "ButtonSize", "ButtonVariant", "ButtonWidth"] },
     { "name": "IconButton", "kind": "action", "task": "T08", "path": "src/v1/components/IconButton", "status": "planned", "dependencies": [], "publicExports": ["IconButton", "IconButtonProps"] },
     { "name": "FloatingActionButton", "kind": "action", "task": "T09", "path": "src/v1/components/FloatingActionButton", "status": "planned", "dependencies": [], "publicExports": ["FloatingActionButton", "FloatingActionButtonProps"] },
     { "name": "Card", "kind": "containment", "task": "T10", "path": "src/v1/components/Card", "status": "planned", "dependencies": [], "publicExports": ["Card", "CardProps"] },

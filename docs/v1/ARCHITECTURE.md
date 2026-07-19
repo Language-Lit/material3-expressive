@@ -66,6 +66,13 @@ This mapping is centralized rather than repeated in component code. The build
 regenerates token CSS from the validated public default and checks it byte for
 byte, so contributors do not manually edit generated output.
 
+T07 establishes the CSS motion projection at this serialization boundary. Each
+validated spring slot deterministically emits a calculated settlement duration
+and sampled `linear()` easing beside its source damping/stiffness values. Theme
+overrides therefore produce scoped motion CSS without browser measurement,
+React state, or a runtime stylesheet. ADR 0007 records the calculation and
+reduced-motion contract.
+
 ## Theme runtime
 
 `src/v1/theme/theme.ts` is the only conversion boundary between public
@@ -136,6 +143,14 @@ source contract is deliberately minimal and the glyph adapter consumes literal
 component variables for all current symbol axes, including Expressive `ROND`.
 Icon inherits content color, loads no asset, and mirrors directional artwork
 only through an explicit RTL opt-in. ADR 0006 records the public contract.
+
+`Button` establishes the native action/form boundary. A semantic button root
+owns browser activation, focus, disabled state, forms, consumer events, a 48px
+minimum target, and the forwarded ref. Its nested visual container owns the five
+Material variants, five Expressive sizes, width, resting/pressed shape,
+elevation, and state layer, while public `Text` supplies sourced typography.
+Decorative leading/trailing visual slots do not alter the accessible name.
+ADR 0007 records the public contract and shared CSS spring projection.
 
 ## Styling
 

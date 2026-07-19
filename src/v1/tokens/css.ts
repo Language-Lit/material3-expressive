@@ -19,6 +19,7 @@ import {
   type FoundationTokenPath,
   type FoundationTokenSet,
   type ShadowLayer,
+  type SpringMotionSpec,
 } from './schema'
 
 interface CssDeclaration {
@@ -164,6 +165,80 @@ function shapeDeclarations(tokenSet: FoundationTokenSet): CssDeclaration[] {
   return declarations
 }
 
+const springSettlementThreshold = 0.001
+const springSampleCount = 10
+
+function springProgress(spec: SpringMotionSpec, seconds: number): number {
+  const naturalFrequency = Math.sqrt(spec.stiffness)
+  const dampingRatio = spec.dampingRatio
+
+  if (Math.abs(dampingRatio - 1) < 0.000001) {
+    const scaledTime = naturalFrequency * seconds
+    return 1 - (1 + scaledTime) * Math.exp(-scaledTime)
+  }
+
+  if (dampingRatio < 1) {
+    const dampedFrequency = naturalFrequency * Math.sqrt(1 - dampingRatio ** 2)
+    const decay = Math.exp(-dampingRatio * naturalFrequency * seconds)
+    const sineScale = dampingRatio / Math.sqrt(1 - dampingRatio ** 2)
+    return 1 - decay * (
+      Math.cos(dampedFrequency * seconds) + sineScale * Math.sin(dampedFrequency * seconds)
+    )
+  }
+
+  const discriminant = Math.sqrt(dampingRatio ** 2 - 1)
+  const slowRoot = -naturalFrequency * (dampingRatio - discriminant)
+  const fastRoot = -naturalFrequency * (dampingRatio + discriminant)
+  const slowScale = -fastRoot / (slowRoot - fastRoot)
+  const fastScale = slowRoot / (slowRoot - fastRoot)
+  return 1 - slowScale * Math.exp(slowRoot * seconds) - fastScale * Math.exp(fastRoot * seconds)
+}
+
+function springDurationMilliseconds(spec: SpringMotionSpec): number {
+  const naturalFrequency = Math.sqrt(spec.stiffness)
+  if (spec.dampingRatio < 1) {
+    const amplitude = 1 / Math.sqrt(1 - spec.dampingRatio ** 2)
+    return Math.max(1, Math.ceil(
+      (Math.log(amplitude / springSettlementThreshold) /
+        (spec.dampingRatio * naturalFrequency)) * 1000,
+    ))
+  }
+
+  let lowerSeconds = 0
+  let upperSeconds = 1 / naturalFrequency
+  while (Math.abs(1 - springProgress(spec, upperSeconds)) > springSettlementThreshold) {
+    lowerSeconds = upperSeconds
+    upperSeconds *= 2
+  }
+  for (let iteration = 0; iteration < 60; iteration += 1) {
+    const middleSeconds = (lowerSeconds + upperSeconds) / 2
+    if (Math.abs(1 - springProgress(spec, middleSeconds)) > springSettlementThreshold) {
+      lowerSeconds = middleSeconds
+    } else {
+      upperSeconds = middleSeconds
+    }
+  }
+  return Math.max(1, Math.ceil(upperSeconds * 1000))
+}
+
+function formatSpringPoint(value: number): string {
+  const rounded = Math.round(value * 10_000) / 10_000
+  return Object.is(rounded, -0) ? '0' : String(rounded)
+}
+
+function springEasing(spec: SpringMotionSpec, durationMilliseconds: number): string {
+  const points = Array.from({ length: springSampleCount + 1 }, (_, index) => {
+    if (index === 0) return '0'
+    if (index === springSampleCount) return '1'
+    const progress = springProgress(
+      spec,
+      (durationMilliseconds * (index / springSampleCount)) / 1000,
+    )
+    return `${formatSpringPoint(progress)} ${index * 10}%`
+  })
+  return `linear(${points.join(', ')})`
+}
+
 function motionDeclarations(tokenSet: FoundationTokenSet): CssDeclaration[] {
   const declarations: CssDeclaration[] = []
   for (const scheme of MOTION_SCHEME_NAMES) {
@@ -171,6 +246,8 @@ function motionDeclarations(tokenSet: FoundationTokenSet): CssDeclaration[] {
       for (const category of MOTION_CATEGORY_NAMES) {
         const spec = tokenSet.system.motion[scheme][speed][category]
         const prefix = `sys.motion.${scheme}.${speed}.${category}` as const
+        const durationMilliseconds = springDurationMilliseconds(spec)
+        const cssPrefix = `--m3e-sys-motion-${scheme}-${speed}-${category}`
         declarations.push(
           {
             name: tokenPathToCssVariable(`${prefix}.dampingRatio`),
@@ -179,6 +256,14 @@ function motionDeclarations(tokenSet: FoundationTokenSet): CssDeclaration[] {
           {
             name: tokenPathToCssVariable(`${prefix}.stiffness`),
             value: String(spec.stiffness),
+          },
+          {
+            name: `${cssPrefix}-duration`,
+            value: `${durationMilliseconds}ms`,
+          },
+          {
+            name: `${cssPrefix}-easing`,
+            value: springEasing(spec, durationMilliseconds),
           },
         )
       }

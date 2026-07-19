@@ -42,3 +42,23 @@
 .icon-example > .m3e-text:last-child {
   grid-column: 1 / -1;
 }
+
+.button-example {
+  display: grid;
+  gap: 1rem;
+  margin-block-start: 2rem;
+  padding: 1.5rem;
+}
+
+.button-example__row,
+.button-example__sizes {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.button-example__sizes {
+  align-items: flex-start;
+  flex-direction: column;
+}

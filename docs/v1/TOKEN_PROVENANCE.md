@@ -45,9 +45,13 @@ Primary revision: `0be207d91046b7376beeef5544d331a02d6fa87c`
 - Tonal elevation behavior: [ColorScheme.kt](https://android.googlesource.com/platform/frameworks/support/+/0be207d91046b7376beeef5544d331a02d6fa87c/compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/ColorScheme.kt)
 
 Motion is represented by the same standard/expressive, fast/default/slow, and
-spatial/effects slots as AndroidX. The library does not invent duration
-equivalents for springs. CSS string generation preserves spring parameters as
-custom properties for the later motion service to consume.
+spatial/effects slots as AndroidX. T02 initially preserved only spring
+parameters. T07 adds the first required web motion adapter at token serialization:
+every spring deterministically emits a unit-mass settlement duration at a 0.001
+threshold and a ten-sample CSS `linear()` curve. The source damping ratio and
+stiffness remain canonical, and custom themes regenerate scoped derived values.
+ADR 0007 records this projection; it adds no browser or React dependency to the
+token layer.
 
 Tonal surface-container roles are the preferred web elevation colors. The
 AndroidX tonal overlay formula remains represented for custom schemes and later
@@ -81,3 +85,15 @@ ranges and now includes `ROND` in its variable-font requests; T06 carries that
 Expressive axis even though the guide's introductory copy still describes the
 four original symbol axes. Font files, subsetting, and network delivery remain
 consumer-owned. SVG sources consume only Icon size and inherited `currentColor`.
+
+`Button` registers current AndroidX Material 3 revision
+`dd849e200f5046c2f2ca904e821fc9d42cbd0256`. The five generated size token files
+supply visual heights 32/40/56/96/136px, padding, icon metrics, outline widths,
+and size-aware resting/pressed corner roles. Filled, filled-tonal, elevated,
+outlined, and text generated tokens supply enabled/disabled color roles,
+opacities, and elevation. The source Button implementation supplies the 58px
+minimum width, label type selection, content-padding corrections, and its
+intentional no-bounce default-effects shape spring. Round CSS radii are exact
+half-heights so the sourced pill geometry interpolates rather than transitioning
+from an arbitrary 9999px value. The web root consumes the existing 48px density
+target independently from the visual height.

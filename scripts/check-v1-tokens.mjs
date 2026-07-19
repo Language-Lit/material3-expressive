@@ -40,6 +40,12 @@ const iconRegistration = api.defaultTokenSet.componentTokens.find(
 if (!iconRegistration || iconRegistration.task !== 'T06') {
   errors.push('Default component-token registry is missing the sourced T06 Icon registration')
 }
+const buttonRegistration = api.defaultTokenSet.componentTokens.find(
+  (registration) => registration.component === 'button',
+)
+if (!buttonRegistration || buttonRegistration.task !== 'T07') {
+  errors.push('Default component-token registry is missing the sourced T07 Button registration')
+}
 
 if (errors.length > 0) {
   console.error('v1 token check failed:')

@@ -1,6 +1,7 @@
 'use client'
 
 import {
+  Button,
   Icon,
   Surface,
   Text,
@@ -24,6 +25,7 @@ export function ClientSmoke() {
   const surfaceRef = useRef<HTMLElementTagNameMap['article'] | null>(null)
   const textRef = useRef<HTMLParagraphElement | null>(null)
   const iconRef = useRef<HTMLSpanElement | null>(null)
+  const buttonRef = useRef<HTMLButtonElement | null>(null)
   return (
     <Surface as="article" ref={surfaceRef} color="surface-container" shape="medium">
       <Text as="p" ref={textRef} variant="bodyMedium">
@@ -36,6 +38,15 @@ export function ClientSmoke() {
         ref={iconRef}
         source={ClientMark}
       />
+      <Button
+        ref={buttonRef}
+        variant="tonal"
+        size="medium"
+        leadingIcon={<Icon source="add" />}
+        onClick={() => buttonRef.current?.setAttribute('data-activated', 'true')}
+      >
+        Client action
+      </Button>
     </Surface>
   )
 }
