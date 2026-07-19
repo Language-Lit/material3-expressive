@@ -4,6 +4,7 @@ import { defaultButtonTokens } from './button'
 import { defaultDarkColorScheme, defaultLightColorScheme, defaultPalette } from './color'
 import { defaultDensity } from './density'
 import { defaultElevation } from './elevation'
+import { defaultFloatingActionButtonTokens } from './floating-action-button'
 import { defaultIconTokens } from './icon'
 import { defaultIconButtonTokens } from './icon-button'
 import { defaultMotion } from './motion'
@@ -60,6 +61,7 @@ const defaultTokenSetInput = {
     defaultIconTokens,
     defaultButtonTokens,
     defaultIconButtonTokens,
+    defaultFloatingActionButtonTokens,
   ],
 } satisfies FoundationTokenSet
 

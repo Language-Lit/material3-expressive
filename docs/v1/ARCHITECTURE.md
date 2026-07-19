@@ -160,6 +160,15 @@ alternate selected artwork. Controlled/uncontrolled state and consumer-first
 cancelable event composition live in named internal primitives for later
 controls. ADR 0008 records the web toggle semantics and API.
 
+`FloatingActionButton` establishes the promoted-action boundary. One native
+button API statically separates icon-only momentary, label-driven extended, and
+icon-only toggle modes. Its visual container owns current 56/80/96px geometry,
+extended expansion, size-aware typography/spacing, state elevation, and the
+Expressive toggle transition to a 56px round primary close control. The native
+root preserves forms and stable naming; shared event/state primitives preserve
+cancelable controlled/uncontrolled selection. ADR 0009 records the public mode,
+accessibility, motion, and elevation decisions.
+
 ## Styling
 
 Component CSS is authored beside the component. `src/v1/styles/styles.css`

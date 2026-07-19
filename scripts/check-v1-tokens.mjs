@@ -46,6 +46,12 @@ const buttonRegistration = api.defaultTokenSet.componentTokens.find(
 if (!buttonRegistration || buttonRegistration.task !== 'T07') {
   errors.push('Default component-token registry is missing the sourced T07 Button registration')
 }
+const floatingActionButtonRegistration = api.defaultTokenSet.componentTokens.find(
+  (registration) => registration.component === 'floating-action-button',
+)
+if (!floatingActionButtonRegistration || floatingActionButtonRegistration.task !== 'T09') {
+  errors.push('Default component-token registry is missing the sourced T09 FloatingActionButton registration')
+}
 
 if (errors.length > 0) {
   console.error('v1 token check failed:')

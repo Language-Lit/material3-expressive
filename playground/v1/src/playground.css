@@ -57,6 +57,20 @@
   padding: 1.5rem;
 }
 
+.fab-example {
+  display: grid;
+  gap: 1rem;
+  margin-block-start: 2rem;
+  padding: 1.5rem;
+}
+
+.fab-example__row {
+  align-items: flex-start;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
 .icon-button-example__row,
 .icon-button-example__sizes {
   align-items: center;

@@ -8,6 +8,7 @@ import {
 } from '@language-lit/material3-expressive/v1'
 import '@language-lit/material3-expressive/v1/styles.css'
 import { ButtonExample } from '../examples/Button.example'
+import { FloatingActionButtonExample } from '../examples/FloatingActionButton.example'
 import { IconExample } from '../examples/Icon.example'
 import { IconButtonExample } from '../examples/IconButton.example'
 import { SurfaceExample } from '../examples/Surface.example'
@@ -33,6 +34,7 @@ createRoot(root).render(
         <TextExample />
         <IconExample />
         <IconButtonExample />
+        <FloatingActionButtonExample />
         <ButtonExample />
       </main>
     </Material3Provider>

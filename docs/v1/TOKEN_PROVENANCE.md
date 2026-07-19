@@ -110,3 +110,16 @@ default-effects motion for corner morphs. Exact half-height CSS radii represent
 web adaptation uses the recommended vibrant system roles where Compose also
 offers inherited-local-content overloads, and uses `aria-pressed` for native
 toggle-button semantics.
+
+`FloatingActionButton` registers current AndroidX Material 3 revision
+`b0ef6d36c141931a051272e39ad3f4783dcb28e0`. `FabBaselineTokens`,
+`FabMediumTokens`, `FabLargeTokens`, their extended counterparts, and the
+current implementations supply 56/80/96px containers; 24/28/36px icons;
+16/20/28px corners; size-aware label type and spacing; primary-container color;
+and Level 3/4 normal plus Level 1/2 lowered elevation. The 36px large icon and
+12/16px medium/large icon-label gaps follow explicit source corrections while
+the generated token files retain upstream TODO values. The paired toggle FAB
+source supplies its 56px final container, 28px corner, 20px icon,
+primary/on-primary selected colors, logical top-end alignment, and
+fast-spatial progress. The web API keeps its native button name stable and uses
+`aria-pressed` rather than importing menu semantics before T24.

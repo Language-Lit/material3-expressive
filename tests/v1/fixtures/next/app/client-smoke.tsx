@@ -2,6 +2,7 @@
 
 import {
   Button,
+  FloatingActionButton,
   Icon,
   IconButton,
   Surface,
@@ -28,6 +29,7 @@ export function ClientSmoke() {
   const iconRef = useRef<HTMLSpanElement | null>(null)
   const buttonRef = useRef<HTMLButtonElement | null>(null)
   const iconButtonRef = useRef<HTMLButtonElement | null>(null)
+  const fabRef = useRef<HTMLButtonElement | null>(null)
   return (
     <Surface as="article" ref={surfaceRef} color="surface-container" shape="medium">
       <Text as="p" ref={textRef} variant="bodyMedium">
@@ -62,6 +64,18 @@ export function ClientSmoke() {
       >
         <Icon source="favorite" />
       </IconButton>
+      <FloatingActionButton
+        ref={fabRef}
+        aria-label="Creation actions"
+        icon={<Icon source="add" />}
+        selectedIcon={<Icon source="close" />}
+        size="medium"
+        toggle
+        defaultSelected
+        onSelectedChange={(selected) =>
+          fabRef.current?.setAttribute('data-fixture-selected', String(selected))
+        }
+      />
     </Surface>
   )
 }
