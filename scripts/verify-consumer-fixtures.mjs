@@ -75,6 +75,7 @@ try {
     'dist/v1/index.js',
     'dist/v1/index.d.ts',
     'dist/v1/styles.css',
+    'dist/v1/tokens.css',
     'package.json',
   ]
   for (const requiredPath of requiredPaths) {

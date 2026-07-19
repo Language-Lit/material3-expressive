@@ -11,6 +11,7 @@ const checks = [
   ['Validate v1 architecture', 'check:v1:architecture'],
   ['Validate browser support', 'check:v1:browsers'],
   ['Validate v1 CSS boundary', 'check:v1:styles'],
+  ['Validate v1 token contract', 'check:v1:tokens'],
   ['Validate frozen legacy contract', 'check:legacy-contract'],
   ['Validate bundle-size budgets', 'check:bundle-size'],
   ['Build packed consumer fixtures', 'check:consumer-fixtures'],
@@ -21,4 +22,4 @@ for (const [label, script] of checks) {
   execFileSync('npm', ['run', script], { cwd: root, stdio: 'inherit' })
 }
 
-console.log(`\nT01 aggregate verification passed (${checks.length} gates).`)
+console.log(`\nv1 aggregate verification passed (${checks.length} gates).`)

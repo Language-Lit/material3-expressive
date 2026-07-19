@@ -1,0 +1,57 @@
+import type { FoundationTokenSet } from '../schema'
+import { parseTokenSet } from '../validation'
+import { defaultDarkColorScheme, defaultLightColorScheme, defaultPalette } from './color'
+import { defaultDensity } from './density'
+import { defaultElevation } from './elevation'
+import { defaultMotion } from './motion'
+import { defaultShape } from './shape'
+import { defaultState } from './state'
+import { defaultTypography } from './typography'
+
+const defaultTokenSetInput = {
+  metadata: {
+    schemaVersion: 1,
+    materialVersion: '34.0.21',
+    sources: [
+      {
+        id: 'material-web-tokens',
+        url: 'https://github.com/material-components/material-web/tree/b4de401eb665ec63474f39319a4ba8f2145974cc/tokens/versions/latest/sass',
+        revision: 'b4de401eb665ec63474f39319a4ba8f2145974cc',
+        accessed: '2026-07-19',
+      },
+      {
+        id: 'androidx-material3',
+        url: 'https://android.googlesource.com/platform/frameworks/support/+/0be207d91046b7376beeef5544d331a02d6fa87c/compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3',
+        revision: '0be207d91046b7376beeef5544d331a02d6fa87c',
+        accessed: '2026-07-19',
+      },
+    ],
+  },
+  reference: {
+    palette: defaultPalette,
+    typeface: {
+      brand: ['Roboto', 'sans-serif'],
+      plain: ['Roboto', 'sans-serif'],
+      weight: {
+        regular: 400,
+        medium: 500,
+        bold: 700,
+      },
+    },
+  },
+  system: {
+    color: {
+      light: defaultLightColorScheme,
+      dark: defaultDarkColorScheme,
+    },
+    typography: defaultTypography,
+    shape: defaultShape,
+    motion: defaultMotion,
+    elevation: defaultElevation,
+    state: defaultState,
+    density: defaultDensity,
+  },
+  componentTokens: [],
+} satisfies FoundationTokenSet
+
+export const defaultTokenSet = parseTokenSet(defaultTokenSetInput)

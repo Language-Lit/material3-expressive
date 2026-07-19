@@ -1,11 +1,21 @@
-import { readFile, readdir } from 'node:fs/promises'
+import { readFile, readdir, stat } from 'node:fs/promises'
 import path from 'node:path'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
-const cssRoot = path.join(root, 'src/v1')
+const sourceRoot = path.join(root, 'src/v1')
+const distRoot = path.join(root, 'dist/v1')
 const errors = []
+
+async function exists(target) {
+  try {
+    await stat(target)
+    return true
+  } catch {
+    return false
+  }
+}
 
 async function walk(directory) {
   const entries = await readdir(directory, { withFileTypes: true })
@@ -16,12 +26,16 @@ async function walk(directory) {
   return nested.flat()
 }
 
-const cssFiles = (await walk(cssRoot)).filter((file) => file.endsWith('.css'))
+const cssFiles = [
+  ...(await walk(sourceRoot)),
+  ...((await exists(distRoot)) ? await walk(distRoot) : []),
+].filter((file) => file.endsWith('.css'))
 
 for (const file of cssFiles) {
   const relative = path.relative(root, file)
   const css = await readFile(file, 'utf8')
   const cssWithoutLayerNames = css.replace(/@layer\s+[^;{]+[;{]/g, '')
+  const definitions = new Set([...css.matchAll(/(--m3e-[a-z0-9-]+)\s*:/g)].map((match) => match[1]))
 
   if (css.includes('--md-')) errors.push(`${relative} uses a frozen legacy --md-* custom property`)
 
@@ -43,8 +57,13 @@ for (const file of cssFiles) {
       continue
     }
     const resolved = path.resolve(path.dirname(file), specifier)
-    if (resolved !== cssRoot && !resolved.startsWith(`${cssRoot}${path.sep}`)) {
+    if (resolved !== sourceRoot && !resolved.startsWith(`${sourceRoot}${path.sep}`)) {
       errors.push(`${relative} imports CSS outside src/v1: ${specifier}`)
+    }
+  }
+  for (const match of css.matchAll(/var\(\s*(--m3e-[a-z0-9-]+)/g)) {
+    if (!definitions.has(match[1])) {
+      errors.push(`${relative} contains unresolved custom-property reference ${match[1]}`)
     }
   }
 }

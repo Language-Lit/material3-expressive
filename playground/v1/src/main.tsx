@@ -1,6 +1,9 @@
 import React from 'react'
 import { createRoot } from 'react-dom/client'
-import * as Material3Expressive from '@language-lit/material3-expressive/v1'
+import {
+  defaultTokenSet,
+  validateTokenSet,
+} from '@language-lit/material3-expressive/v1'
 import '@language-lit/material3-expressive/v1/styles.css'
 import './playground.css'
 
@@ -12,8 +15,11 @@ createRoot(root).render(
   <React.StrictMode>
     <main className="workbench">
       <h1>Material 3 Expressive React v1</h1>
-      <p>T01 package boundary ready.</p>
-      <output>{Object.keys(Material3Expressive).length} implemented public exports</output>
+      <p>Framework-neutral token foundation ready.</p>
+      <output>
+        Material {defaultTokenSet.metadata.materialVersion}:{' '}
+        {validateTokenSet(defaultTokenSet).success ? 'valid' : 'invalid'}
+      </output>
     </main>
   </React.StrictMode>,
 )

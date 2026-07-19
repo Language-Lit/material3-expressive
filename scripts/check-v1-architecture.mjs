@@ -27,6 +27,7 @@ const forbiddenFrameworkImports = [
   'react-router',
   'react-router-dom',
 ]
+const forbiddenFoundationImports = ['react', 'react-dom']
 
 async function exists(target) {
   try {
@@ -95,10 +96,23 @@ const importPattern = /(?:from\s*|import\s*\()\s*['"]([^'"]+)['"]/g
 
 for (const file of sourceFiles) {
   const source = await readFile(file, 'utf8')
+  const v1Relative = path.relative(v1Root, file)
+  const isFoundationFile =
+    v1Relative.startsWith(`tokens${path.sep}`) ||
+    v1Relative.startsWith(`types${path.sep}`)
   for (const match of source.matchAll(importPattern)) {
     const specifier = match[1]
     if (forbiddenFrameworkImports.some((entry) => specifier === entry || specifier.startsWith(entry))) {
       errors.push(`${path.relative(root, file)} imports app/framework-specific module: ${specifier}`)
+      continue
+    }
+    if (
+      isFoundationFile &&
+      forbiddenFoundationImports.some(
+        (entry) => specifier === entry || specifier.startsWith(`${entry}/`),
+      )
+    ) {
+      errors.push(`${path.relative(root, file)} imports React from a foundation layer: ${specifier}`)
       continue
     }
     if (specifier.startsWith('@/')) {

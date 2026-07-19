@@ -104,6 +104,7 @@
     "check:v1:architecture": "node scripts/check-v1-architecture.mjs",
     "check:v1:browsers": "node scripts/check-browser-support.mjs",
     "check:v1:styles": "node scripts/check-v1-css.mjs",
+    "check:v1:tokens": "node scripts/check-v1-tokens.mjs",
     "check:legacy-contract": "node scripts/legacy-contract.mjs",
     "update:legacy-contract": "npm run build && node scripts/legacy-contract.mjs --update",
     "check:consumer-fixtures": "node scripts/verify-consumer-fixtures.mjs",

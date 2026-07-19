@@ -39,6 +39,33 @@ serializable types and token data
 The `check:v1:architecture` command enforces the rules that can be checked
 statically without interpreting component behavior.
 
+## Token foundation
+
+`src/v1/tokens/schema.ts` is the canonical inventory for every foundation token
+domain and path. Runtime validation, reference resolution, public types, default
+data, and CSS generation derive from that inventory. Token data stays JSON-like,
+and parsing returns an independent deeply frozen value.
+
+Defaults live in one file per domain under `src/v1/tokens/defaults/`. Source
+revisions and web adaptations are recorded in `docs/v1/TOKEN_PROVENANCE.md` and
+cross-cutting policy in ADR 0002. A later component task adds tokens through the
+typed component registry only after recording its primary Material source; the
+default registry stays empty otherwise.
+
+Foundation paths use canonical dot notation in TypeScript and deterministic
+namespaced custom properties in CSS:
+
+```text
+ref.palette.primary-40          -> --m3e-ref-palette-primary-40
+sys.color.light.primary         -> --m3e-sys-color-primary (light scope)
+sys.motion.expressive.fast.*    -> --m3e-sys-motion-expressive-fast-*
+comp.button.container.color     -> --m3e-comp-button-container-color
+```
+
+This mapping is centralized rather than repeated in component code. The build
+regenerates token CSS from the validated public default and checks it byte for
+byte, so contributors do not manually edit generated output.
+
 ## Component layout
 
 Every public component uses the same mirrored layout:
