@@ -15,6 +15,7 @@ import {
   Snackbar,
   Surface,
   Switch,
+  Tabs,
   Text,
   TextArea,
   TextField,
@@ -57,6 +58,7 @@ export function ClientSmoke() {
   const tooltipAnchorRef = useRef<HTMLButtonElement | null>(null)
   const tooltipRef = useRef<HTMLDivElement | null>(null)
   const snackbarRef = useRef<HTMLDivElement | null>(null)
+  const tabsRef = useRef<HTMLDivElement | null>(null)
   return (
     <Surface as="article" ref={surfaceRef} color="surface-container" shape="medium">
       <Text as="p" ref={textRef} variant="bodyMedium">
@@ -234,6 +236,15 @@ export function ClientSmoke() {
         dismissible
         defaultOpen
         onOpenChange={(open) => snackbarRef.current?.setAttribute('data-fixture-open', String(open))}
+      />
+      <Tabs
+        ref={tabsRef}
+        aria-label="Fixture tabs"
+        items={[
+          { value: 'one', label: 'One', panel: <span>One content</span> },
+          { value: 'two', label: 'Two', panel: <span>Two content</span> },
+        ]}
+        onValueChange={(value) => tabsRef.current?.setAttribute('data-fixture-value', value)}
       />
     </Surface>
   )

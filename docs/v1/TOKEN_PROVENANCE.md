@@ -405,3 +405,48 @@ placement to a consuming `Scaffold`, and material-web ships no snackbar
 implementation to cross-validate against either, so the bottom offset is a
 plain CSS value, not a claimed-sourced token — the same status Menu's own
 `z-index: 1000` already has.
+
+`Tabs` registers the same pinned revision, `PrimaryNavigationTabTokens.kt`
+blob `3a7cc1b6e3dc512162a43ef08275f8afa6433a23` at `VERSION: v0_162` and
+`SecondaryNavigationTabTokens.kt` blob
+`a19ea9bf5a359ba8a81b67cdaac79f378b6d0749`, also `VERSION: v0_162`.
+Indicator color/height/shape and the `'primary'`-only content-hugging
+width come from `PrimaryNavigationTabTokens` (`ActiveIndicatorColor`
+primary, `ActiveIndicatorHeight` 3dp, `ActiveIndicatorShape`
+`RoundedCornerShape(3dp)`) plus the `24dp` default width parameter
+`TabRowDefaults.PrimaryIndicator` itself defines (not a token-file value).
+`SecondaryNavigationTabTokens` defines no indicator fields of its own — the
+pinned source's own `TabRowDefaults.SecondaryIndicator` reads
+`PrimaryNavigationTabTokens.ActiveIndicatorColor`/`ActiveIndicatorHeight`
+directly — so `'secondary'` reuses the same `indicator-color`/
+`indicator-height` pair rather than a duplicate value under a second name.
+Active/inactive label and icon color come from each token file's own
+`Active*Color`/`Inactive*Color` pair (`primary`/`onSurfaceVariant` for
+`'primary'`; plain `onSurface`/`onSurfaceVariant` for `'secondary'` —
+deliberately more subdued, not brand-colored). `divider-color`/
+`divider-height` come from `SecondaryNavigationTabTokens.DividerColor`/
+`DividerHeight` (surfaceVariant, 1dp), even though the pinned source's own
+default `divider` composable for *both* `PrimaryTabRow`/`SecondaryTabRow`
+is actually a generic, non-tab-specific `HorizontalDivider()` — this
+project surfaces the actually-defined, traceable token value instead of an
+untraceable system-generic one. `container-height` (48px,
+`ContainerHeight`/`SmallTabHeight`) and `container-height-with-icon-and-
+label` (72px, `LargeTabHeight`, the value `Tab.kt`'s own
+`TabBaselineLayout` actually uses — not the token file's unread 64px
+`IconAndLabelTextContainerHeight`) both come straight from `Tab.kt`/
+`TabRow.kt`, the same plain-layout-constant status Tooltip's/Snackbar's own
+sizing constants have; likewise `label-inline-padding` (16px,
+`HorizontalTextPadding`) and the scrollable-variant `scrollable-min-tab-
+width`/`scrollable-edge-padding` (90px/52px,
+`ScrollableTabRowMinTabWidth`/`ScrollableTabRowEdgeStartPadding`).
+`icon-label-gap` approximates the source's own baseline-relative stacked
+layout as an ordinary flexbox gap, the same baseline-to-block-model
+simplification already applied to Tooltip's rich-variant padding.
+`disabled-label-color`/`disabled-icon-color` (both `onSurface` at `0.38`
+opacity) have no source at all: `Tab`'s `enabled` param removes
+interactivity only, with no distinct disabled color axis in the pinned
+source's own `TabTransition` — this registers the same universal disabled
+dimming every other v1 interactive component already uses. Label
+typography reuses the theme's own `title-small` typescale role directly
+(`LabelTextFont`, unread by name for the same reason as every prior
+component's typography roles).

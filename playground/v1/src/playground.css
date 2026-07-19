@@ -273,3 +273,10 @@
   flex-wrap: wrap;
   gap: 1rem;
 }
+
+.tabs-example {
+  display: grid;
+  gap: 1rem;
+  margin-block-start: 2rem;
+  padding: 1.5rem;
+}

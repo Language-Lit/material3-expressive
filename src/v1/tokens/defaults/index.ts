@@ -19,6 +19,7 @@ import { defaultSnackbarTokens } from './snackbar'
 import { defaultState } from './state'
 import { defaultSurfaceTokens } from './surface'
 import { defaultSwitchTokens } from './switch'
+import { defaultTabsTokens } from './tabs'
 import { defaultTextFieldTokens } from './text-field'
 import { defaultTooltipTokens } from './tooltip'
 import { defaultTypography } from './typography'
@@ -82,6 +83,7 @@ const defaultTokenSetInput = {
     defaultMenuTokens,
     defaultTooltipTokens,
     defaultSnackbarTokens,
+    defaultTabsTokens,
   ],
 } satisfies FoundationTokenSet
 

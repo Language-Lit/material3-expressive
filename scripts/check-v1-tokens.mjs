@@ -118,6 +118,13 @@ if (!snackbarRegistration || snackbarRegistration.task !== 'T18') {
   errors.push('Default component-token registry is missing the sourced T18 Snackbar registration')
 }
 
+const tabsRegistration = api.defaultTokenSet.componentTokens.find(
+  (registration) => registration.component === 'tabs',
+)
+if (!tabsRegistration || tabsRegistration.task !== 'T19') {
+  errors.push('Default component-token registry is missing the sourced T19 Tabs registration')
+}
+
 if (errors.length > 0) {
   console.error('v1 token check failed:')
   for (const error of errors) console.error(`- ${error}`)
