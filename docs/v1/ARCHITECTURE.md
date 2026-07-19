@@ -327,6 +327,22 @@ mount/measure/dismiss phase machine (no anchor, so it does not use
 pauses on hover/focus and resumes on leave, a deliberate WCAG 2.2.1
 addition. ADR 0018 records both design decisions.
 
+`Tabs` is one data-driven component (`items: readonly TabItem[]`) with the
+first sliding-indicator infrastructure in v1: a plain `useEffect` measures
+the selected tab's own bounding rect (or, in the `'primary'` variant, its
+inner content-wrapper rect) relative to the tablist, applying the result as
+the indicator's `transform`/`inline-size`, kept correct across reflow by a
+`ResizeObserver` and a window `resize` listener. Unlike every prior
+overlay-entrance task, the indicator's transition uses the sourced
+`DefaultSpatial` motion slot, not `FastSpatial` — a content-shift
+transition, not an overlay entrance, matching the pinned source's own
+choice. An item with `href` renders a real `<a role="tab">` instead of
+`<button role="tab">` (a link-safe API for router-driven navigation tabs,
+leaving actual navigation to the browser's native anchor behavior); an item
+with `panel` gets one `role="tabpanel"` region for the selected item only,
+and no tabpanel region exists at all when no item defines one. ADR 0019
+records the indicator infrastructure and the link/panel API.
+
 ## Styling
 
 Component CSS is authored beside the component. `src/v1/styles/styles.css`

@@ -21,7 +21,7 @@
     { "name": "Select", "kind": "input", "task": "T17", "path": "src/v1/components/Select", "status": "conformant", "dependencies": [], "publicExports": ["Select", "SelectOption", "SelectProps", "SelectVariant"] },
     { "name": "Tooltip", "kind": "overlay", "task": "T18", "path": "src/v1/components/Tooltip", "status": "conformant", "dependencies": [], "publicExports": ["Tooltip", "TooltipPlacement", "TooltipProps", "TooltipVariant"] },
     { "name": "Snackbar", "kind": "feedback", "task": "T18", "path": "src/v1/components/Snackbar", "status": "conformant", "dependencies": [], "publicExports": ["Snackbar", "SnackbarAction", "SnackbarProps"] },
-    { "name": "Tabs", "kind": "navigation", "task": "T19", "path": "src/v1/components/Tabs", "status": "planned", "dependencies": [], "publicExports": ["Tabs", "TabsProps"] },
+    { "name": "Tabs", "kind": "navigation", "task": "T19", "path": "src/v1/components/Tabs", "status": "conformant", "dependencies": [], "publicExports": ["Tabs", "TabItem", "TabsProps", "TabsVariant"] },
     { "name": "NavigationBar", "kind": "navigation", "task": "T20", "path": "src/v1/components/NavigationBar", "status": "planned", "dependencies": [], "publicExports": ["NavigationBar", "NavigationBarProps"] },
     { "name": "NavigationRail", "kind": "navigation", "task": "T20", "path": "src/v1/components/NavigationRail", "status": "planned", "dependencies": [], "publicExports": ["NavigationRail", "NavigationRailProps"] },
     { "name": "NavigationDrawer", "kind": "navigation", "task": "T20", "path": "src/v1/components/NavigationDrawer", "status": "planned", "dependencies": [], "publicExports": ["NavigationDrawer", "NavigationDrawerProps"] },

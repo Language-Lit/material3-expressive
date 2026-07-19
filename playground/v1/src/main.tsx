@@ -21,6 +21,7 @@ import { SelectExample } from '../examples/Select.example'
 import { SnackbarExample } from '../examples/Snackbar.example'
 import { SurfaceExample } from '../examples/Surface.example'
 import { SwitchExample } from '../examples/Switch.example'
+import { TabsExample } from '../examples/Tabs.example'
 import { TextExample } from '../examples/Text.example'
 import { TextAreaExample } from '../examples/TextArea.example'
 import { TextFieldExample } from '../examples/TextField.example'
@@ -60,6 +61,7 @@ createRoot(root).render(
         <SelectExample />
         <TooltipExample />
         <SnackbarExample />
+        <TabsExample />
       </main>
     </Material3Provider>
   </React.StrictMode>,
