@@ -19,8 +19,5 @@ jobs:
       # `npm ci` runs the `prepare` script, which builds dist via tsup.
       - run: npm ci
 
-      - name: Typecheck
-        run: npm run typecheck
-
-      - name: Test
-        run: npm test
+      - name: Verify legacy and v1 contracts
+        run: npm run verify:v1

@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "allowJs": false,
+    "baseUrl": ".",
+    "paths": {}
+  },
+  "include": ["src/v1/**/*.ts", "src/v1/**/*.tsx"],
+  "exclude": ["node_modules", "dist"]
+}

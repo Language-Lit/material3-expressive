@@ -22,6 +22,7 @@ export default defineConfig({
     showcase: 'src/showcase/index.ts',
     utils: 'src/utils/index.ts',
     'tailwind.preset': 'tailwind.preset.ts',
+    'v1/index': 'src/v1/index.ts',
   },
   format: ['esm'],
   dts: true,

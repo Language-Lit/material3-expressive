@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "baselineCommit": "6f7ac573aaccb6a610b1a9d680ee8e6929dce509",
+  "artifacts": {
+    "packedPackage": {
+      "baselineBytes": 130628,
+      "maxBytes": 150000
+    },
+    "dist/v1/index.js": {
+      "baselineBytes": 68,
+      "maxBytes": 128,
+      "baselineGzipBytes": 57,
+      "maxGzipBytes": 128
+    },
+    "dist/v1/index.d.ts": {
+      "baselineBytes": 13,
+      "maxBytes": 64,
+      "baselineGzipBytes": 33,
+      "maxGzipBytes": 64
+    },
+    "dist/v1/styles.css": {
+      "baselineBytes": 56,
+      "maxBytes": 128,
+      "baselineGzipBytes": 66,
+      "maxGzipBytes": 128
+    }
+  }
+}
