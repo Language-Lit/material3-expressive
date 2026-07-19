@@ -17,6 +17,8 @@ import { RadioExample } from '../examples/Radio.example'
 import { SurfaceExample } from '../examples/Surface.example'
 import { SwitchExample } from '../examples/Switch.example'
 import { TextExample } from '../examples/Text.example'
+import { TextAreaExample } from '../examples/TextArea.example'
+import { TextFieldExample } from '../examples/TextField.example'
 import './playground.css'
 
 const root = document.getElementById('root')
@@ -44,6 +46,8 @@ createRoot(root).render(
         <CheckboxExample />
         <RadioExample />
         <SwitchExample />
+        <TextFieldExample />
+        <TextAreaExample />
       </main>
     </Material3Provider>
   </React.StrictMode>,

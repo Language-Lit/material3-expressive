@@ -1,0 +1,95 @@
+# TextField
+
+`TextField` is a native `input` with a Material label, indicator/outline,
+icon slots, and supporting/error text, in the `filled` and `outlined`
+variants. It shares its label/border/icon/supporting-text decoration with
+`TextArea` — the pinned source itself reuses one decoration layer for both
+single- and multi-line fields.
+
+```tsx
+import { TextField } from '@language-lit/material3-expressive/v1'
+import '@language-lit/material3-expressive/v1/styles.css'
+
+<TextField
+  label="Email"
+  variant="outlined"
+  type="email"
+  value={email}
+  onChange={(event) => setEmail(event.currentTarget.value)}
+/>
+```
+
+## Contract
+
+- The rendered control is one native `input`, associated with a native
+  `label` through `htmlFor`/`id` (generated with `useId()` when the caller
+  supplies none). Its ref, `name`, `value`/`defaultValue`, `form`,
+  `required`, ARIA and data attributes, and native handlers are forwarded to
+  that input.
+- `className` and `style` describe the field root.
+- Value state is left entirely to native controlled/uncontrolled `input`
+  behavior — this component owns no derived value state, so React's own
+  development warnings for conflicting `value`/`defaultValue` already apply.
+- `type` accepts text-like values (`text`, `email`, `password`, `search`,
+  `tel`, `url`, `number`); types with incompatible browser-owned chrome are
+  excluded at the type level.
+- `error` sets `aria-invalid` (unless the caller already set their own) and
+  recolors the label, indicator/outline, and supporting text. It does not
+  alter `supportingText` content — the caller owns the message.
+
+## Floating label
+
+The label floats between a large resting position/type size and a small
+top-aligned position/type size, driven by the input's own native
+`:focus`/`:placeholder-shown` pseudo classes rather than React-rendered
+state. That means the label repositions correctly even when the value
+changes outside a normal input event — browser autofill, a form reset, an
+imperative ref write — the same native-truth precedent established for
+Radio's checked state.
+
+A caller-supplied `placeholder` is shown only once the label has floated
+clear of the input's resting position, matching the pinned source's own
+placeholder slot. When no `placeholder` is supplied, the native attribute
+still resolves to a single space internally — purely so
+`:placeholder-shown` keeps working — and nothing is visibly shown.
+
+## Variants
+
+| Variant | Container | Border affordance |
+| --- | --- | --- |
+| `filled` (default) | surface-container-highest, top-only rounded | 1px bottom indicator, 2px focused |
+| `outlined` | transparent, fully rounded | 1px border with a label-sized notch, 2px focused |
+
+The outlined notch is a native `fieldset`/`legend`: the legend's own
+intrinsic text width produces the gap, with no JS measurement, in place of
+the pinned source's canvas-drawn border and difference-mode clip.
+
+## Icons and supporting text
+
+```tsx
+<TextField
+  variant="outlined"
+  label="Search"
+  leadingIcon={<Icon source="search" />}
+  supportingText="Press enter to search"
+/>
+```
+
+`leadingIcon`/`trailingIcon` render inside a 48px touch target at the
+field's edges and adjust the input's own content padding. `supportingText`
+renders below the field and is associated through `aria-describedby`,
+composed with any caller-supplied `aria-describedby` rather than replacing
+it.
+
+## Tokens and boundaries
+
+`TextField` and `TextArea` share one `--m3e-comp-text-field-*` registration.
+Every content color role (input, placeholder, label, icons, supporting text)
+is identical between the pinned source's filled and outlined token files, so
+this port keeps one unprefixed copy of each rather than a duplicated pair;
+only the container fill/shape and the indicator/outline border are
+registered per variant.
+
+Theme overrides remain scoped to `Material3Provider`; `TextField` injects no
+runtime styles. It imports no legacy source, Next.js, Vite, router, animation
+library, or private downstream application code.

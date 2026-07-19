@@ -10,6 +10,8 @@
 @import '../components/Surface/Surface.css';
 @import '../components/Switch/Switch.css';
 @import '../components/Text/Text.css';
+@import '../components/TextArea/TextArea.css';
+@import '../components/TextField/TextField.css';
 
 @layer m3e.base {
   :root,

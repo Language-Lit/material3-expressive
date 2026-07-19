@@ -15,6 +15,7 @@ import { defaultShape } from './shape'
 import { defaultState } from './state'
 import { defaultSurfaceTokens } from './surface'
 import { defaultSwitchTokens } from './switch'
+import { defaultTextFieldTokens } from './text-field'
 import { defaultTypography } from './typography'
 
 const defaultTokenSetInput = {
@@ -70,6 +71,7 @@ const defaultTokenSetInput = {
     defaultCheckboxTokens,
     defaultRadioTokens,
     defaultSwitchTokens,
+    defaultTextFieldTokens,
   ],
 } satisfies FoundationTokenSet
 

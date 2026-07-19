@@ -1,0 +1,15 @@
+/* Multiline deltas layered on top of the shared field chrome owned by
+   TextField's stylesheet (see the note at its top for why this file does
+   not re-declare the shared `.m3e-text-field*` rules itself). */
+@layer m3e.components {
+  textarea.m3e-text-field__input {
+    resize: vertical;
+  }
+
+  /* Icons align to the first line instead of the full multiline height,
+     matching every other Material multiline field's icon placement. */
+  .m3e-text-field[data-m3e-multiline="true"] .m3e-text-field__icon {
+    inset-block: 0 auto;
+    margin-block: 0;
+  }
+}
