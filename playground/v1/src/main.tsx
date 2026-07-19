@@ -14,6 +14,7 @@ import { FloatingActionButtonExample } from '../examples/FloatingActionButton.ex
 import { IconExample } from '../examples/Icon.example'
 import { IconButtonExample } from '../examples/IconButton.example'
 import { RadioExample } from '../examples/Radio.example'
+import { SegmentedButtonGroupExample } from '../examples/SegmentedButtonGroup.example'
 import { SurfaceExample } from '../examples/Surface.example'
 import { SwitchExample } from '../examples/Switch.example'
 import { TextExample } from '../examples/Text.example'
@@ -48,6 +49,7 @@ createRoot(root).render(
         <SwitchExample />
         <TextFieldExample />
         <TextAreaExample />
+        <SegmentedButtonGroupExample />
       </main>
     </Material3Provider>
   </React.StrictMode>,

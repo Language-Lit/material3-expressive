@@ -81,6 +81,15 @@ if (!textFieldRegistration || textFieldRegistration.task !== 'T14') {
   errors.push('Default component-token registry is missing the sourced T14 TextField registration')
 }
 
+const segmentedButtonGroupRegistration = api.defaultTokenSet.componentTokens.find(
+  (registration) => registration.component === 'segmented-button-group',
+)
+if (!segmentedButtonGroupRegistration || segmentedButtonGroupRegistration.task !== 'T15') {
+  errors.push(
+    'Default component-token registry is missing the sourced T15 SegmentedButtonGroup registration',
+  )
+}
+
 if (errors.length > 0) {
   console.error('v1 token check failed:')
   for (const error of errors) console.error(`- ${error}`)
