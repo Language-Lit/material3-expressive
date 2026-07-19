@@ -1,4 +1,4 @@
-import { Material3Provider, Surface } from '@language-lit/material3-expressive/v1'
+import { Material3Provider, Surface, Text } from '@language-lit/material3-expressive/v1'
 import { createTheme } from '@language-lit/material3-expressive/v1/theme'
 import { ClientSmoke } from './client-smoke'
 
@@ -8,7 +8,9 @@ export default function Page() {
   return (
     <Material3Provider theme={serverTheme} colorMode="system" systemModeFallback="light">
       <Surface as="main" color="surface" tonalElevation={0}>
-        <h1>Material 3 Expressive React v1 SSR fixture</h1>
+        <Text as="h1" variant="displaySmall" emphasis="emphasized">
+          Material 3 Expressive React v1 SSR fixture
+        </Text>
         <ClientSmoke />
       </Surface>
     </Material3Provider>

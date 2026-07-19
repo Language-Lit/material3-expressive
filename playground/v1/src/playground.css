@@ -15,3 +15,17 @@
   margin-block-start: 1rem;
   padding: 1rem;
 }
+
+.text-example {
+  margin-block-start: 2rem;
+  padding: 1.5rem;
+}
+
+.text-example > .m3e-text + .m3e-text,
+.text-example__inverse {
+  margin-block-start: 1rem;
+}
+
+.text-example__inverse {
+  padding: 1rem;
+}

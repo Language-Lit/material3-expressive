@@ -29,6 +29,12 @@ Material's generated font sizes and line heights are converted from pixels to
 first and add the generic `sans-serif` fallback required for a resilient web
 font stack. Variable-font axes remain typed metadata for capable consumers.
 
+The current AndroidX `Typography` API was rechecked for T05 on 2026-07-19. It
+exposes emphasized counterparts for all 15 baseline display, headline, title,
+body, and label roles. `Text` consumes both complete scales and maps all nine
+modeled axes to CSS `font-variation-settings`; it does not approximate the
+Expressive scale with an application-defined bold style.
+
 ## AndroidX Material 3
 
 Primary revision: `0be207d91046b7376beeef5544d331a02d6fa87c`
@@ -61,3 +67,8 @@ Its defaults map the passive surface container, content color, rectangular
 shape, and zero tonal/shadow elevations to existing system tokens. Explicit
 Surface variants continue to resolve through system color, shape, and elevation
 roles so custom themes remain authoritative.
+
+`Text` deliberately adds no component-token registration. AndroidX Text reads a
+selected theme `TextStyle` and inherited content color, so the web adaptation
+maps directly to existing `sys.typography` and CSS color inheritance. Font
+loading remains consumer-owned and is not token-generation behavior.

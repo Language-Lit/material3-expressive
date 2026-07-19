@@ -8,6 +8,7 @@ import {
 } from '@language-lit/material3-expressive/v1'
 import '@language-lit/material3-expressive/v1/styles.css'
 import { SurfaceExample } from '../examples/Surface.example'
+import { TextExample } from '../examples/Text.example'
 import './playground.css'
 
 const root = document.getElementById('root')
@@ -26,6 +27,7 @@ createRoot(root).render(
           {validateTokenSet(defaultTokenSet).success ? 'valid' : 'invalid'}
         </output>
         <SurfaceExample />
+        <TextExample />
       </main>
     </Material3Provider>
   </React.StrictMode>,

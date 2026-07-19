@@ -1,6 +1,7 @@
 @layer m3e.tokens, m3e.base, m3e.components, m3e.utilities;
 
 @import '../components/Surface/Surface.css';
+@import '../components/Text/Text.css';
 
 @layer m3e.base {
   :root,

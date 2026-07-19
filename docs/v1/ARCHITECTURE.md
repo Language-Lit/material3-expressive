@@ -122,6 +122,13 @@ must keep that behavior in their own semantic implementation rather than making
 Surface polymorphic to an interactive element. ADR 0004 records the elevation,
 color-pairing, and semantic decisions.
 
+`Text` establishes the typography/semantics boundary. Its visual `variant` and
+Expressive `emphasis` map literally to system type-scale tokens, while a bounded
+native `as` prop alone determines document semantics. It inherits content color
+and does not fetch fonts, generate token names, or subscribe to theme context.
+The explicit 30-style CSS table keeps every baseline/emphasized mapping
+searchable and distribution-checkable. ADR 0005 records the public contract.
+
 ## Styling
 
 Component CSS is authored beside the component. `src/v1/styles/styles.css`
