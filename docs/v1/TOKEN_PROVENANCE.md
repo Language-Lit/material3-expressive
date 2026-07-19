@@ -159,3 +159,24 @@ upstream-unread `FocusIndicatorColor` secondary role because visible focus is
 required. The sourced springs need no substitution because Expressive default
 spatial 0.8/380, default effects 1.0/1600, and fast effects 1.0/3800 already
 match this library's scheme.
+
+`Radio` registers the same AndroidX Material 3 branch revision
+`225f50d42bf0adeb2abf4b6109befb5ab6ce4efc`, `RadioButton.kt` blob
+`02bdd9c675137bb277e454b21ffec58fc4ff6dfb`, and generated `RadioButtonTokens`
+blob `9c3d1a69f1dada4962d9f3f68a40a36f26824683` at `VERSION: v0_117`. They
+supply the 20px container, 2px ring stroke, 10px drawn dot diameter, 40px
+state layer, and primary/on-surface-variant selected/unselected roles. The
+source paints the ring and dot from one shared `radioColor` value, so Radio
+registers one icon-color role per state instead of separate ring/dot roles.
+`DisabledSelectedIconOpacity` and `DisabledUnselectedIconOpacity` are both
+0.38 but remain separate tokens because the source reads them under different
+names, matching the Checkbox precedent for its own equal-but-distinct
+opacities.
+
+Two roles are deliberate web additions, both following Checkbox precedent:
+the state layer uses the same-state icon-color role because the pinned
+`ripple()` call carries no explicit per-state color, and the focus ring uses
+the secondary role because `RadioButtonTokens` defines no focus-indicator
+token at all. The sourced `MotionSchemeKeyTokens.FastSpatial` dot animation
+and `DefaultEffects` color animation need no substitution for the same reason
+as Checkbox's springs.

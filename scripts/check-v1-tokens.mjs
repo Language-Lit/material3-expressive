@@ -60,6 +60,13 @@ if (!checkboxRegistration || checkboxRegistration.task !== 'T11') {
   errors.push('Default component-token registry is missing the sourced T11 Checkbox registration')
 }
 
+const radioRegistration = api.defaultTokenSet.componentTokens.find(
+  (registration) => registration.component === 'radio',
+)
+if (!radioRegistration || radioRegistration.task !== 'T12') {
+  errors.push('Default component-token registry is missing the sourced T12 Radio registration')
+}
+
 if (errors.length > 0) {
   console.error('v1 token check failed:')
   for (const error of errors) console.error(`- ${error}`)

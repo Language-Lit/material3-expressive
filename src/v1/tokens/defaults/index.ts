@@ -10,6 +10,7 @@ import { defaultFloatingActionButtonTokens } from './floating-action-button'
 import { defaultIconTokens } from './icon'
 import { defaultIconButtonTokens } from './icon-button'
 import { defaultMotion } from './motion'
+import { defaultRadioTokens } from './radio'
 import { defaultShape } from './shape'
 import { defaultState } from './state'
 import { defaultSurfaceTokens } from './surface'
@@ -66,6 +67,7 @@ const defaultTokenSetInput = {
     defaultFloatingActionButtonTokens,
     defaultCardTokens,
     defaultCheckboxTokens,
+    defaultRadioTokens,
   ],
 } satisfies FoundationTokenSet
 

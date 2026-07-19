@@ -189,6 +189,20 @@ the DOM property cannot be serialized. Ref composition joined the shared interna
 primitives for the remaining form controls. ADR 0011 records the tri-state
 model, geometry selection, and motion mapping.
 
+`Radio` establishes the native grouping boundary. A native `input
+type="radio"` owns semantics, naming, activation, native grouping through a
+required `name`, forms, reset, disabled state, and the forwarded ref, while a
+decorative wrapper owns only the 48px target, the resolved state attributes,
+and the consumer class and style. Its sibling container draws the sourced
+20px ring and dot from one shared icon-color role per state. Visual state is
+read from the input's own `:checked`/`:disabled` pseudo-classes rather than
+from the wrapper's data attributes, because a sibling in the same native
+group can be deselected with no event firing on it, and only a
+browser-owned pseudo-class stays accurate for every radio in the group
+regardless of which one last re-rendered. ADR 0012 records the grouping
+model, the checked-driven CSS decision, and the motion asymmetry between the
+dot's unconditional scale and the disabled-snapped color transition.
+
 ## Styling
 
 Component CSS is authored beside the component. `src/v1/styles/styles.css`

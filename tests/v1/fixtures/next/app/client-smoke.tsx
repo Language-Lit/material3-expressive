@@ -7,6 +7,7 @@ import {
   FloatingActionButton,
   Icon,
   IconButton,
+  Radio,
   Surface,
   Text,
   defaultTokenSet,
@@ -33,6 +34,7 @@ export function ClientSmoke() {
   const cardRef = useRef<HTMLElementTagNameMap['article'] | null>(null)
   const cardButtonRef = useRef<HTMLButtonElement | null>(null)
   const checkboxRef = useRef<HTMLInputElement | null>(null)
+  const radioRef = useRef<HTMLInputElement | null>(null)
   const iconButtonRef = useRef<HTMLButtonElement | null>(null)
   const fabRef = useRef<HTMLButtonElement | null>(null)
   return (
@@ -80,6 +82,18 @@ export function ClientSmoke() {
           }
         />
         Fixture checkbox
+      </label>
+      <label>
+        <Radio
+          ref={radioRef}
+          name="fixture-plan"
+          value="pro"
+          defaultChecked
+          onCheckedChange={(checked) =>
+            radioRef.current?.setAttribute('data-fixture-checked', String(checked))
+          }
+        />
+        Fixture radio
       </label>
       <IconButton
         ref={iconButtonRef}
