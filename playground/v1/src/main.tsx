@@ -13,6 +13,7 @@ import { CheckboxExample } from '../examples/Checkbox.example'
 import { FloatingActionButtonExample } from '../examples/FloatingActionButton.example'
 import { IconExample } from '../examples/Icon.example'
 import { IconButtonExample } from '../examples/IconButton.example'
+import { RadioExample } from '../examples/Radio.example'
 import { SurfaceExample } from '../examples/Surface.example'
 import { TextExample } from '../examples/Text.example'
 import './playground.css'
@@ -40,6 +41,7 @@ createRoot(root).render(
         <ButtonExample />
         <CardExample />
         <CheckboxExample />
+        <RadioExample />
       </main>
     </Material3Provider>
   </React.StrictMode>,
