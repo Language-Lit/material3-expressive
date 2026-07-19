@@ -12,7 +12,7 @@
     { "name": "Card", "kind": "containment", "task": "T10", "path": "src/v1/components/Card", "status": "conformant", "dependencies": [], "publicExports": ["Card", "CardElement", "CardProps", "CardVariant"] },
     { "name": "Checkbox", "kind": "input", "task": "T11", "path": "src/v1/components/Checkbox", "status": "conformant", "dependencies": [], "publicExports": ["Checkbox", "CheckboxProps"] },
     { "name": "Radio", "kind": "input", "task": "T12", "path": "src/v1/components/Radio", "status": "conformant", "dependencies": [], "publicExports": ["Radio", "RadioProps"] },
-    { "name": "Switch", "kind": "input", "task": "T13", "path": "src/v1/components/Switch", "status": "planned", "dependencies": [], "publicExports": ["Switch", "SwitchProps"] },
+    { "name": "Switch", "kind": "input", "task": "T13", "path": "src/v1/components/Switch", "status": "conformant", "dependencies": [], "publicExports": ["Switch", "SwitchProps"] },
     { "name": "TextField", "kind": "input", "task": "T14", "path": "src/v1/components/TextField", "status": "planned", "dependencies": [], "publicExports": ["TextField", "TextFieldProps"] },
     { "name": "TextArea", "kind": "input", "task": "T14", "path": "src/v1/components/TextArea", "status": "planned", "dependencies": [], "publicExports": ["TextArea", "TextAreaProps"] },
     { "name": "SegmentedButtonGroup", "kind": "input", "task": "T15", "path": "src/v1/components/SegmentedButtonGroup", "status": "planned", "dependencies": [], "publicExports": ["SegmentedButtonGroup", "SegmentedButtonGroupProps"] },

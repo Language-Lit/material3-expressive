@@ -15,6 +15,7 @@ import { IconExample } from '../examples/Icon.example'
 import { IconButtonExample } from '../examples/IconButton.example'
 import { RadioExample } from '../examples/Radio.example'
 import { SurfaceExample } from '../examples/Surface.example'
+import { SwitchExample } from '../examples/Switch.example'
 import { TextExample } from '../examples/Text.example'
 import './playground.css'
 
@@ -42,6 +43,7 @@ createRoot(root).render(
         <CardExample />
         <CheckboxExample />
         <RadioExample />
+        <SwitchExample />
       </main>
     </Material3Provider>
   </React.StrictMode>,

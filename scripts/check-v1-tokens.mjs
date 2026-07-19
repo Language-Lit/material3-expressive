@@ -67,6 +67,13 @@ if (!radioRegistration || radioRegistration.task !== 'T12') {
   errors.push('Default component-token registry is missing the sourced T12 Radio registration')
 }
 
+const switchRegistration = api.defaultTokenSet.componentTokens.find(
+  (registration) => registration.component === 'switch',
+)
+if (!switchRegistration || switchRegistration.task !== 'T13') {
+  errors.push('Default component-token registry is missing the sourced T13 Switch registration')
+}
+
 if (errors.length > 0) {
   console.error('v1 token check failed:')
   for (const error of errors) console.error(`- ${error}`)

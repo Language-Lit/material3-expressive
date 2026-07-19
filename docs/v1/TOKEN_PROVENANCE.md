@@ -180,3 +180,31 @@ the secondary role because `RadioButtonTokens` defines no focus-indicator
 token at all. The sourced `MotionSchemeKeyTokens.FastSpatial` dot animation
 and `DefaultEffects` color animation need no substitution for the same reason
 as Checkbox's springs.
+
+`Switch` registers the same AndroidX Material 3 branch revision
+`225f50d42bf0adeb2abf4b6109befb5ab6ce4efc`, `Switch.kt` blob
+`15dbb283ad8b99ca2aac1b665a02e2f3ebce6293`, and generated `SwitchTokens` blob
+`e73c33330cdd86a2c0cfeec04d2cd12d4e01da64` at `VERSION: v0_210`. They supply
+the 52×32px track, 2px outline, 16/24/28px unselected/selected/pressed handle
+sizes, 40px state layer, 16px icon size, primary/on-primary/on-primary-container
+selected roles, and surface-container-highest/outline/surface-container-highest
+unselected roles. `SwitchTokens` also generates Hover/Focus/Pressed-suffixed
+handle, track, and icon color roles that `SwitchColors`/`defaultSwitchColors`
+never read, so they are not registered, matching the unread-role precedent
+from Checkbox and Radio. `DisabledTrackOpacity` (0.12) is one source constant
+read by three different disabled roles — the disabled checked track, the
+disabled unchecked track, and the disabled unchecked border — and is
+registered once and reused rather than duplicated, unlike Checkbox's
+distinctly-named equal opacities. `DisabledSelectedHandleOpacity` is a real
+constant equal to 1.0, a functional no-op kept as a literal opaque color.
+
+Two roles are deliberate web additions, following the same Checkbox/Radio
+precedent: the state layer uses a primary/on-surface-variant identity pairing
+because the pinned `ripple()` call carries no explicit per-state color, and
+disabled colors use `color-mix(..., transparent)` instead of the source's
+`compositeOver(colorScheme.surface)`, so they composite correctly against
+whatever backdrop the control actually sits on. The sourced
+`MotionSchemeKeyTokens.FastSpatial` thumb-shape animation and `DefaultEffects`
+color animation need no substitution for the same reason as Checkbox's and
+Radio's springs; the press-triggered `SnapSpec` is reproduced as a
+zero-duration `transition-duration` scoped to `:active`.

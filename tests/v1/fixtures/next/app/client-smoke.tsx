@@ -9,6 +9,7 @@ import {
   IconButton,
   Radio,
   Surface,
+  Switch,
   Text,
   defaultTokenSet,
   useResolvedColorMode,
@@ -35,6 +36,7 @@ export function ClientSmoke() {
   const cardButtonRef = useRef<HTMLButtonElement | null>(null)
   const checkboxRef = useRef<HTMLInputElement | null>(null)
   const radioRef = useRef<HTMLInputElement | null>(null)
+  const switchRef = useRef<HTMLInputElement | null>(null)
   const iconButtonRef = useRef<HTMLButtonElement | null>(null)
   const fabRef = useRef<HTMLButtonElement | null>(null)
   return (
@@ -94,6 +96,17 @@ export function ClientSmoke() {
           }
         />
         Fixture radio
+      </label>
+      <label>
+        <Switch
+          ref={switchRef}
+          name="fixture-notifications"
+          defaultChecked
+          onCheckedChange={(checked) =>
+            switchRef.current?.setAttribute('data-fixture-checked', String(checked))
+          }
+        />
+        Fixture switch
       </label>
       <IconButton
         ref={iconButtonRef}
