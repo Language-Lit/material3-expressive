@@ -16,6 +16,7 @@ import { FloatingActionButtonExample } from '../examples/FloatingActionButton.ex
 import { IconExample } from '../examples/Icon.example'
 import { IconButtonExample } from '../examples/IconButton.example'
 import { LinearProgressExample } from '../examples/LinearProgress.example'
+import { LoadingIndicatorExample } from '../examples/LoadingIndicator.example'
 import { MenuExample } from '../examples/Menu.example'
 import { NavigationBarExample } from '../examples/NavigationBar.example'
 import { NavigationDrawerExample } from '../examples/NavigationDrawer.example'
@@ -76,6 +77,7 @@ createRoot(root).render(
         <LinearProgressExample />
         <CircularProgressExample />
         <WavyProgressExample />
+        <LoadingIndicatorExample />
       </main>
     </Material3Provider>
   </React.StrictMode>,

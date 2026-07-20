@@ -12,6 +12,7 @@ import { defaultFloatingActionButtonTokens } from './floating-action-button'
 import { defaultIconTokens } from './icon'
 import { defaultIconButtonTokens } from './icon-button'
 import { defaultLinearProgressTokens } from './linear-progress'
+import { defaultLoadingIndicatorTokens } from './loading-indicator'
 import { defaultMenuTokens } from './menu'
 import { defaultMotion } from './motion'
 import { defaultNavigationBarTokens } from './navigation-bar'
@@ -96,6 +97,7 @@ const defaultTokenSetInput = {
     defaultLinearProgressTokens,
     defaultCircularProgressTokens,
     defaultWavyProgressTokens,
+    defaultLoadingIndicatorTokens,
   ],
 } satisfies FoundationTokenSet
 

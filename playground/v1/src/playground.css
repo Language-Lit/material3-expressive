@@ -381,3 +381,17 @@
   flex-wrap: wrap;
   gap: 1.5rem;
 }
+
+.loading-indicator-example {
+  display: grid;
+  gap: 1rem;
+  margin-block-start: 2rem;
+  padding: 1.5rem;
+}
+
+.loading-indicator-example__row {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
