@@ -158,11 +158,20 @@
     );
   }
 
+  /* line-height: 1, not the body-small typescale's own line-height, on both
+     this and the notch below. Compose measures and trims the label to its
+     exact line-height with no extra font leading, so `endY = -(labelHeight /
+     2)` (the pinned source's own floated-label formula, which `top: 0` +
+     `translateY(-50%)` below reproduces exactly) lands the label dead-center
+     on the border. Browsers don't trim a font's own ascent/descent out of
+     `line-height` the same way, so the untrimmed body-small line-height
+     (visibly larger than Roboto's own glyph metrics at this size) shifted
+     the visible glyph well above the border instead of straddling it. */
   .m3e-text-field__input:focus ~ .m3e-text-field__label,
   .m3e-text-field__input:not(:placeholder-shown) ~ .m3e-text-field__label {
     font-size: var(--m3e-sys-typescale-baseline-body-small-font-size);
     letter-spacing: var(--m3e-sys-typescale-baseline-body-small-letter-spacing);
-    line-height: var(--m3e-sys-typescale-baseline-body-small-line-height);
+    line-height: 1;
   }
 
   .m3e-text-field[data-m3e-variant="filled"] .m3e-text-field__input:focus ~ .m3e-text-field__label,
@@ -261,9 +270,13 @@
   }
 
   .m3e-text-field__notch {
+    /* line-height: 1 matches the label's own override above, not the
+       body-small typescale's line-height — see the comment there. The
+       native border-notch height tracks this element's own box, so it has
+       to shrink in step with the label or the two drift apart. */
     font-size: var(--m3e-sys-typescale-baseline-body-small-font-size);
     letter-spacing: var(--m3e-sys-typescale-baseline-body-small-letter-spacing);
-    line-height: var(--m3e-sys-typescale-baseline-body-small-line-height);
+    line-height: 1;
     margin-inline-start: calc(var(--m3e-comp-text-field-icon-content-gap));
     max-inline-size: 0.01px;
     overflow: hidden;
