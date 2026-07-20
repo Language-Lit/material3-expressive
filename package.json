@@ -107,6 +107,7 @@
     "dev": "tsup --watch",
     "playground": "vite --config vite.config.ts",
     "playground:build": "vite build --config vite.config.ts",
+    "playground:v1": "vite --config playground/v1/vite.dev.config.ts --port 5173 --strictPort",
     "typecheck": "tsc --noEmit",
     "test": "vitest --run",
     "test:v1": "vitest --run tests/v1",

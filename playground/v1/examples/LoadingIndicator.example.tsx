@@ -21,9 +21,12 @@ export function LoadingIndicatorExample() {
       </Text>
 
       <div className="loading-indicator-example__row">
+        <LoadingIndicator aria-label="Loading, empty" value={0} />
         <LoadingIndicator aria-label="Loading, low" value={0.05} />
         <LoadingIndicator aria-label="Loading, mid" value={0.45} />
         <LoadingIndicator aria-label="Loading, high" value={0.98} />
+        <LoadingIndicator aria-label="Loading, complete" value={1} />
+        <LoadingIndicator aria-label="Loading, custom max" value={150} max={200} />
         <LoadingIndicator aria-label="Loading" />
       </div>
     </Surface>

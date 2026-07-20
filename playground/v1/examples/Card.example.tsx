@@ -41,6 +41,35 @@ export function CardExample() {
           </Card>
         ))}
       </div>
+      <Text as="h3" variant="titleMedium" emphasis="emphasized">
+        Passive card elements
+      </Text>
+      <div className="card-example__grid">
+        <Card as="div" variant="filled" className="card-example__item">
+          <Text as="h4" variant="titleSmall" emphasis="emphasized">
+            div card
+          </Text>
+          <Text as="p" variant="bodyMedium">
+            Passive card rendered as a native div.
+          </Text>
+        </Card>
+        <Card as="section" variant="elevated" className="card-example__item">
+          <Text as="h4" variant="titleSmall" emphasis="emphasized">
+            section card
+          </Text>
+          <Text as="p" variant="bodyMedium">
+            Passive card rendered as a native section.
+          </Text>
+        </Card>
+        <Card as="aside" variant="outlined" className="card-example__item">
+          <Text as="h4" variant="titleSmall" emphasis="emphasized">
+            aside card
+          </Text>
+          <Text as="p" variant="bodyMedium">
+            Passive card rendered as a native aside.
+          </Text>
+        </Card>
+      </div>
       <div className="card-example__grid">
         {variants.map((variant) => (
           <Card
@@ -58,9 +87,17 @@ export function CardExample() {
             </Text>
           </Card>
         ))}
-        <Card interactive disabled className="card-example__item">
-          Unavailable card
-        </Card>
+        {variants.map((variant) => (
+          <Card
+            key={`disabled-${variant}`}
+            interactive
+            disabled
+            variant={variant}
+            className="card-example__item"
+          >
+            Unavailable {variant} card
+          </Card>
+        ))}
       </div>
       <Text as="output" variant="bodySmall" aria-live="polite">
         Last opened: {openedCard}

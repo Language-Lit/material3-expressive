@@ -5,6 +5,7 @@ export function DialogExample() {
   const [confirmOpen, setConfirmOpen] = useState(false)
   const [customOpen, setCustomOpen] = useState(false)
   const [nonModalOpen, setNonModalOpen] = useState(false)
+  const [titlelessOpen, setTitlelessOpen] = useState(false)
 
   return (
     <Surface
@@ -31,6 +32,9 @@ export function DialogExample() {
         </Button>
         <Button variant="tonal" onClick={() => setNonModalOpen(true)}>
           Open non-modal
+        </Button>
+        <Button variant="tonal" onClick={() => setTitlelessOpen(true)}>
+          Open title-less
         </Button>
       </div>
 
@@ -87,6 +91,22 @@ export function DialogExample() {
             Close
           </Button>
         </div>
+      </Dialog>
+
+      <Dialog
+        open={titlelessOpen}
+        onOpenChange={setTitlelessOpen}
+        icon={<Icon source="check_circle" />}
+        aria-label="Changes saved"
+        actions={
+          <Button variant="text" onClick={() => setTitlelessOpen(false)}>
+            Done
+          </Button>
+        }
+      >
+        <Text as="p" variant="bodyMedium">
+          No title here: the icon and body carry the message on their own.
+        </Text>
       </Dialog>
     </Surface>
   )

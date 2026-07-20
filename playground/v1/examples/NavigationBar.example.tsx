@@ -20,6 +20,7 @@ export function NavigationBarExample() {
       <NavigationBar
         aria-label="Example sections"
         className="navigation-bar-example__bar"
+        defaultValue="profile"
         items={[
           {
             value: 'home',
@@ -34,6 +35,10 @@ export function NavigationBarExample() {
             selectedIcon: <Icon source="favorite" fill={1} />,
           },
           { value: 'trash', label: 'Trash', icon: <Icon source="delete" />, disabled: true },
+          // No `selectedIcon` — selected by default here to visually confirm
+          // the fallback-to-`icon`-while-selected behavior.
+          { value: 'profile', label: 'Profile', icon: <Icon source="person" /> },
+          { value: 'docs', label: 'Docs', icon: <Icon source="description" />, href: '#' },
         ]}
       />
     </Surface>

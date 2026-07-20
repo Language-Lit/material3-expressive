@@ -1,6 +1,9 @@
-import { FloatingToolbar, Icon, IconButton, Surface, Text } from '@language-lit/material3-expressive/v1'
+import { useState } from 'react'
+import { Button, FloatingToolbar, Icon, IconButton, Surface, Text } from '@language-lit/material3-expressive/v1'
 
 export function FloatingToolbarExample() {
+  const [collapsibleExpanded, setCollapsibleExpanded] = useState(true)
+
   return (
     <Surface
       as="section"
@@ -49,6 +52,33 @@ export function FloatingToolbarExample() {
           </IconButton>
           <IconButton aria-label="Remove">
             <Icon source="remove" />
+          </IconButton>
+        </FloatingToolbar>
+
+        <FloatingToolbar aria-label="Vibrant vertical actions" orientation="vertical" variant="vibrant">
+          <IconButton aria-label="Add">
+            <Icon source="add" />
+          </IconButton>
+          <IconButton aria-label="Remove">
+            <Icon source="remove" />
+          </IconButton>
+        </FloatingToolbar>
+      </div>
+
+      <div className="floating-toolbar-example__row">
+        <Button variant="outlined" onClick={() => setCollapsibleExpanded((expanded) => !expanded)}>
+          {collapsibleExpanded ? 'Collapse' : 'Expand'} toolbar
+        </Button>
+        <FloatingToolbar
+          aria-label="Collapsible formatting"
+          expanded={collapsibleExpanded}
+          onExpandedChange={setCollapsibleExpanded}
+        >
+          <IconButton aria-label="Bold">
+            <Icon source="format_bold" />
+          </IconButton>
+          <IconButton aria-label="Italic">
+            <Icon source="format_italic" />
           </IconButton>
         </FloatingToolbar>
       </div>

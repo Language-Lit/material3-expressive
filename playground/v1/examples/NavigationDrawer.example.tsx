@@ -2,9 +2,17 @@ import { useState } from 'react'
 import { Button, Icon, NavigationDrawer, Surface, Text } from '@language-lit/material3-expressive/v1'
 
 const items = [
-  { value: 'inbox', label: 'Inbox', icon: <Icon source="inbox" /> },
+  // Selected by default (first item) in every variant below, so its
+  // `selectedIcon` is visually confirmed across all three.
+  {
+    value: 'inbox',
+    label: 'Inbox',
+    icon: <Icon source="inbox" />,
+    selectedIcon: <Icon source="inbox" fill={1} />,
+  },
   { value: 'sent', label: 'Sent', icon: <Icon source="send" /> },
   { value: 'trash', label: 'Trash', icon: <Icon source="delete" />, disabled: true },
+  { value: 'docs', label: 'Docs', icon: <Icon source="description" />, href: '#' },
 ]
 
 export function NavigationDrawerExample() {

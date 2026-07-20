@@ -60,6 +60,38 @@ export function TextFieldExample() {
         <TextField label="Unavailable" disabled defaultValue="Locked" />
         <TextField variant="outlined" label="Unavailable" disabled placeholder="Locked" />
       </div>
+
+      <div className="text-field-example__row">
+        <TextField variant="outlined" label="Password" type="password" defaultValue="hunter2" />
+        <TextField label="Phone" type="tel" placeholder="(555) 123-4567" />
+        <TextField variant="outlined" label="Website" type="url" placeholder="https://example.com" />
+        <TextField label="Quantity" type="number" defaultValue="1" />
+      </div>
+
+      <div className="text-field-example__row">
+        <TextField
+          variant="outlined"
+          label="Coupon"
+          error
+          defaultValue="EXPIRED10"
+          supportingText="This code has expired"
+        />
+        <TextField
+          variant="outlined"
+          label="Card number"
+          error
+          leadingIcon={<Icon source="credit_card" />}
+          defaultValue="4111 1111 1111 1111"
+          supportingText="This card was declined"
+        />
+        <TextField
+          label="Locked field"
+          disabled
+          error
+          defaultValue="Invalid"
+          supportingText="Contact support"
+        />
+      </div>
     </Surface>
   )
 }

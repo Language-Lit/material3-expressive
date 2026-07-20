@@ -20,10 +20,17 @@ const filterSegments = [
   { value: 'drive', label: 'Drive' },
 ]
 
+const notificationSegments = [
+  { value: 'email', label: 'Email', icon: <Icon source="mail" /> },
+  { value: 'sms', label: 'SMS', icon: <Icon source="sms" /> },
+  { value: 'push', label: 'Push', icon: <Icon source="notifications" /> },
+]
+
 export function SegmentedButtonGroupExample() {
   const [view, setView] = useState('day')
   const [align, setAlign] = useState('left')
   const [filters, setFilters] = useState<readonly string[]>(['walk'])
+  const [notifications, setNotifications] = useState<readonly string[]>(['email', 'push'])
 
   return (
     <Surface
@@ -87,6 +94,23 @@ export function SegmentedButtonGroupExample() {
           ]}
           aria-label="Partly unavailable view"
           defaultValue="day"
+        />
+      </div>
+
+      <div className="segmented-button-group-example__row">
+        <SegmentedButtonGroup
+          multiple
+          segments={notificationSegments}
+          aria-label="Notification channels"
+          value={notifications}
+          onValueChange={setNotifications}
+        />
+        <SegmentedButtonGroup
+          multiple
+          segments={filterSegments}
+          aria-label="Unavailable travel modes"
+          defaultValue={['walk']}
+          disabled
         />
       </div>
     </Surface>

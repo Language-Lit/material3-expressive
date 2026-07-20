@@ -4,6 +4,7 @@ import {
   Material3Provider,
   createTheme,
   defaultTokenSet,
+  generateTokenCss,
   validateTokenSet,
 } from '@language-lit/material3-expressive/v1'
 import '@language-lit/material3-expressive/v1/styles.css'
@@ -44,6 +45,15 @@ const root = document.getElementById('root')
 const workbenchTheme = createTheme({ density: { scale: -1 } })
 
 if (!root) throw new Error('Missing playground root element')
+
+// vite.dev.config.ts aliases the styles.css import to the authored-only
+// source file (no build step to generate the token custom-properties
+// layer), so inject it here to keep live-source dev mode fully styled.
+if (import.meta.env.DEV) {
+  const tokenStyle = document.createElement('style')
+  tokenStyle.textContent = generateTokenCss(defaultTokenSet)
+  document.head.appendChild(tokenStyle)
+}
 
 createRoot(root).render(
   <React.StrictMode>

@@ -5,6 +5,7 @@ export function MenuExample() {
   const anchorRef = useRef<HTMLButtonElement>(null)
   const [open, setOpen] = useState(false)
   const [wordWrap, setWordWrap] = useState(true)
+  const [autoSave, setAutoSave] = useState(true)
   const [lastSelected, setLastSelected] = useState<string | null>(null)
 
   return (
@@ -58,6 +59,13 @@ export function MenuExample() {
             onSelect: () => setLastSelected('Paste'),
           },
           {
+            value: 'share',
+            label: 'Share',
+            leadingIcon: <Icon source="share" />,
+            trailingIcon: <Icon source="chevron_right" />,
+            onSelect: () => setLastSelected('Share'),
+          },
+          {
             value: 'delete',
             label: 'Delete',
             leadingIcon: <Icon source="delete" />,
@@ -69,6 +77,13 @@ export function MenuExample() {
             label: 'Word wrap',
             checked: wordWrap,
             onCheckedChange: setWordWrap,
+          },
+          {
+            value: 'auto-save',
+            label: 'Auto save',
+            checked: autoSave,
+            disabled: true,
+            onCheckedChange: setAutoSave,
           },
         ]}
       />

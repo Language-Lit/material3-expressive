@@ -18,9 +18,14 @@ export function LinearProgressExample() {
       </Text>
 
       <Text as="p" variant="labelLarge">Determinate</Text>
+      <LinearProgress aria-label="Download progress, empty" value={0} />
       <LinearProgress aria-label="Download progress, low" value={0.05} />
       <LinearProgress aria-label="Download progress, mid" value={0.45} />
       <LinearProgress aria-label="Download progress, high" value={0.98} />
+      <LinearProgress aria-label="Download progress, complete" value={1} />
+
+      <Text as="p" variant="labelLarge">Custom max</Text>
+      <LinearProgress aria-label="Download progress, custom max" value={150} max={200} />
 
       <Text as="p" variant="labelLarge">Indeterminate</Text>
       <LinearProgress aria-label="Loading" />
