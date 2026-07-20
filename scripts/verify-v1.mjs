@@ -7,6 +7,7 @@ const checks = [
   ['Typecheck all source', 'typecheck'],
   ['Run legacy and v1 tests', 'test'],
   ['Build distributable package', 'build'],
+  ['Build production v1 playground', 'playground:v1:build'],
   ['Typecheck isolated v1 source', 'typecheck:v1'],
   ['Validate v1 architecture', 'check:v1:architecture'],
   ['Validate v1 documentation', 'check:v1:docs'],

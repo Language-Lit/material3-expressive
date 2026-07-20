@@ -106,6 +106,7 @@ const requiredGuides = [
   'docs/v1/MIGRATION.md',
   'docs/v1/WEB_DEVIATIONS.md',
   'docs/v1/RELEASE_NOTES.md',
+  'docs/v1/RELEASE_READINESS.md',
 ]
 
 for (const guide of requiredGuides) {

@@ -43,6 +43,16 @@ import './playground.css'
 
 const root = document.getElementById('root')
 const workbenchTheme = createTheme({ density: { scale: -1 } })
+let runtimeErrorCount = 0
+
+function reportRuntimeError() {
+  runtimeErrorCount += 1
+  const status = document.getElementById('v1-runtime-status')
+  if (status) status.textContent = `Runtime errors: ${runtimeErrorCount}`
+}
+
+window.addEventListener('error', reportRuntimeError)
+window.addEventListener('unhandledrejection', reportRuntimeError)
 
 if (!root) throw new Error('Missing playground root element')
 
@@ -65,6 +75,7 @@ createRoot(root).render(
           Material {defaultTokenSet.metadata.materialVersion}:{' '}
           {validateTokenSet(defaultTokenSet).success ? 'valid' : 'invalid'}
         </output>
+        <output id="v1-runtime-status">Runtime errors: {runtimeErrorCount}</output>
         <SurfaceExample />
         <TextExample />
         <IconExample />
