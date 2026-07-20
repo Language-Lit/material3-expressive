@@ -1,10 +1,13 @@
 import { forwardRef, type CSSProperties, type ForwardedRef, type ReactElement } from 'react'
 import type { WavyProgressProps } from './WavyProgress.types'
 import {
+  CIRCULAR_CIRCLE_PATH,
   CIRCULAR_WAVE_PATH,
-  CIRCULAR_WAVE_RADIUS,
+  LINEAR_FLAT_PATH_DETERMINATE,
   LINEAR_WAVE_PATH_DETERMINATE,
   LINEAR_WAVE_PATH_INDETERMINATE,
+  LINEAR_WAVE_VIEWBOX_HEIGHT,
+  LINEAR_WAVE_VIEWBOX_WIDTH,
 } from './wavePaths'
 
 interface WavyProgressComponent {
@@ -12,19 +15,22 @@ interface WavyProgressComponent {
   displayName?: string
 }
 
-// Both linear wave paths are pre-rendered at a fixed 2400px intrinsic width
-// (see wavePaths.ts) and revealed by a smaller, percentage-sized clipping
-// parent — the SVG element itself must declare this same fixed width so it
-// never stretches (which would distort the wavelength).
-const LINEAR_WAVE_VIEWBOX_WIDTH = 2400
-
 const CIRCULAR_DIAMETER = 48
 const CIRCULAR_STROKE_WIDTH = 4
-// Center = radius + half the stroke width, so the stroked circle's outer
-// edge lands exactly on the viewBox boundary (diameter = 2 * center).
-const CIRCULAR_CENTER = CIRCULAR_WAVE_RADIUS + CIRCULAR_STROKE_WIDTH / 2
-const CIRCULAR_CIRCUMFERENCE = 2 * Math.PI * CIRCULAR_WAVE_RADIUS
-const CIRCULAR_GAP_PCT = (4 / CIRCULAR_CIRCUMFERENCE) * 100
+const CIRCULAR_TRACK_GAP_PX = 4
+const CIRCULAR_CENTER = CIRCULAR_DIAMETER / 2
+const CIRCULAR_CENTERLINE_RADIUS = CIRCULAR_CENTER - CIRCULAR_STROKE_WIDTH / 2
+const CIRCULAR_CIRCUMFERENCE = 2 * Math.PI * CIRCULAR_CENTERLINE_RADIUS
+
+function circularTrackSpacingPct(progressFraction: number): number {
+  const progressLength = progressFraction * CIRCULAR_CIRCUMFERENCE
+  // CircularWavyProgressModifiers reserves both round-cap half-widths plus
+  // the requested track gap, shortening each term adaptively while the
+  // active segment is still too small to contain the full spacing.
+  const capInset = Math.min(progressLength, CIRCULAR_STROKE_WIDTH / 2)
+  const gap = Math.min(progressLength, CIRCULAR_TRACK_GAP_PX)
+  return ((capInset * 2 + gap) / CIRCULAR_CIRCUMFERENCE) * 100
+}
 
 // WavyProgressIndicatorDefaults.indicatorAmplitude: ramps the wave's
 // amplitude to zero near the start and end of determinate progress.
@@ -41,6 +47,7 @@ function WavyProgressRender(
   const coercedValue = determinate ? Math.min(Math.max(value as number, 0), max) : 0
   const progressFraction = max > 0 ? coercedValue / max : 0
   const amplitudeFraction = amplitudeFractionFor(progressFraction)
+  const renderedAmplitudeFraction = determinate ? amplitudeFraction : 1
 
   const rootProps = {
     ...divProps,
@@ -53,11 +60,15 @@ function WavyProgressRender(
     style: style as CSSProperties,
     'data-m3e-shape': shape,
     'data-m3e-determinate': determinate,
+    'data-m3e-amplitude': renderedAmplitudeFraction === 0 ? 'flat' : 'wave',
   }
 
   if (shape === 'circular') {
     const sweepPct = progressFraction * 100
-    const trackOnLenPct = Math.max(0, 100 - sweepPct - 2 * CIRCULAR_GAP_PCT)
+    const trackSpacingPct = circularTrackSpacingPct(progressFraction)
+    const trackOnLenPct = Math.max(0, 100 - sweepPct - 2 * trackSpacingPct)
+    const showIndicator = !determinate || sweepPct > 0
+    const showTrack = determinate && trackOnLenPct > 0
     return (
       <div {...rootProps}>
         <svg
@@ -67,53 +78,31 @@ function WavyProgressRender(
           height={CIRCULAR_DIAMETER}
           aria-hidden="true"
         >
-          {determinate && (
-            <circle
+          {showTrack && (
+            <path
               className="m3e-wavy-progress__track"
-              cx={CIRCULAR_CENTER}
-              cy={CIRCULAR_CENTER}
-              r={CIRCULAR_WAVE_RADIUS}
+              d={CIRCULAR_CIRCLE_PATH}
               pathLength={100}
-              transform={`rotate(-90 ${CIRCULAR_CENTER} ${CIRCULAR_CENTER})`}
               style={{
                 strokeDasharray: `${trackOnLenPct} ${100 - trackOnLenPct}`,
-                strokeDashoffset: -(sweepPct + CIRCULAR_GAP_PCT),
+                strokeDashoffset: -(sweepPct + trackSpacingPct),
               }}
             />
           )}
           <g className="m3e-wavy-progress__global-rotate">
             <g className="m3e-wavy-progress__additional-rotate">
-              {determinate && (
-                <circle
-                  className="m3e-wavy-progress__indicator m3e-wavy-progress__sweep"
-                  cx={CIRCULAR_CENTER}
-                  cy={CIRCULAR_CENTER}
-                  r={CIRCULAR_WAVE_RADIUS}
+              {!determinate && (
+                <path
+                  className="m3e-wavy-progress__track m3e-wavy-progress__track-sweep"
+                  d={CIRCULAR_CIRCLE_PATH}
                   pathLength={100}
-                  transform={`rotate(-90 ${CIRCULAR_CENTER} ${CIRCULAR_CENTER})`}
-                  style={{
-                    strokeDasharray: `${sweepPct} ${100 - sweepPct}`,
-                    strokeDashoffset: 0,
-                    opacity: 1 - amplitudeFraction,
-                  }}
                 />
               )}
-              {/* The wave path's own coordinate space is centered on
-                  (waveRadius, waveRadius); translating by half the stroke
-                  width aligns it with this SVG's (center, center) origin —
-                  no rotate correction needed, the path already starts at
-                  12 o'clock (see wavePaths.ts). The translate lives on
-                  this outer, unanimated <g> and the CSS-animated
-                  continuous "traveling ripple" rotation lives on the
-                  inner one — CSS `transform` fully replaces (does not
-                  compose with) an element's own `transform` attribute, so
-                  the two must be on separate nested elements to both take
-                  effect. */}
-              <g transform={`translate(${CIRCULAR_STROKE_WIDTH / 2} ${CIRCULAR_STROKE_WIDTH / 2})`}>
+              {showIndicator && (
                 <g className="m3e-wavy-progress__wave-rotate">
                   <path
                     className="m3e-wavy-progress__indicator m3e-wavy-progress__sweep m3e-wavy-progress__wave"
-                    d={CIRCULAR_WAVE_PATH}
+                    d={renderedAmplitudeFraction === 0 ? CIRCULAR_CIRCLE_PATH : CIRCULAR_WAVE_PATH}
                     pathLength={100}
                     vectorEffect="non-scaling-stroke"
                     style={
@@ -121,13 +110,12 @@ function WavyProgressRender(
                         ? {
                             strokeDasharray: `${sweepPct} ${100 - sweepPct}`,
                             strokeDashoffset: 0,
-                            opacity: amplitudeFraction,
                           }
                         : undefined
                     }
                   />
                 </g>
-              </g>
+              )}
             </g>
           </g>
         </svg>
@@ -140,7 +128,7 @@ function WavyProgressRender(
   const wave = (path: string) => (
     <svg
       className="m3e-wavy-progress__linear-wave-svg"
-      viewBox={`0 -1 ${LINEAR_WAVE_VIEWBOX_WIDTH} 2`}
+      viewBox={`0 0 ${LINEAR_WAVE_VIEWBOX_WIDTH} ${LINEAR_WAVE_VIEWBOX_HEIGHT}`}
       width={LINEAR_WAVE_VIEWBOX_WIDTH}
       preserveAspectRatio="none"
       aria-hidden="true"
@@ -155,15 +143,14 @@ function WavyProgressRender(
         <>
           <div
             className="m3e-wavy-progress__track"
-            style={{ insetInlineStart: `calc(${pct}% + var(--m3e-comp-wavy-progress-linear-track-gap))` }}
+            style={{
+              insetInlineStart: `calc(${pct}% + var(--m3e-comp-wavy-progress-linear-track-gap))`,
+            }}
           />
           <div className="m3e-wavy-progress__wave-clip" style={{ inlineSize: `${pct}%` }}>
-            <div
-              className="m3e-wavy-progress__wave-amplitude"
-              style={{ transform: `scaleY(${amplitudeFraction})` }}
-            >
-              {wave(LINEAR_WAVE_PATH_DETERMINATE)}
-            </div>
+            {wave(
+              amplitudeFraction === 0 ? LINEAR_FLAT_PATH_DETERMINATE : LINEAR_WAVE_PATH_DETERMINATE,
+            )}
           </div>
           <span className="m3e-wavy-progress__stop" />
         </>
@@ -171,10 +158,14 @@ function WavyProgressRender(
         <>
           <div className="m3e-wavy-progress__track" />
           <div className="m3e-wavy-progress__indeterminate-bar1">
-            <div className="m3e-wavy-progress__wave-clip">{wave(LINEAR_WAVE_PATH_INDETERMINATE)}</div>
+            <div className="m3e-wavy-progress__wave-clip">
+              {wave(LINEAR_WAVE_PATH_INDETERMINATE)}
+            </div>
           </div>
           <div className="m3e-wavy-progress__indeterminate-bar2">
-            <div className="m3e-wavy-progress__wave-clip">{wave(LINEAR_WAVE_PATH_INDETERMINATE)}</div>
+            <div className="m3e-wavy-progress__wave-clip">
+              {wave(LINEAR_WAVE_PATH_INDETERMINATE)}
+            </div>
           </div>
         </>
       )}

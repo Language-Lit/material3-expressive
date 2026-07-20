@@ -1,10 +1,10 @@
 # WavyProgress
 
 `WavyProgress` renders the Material 3 Expressive traveling-wave treatment:
-a rippling sine wave along a bar (`shape="linear"`, the default) or around
-a ring (`shape="circular"`). Pass `value` for determinate progress, or omit
-it entirely for a continuously animating indeterminate wave — the same
-contract a native `<progress>` element uses.
+a smooth quadratic wave along a bar (`shape="linear"`, the default) or a
+rounded nine-point ripple around a ring (`shape="circular"`). Pass `value`
+for determinate progress, or omit it entirely for a continuously animating
+indeterminate wave — the same contract a native `<progress>` element uses.
 
 ```tsx
 import { WavyProgress } from '@language-lit/material3-expressive/v1'
@@ -28,6 +28,17 @@ import '@language-lit/material3-expressive/v1/styles.css'
 - `shape="linear"`'s `inline-size` defaults to `100%`; `shape="circular"`
   has a fixed `48px` intrinsic size — the same width-flexibility split
   `LinearProgress`/`CircularProgress` use.
+- The linear wave reserves half of its `4px` stroke at both edges of the
+  `10px` container, so crests and troughs remain complete. The circular wave
+  uses matched circle/star cubic paths inside a stroke-safe `44px` drawing
+  area and rotates around the fixed `24px` view-box center. A synchronized
+  dash shift keeps the circular sweep endpoints in place while its lobes
+  travel.
+- At the sourced amplitude thresholds, determinate geometry morphs between
+  flat and full-wave paths while preserving stroke width; no SVG scaling or
+  opacity cross-fade is used.
+- Circular indeterminate mode keeps Material's visible circle track, rotating
+  it with the active sweep and continuously preserving the cap-aware gap.
 - For the plain (non-wavy) treatment, see `LinearProgress`/
   `CircularProgress`.
 

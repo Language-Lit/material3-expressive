@@ -26,6 +26,11 @@ import '@language-lit/material3-expressive/v1/styles.css'
   its own.
 - Fixed `40px` intrinsic size, matching a small, fixed-size spinner's real
   web usage; override `--m3e-comp-circular-progress-diameter` to resize.
+- Determinate arcs account for the visual width of their round caps when
+  reserving the active/track gap; 0% and 100% omit zero-length arcs rather
+  than letting SVG render a stray cap dot.
+- Indeterminate rotation layers share the fixed center of the SVG view box,
+  so the pulsing arc rotates in place as its painted bounds change.
 - For the Material 3 Expressive rippling-ring treatment, see
   `WavyProgress`.
 

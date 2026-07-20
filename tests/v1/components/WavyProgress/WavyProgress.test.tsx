@@ -75,26 +75,60 @@ describe('WavyProgress', () => {
     expect((sweep.style as CSSStyleDeclaration).strokeDasharray).toBe('25 75')
   })
 
-  it('circular shape: renders no track element at all when indeterminate', () => {
+  it('circular shape: does not paint zero-length round-cap artifacts at either endpoint', () => {
+    const { rerender } = render(<WavyProgress aria-label="Progress" shape="circular" value={0} />)
+    expect(document.querySelector('.m3e-wavy-progress__indicator')).toBeNull()
+    expect(document.querySelector('.m3e-wavy-progress__track')).not.toBeNull()
+
+    rerender(<WavyProgress aria-label="Progress" shape="circular" value={1} />)
+    expect(document.querySelector('.m3e-wavy-progress__indicator')).not.toBeNull()
+    expect(document.querySelector('.m3e-wavy-progress__track')).toBeNull()
+  })
+
+  it('circular shape: morphs one matched cubic path between the flat circle and rounded wave', () => {
+    const { rerender } = render(
+      <WavyProgress aria-label="Progress" shape="circular" value={0.05} />,
+    )
+    const flatPath = document.querySelector('.m3e-wavy-progress__wave')?.getAttribute('d') ?? ''
+    expect(screen.getByRole('progressbar').getAttribute('data-m3e-amplitude')).toBe('flat')
+
+    rerender(<WavyProgress aria-label="Progress" shape="circular" value={0.5} />)
+    const wavePath = document.querySelector('.m3e-wavy-progress__wave')?.getAttribute('d') ?? ''
+    expect(screen.getByRole('progressbar').getAttribute('data-m3e-amplitude')).toBe('wave')
+    expect(wavePath).not.toBe(flatPath)
+    expect(wavePath.match(/\bC\b/g)?.length).toBe(flatPath.match(/\bC\b/g)?.length)
+    expect(wavePath.match(/\bC\b/g)?.length).toBe(27)
+  })
+
+  it('circular shape: keeps the sourced track visible when indeterminate', () => {
     const { rerender } = render(<WavyProgress aria-label="Progress" shape="circular" value={0.5} />)
     expect(document.querySelector('.m3e-wavy-progress__track')).not.toBeNull()
 
     rerender(<WavyProgress aria-label="Syncing" shape="circular" />)
-    expect(document.querySelector('.m3e-wavy-progress__track')).toBeNull()
+    const track = document.querySelector('.m3e-wavy-progress__track') as SVGPathElement
+    expect(track).not.toBeNull()
+    expect(track.classList.contains('m3e-wavy-progress__track-sweep')).toBe(true)
+    expect(track.hasAttribute('style')).toBe(false)
   })
 
   it('ramps amplitude toward zero near the start and end of determinate progress', () => {
     const { rerender } = render(<WavyProgress aria-label="Upload" value={0.02} />)
-    let amplitude = document.querySelector('.m3e-wavy-progress__wave-amplitude') as HTMLElement
-    expect(amplitude.style.transform).toBe('scaleY(0)')
+    let path = document.querySelector('.m3e-wavy-progress__linear-wave-svg path')
+    const flatPath = path?.getAttribute('d')
+    expect(screen.getByRole('progressbar').getAttribute('data-m3e-amplitude')).toBe('flat')
+    expect(flatPath).toContain('Q')
 
     rerender(<WavyProgress aria-label="Upload" value={0.5} />)
-    amplitude = document.querySelector('.m3e-wavy-progress__wave-amplitude') as HTMLElement
-    expect(amplitude.style.transform).toBe('scaleY(1)')
+    path = document.querySelector('.m3e-wavy-progress__linear-wave-svg path')
+    const wavePath = path?.getAttribute('d')
+    expect(screen.getByRole('progressbar').getAttribute('data-m3e-amplitude')).toBe('wave')
+    expect(wavePath).not.toBe(flatPath)
+    expect(wavePath?.match(/\bQ\b/g)?.length).toBe(flatPath?.match(/\bQ\b/g)?.length)
 
     rerender(<WavyProgress aria-label="Upload" value={0.99} />)
-    amplitude = document.querySelector('.m3e-wavy-progress__wave-amplitude') as HTMLElement
-    expect(amplitude.style.transform).toBe('scaleY(0)')
+    path = document.querySelector('.m3e-wavy-progress__linear-wave-svg path')
+    expect(screen.getByRole('progressbar').getAttribute('data-m3e-amplitude')).toBe('flat')
+    expect(path?.getAttribute('d')).toBe(flatPath)
   })
 
   it('forwards ref, className, and style to the root', () => {

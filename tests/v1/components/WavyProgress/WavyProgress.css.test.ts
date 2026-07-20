@@ -2,7 +2,9 @@ import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 
 const css = readFileSync(
-  fileURLToPath(new URL('../../../../src/v1/components/WavyProgress/WavyProgress.css', import.meta.url)),
+  fileURLToPath(
+    new URL('../../../../src/v1/components/WavyProgress/WavyProgress.css', import.meta.url),
+  ),
   'utf8',
 )
 
@@ -19,18 +21,32 @@ describe('WavyProgress stylesheet contract', () => {
     expect(css).toContain('@keyframes m3e-wavy-progress-linear-wave-travel-determinate')
     expect(css).toContain('@keyframes m3e-wavy-progress-linear-wave-travel-indeterminate')
     expect(css).toContain('@keyframes m3e-wavy-progress-wave-rotate')
+    expect(css).toContain('@keyframes m3e-wavy-progress-wave-dash-travel')
+    expect(css).toContain('stroke-dashoffset: -11.111111')
     expect(css).toContain('var(--m3e-comp-wavy-progress-wave-travel-duration)')
   })
 
   it('transitions the amplitude ramp on its own dedicated duration/easing tokens', () => {
     expect(css).toContain('var(--m3e-comp-wavy-progress-amplitude-transition-duration)')
     expect(css).toContain('var(--m3e-comp-wavy-progress-amplitude-transition-easing)')
+    expect(css).toContain('var(--m3e-comp-wavy-progress-amplitude-decreasing-transition-easing)')
+    expect(css).toMatch(/transition:\s*d /)
+    expect(css).not.toContain('scaleY(')
   })
 
   it('composes three independent circular indeterminate animations, matching CircularProgress', () => {
     expect(css).toContain('@keyframes m3e-wavy-progress-global-rotate')
     expect(css).toContain('@keyframes m3e-wavy-progress-additional-rotate')
     expect(css).toContain('@keyframes m3e-wavy-progress-sweep-pulse')
+    expect(css).toContain('@keyframes m3e-wavy-progress-track-sweep-pulse')
+  })
+
+  it('rotates every circular animation layer around the fixed SVG view box', () => {
+    expect(css).toContain('transform-box: view-box')
+    expect(css).not.toContain('transform-box: fill-box')
+    expect(css).toMatch(/to\s*{\s*transform:\s*rotate\(-40deg\);\s*}/)
+    expect(css).toMatch(/from\s*{\s*transform:\s*rotate\(90deg\);\s*}/)
+    expect(css).toContain('stroke-linecap: round')
   })
 
   it('drives linear indeterminate motion with CSS @keyframes, not a JS animation loop', () => {

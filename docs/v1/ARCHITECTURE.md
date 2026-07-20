@@ -371,6 +371,19 @@ a deliberate 3-tier mapping that diverges from the pinned source's own
 rendering and pre-hydration always reflect the compact tier, corrected by
 a client effect once a real viewport exists to measure.
 
+`LinearProgress`, `CircularProgress`, and `WavyProgress` share the native
+`<progress>` determinate/indeterminate value contract while rendering custom
+DOM/SVG geometry. Their continuous motion uses component-owned CSS
+`@keyframes`, not a JavaScript frame loop. Circular animation layers rotate
+around explicit SVG view-box centers, and round-capped endpoint paths are
+omitted when their visible length is zero. `WavyProgress` builds the pinned
+linear quadratic wave inside its stroke-safe 10px container and uses matched
+27-cubic circle/rounded-nine-point-star endpoints generated from the faithful
+offline `RoundedPolygon`/`Morph` port established by `LoadingIndicator`.
+Amplitude changes interpolate path geometry so stroke width remains constant.
+ADR 0021 records the progress-specific geometry and motion decisions; ADR
+0022 records the shared offline geometry provenance.
+
 ## Styling
 
 Component CSS is authored beside the component. `src/v1/styles/styles.css`

@@ -29,7 +29,8 @@ Supported Material baseline: AndroidX Material 3 branch revision
 - A fixed `40x40` SVG (`Size` token) containing a `<circle>` track
   (determinate only) and a `<circle>` indicator, both driven by
   `stroke-dasharray`/`stroke-dashoffset` with an explicit `pathLength={100}`
-  so every sweep value is a plain 0–100 number.
+  so every sweep value is a plain 0–100 number. A zero-length active or track
+  arc is omitted so its round cap cannot paint an endpoint dot.
 
 ## Variants, shape, color, and size
 
@@ -41,13 +42,19 @@ Supported Material baseline: AndroidX Material 3 branch revision
 ## States and motion
 
 - Determinate: the sweep's `stroke-dasharray` transitions on value changes
-  via the shared `--m3e-sys-motion-expressive-default-spatial-*` slot.
+  via the shared `--m3e-sys-motion-expressive-default-spatial-*` slot. Track
+  placement reserves the requested 4px gap plus the 4px stroke-width
+  allowance required by the two round caps, clamped for short active arcs.
 - Indeterminate: three independently animated nested groups compose
   additively, matching the source's three composed `animateFloat` values —
   a continuous `1080deg`/`6000ms` linear global rotation, a stepped
   `90/180/270/360deg` additional rotation
   (`EasingEmphasizedDecelerateCubicBezier`), and a `0.1→0.87→0.1` sweep
-  pulse (`EasingStandardCubicBezier` then linear).
+  pulse (`EasingStandardCubicBezier` then linear). Each nested group uses
+  the fixed SVG view box as its transform basis and resolves to the 20px/20px
+  canvas center throughout the cycle. Determinate geometry starts at
+  `-90deg` (12 o'clock); indeterminate preserves the source's native
+  circle-path phase before those composed rotations.
 
 ## Accessibility
 

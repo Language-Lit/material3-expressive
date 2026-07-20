@@ -18,6 +18,7 @@ describe('CircularProgress stylesheet contract', () => {
 
   it('drives determinate sweep via stroke-dasharray, transitioning on the shared spatial motion slot', () => {
     expect(css).toContain('stroke-dasharray')
+    expect(css).toContain('stroke-linecap: round')
     expect(css).toContain('var(--m3e-sys-motion-expressive-default-spatial-duration)')
   })
 
@@ -25,6 +26,12 @@ describe('CircularProgress stylesheet contract', () => {
     expect(css).toContain('@keyframes m3e-circular-progress-global-rotate')
     expect(css).toContain('@keyframes m3e-circular-progress-additional-rotate')
     expect(css).toContain('@keyframes m3e-circular-progress-sweep-pulse')
+  })
+
+  it('rotates nested SVG layers around the fixed view box rather than their changing fill bounds', () => {
+    expect(css).toContain('transform-box: view-box')
+    expect(css).not.toContain('transform-box: fill-box')
+    expect(css).toContain('transform-origin: center')
   })
 
   it('uses an immediate reduced-motion outcome with a static partial arc fallback', () => {
