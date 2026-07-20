@@ -1,18 +1,62 @@
 # @language-lit/material3-expressive
 
-A framework-agnostic React component library implementing the Material 3 Expressive design system. Pure React — no Next.js dependency.
+A framework-neutral React implementation of Material 3 Expressive. The v1
+prerelease ships precompiled CSS, typed theme and token APIs, native web
+semantics, and 32 conformant public components.
 
-## Install
+## v1 prerelease
+
+Install the `next` candidate with React 18 or React 19:
 
 ```bash
-npm install @language-lit/material3-expressive
+npm install @language-lit/material3-expressive@next
 ```
 
-Peer dependencies: `react`, `react-dom`, `tailwindcss`.
+Import components from the additive v1 entry and the complete stylesheet once:
 
-## Setup
+```tsx
+import {
+  Button,
+  Material3Provider,
+} from '@language-lit/material3-expressive/v1'
+import '@language-lit/material3-expressive/v1/styles.css'
 
-**1. Tailwind preset** — add it to your `tailwind.config`:
+export function App() {
+  return (
+    <Material3Provider colorMode="system">
+      <Button>Continue</Button>
+    </Material3Provider>
+  )
+}
+```
+
+v1 does not require Tailwind, a content glob, a preset, runtime style injection,
+or framework-specific adapters. `Material3Provider` defaults to the complete
+theme and system color mode.
+
+The package root and existing subpaths still expose the frozen legacy API during
+the prerelease. Use `/v1` explicitly; stable-root cutover is a later, separately
+approved release task.
+
+## Documentation
+
+- [v1 documentation](docs/v1/README.md)
+- [Getting started](docs/v1/GETTING_STARTED.md)
+- [Theming](docs/v1/THEMING.md)
+- [SSR and system color mode](docs/v1/SSR.md)
+- [Supported components](docs/v1/SUPPORTED_COMPONENTS.md)
+- [Generic legacy-to-v1 migration](docs/v1/MIGRATION.md)
+- [Web deviations](docs/v1/WEB_DEVIATIONS.md)
+- [Prerelease notes and breaking changes](docs/v1/RELEASE_NOTES.md)
+
+The supported-component matrix is generated from the machine-readable inventory.
+Only entries marked `conformant` are part of the advertised v1 prerelease
+surface.
+
+## Legacy 0.3
+
+Existing applications can remain on the legacy release and its current entry
+points. The legacy Tailwind setup still uses the package preset and stylesheet:
 
 ```ts
 import { material3Preset } from '@language-lit/material3-expressive/tailwind-preset'
@@ -26,83 +70,25 @@ export default {
 }
 ```
 
-**2. Styles** — import the token stylesheet once (e.g. in your global CSS):
-
 ```css
 @import '@language-lit/material3-expressive/styles';
 ```
 
-**3. Provider** — components that render links or images pull those primitives
-from context, defaulting to native `<a>` / `<img>`. To plug in your framework's
-optimized primitives (e.g. Next.js), wrap your app once:
+Legacy and v1 styles are independent. Do not replace legacy imports or styles
+until deliberately migrating to the v1 contract.
 
-```tsx
-import { Material3Provider } from '@language-lit/material3-expressive'
-import NextLink from 'next/link'
-import NextImage from 'next/image'
-
-const LinkAdapter = ({ href, children, ...rest }) => (
-  <NextLink href={href} {...rest}>{children}</NextLink>
-)
-const ImageAdapter = (props) => <NextImage {...props} />
-
-export function Providers({ children }) {
-  return (
-    <Material3Provider Link={LinkAdapter} Image={ImageAdapter}>
-      {children}
-    </Material3Provider>
-  )
-}
-```
-
-Without a provider the components still work using native elements.
-
-## Usage
-
-```tsx
-import { Button } from '@language-lit/material3-expressive/components/buttons'
-import { Text } from '@language-lit/material3-expressive/components/display'
-// or from the barrel:
-import { Button, Text } from '@language-lit/material3-expressive'
-```
-
-### Controlled navigation
-
-`NavigationBar`, `NavigationRail`, and `TabsContainer` are presentational and
-controlled — they don't read a router. Supply the active location and a
-navigation callback:
-
-```tsx
-<NavigationBar
-  navigationItems={items}
-  activeLink={pathname}
-  onNavigate={(link) => router.push(link)}
-  onPrefetch={(link) => router.prefetch(link)}
-  fab={<FAB iconName="add" href="/new" />}
-/>
-```
-
-## Visual workbench
-
-Run the local component gallery while developing the library:
+## Development
 
 ```bash
 npm install
-npm run playground
+npm run playground:v1
+npm run check:v1:docs
+npm run verify:v1
 ```
 
-Then open `http://localhost:5173`. The workbench imports components directly
-from `src`, so edits are reflected immediately with Vite Fast Refresh. Its UI
-lives in `playground/`; production package builds continue to use `src/` and
-`tsup.config.ts`.
-
-## Build
-
-```bash
-npm run build      # tsup -> dist/ (ESM + d.ts), then copies styles
-npm run typecheck
-npm run test
-```
+The v1 playground runs at `http://localhost:5173`. The aggregate verification
+checks types, tests, package output, architecture, documentation, CSS, tokens,
+legacy contracts, bundle budgets, and packed Vite/Next consumer fixtures.
 
 ## License
 

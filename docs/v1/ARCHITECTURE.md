@@ -415,6 +415,13 @@ names, owner paths, task IDs, dependencies, conformance status, and exports. A
 planned entry makes no support claim. Only conformant entries may be presented as
 stable in generated documentation.
 
+`scripts/check-v1-docs.mjs` deterministically projects that inventory into
+`docs/v1/SUPPORTED_COMPONENTS.md` and verifies that every conformant component
+has a discoverable public page covering its example, anatomy, variants/states,
+accessibility, and tokens. The same gate validates the public setup, theming,
+SSR, migration, deviation, and release guides against package metadata. ADR 0026
+records the prerelease documentation and optional legacy Tailwind-peer decision.
+
 ## Decisions and generated output
 
 Cross-cutting decisions live in `docs/v1/adr/`. Generated files must identify
