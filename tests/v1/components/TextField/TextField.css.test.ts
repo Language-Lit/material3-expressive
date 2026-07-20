@@ -42,6 +42,16 @@ describe('TextField stylesheet contract', () => {
     expect(css).toContain('.m3e-text-field__notch')
     expect(css).toContain('max-inline-size: 1000px')
     expect(css).toContain('visibility: hidden')
+
+    // The browser only applies its special border-cutting layout to a
+    // <legend> that is in normal flow — floating or positioning it (even
+    // logically, e.g. `float: inline-start`) silently falls back to a
+    // plain block box with no border gap, leaving the fieldset's top
+    // border drawn straight across wherever the floating label sits.
+    const notchRule = css.slice(css.indexOf('.m3e-text-field__notch {'))
+    const notchBody = notchRule.slice(0, notchRule.indexOf('}'))
+    expect(notchBody).not.toMatch(/\bfloat\s*:/)
+    expect(notchBody).not.toMatch(/\bposition\s*:/)
   })
 
   it('uses the true-alpha color-mix technique for every disabled color', () => {

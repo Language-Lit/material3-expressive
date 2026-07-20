@@ -261,7 +261,6 @@
   }
 
   .m3e-text-field__notch {
-    float: inline-start;
     font-size: var(--m3e-sys-typescale-baseline-body-small-font-size);
     letter-spacing: var(--m3e-sys-typescale-baseline-body-small-letter-spacing);
     line-height: var(--m3e-sys-typescale-baseline-body-small-line-height);
