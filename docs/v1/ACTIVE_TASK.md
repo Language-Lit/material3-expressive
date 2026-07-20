@@ -2,9 +2,10 @@
 
 ## T14 — TextField and TextArea geometry repair
 
-Status: active
+Status: complete
 Approved: 2026-07-20
 Follow-up approved: 2026-07-20
+Completed: 2026-07-20
 
 ### Scope
 
