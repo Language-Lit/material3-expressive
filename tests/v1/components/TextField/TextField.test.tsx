@@ -29,9 +29,16 @@ describe('TextField', () => {
   it('renders the outlined variant with a notched border and no indicator', () => {
     render(<TextField variant="outlined" label="Email" />)
     const root = screen.getByLabelText('Email').closest('.m3e-text-field')
+    const outline = root?.querySelector('.m3e-text-field__outline')
 
     expect(root?.getAttribute('data-m3e-variant')).toBe('outlined')
-    expect(root?.querySelector('.m3e-text-field__outline')).not.toBeNull()
+    expect(outline?.tagName).toBe('SPAN')
+    expect(outline?.getAttribute('aria-hidden')).toBe('true')
+    expect(Array.from(outline?.children ?? [], (child) => child.className)).toEqual([
+      'm3e-text-field__outline-start',
+      'm3e-text-field__notch',
+      'm3e-text-field__outline-end',
+    ])
     expect(root?.querySelector('.m3e-text-field__notch')?.textContent).toBe('Email')
     expect(root?.querySelector('.m3e-text-field__indicator')).toBeNull()
   })

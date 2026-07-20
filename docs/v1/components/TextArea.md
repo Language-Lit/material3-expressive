@@ -29,12 +29,12 @@ native `textarea` for the native `input`. There is no `type` prop — native
 (`resize: vertical`) is kept as a deliberate web affordance; auto-growing
 height is out of scope.
 
-## Icons
+## Multiline layout
 
-Leading/trailing icons top-align to the first line instead of centering
-across the full multiline height — the only geometry delta from
-`TextField`, reasoned rather than sourced, since the pinned source leaves a
-multiline field's icon alignment to the caller's own icon composable.
+An empty resting label starts at the ordinary 16px top padding instead of
+centering across all rows. Leading/trailing icon slots remain vertically
+centered across the container. Both choices follow the pinned measure
+policy's explicit multiline-label branch and shared icon placement.
 
 ## Tokens and boundaries
 

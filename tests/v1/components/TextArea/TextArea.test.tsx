@@ -26,9 +26,12 @@ describe('TextArea', () => {
   it('renders the outlined variant with a notched border', () => {
     render(<TextArea variant="outlined" label="Notes" />)
     const root = screen.getByLabelText('Notes').closest('.m3e-text-field')
+    const outline = root?.querySelector('.m3e-text-field__outline')
 
     expect(root?.getAttribute('data-m3e-variant')).toBe('outlined')
+    expect(outline?.querySelector('.m3e-text-field__outline-start')).not.toBeNull()
     expect(root?.querySelector('.m3e-text-field__notch')?.textContent).toBe('Notes')
+    expect(outline?.querySelector('.m3e-text-field__outline-end')).not.toBeNull()
   })
 
   it('defaults its native placeholder to a single space so :placeholder-shown stays reliable', () => {
