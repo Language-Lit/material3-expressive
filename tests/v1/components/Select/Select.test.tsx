@@ -26,6 +26,17 @@ function getTrigger(name = 'Fruit') {
 }
 
 describe('Select', () => {
+  it('inherits the shared segmented outline in the outlined variant', () => {
+    render(<Select label="Fruit" options={fruitOptions} variant="outlined" />)
+    const outline = getTrigger().closest('.m3e-text-field')?.querySelector(
+      '.m3e-text-field__outline',
+    )
+
+    expect(outline?.querySelector('.m3e-text-field__outline-start')).not.toBeNull()
+    expect(outline?.querySelector('.m3e-text-field__notch')?.textContent).toBe('Fruit')
+    expect(outline?.querySelector('.m3e-text-field__outline-end')).not.toBeNull()
+  })
+
   it('renders a combobox trigger with no listbox until opened', () => {
     render(<Select label="Fruit" options={fruitOptions} />)
     const trigger = getTrigger()

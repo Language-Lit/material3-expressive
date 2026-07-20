@@ -228,14 +228,16 @@ unchanged decoration layer. The floating label's position and type size are
 read from the control's own `:focus`/`:placeholder-shown` pseudo-classes,
 extending the checked-driven-CSS precedent from Radio and Switch from a
 discrete boolean to a continuous has-value signal. The outlined variant's
-label-notched border uses a native `fieldset`/`legend` in place of the
-source's canvas-drawn border and difference-mode clip, so the gap sizes
-itself to the legend's own intrinsic text width with no JS measurement.
+label-notched border uses three CSS flex panels: a hidden body-small label
+clone gives the middle panel its intrinsic width, and that panel's top stroke
+scales away when the label floats. The panels paint against the field's own
+border box, keeping the outline, floating label, input, and icons in one
+coordinate system with no JS measurement.
 `error` and `disabled` are the only two states mirrored onto the root as
 `data-m3e-*` attributes, because they are the only states unreachable by a
 plain sibling combinator from the control and neither can change without
 this component re-rendering. ADR 0014 records the shared-foundation
-decision, the native-truth label float, and the fieldset/legend notch.
+decision, the native-truth label float, and the segmented outline.
 
 `SegmentedButtonGroup` establishes the data-driven-group boundary: one
 `segments` array replaces the pinned source's two row composables plus a

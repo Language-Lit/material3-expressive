@@ -14,6 +14,8 @@ Reviewed: 2026-07-20
 - Pinned generated AndroidX `FilledTextFieldTokens`/`OutlinedTextFieldTokens`,
   accessed 2026-07-20:
   <https://android.googlesource.com/platform/frameworks/support/+/225f50d42bf0adeb2abf4b6109befb5ab6ce4efc/compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledTextFieldTokens.kt>
+- Pinned first-party Material Web outlined-field layout, accessed 2026-07-20:
+  <https://github.com/material-components/material-web/blob/b4de401eb665ec63474f39319a4ba8f2145974cc/field/internal/_outlined-field.scss>
 - WCAG 2.2 focus visible, target size, labels/descriptions, and reduced
   motion, accessed 2026-07-20:
   <https://www.w3.org/TR/WCAG22/>
@@ -53,7 +55,7 @@ provisional additions are out of scope here; see Web-specific deviations.
   `aria-describedby`.
 - Optional leading/trailing icon slots.
 - Filled adds one bottom indicator line. Outlined adds one bordered,
-  label-notched container built from a native `fieldset`/`legend`.
+  label-notched container built from three intrinsic-width CSS flex panels.
 
 ## Variants, shape, color, and size
 
@@ -175,10 +177,8 @@ and `TextArea`. Production CSS validation requires every literal
 
 ## Bidirectional, forced-color, and adaptive behavior
 
-- Layout uses logical inline/block sizing throughout, so the notch, icon
-  slots, and label position all mirror correctly in RTL; the native
-  `fieldset`/`legend` notch also inherits the browser's own RTL-aware
-  legend placement for free.
+- Layout uses logical inline/block sizing throughout, so the segmented
+  notch, icon slots, and label position all mirror correctly in RTL.
 - Forced colors keeps the field boundary, uses Highlight for focus and
   GrayText for disabled treatment, and fixes text/icon color to CanvasText.
 - Default, custom, and nested themes scope every TextField/TextArea
@@ -188,10 +188,12 @@ and `TextArea`. Production CSS validation requires every literal
 
 - The pinned source draws the outlined notch by rendering a full border and
   then clipping a label-width rectangle out of it with a `drawWithContent`,
-  difference-mode clip. The web control uses a native `fieldset`/`legend`
-  instead: the legend's own intrinsic text width produces the same visual
-  gap with no JS measurement, and the technique is the standard, zero-JS
-  web equivalent for exactly this visual effect.
+  difference-mode clip. The web control follows Material Web's first-party
+  adaptation instead: three logical flex panels draw the border, a hidden
+  body-small label clone intrinsically sizes the center panel, and that
+  panel's top stroke scales away for the populated/focused gap. This avoids
+  canvas and JS measurement while keeping the painted border and visible
+  label in one coordinate system.
 - The pinned source's disabled colors already resolve as true alpha
   (`fromToken(...).copy(alpha = ...)`), not the fixed-backdrop
   `compositeOver(colorScheme.surface)` pattern seen in Checkbox, Radio, and

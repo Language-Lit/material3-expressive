@@ -60,9 +60,11 @@ still resolves to a single space internally — purely so
 | `filled` (default) | surface-container-highest, top-only rounded | 1px bottom indicator, 2px focused |
 | `outlined` | transparent, fully rounded | 1px border with a label-sized notch, 2px focused |
 
-The outlined notch is a native `fieldset`/`legend`: the legend's own
-intrinsic text width produces the gap, with no JS measurement, in place of
-the pinned source's canvas-drawn border and difference-mode clip.
+The outlined notch uses three CSS flex panels. A hidden body-small label
+clone gives the middle panel its intrinsic width, and that panel's top stroke
+scales away when the visible label floats. This produces a label-sized gap
+without JS measurement while keeping the outline and label in the same
+border-box coordinate system.
 
 ## Icons and supporting text
 

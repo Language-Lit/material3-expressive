@@ -50,12 +50,12 @@ multiline. See `TextField.conformance.md` for the full mapping.
 
 ## States and motion
 
-Identical to `TextField`. One addition: leading/trailing icons top-align to
-the first line (`TextArea.css`'s only geometry delta) rather than centering
-across the full multiline height, matching every other Material multiline
-field's icon placement; the pinned source leaves icon vertical alignment
-inside a multiline field to the caller's own icon composable, so this is a
-reasoned web-layout default, not a literal source constant.
+Identical to `TextField`, including vertically centered leading/trailing icon
+slots: the pinned measure policy applies `Alignment.CenterVertically` to both
+icons regardless of `singleLine`. The resting label follows the source's
+multiline branch and starts at the ordinary 16px top padding rather than
+centering across all rows. Once focused or populated it moves to the same
+filled or outlined destination as TextField.
 
 ## Component token mapping
 
@@ -65,11 +65,11 @@ TextArea-specific tokens exist.
 ## DOM, forms, and behavior
 
 Identical structure to `TextField`, with `data-m3e-multiline="true"` on the
-root (driving the icon top-alignment delta above) and no `type` prop, since
-native `textarea` has no `type` attribute. `rows`, `cols`, `wrap`, and every
-other native `textarea` attribute forward directly. Native vertical resize
-(`resize: vertical`) is retained as a deliberate, native web affordance with
-no first-party equivalent to defer to.
+root (driving the resting-label placement branch above) and no `type` prop,
+since native `textarea` has no `type` attribute. `rows`, `cols`, `wrap`, and
+every other native `textarea` attribute forward directly. Native vertical
+resize (`resize: vertical`) is retained as a deliberate, native web
+affordance with no first-party equivalent to defer to.
 
 ## Accessible name, description, role, state, and keyboard
 
@@ -84,6 +84,6 @@ Identical to `TextField`.
 
 ## Web-specific deviations
 
-Shares every deviation already recorded for `TextField`. The only
-`TextArea`-specific addition is the top-aligned icon layout described above,
-which has no pinned-source counterpart to deviate from.
+Shares every deviation already recorded for `TextField`; there is no
+TextArea-specific geometry deviation. Native vertical resize remains the
+web-only affordance described above.

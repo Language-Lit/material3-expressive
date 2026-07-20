@@ -1,7 +1,8 @@
-# ADR 0014: Shared TextField/TextArea foundation, native-truth label float, and the fieldset/legend notch
+# ADR 0014: Shared TextField/TextArea foundation, native-truth label float, and segmented outline
 
 Status: accepted
 Date: 2026-07-20
+Amended: 2026-07-20 (T14 outlined-geometry repair)
 Task: T14
 
 ## Context
@@ -27,6 +28,16 @@ The outlined variant's border gap around the floating label is drawn by
 rendering a full rounded stroke, then clipping a label-width rectangle out
 of it with `drawWithContent` + `ClipOp.Difference` (`Modifier.outlineCutout`),
 sized to the label's own measured width plus a 4dp margin on each side.
+
+The initial T14 web adaptation used a native `fieldset`/`legend` to obtain an
+intrinsic-width gap. Browser verification after T14 found that a fieldset's
+painted top stroke follows the legend's special layout rather than the
+fieldset border box used to position the separate visible label. This placed
+the painted top edge and label in different block-axis coordinate systems.
+The same implementation also kept a leading icon's 52px expanded-label inset
+after the outlined label minimized, although the pinned measure policy moves
+that minimized label back to the ordinary 16px start padding. Decision 6
+below supersedes the original fieldset/legend adaptation.
 
 Every content color role (input, placeholder, label, leading icon, trailing
 icon, supporting text) is identical between `FilledTextFieldTokens` and
@@ -79,13 +90,18 @@ documenting a dimmed one.
    spring-to-token-driven-transition flattening every other component's
    motion already uses at this layer, applied here to a typographic
    property set instead of a transform.
-6. The outlined variant's notch is a native `fieldset`/`legend`, not a
-   canvas clip: the legend contains a `visibility: hidden` clone of the
-   label text at the floating type size, and its own intrinsic width — not
-   a JS measurement — produces the border gap via a `max-inline-size`
-   transition. This reproduces the pinned source's visual outcome exactly
-   while additionally inheriting the browser's own RTL-aware legend
-   placement for free.
+6. The outlined variant uses three logical CSS flex panels rather than a
+   native `fieldset`/`legend` or a canvas clip. A `visibility: hidden` clone
+   of the label at the floating body-small type size gives the center panel
+   its intrinsic width. That panel always draws the bottom stroke and draws
+   its top stroke only while the label rests; focus or a populated value
+   scales the top stroke away to reveal the label-sized gap. The start and
+   end panels draw the remaining rounded outline against the field's own
+   border box. The floating label and cutout start at the ordinary 16px
+   content padding even with a leading icon, while the input and expanded
+   label retain the sourced 48px icon slot plus 4px gap (52px). This matches
+   the pinned AndroidX placement formulas and Material Web's first-party
+   segmented-outline adaptation with no JS measurement.
 7. Every content color role registers once, unprefixed, instead of a
    `filled-*`/`outlined-*` pair that would only ever hold identical values;
    only the container fill/shape and the indicator/outline border — where
@@ -121,20 +137,21 @@ documenting a dimmed one.
     covers this case with no duplicate warning needed.
 12. `TextArea` renders a native `textarea` through the same
     `TextFieldChrome` primitive and the same `.m3e-text-field__input` class
-    used by `TextField`, so every shared CSS rule applies unchanged. Its
-    only geometry delta — top-aligning leading/trailing icons to the first
-    line instead of centering them across the full multiline height — has
-    no primary-source basis (the pinned source leaves a multiline field's
-    icon alignment to the caller's own icon composable) and is a reasoned
-    web-layout default.
+    used by `TextField`, so every shared CSS rule applies unchanged. The
+    pinned measure policy centers a single-line resting label but starts a
+    multiline resting label at the ordinary 16px top padding; a
+    `data-m3e-multiline` selector reproduces that branch. Leading/trailing
+    icon slots continue to use the shared vertically centered placement,
+    matching the source placing both icons with `Alignment.CenterVertically`
+    regardless of `singleLine`.
 13. This project's stylesheet assembler (`assembleAuthoredCss` in
     `scripts/build-styles.mjs`) inlines every `@import` with no
     deduplication. Because `styles.css` must import both `TextField.css`
     and `TextArea.css` directly (the architecture check requires each
     conformant component's own stylesheet to be assembled), the shared
     chrome rules live in `TextField.css` alone; `TextArea.css` contains
-    only its own multiline deltas, layering on top within the same
-    cascade layer rather than re-declaring shared rules a second time.
+    only its native `resize: vertical` delta, layering on top within the
+    same cascade layer rather than re-declaring shared rules a second time.
 14. Bundle budgets are unchanged from T13's ceilings; measured output
     (154,653 / 28,045 gzip JS; 44,338 / 11,358 gzip declarations; 208,286 /
     18,494 gzip full CSS; 91,974 / 7,820 gzip token CSS; 284,749 packed)
@@ -148,9 +165,9 @@ documenting a dimmed one.
   maintained decoration trees that could silently drift apart.
 - The floating label, the notch, and the placeholder visibility rule are
   all reproduced with zero JavaScript and zero measurement, entirely
-  through native pseudo-classes, a `fieldset`/`legend`, and CSS transitions
-  — consistent with every prior selection control's zero-JS state
-  precedent, now extended to a continuous (not just discrete) native
+  through native pseudo-classes, intrinsic CSS flex sizing, and CSS
+  transitions — consistent with every prior selection control's zero-JS
+  state precedent, now extended to a continuous (not just discrete) native
   signal.
 - Future form-control tasks that need label/description/error anatomy
   (e.g. `Select` in T17) have a direct, already-adversarially-considered

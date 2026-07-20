@@ -14,8 +14,8 @@ describe('TextArea stylesheet contract', () => {
     expect(css).not.toContain('.m3e-text-field__outline {')
   })
 
-  it('top-aligns icons instead of centering them across the full multiline height', () => {
-    expect(css).toContain('[data-m3e-multiline="true"] .m3e-text-field__icon')
-    expect(css).toContain('inset-block: 0 auto')
+  it('does not override the shared chrome’s source-aligned icon centering', () => {
+    expect(css).not.toContain('[data-m3e-multiline="true"] .m3e-text-field__icon')
+    expect(css).not.toContain('inset-block: 0 auto')
   })
 })

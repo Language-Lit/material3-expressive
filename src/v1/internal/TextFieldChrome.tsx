@@ -76,11 +76,13 @@ export function TextFieldChrome({
           {label}
         </label>
         {variant === 'outlined' ? (
-          <fieldset className="m3e-text-field__outline" aria-hidden="true">
-            <legend className="m3e-text-field__notch">
+          <span className="m3e-text-field__outline" aria-hidden="true">
+            <span className="m3e-text-field__outline-start" />
+            <span className="m3e-text-field__notch">
               <span>{label}</span>
-            </legend>
-          </fieldset>
+            </span>
+            <span className="m3e-text-field__outline-end" />
+          </span>
         ) : (
           <span className="m3e-text-field__indicator" aria-hidden="true" />
         )}

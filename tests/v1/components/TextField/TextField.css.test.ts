@@ -37,21 +37,34 @@ describe('TextField stylesheet contract', () => {
     expect(css).toContain('var(--m3e-sys-typescale-baseline-body-small-line-height)')
   })
 
-  it('draws the outlined notch with a native fieldset/legend instead of a canvas clip', () => {
+  it('draws the outlined notch with intrinsic-width segmented panels', () => {
     expect(css).toContain('.m3e-text-field__outline')
+    expect(css).toContain('.m3e-text-field__outline-start')
     expect(css).toContain('.m3e-text-field__notch')
-    expect(css).toContain('max-inline-size: 1000px')
+    expect(css).toContain('.m3e-text-field__notch::before')
+    expect(css).toContain('.m3e-text-field__outline-end')
     expect(css).toContain('visibility: hidden')
+    expect(css).toContain('transform: scaleX(0)')
+    expect(css).not.toContain('max-inline-size: 1000px')
+  })
 
-    // The browser only applies its special border-cutting layout to a
-    // <legend> that is in normal flow — floating or positioning it (even
-    // logically, e.g. `float: inline-start`) silently falls back to a
-    // plain block box with no border gap, leaving the fieldset's top
-    // border drawn straight across wherever the floating label sits.
-    const notchRule = css.slice(css.indexOf('.m3e-text-field__notch {'))
-    const notchBody = notchRule.slice(0, notchRule.indexOf('}'))
-    expect(notchBody).not.toMatch(/\bfloat\s*:/)
-    expect(notchBody).not.toMatch(/\bposition\s*:/)
+  it('separates leading-icon resting content from the outlined floating inset', () => {
+    const outlinedFloatRule = css.slice(
+      css.indexOf('.m3e-text-field[data-m3e-variant="outlined"]\n    .m3e-text-field__input:focus'),
+    )
+    const outlinedFloatBody = outlinedFloatRule.slice(0, outlinedFloatRule.indexOf('}'))
+
+    expect(css).toContain('var(--m3e-comp-text-field-minimum-interactive-target) +')
+    expect(outlinedFloatBody).toContain(
+      'inset-inline-start: var(--m3e-comp-text-field-content-padding)',
+    )
+  })
+
+  it('starts a resting multiline label at the sourced top padding', () => {
+    expect(css).toContain(
+      '.m3e-text-field[data-m3e-multiline="true"] .m3e-text-field__label',
+    )
+    expect(css).toContain('top: var(--m3e-comp-text-field-content-padding)')
   })
 
   it('uses the true-alpha color-mix technique for every disabled color', () => {

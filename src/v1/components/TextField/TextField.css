@@ -141,6 +141,8 @@
         var(--m3e-sys-motion-expressive-fast-effects-easing),
       font-size var(--m3e-sys-motion-expressive-fast-spatial-duration)
         var(--m3e-sys-motion-expressive-fast-spatial-easing),
+      inset-inline-start var(--m3e-sys-motion-expressive-fast-spatial-duration)
+        var(--m3e-sys-motion-expressive-fast-spatial-easing),
       line-height var(--m3e-sys-motion-expressive-fast-spatial-duration)
         var(--m3e-sys-motion-expressive-fast-spatial-easing),
       top var(--m3e-sys-motion-expressive-fast-spatial-duration)
@@ -158,20 +160,24 @@
     );
   }
 
-  /* line-height: 1, not the body-small typescale's own line-height, on both
-     this and the notch below. Compose measures and trims the label to its
-     exact line-height with no extra font leading, so `endY = -(labelHeight /
-     2)` (the pinned source's own floated-label formula, which `top: 0` +
-     `translateY(-50%)` below reproduces exactly) lands the label dead-center
-     on the border. Browsers don't trim a font's own ascent/descent out of
-     `line-height` the same way, so the untrimmed body-small line-height
-     (visibly larger than Roboto's own glyph metrics at this size) shifted
-     the visible glyph well above the border instead of straddling it. */
+  /* AndroidX centers a single-line resting label, but starts a multiline
+     resting label at the ordinary 16px top padding. The focused/populated
+     variant rules below still move it to its final filled or outlined
+     position. */
+  .m3e-text-field[data-m3e-multiline="true"] .m3e-text-field__label {
+    top: var(--m3e-comp-text-field-content-padding);
+    transform: translateY(0);
+  }
+
+  /* The populated label uses the complete body-small role. In the outlined
+     variant its 16px default line box is translated by half its own height,
+     matching Material Web's `translateY(-100% + 8px)` placement and leaving
+     the label centered on the painted top outline. */
   .m3e-text-field__input:focus ~ .m3e-text-field__label,
   .m3e-text-field__input:not(:placeholder-shown) ~ .m3e-text-field__label {
     font-size: var(--m3e-sys-typescale-baseline-body-small-font-size);
     letter-spacing: var(--m3e-sys-typescale-baseline-body-small-letter-spacing);
-    line-height: 1;
+    line-height: var(--m3e-sys-typescale-baseline-body-small-line-height);
   }
 
   .m3e-text-field[data-m3e-variant="filled"] .m3e-text-field__input:focus ~ .m3e-text-field__label,
@@ -182,16 +188,19 @@
     transform: translateY(0);
   }
 
-  /* The outlined label keeps the same translateY(-50%) throughout: at rest
-     it centers within the field, and floating it centers on the border line
-     itself (top: 0), exactly where the outline's own notch clips a gap. */
+  /* The outlined floating label returns to the ordinary content inset even
+     when its resting state follows a leading icon. AndroidX likewise places
+     the expanded label after the icon but computes the minimized label's X
+     from startPadding alone. */
   .m3e-text-field[data-m3e-variant="outlined"]
     .m3e-text-field__input:focus
     ~ .m3e-text-field__label,
   .m3e-text-field[data-m3e-variant="outlined"]
     .m3e-text-field__input:not(:placeholder-shown)
     ~ .m3e-text-field__label {
+    inset-inline-start: var(--m3e-comp-text-field-content-padding);
     top: 0;
+    transform: translateY(-50%);
   }
 
   .m3e-text-field__input:focus ~ .m3e-text-field__label {
@@ -247,65 +256,120 @@
     );
   }
 
-  /* Outlined — a native fieldset/legend draws the full border and its own
-     notch gap for free. AndroidX instead draws a plain border, then clips a
-     rectangle out of it with a `drawWithContent`, difference-mode clip sized
-     to the label's measured width; the legend's own intrinsic width
-     produces the same visual gap without any JS measurement. */
+  /* Outlined — three flex panels reproduce Material Web's segmented outline.
+     The hidden body-small label clone gives the center panel its intrinsic
+     width, while that panel's top stroke scales away when the visible label
+     floats. Unlike a native fieldset/legend, every stroke is painted against
+     the field's own border box, so the top edge, content, icons, and floating
+     label all share one coordinate system. */
   .m3e-text-field__outline {
-    border: var(--m3e-comp-text-field-outlined-outline-width) solid
-      var(--m3e-comp-text-field-outlined-outline-color);
+    --m3e-text-field-resolved-outline-width:
+      var(--m3e-comp-text-field-outlined-outline-width);
+
+    border-color: var(--m3e-comp-text-field-outlined-outline-color);
     border-radius: inherit;
+    display: flex;
     inset: 0;
-    margin: 0;
-    min-inline-size: 0;
-    padding-inline: 8px;
     pointer-events: none;
     position: absolute;
-    transition:
-      border-color var(--m3e-sys-motion-expressive-fast-effects-duration)
-        var(--m3e-sys-motion-expressive-fast-effects-easing),
-      border-width var(--m3e-sys-motion-expressive-fast-spatial-duration)
-        var(--m3e-sys-motion-expressive-fast-spatial-easing);
+    transition: border-color var(--m3e-sys-motion-expressive-fast-effects-duration)
+      var(--m3e-sys-motion-expressive-fast-effects-easing);
+  }
+
+  .m3e-text-field__outline-start,
+  .m3e-text-field__notch,
+  .m3e-text-field__outline-end {
+    block-size: 100%;
+    border-color: inherit;
+    border-style: solid;
+    border-width: var(--m3e-text-field-resolved-outline-width);
+    box-sizing: border-box;
+    position: relative;
+    transition: border-width var(--m3e-sys-motion-expressive-fast-spatial-duration)
+      var(--m3e-sys-motion-expressive-fast-spatial-easing);
+  }
+
+  .m3e-text-field__outline-start {
+    border-radius: inherit;
+    border-end-end-radius: 0;
+    border-inline-end-style: none;
+    border-start-end-radius: 0;
+    flex: 0 0 calc(
+      var(--m3e-comp-text-field-content-padding) -
+        var(--m3e-comp-text-field-icon-content-gap)
+    );
   }
 
   .m3e-text-field__notch {
-    /* line-height: 1 matches the label's own override above, not the
-       body-small typescale's line-height — see the comment there. The
-       native border-notch height tracks this element's own box, so it has
-       to shrink in step with the label or the two drift apart. */
+    border-block-start-style: none;
+    border-inline-style: none;
+    flex: 0 1 auto;
     font-size: var(--m3e-sys-typescale-baseline-body-small-font-size);
     letter-spacing: var(--m3e-sys-typescale-baseline-body-small-letter-spacing);
-    line-height: 1;
-    margin-inline-start: calc(var(--m3e-comp-text-field-icon-content-gap));
-    max-inline-size: 0.01px;
+    line-height: var(--m3e-sys-typescale-baseline-body-small-line-height);
+    max-inline-size: calc(
+      100% - var(--m3e-comp-text-field-content-padding) -
+        var(--m3e-comp-text-field-content-padding) +
+        var(--m3e-comp-text-field-icon-content-gap) +
+        var(--m3e-comp-text-field-icon-content-gap)
+    );
+    min-inline-size: 0;
     overflow: hidden;
-    padding: 0;
-    transition: max-inline-size var(--m3e-sys-motion-expressive-fast-spatial-duration)
-      var(--m3e-sys-motion-expressive-fast-spatial-easing);
+  }
+
+  .m3e-text-field__notch::before {
+    border-block-start-color: inherit;
+    border-block-start-style: solid;
+    border-block-start-width: var(--m3e-text-field-resolved-outline-width);
+    content: '';
+    inset-block-start: 0;
+    inset-inline: 0;
+    position: absolute;
+    transform: scaleX(1);
+    transition:
+      border-width var(--m3e-sys-motion-expressive-fast-spatial-duration)
+        var(--m3e-sys-motion-expressive-fast-spatial-easing),
+      transform var(--m3e-sys-motion-expressive-fast-spatial-duration)
+        var(--m3e-sys-motion-expressive-fast-spatial-easing);
+  }
+
+  .m3e-text-field__notch > span {
+    box-sizing: border-box;
+    display: block;
+    overflow: hidden;
+    padding-inline: var(--m3e-comp-text-field-icon-content-gap);
+    text-overflow: ellipsis;
     visibility: hidden;
     white-space: nowrap;
   }
 
-  .m3e-text-field__notch > span {
-    display: inline-block;
-    padding-inline: var(--m3e-comp-text-field-icon-content-gap);
-  }
-
-  .m3e-text-field__field[data-m3e-has-leading-icon="true"] .m3e-text-field__notch {
-    margin-inline-start: calc(
-      var(--m3e-comp-text-field-minimum-interactive-target) +
-        var(--m3e-comp-text-field-icon-content-gap) - 8px
+  .m3e-text-field__outline-end {
+    border-radius: inherit;
+    border-end-start-radius: 0;
+    border-inline-start-style: none;
+    border-start-start-radius: 0;
+    flex: 1 1 calc(
+      var(--m3e-comp-text-field-content-padding) -
+        var(--m3e-comp-text-field-icon-content-gap)
+    );
+    min-inline-size: calc(
+      var(--m3e-comp-text-field-content-padding) -
+        var(--m3e-comp-text-field-icon-content-gap)
     );
   }
 
-  .m3e-text-field__input:focus ~ .m3e-text-field__outline .m3e-text-field__notch,
-  .m3e-text-field__input:not(:placeholder-shown) ~ .m3e-text-field__outline .m3e-text-field__notch {
-    max-inline-size: 1000px;
+  .m3e-text-field__input:focus
+    ~ .m3e-text-field__outline
+    .m3e-text-field__notch::before,
+  .m3e-text-field__input:not(:placeholder-shown)
+    ~ .m3e-text-field__outline
+    .m3e-text-field__notch::before {
+    transform: scaleX(0);
   }
 
   .m3e-text-field__input:focus ~ .m3e-text-field__outline {
-    border-width: var(--m3e-comp-text-field-outlined-focus-outline-width);
+    --m3e-text-field-resolved-outline-width:
+      var(--m3e-comp-text-field-outlined-focus-outline-width);
   }
 
   .m3e-text-field__input:focus ~ .m3e-text-field__outline {
@@ -317,13 +381,15 @@
   }
 
   .m3e-text-field__input:disabled ~ .m3e-text-field__outline {
+    --m3e-text-field-resolved-outline-width:
+      var(--m3e-comp-text-field-outlined-disabled-outline-width);
+
     border-color: color-mix(
       in srgb,
       var(--m3e-comp-text-field-outlined-disabled-outline-color)
         calc(var(--m3e-comp-text-field-outlined-disabled-outline-opacity) * 100%),
       transparent
     );
-    border-width: var(--m3e-comp-text-field-outlined-disabled-outline-width);
   }
 
   /* Icons. */
@@ -406,7 +472,10 @@
     .m3e-text-field__label,
     .m3e-text-field__indicator,
     .m3e-text-field__outline,
+    .m3e-text-field__outline-start,
     .m3e-text-field__notch,
+    .m3e-text-field__notch::before,
+    .m3e-text-field__outline-end,
     .m3e-text-field__input::placeholder,
     .m3e-text-field__icon,
     .m3e-text-field__supporting-text {
