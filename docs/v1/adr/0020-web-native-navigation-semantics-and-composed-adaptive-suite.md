@@ -71,6 +71,11 @@ components.
    render helper, since their container semantics (fixed horizontal row
    vs. vertical column with an optional header) differ enough that a
    shared abstraction would need real parameterization for modest savings.
+   A T20 conformance repair preserves the source's separate placeables in
+   CSS: the icon and full-size interaction layer keep fixed geometry while a
+   centered background pseudo-element alone animates from zero width to the
+   `56×32px` active pill. Scaling the wrapper would incorrectly halve the
+   inactive icon and change the item geometry.
 4. `NavigationDrawer` unifies three pinned composables
    (`ModalNavigationDrawer`/`DismissibleNavigationDrawer`/
    `PermanentNavigationDrawer`) into one component with a `variant` prop.

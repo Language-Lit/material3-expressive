@@ -1,7 +1,7 @@
 # NavigationRail
 
 `NavigationRail` is `NavigationBar`'s vertical sibling: the same item
-language (icon, sliding pill, label) laid out in a fixed-width side
+language (fixed-size icon, width-expanding pill, label) laid out in a fixed-width side
 column, with an optional `header` region above the items.
 
 ```tsx
@@ -26,6 +26,8 @@ import '@language-lit/material3-expressive/v1/styles.css'
 - `header` is a consumer-owned region rendered above the items, typically
   a `FloatingActionButton` or menu button, matching the pinned source's
   own `header` slot.
+- Selection keeps the icon in its 24×24px box and expands only the centered
+  indicator background from zero width to 56×32px, matching `NavigationBar`.
 
 ## Tokens and boundaries
 

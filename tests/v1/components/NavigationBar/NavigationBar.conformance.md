@@ -59,10 +59,13 @@ Supported Material baseline: AndroidX Material 3 branch revision
   focus/pressed reuse the shared `--m3e-sys-state-*` system via
   `currentColor`, the same `Menu`/`Tabs` precedent (the source's own color
   model has only a selected/unselected axis).
-- The pill fades and scales in independently per item on its own selection
-  change (no shared/measured indicator the way `Tabs` needs, since each
-  item's pill is self-contained) using the `FastSpatial`/`FastEffects`
-  motion slots.
+- The pinned source measures the 24px icon separately from a fixed-height
+  indicator whose width animates from zero to 56px. The web translation uses
+  the same separation: a centered background layer fades and expands
+  horizontally while the 56×32px interaction layer, 24×24px icon, and item
+  footprint stay fixed. It uses the `FastSpatial`/`FastEffects` motion slots
+  independently per item; no shared/measured indicator is needed as in
+  `Tabs`.
 
 ## Web-specific deviations
 

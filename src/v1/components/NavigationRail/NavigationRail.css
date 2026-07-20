@@ -41,6 +41,7 @@
 
   .m3e-navigation-rail__indicator {
     align-items: center;
+    block-size: var(--m3e-comp-navigation-rail-item-active-indicator-height);
     border-radius: var(--m3e-comp-navigation-rail-item-active-indicator-shape);
     box-sizing: border-box;
     color: var(--m3e-comp-navigation-rail-item-inactive-icon-color);
@@ -48,24 +49,39 @@
     inline-size: var(--m3e-comp-navigation-rail-item-active-indicator-width);
     justify-content: center;
     position: relative;
-    transform: scale(0.5);
-    transition:
-      background-color var(--m3e-sys-motion-expressive-fast-effects-duration)
-        var(--m3e-sys-motion-expressive-fast-effects-easing),
-      color var(--m3e-sys-motion-expressive-fast-effects-duration)
-        var(--m3e-sys-motion-expressive-fast-effects-easing),
-      transform var(--m3e-sys-motion-expressive-fast-spatial-duration)
-        var(--m3e-sys-motion-expressive-fast-spatial-easing);
+    transition: color var(--m3e-sys-motion-expressive-fast-effects-duration)
+      var(--m3e-sys-motion-expressive-fast-effects-easing);
   }
 
   .m3e-navigation-rail__item[data-m3e-selected="true"] .m3e-navigation-rail__indicator {
-    background-color: var(--m3e-comp-navigation-rail-item-active-indicator-color);
-    block-size: var(--m3e-comp-navigation-rail-item-active-indicator-height);
     color: var(--m3e-comp-navigation-rail-item-active-icon-color);
-    transform: scale(1);
   }
 
   .m3e-navigation-rail__indicator::before {
+    background-color: var(--m3e-comp-navigation-rail-item-active-indicator-color);
+    border-radius: inherit;
+    block-size: 100%;
+    content: "";
+    inline-size: 0;
+    inset-block: 0;
+    inset-inline: 0;
+    margin-inline: auto;
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    transition:
+      inline-size var(--m3e-sys-motion-expressive-fast-spatial-duration)
+        var(--m3e-sys-motion-expressive-fast-spatial-easing),
+      opacity var(--m3e-sys-motion-expressive-fast-effects-duration)
+        var(--m3e-sys-motion-expressive-fast-effects-easing);
+  }
+
+  .m3e-navigation-rail__item[data-m3e-selected="true"] .m3e-navigation-rail__indicator::before {
+    inline-size: 100%;
+    opacity: 1;
+  }
+
+  .m3e-navigation-rail__indicator::after {
     background: currentColor;
     border-radius: inherit;
     content: "";
@@ -78,21 +94,22 @@
   }
 
   @media (hover: hover) {
-    .m3e-navigation-rail__item:hover:not([aria-disabled="true"]) .m3e-navigation-rail__indicator::before {
+    .m3e-navigation-rail__item:hover:not([aria-disabled="true"]) .m3e-navigation-rail__indicator::after {
       opacity: var(--m3e-sys-state-hover);
     }
   }
 
-  .m3e-navigation-rail__item:active:not([aria-disabled="true"]) .m3e-navigation-rail__indicator::before {
+  .m3e-navigation-rail__item:active:not([aria-disabled="true"]) .m3e-navigation-rail__indicator::after {
     opacity: var(--m3e-sys-state-pressed);
   }
 
-  .m3e-navigation-rail__item:focus-visible .m3e-navigation-rail__indicator::before {
+  .m3e-navigation-rail__item:focus-visible .m3e-navigation-rail__indicator::after {
     opacity: var(--m3e-sys-state-focus);
   }
 
   .m3e-navigation-rail__icon {
     align-items: center;
+    block-size: var(--m3e-comp-navigation-rail-item-icon-size);
     display: flex;
     inline-size: var(--m3e-comp-navigation-rail-item-icon-size);
     justify-content: center;
@@ -140,6 +157,7 @@
   @media (prefers-reduced-motion: reduce) {
     .m3e-navigation-rail__indicator,
     .m3e-navigation-rail__indicator::before,
+    .m3e-navigation-rail__indicator::after,
     .m3e-navigation-rail__label {
       transition: none;
     }
@@ -151,12 +169,15 @@
     }
 
     .m3e-navigation-rail__item[data-m3e-selected="true"] .m3e-navigation-rail__indicator {
-      background-color: Highlight;
       color: HighlightText;
       forced-color-adjust: none;
     }
 
-    .m3e-navigation-rail__item:focus-visible .m3e-navigation-rail__indicator::before {
+    .m3e-navigation-rail__item[data-m3e-selected="true"] .m3e-navigation-rail__indicator::before {
+      background-color: Highlight;
+    }
+
+    .m3e-navigation-rail__item:focus-visible .m3e-navigation-rail__indicator::after {
       outline: 2px solid Highlight;
     }
   }

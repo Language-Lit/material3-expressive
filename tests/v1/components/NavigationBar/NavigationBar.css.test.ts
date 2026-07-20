@@ -14,9 +14,27 @@ describe('NavigationBar stylesheet contract', () => {
     expect(css).not.toMatch(/#[0-9a-f]{3,8}/i)
   })
 
-  it('drives the active pill from a data attribute on each independently selected item', () => {
+  it('expands only the active background from the selected data attribute', () => {
     expect(css).toContain('[data-m3e-selected="true"]')
-    expect(css).toContain('transform: scale(1)')
+    expect(css).toMatch(
+      /\.m3e-navigation-bar__indicator::before\s*{[\s\S]*?inline-size:\s*0;/,
+    )
+    expect(css).toMatch(
+      /\[data-m3e-selected="true"\] \.m3e-navigation-bar__indicator::before\s*{[\s\S]*?inline-size:\s*100%;/,
+    )
+    expect(css).toContain(
+      'inline-size var(--m3e-sys-motion-expressive-fast-spatial-duration)',
+    )
+  })
+
+  it('keeps the indicator footprint and icon size stable instead of scaling the icon', () => {
+    expect(css).toMatch(
+      /\.m3e-navigation-bar__indicator\s*{[\s\S]*?block-size:\s*var\(--m3e-comp-navigation-bar-item-active-indicator-height\);[\s\S]*?inline-size:\s*var\(--m3e-comp-navigation-bar-item-active-indicator-width\);/,
+    )
+    expect(css).toMatch(
+      /\.m3e-navigation-bar__icon\s*{[\s\S]*?block-size:\s*var\(--m3e-comp-navigation-bar-item-icon-size\);[\s\S]*?inline-size:\s*var\(--m3e-comp-navigation-bar-item-icon-size\);/,
+    )
+    expect(css).not.toMatch(/transform:\s*scale/)
   })
 
   it('uses the shared state-layer system for hover/focus/pressed item feedback', () => {
@@ -24,6 +42,7 @@ describe('NavigationBar stylesheet contract', () => {
     expect(css).toContain('var(--m3e-sys-state-focus)')
     expect(css).toContain('var(--m3e-sys-state-pressed)')
     expect(css).toContain('background: currentColor')
+    expect(css).toContain('.m3e-navigation-bar__indicator::after')
   })
 
   it('dims a disabled item using color-mix against its own disabled opacity token', () => {
