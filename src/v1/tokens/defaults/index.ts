@@ -3,6 +3,7 @@ import { parseTokenSet } from '../validation'
 import { defaultButtonTokens } from './button'
 import { defaultCardTokens } from './card'
 import { defaultCheckboxTokens } from './checkbox'
+import { defaultCircularProgressTokens } from './circular-progress'
 import { defaultDarkColorScheme, defaultLightColorScheme, defaultPalette } from './color'
 import { defaultDensity } from './density'
 import { defaultDialogTokens } from './dialog'
@@ -10,6 +11,7 @@ import { defaultElevation } from './elevation'
 import { defaultFloatingActionButtonTokens } from './floating-action-button'
 import { defaultIconTokens } from './icon'
 import { defaultIconButtonTokens } from './icon-button'
+import { defaultLinearProgressTokens } from './linear-progress'
 import { defaultMenuTokens } from './menu'
 import { defaultMotion } from './motion'
 import { defaultNavigationBarTokens } from './navigation-bar'
@@ -26,6 +28,7 @@ import { defaultTabsTokens } from './tabs'
 import { defaultTextFieldTokens } from './text-field'
 import { defaultTooltipTokens } from './tooltip'
 import { defaultTypography } from './typography'
+import { defaultWavyProgressTokens } from './wavy-progress'
 
 const defaultTokenSetInput = {
   metadata: {
@@ -90,6 +93,9 @@ const defaultTokenSetInput = {
     defaultNavigationBarTokens,
     defaultNavigationRailTokens,
     defaultNavigationDrawerTokens,
+    defaultLinearProgressTokens,
+    defaultCircularProgressTokens,
+    defaultWavyProgressTokens,
   ],
 } satisfies FoundationTokenSet
 

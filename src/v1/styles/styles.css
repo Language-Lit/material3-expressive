@@ -3,10 +3,12 @@
 @import '../components/Button/Button.css';
 @import '../components/Card/Card.css';
 @import '../components/Checkbox/Checkbox.css';
+@import '../components/CircularProgress/CircularProgress.css';
 @import '../components/Dialog/Dialog.css';
 @import '../components/FloatingActionButton/FloatingActionButton.css';
 @import '../components/Icon/Icon.css';
 @import '../components/IconButton/IconButton.css';
+@import '../components/LinearProgress/LinearProgress.css';
 @import '../components/Menu/Menu.css';
 @import '../components/NavigationBar/NavigationBar.css';
 @import '../components/NavigationDrawer/NavigationDrawer.css';
@@ -23,6 +25,7 @@
 @import '../components/TextArea/TextArea.css';
 @import '../components/TextField/TextField.css';
 @import '../components/Tooltip/Tooltip.css';
+@import '../components/WavyProgress/WavyProgress.css';
 
 @layer m3e.base {
   :root,

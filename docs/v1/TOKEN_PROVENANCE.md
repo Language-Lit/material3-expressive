@@ -518,3 +518,47 @@ dimming every other v1 interactive component already uses.
 whichever of their registrations applies to the currently active tier, the
 same "reuses an existing domain entirely" precedent `Select` already set
 for `text-field`/`menu`.
+
+`LinearProgress`/`CircularProgress` register the same pinned revision,
+`ProgressIndicator.kt` blob `656375f06afe964ca60ab4806a32a0bc15ff2edc`,
+generated `ProgressIndicatorTokens.kt` blob
+`eea770174ac30abd8faa16bc69817c44ffde55d0`, `LinearProgressIndicatorTokens
+.kt` blob `8bbd505238de24cabdaa3baa24c48a4ae69de75b`, and
+`CircularProgressIndicatorTokens.kt` blob
+`1e3dd93e33e8b1bdba2cb924e1153f8159034f68`. `ProgressIndicatorTokens`
+(`ActiveIndicatorColor`/`TrackColor`/shapes) is registered independently
+by both components rather than through a third shared token file, the
+same duplication-over-premature-extraction precedent `NavigationBar`/
+`NavigationRail`'s own item visual language already used.
+`LinearProgress`'s `stop-trailing-space` (`6px`) is `ProgressIndicator.kt`'s
+own internal `StopIndicatorTrailingSpace` constant, not the *token* file's
+own unread `StopTrailingSpace` (`0dp`) — the same "prefer the value the
+code actually uses over an unread token" reasoning `Tabs`' own
+`divider-color` registration already used. `LinearProgressIndicatorTokens
+.ActiveWaveAmplitude`/`CircularProgressIndicatorTokens.ActiveWaveAmplitude`
+are not registered by these two plain-only components at all — they exist
+only for the wavy treatment, registered by `WavyProgress` instead.
+
+`WavyProgress` registers the same pinned revision,
+`WavyProgressIndicator.kt` blob `398ae0dd455d85705e0200e1a9cfc07f58d5802b`,
+and generated `MotionTokens.kt` blob
+`8658f45e4241274a22364a0c8b764ff09d59cad7` for its sourced cubic-bezier
+easing/duration constants (`EasingLinearCubicBezier`/
+`EasingStandardCubicBezier`/`EasingEmphasizedAccelerateCubicBezier`/
+`EasingEmphasizedDecelerateCubicBezier`, `DurationLong2`). Registers its
+own copy of `ProgressIndicatorTokens`/`LinearProgressIndicatorTokens`/
+`CircularProgressIndicatorTokens` values independently of `LinearProgress`/
+`CircularProgress`'s own copies, the same established duplication
+precedent. `circular-amplitude` (`1.6dp`, `ActiveWaveAmplitude`) is
+registered here (unlike `LinearProgress`'s reasoned omission of its own
+same-named linear token, whose amplitude-in-px this project instead
+derives directly from container height): the circular wavy ripple's own
+internal implementation (`CircularWavyProgressModifiers.kt`) draws by
+morphing a `RoundedPolygon` (`androidx.graphics.shapes`), not the simple
+sine-perturbation this project uses for a web-renderable approximation —
+the exact pixel-amplitude formula that polygon-morph implementation uses
+was not practical to port, so this registration uses the sourced
+`ActiveWaveAmplitude` value directly as the approximation's max-amplitude
+constant. See ADR 0021 for the full "three progress components, not two
+plus a `variant` prop" rationale and every other T21 web-specific
+deviation.
