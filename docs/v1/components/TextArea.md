@@ -26,8 +26,10 @@ Identical to `TextField`'s contract (see `TextField.md`), substituting a
 native `textarea` for the native `input`. There is no `type` prop — native
 `textarea` has none — and every other native `textarea` attribute (`rows`,
 `cols`, `wrap`, `maxLength`, …) forwards directly. Native vertical resize
-(`resize: vertical`) is kept as a deliberate web affordance; auto-growing
-height is out of scope.
+(`resize: vertical`) is kept as a deliberate web affordance. `rows` determines
+the initial height, while resizing is clamped to the shared 56px Material
+container minimum so the native control cannot become shorter than its label,
+indicator, or outline. Auto-growing height is out of scope.
 
 ## Multiline layout
 

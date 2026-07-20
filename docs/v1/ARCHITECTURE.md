@@ -232,7 +232,10 @@ label-notched border uses three CSS flex panels: a hidden body-small label
 clone gives the middle panel its intrinsic width, and that panel's top stroke
 scales away when the label floats. The panels paint against the field's own
 border box, keeping the outline, floating label, input, and icons in one
-coordinate system with no JS measurement.
+coordinate system with no JS measurement. The native textarea retains vertical
+resizing, but its minimum block size is the same 56px component token as the
+shared field container, preventing browser resize state from separating the
+control from its Material chrome.
 `error` and `disabled` are the only two states mirrored onto the root as
 `data-m3e-*` attributes, because they are the only states unreachable by a
 plain sibling combinator from the control and neither can change without

@@ -2,7 +2,7 @@
 
 Status: accepted
 Date: 2026-07-20
-Amended: 2026-07-20 (T14 outlined-geometry repair)
+Amended: 2026-07-20 (T14 outlined-geometry and TextArea resize repairs)
 Task: T14
 
 ## Context
@@ -143,7 +143,13 @@ documenting a dimmed one.
     `data-m3e-multiline` selector reproduces that branch. Leading/trailing
     icon slots continue to use the shared vertically centered placement,
     matching the source placing both icons with `Alignment.CenterVertically`
-    regardless of `singleLine`.
+    regardless of `singleLine`. Its native vertical resize handle is retained,
+    but the textarea receives the same 56px minimum block-size token as the
+    field container. `rows` therefore remains the initial height while the
+    browser cannot shrink the control below its surrounding chrome. This is
+    the native-React equivalent of Material Web propagating resize through its
+    complete field/container instead of allowing an inner textarea to resize
+    independently.
 13. This project's stylesheet assembler (`assembleAuthoredCss` in
     `scripts/build-styles.mjs`) inlines every `@import` with no
     deduplication. Because `styles.css` must import both `TextField.css`

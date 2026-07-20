@@ -9,9 +9,22 @@ const css = readFileSync(
 describe('TextArea stylesheet contract', () => {
   it('only layers multiline deltas on top of the shared field chrome', () => {
     expect(css).toContain('textarea.m3e-text-field__input')
+    expect(css).toContain(
+      'min-block-size: var(--m3e-comp-text-field-min-container-block-size)',
+    )
     expect(css).toContain('resize: vertical')
     expect(css).not.toContain('.m3e-text-field__label {')
     expect(css).not.toContain('.m3e-text-field__outline {')
+  })
+
+  it('clamps the native resize handle to the shared Material container minimum', () => {
+    const textareaRule = css.slice(css.indexOf('textarea.m3e-text-field__input'))
+    const textareaRuleBody = textareaRule.slice(0, textareaRule.indexOf('}'))
+
+    expect(textareaRuleBody).toContain(
+      'min-block-size: var(--m3e-comp-text-field-min-container-block-size)',
+    )
+    expect(textareaRuleBody).toContain('resize: vertical')
   })
 
   it('does not override the shared chrome’s source-aligned icon centering', () => {
