@@ -56,6 +56,19 @@ describe('Radio stylesheet contract', () => {
     expect(css).toContain('var(--m3e-comp-radio-unselected-state-layer-color)')
   })
 
+  it('centers the oversized state layer with 50%/translate, not inset:0/margin:auto', () => {
+    // `inset: 0; margin: auto;` only centers an absolutely positioned box
+    // that is *larger* than its containing block on the block axis — per
+    // CSS2.1 10.3.7, equal-and-negative auto margins on the inline axis
+    // clamp to zero in LTR, so the box goes flush-start instead of
+    // centering. The 40px state layer inside the 20px container hit this
+    // exactly, rendering visibly off-center. 50%-offset + translate avoids
+    // auto margins entirely.
+    expect(css).toContain('inset-block-start: 50%')
+    expect(css).toContain('inset-inline-start: 50%')
+    expect(css).toContain('translate: -50% -50%')
+  })
+
   it('uses logical layout and retains visible state in forced colors', () => {
     expect(css).toContain('inline-size:')
     expect(css).toContain('block-size:')

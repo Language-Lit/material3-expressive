@@ -62,11 +62,12 @@
     border-radius: 50%;
     content: "";
     inline-size: var(--m3e-comp-checkbox-state-layer-size);
-    inset: 0;
-    margin: auto;
+    inset-block-start: 50%;
+    inset-inline-start: 50%;
     opacity: 0;
     pointer-events: none;
     position: absolute;
+    translate: -50% -50%;
     transition: opacity var(--m3e-sys-motion-expressive-fast-effects-duration)
       var(--m3e-sys-motion-expressive-fast-effects-easing);
   }
