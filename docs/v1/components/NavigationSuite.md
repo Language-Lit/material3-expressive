@@ -35,4 +35,4 @@ import '@language-lit/material3-expressive/v1/styles.css'
 
 Theme overrides remain scoped to `Material3Provider`; `NavigationSuite`
 injects no runtime styles. It imports no legacy source, Next.js, Vite,
-router, animation library, or private downstream application code.
+router, animation library, or private application code.

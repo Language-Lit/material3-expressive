@@ -3,8 +3,10 @@
 ## Product boundary
 
 v1 is a framework-neutral React implementation of Material 3 Expressive for
-general use. private downstream application is a protected downstream consumer and later migration
-target; it is not an architectural layer or API source.
+general use. Private downstream applications are not architectural layers or
+API sources, and their internals are not recorded in this public repository.
+ADR 0025 records the information boundary between public package contracts and
+private consumer data.
 
 React and React DOM are the only framework peers. Next.js and Vite are
 development fixtures used to prove portability in an SSR framework and a

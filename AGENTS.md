@@ -15,7 +15,8 @@ and obtain owner approval before changing its status to active.
 
 ## Safety boundary
 
-- private downstream application is an external consumer. Never edit it from this repository.
+- Private downstream applications are outside this repository. Never record
+  their internals here or read/edit their repositories as part of library work.
 - Legacy source outside `src/v1/` is frozen unless the owner separately approves
   a legacy fix.
 - Before the stable cutover, the package root and existing subpaths remain

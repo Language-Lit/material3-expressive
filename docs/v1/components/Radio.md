@@ -84,4 +84,4 @@ Radio registers searchable `--m3e-comp-radio-*` variables for:
 
 Theme overrides remain scoped to `Material3Provider`; Radio injects no runtime
 styles. It imports no legacy source, Next.js, Vite, router, animation library,
-or private downstream application code.
+or private application code.

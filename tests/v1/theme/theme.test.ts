@@ -87,7 +87,7 @@ describe('Material 3 theme data', () => {
       ThemeValidationError,
     )
 
-    const polluted = JSON.parse('{"__proto__":{"application":"private downstream application"}}')
+    const polluted = JSON.parse('{"__proto__":{"application":"private consumer"}}')
     expect(() => createTheme(polluted)).toThrow(ThemeValidationError)
     expect(({} as { application?: string }).application).toBeUndefined()
   })

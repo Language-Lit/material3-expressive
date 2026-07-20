@@ -62,8 +62,8 @@ names and third-party source changes can alter the accessibility tree.
 ## Consequences
 
 - Consumers can adapt ordinary SVG icon packages and use current Material
-  Symbols without coupling v1 to Next.js, Vite, a font CDN, or private downstream application's
-  legacy `iconNames` list.
+  Symbols without coupling v1 to Next.js, Vite, a font CDN, or a private
+  consumer's icon registry.
 - A source component must honor its small adapter-prop contract. Sources that do
   not forward props are incompatible because Icon cannot enforce sizing and
   source hiding across an opaque React component boundary.

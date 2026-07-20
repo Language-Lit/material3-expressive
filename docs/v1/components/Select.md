@@ -69,4 +69,4 @@ non-value-carrying, read-only display input.
 reuses `Menu`'s `--m3e-comp-menu-*` registration, unchanged. Theme overrides
 to either domain apply here too, scoped to `Material3Provider`; `Select`
 injects no runtime styles. It imports no legacy source, Next.js, Vite,
-router, animation library, or private downstream application code.
+router, animation library, or private application code.

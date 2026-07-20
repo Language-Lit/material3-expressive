@@ -32,4 +32,4 @@ Colors, geometry, and motion timing come entirely from `--m3e-comp-linear-
 progress-*` CSS custom properties, scoped by `Material3Provider`.
 `LinearProgress` injects no runtime styles, uses no `requestAnimationFrame`
 loop (indeterminate motion is pure CSS `@keyframes`), and imports no legacy
-source, Next.js, Vite, router, animation library, or private downstream application code.
+source, Next.js, Vite, router, animation library, or private application code.

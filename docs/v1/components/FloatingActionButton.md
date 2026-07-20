@@ -138,5 +138,5 @@ stay scoped to `Material3Provider`; rendering injects no CSS.
 
 Server markup, initial expanded state, and uncontrolled initial selection are
 deterministic. `FloatingActionButton` imports only React and public v1/internal
-primitives. It does not import legacy source, Next.js, Vite, private downstream application, an
-animation runtime, or a positioning library.
+primitives. It does not import legacy source, Next.js, Vite, private application
+code, an animation runtime, or a positioning library.
