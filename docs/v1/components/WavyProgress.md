@@ -49,5 +49,5 @@ progress-*` CSS custom properties, scoped by `Material3Provider`.
 `WavyProgress` injects no runtime styles, uses no `requestAnimationFrame`
 loop (every animation — wave travel, indeterminate motion, amplitude
 ramp — is pure CSS `transform`/`@keyframes`/`transition`), and imports no
-legacy source, Next.js, Vite, router, animation library, or private downstream application
+legacy source, Next.js, Vite, router, animation library, or private application
 code.

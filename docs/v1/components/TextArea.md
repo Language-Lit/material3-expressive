@@ -46,4 +46,4 @@ pinned source having no separate tokens for multiline.
 
 Theme overrides remain scoped to `Material3Provider`; `TextArea` injects no
 runtime styles. It imports no legacy source, Next.js, Vite, router, animation
-library, or private downstream application code.
+library, or private application code.

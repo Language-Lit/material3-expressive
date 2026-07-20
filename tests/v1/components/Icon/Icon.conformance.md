@@ -131,5 +131,5 @@ declaration. Tests and distribution checks reject unresolved variables.
 - Compose inherits `LocalContentColor`; web Icon uses normal CSS inheritance and
   `currentColor`, avoiding a React theme subscription.
 - Compose uses a platform vector/font registry. Web consumers own Material
-  Symbols loading and subsetting, and v1 never bundles private downstream application's legacy
-  `iconNames` or fetches a font.
+  Symbols loading and subsetting, and v1 never bundles a private consumer's
+  icon registry or fetches a font.

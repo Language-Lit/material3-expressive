@@ -42,4 +42,4 @@ circular-progress-*` CSS custom properties, scoped by `Material3Provider`.
 `requestAnimationFrame` loop (indeterminate motion composes three CSS
 `@keyframes` animations, matching the source's three composed animation
 values), and imports no legacy source, Next.js, Vite, router, animation
-library, or private downstream application code.
+library, or private application code.

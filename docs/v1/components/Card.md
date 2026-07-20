@@ -95,4 +95,4 @@ Card registers searchable `--m3e-comp-card-*` variables for:
 
 Theme overrides remain scoped to `Material3Provider`; Card injects no runtime
 styles. It imports no legacy source, Next.js, Vite, router, animation library,
-or private downstream application code.
+or private application code.

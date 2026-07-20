@@ -72,4 +72,4 @@ item only, correctly associated via `id`/`aria-controls`/
 All color, geometry, and motion values live in one `--m3e-comp-tabs-*`
 registration. Theme overrides remain scoped to `Material3Provider`; `Tabs`
 injects no runtime styles. It imports no legacy source, Next.js, Vite,
-router, animation library, or private downstream application code.
+router, animation library, or private application code.

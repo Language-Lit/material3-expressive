@@ -52,7 +52,7 @@ without forcing a decision record for minifier noise.
 ## Consequences
 
 - Token consumers can validate, serialize, extend, and generate CSS without
-  React, DOM, Next.js, Vite, or private downstream application dependencies.
+  React, DOM, Next.js, Vite, or private application dependencies.
 - One schema drives public types, validation, reference resolution, and CSS,
   reducing implicit contracts for human and agentic contributors.
 - Upstream changes require an explicit provenance and baseline update rather
