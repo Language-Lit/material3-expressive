@@ -2,7 +2,7 @@
 
 ## T26 — Release readiness audit
 
-Status: active
+Status: complete
 Approved: 2026-07-20
 
 ### Scope
