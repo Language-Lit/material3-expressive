@@ -14,29 +14,41 @@ describe('Switch stylesheet contract', () => {
     expect(css).toContain('var(--m3e-comp-switch-unselected-handle-size)')
     expect(css).toContain('var(--m3e-comp-switch-selected-handle-size)')
     expect(css).toContain('var(--m3e-comp-switch-pressed-handle-size)')
+    expect(css).toContain('var(--m3e-comp-switch-icon-size)')
     expect(css).toContain('var(--m3e-comp-switch-state-layer-size)')
     expect(css).toContain('var(--m3e-comp-switch-minimum-interactive-target)')
     expect(css).not.toMatch(/#[0-9a-f]{3,8}/i)
   })
 
-  it('derives every thumb inset from the same formulas as the source measure function', () => {
-    // Resting inset centers the current thumb size within the track height.
+  it('adapts every source outer-box offset to the bordered CSS padding-box origin', () => {
+    // Resting positions subtract the border already consumed by the absolute
+    // containing block, producing outer-box starts of 8px/4px/24px.
     expect(css).toMatch(
-      /\(var\(--m3e-comp-switch-track-height\)\s*-\s*var\(--m3e-comp-switch-unselected-handle-size\)\)\s*\/\s*2/,
+      /\(var\(--m3e-comp-switch-track-height\)\s*-\s*var\(--m3e-comp-switch-unselected-handle-size\)\)\s*\/\s*2\s*-\s*var\(--m3e-comp-switch-track-outline-width\)/,
     )
-    // Checked inset reaches the far edge minus that same centering margin.
     expect(css).toMatch(
-      /var\(--m3e-comp-switch-track-width\)\s*-\s*var\(--m3e-comp-switch-selected-handle-size\)/,
+      /var\(--m3e-comp-switch-track-width\)\s*-\s*var\(--m3e-comp-switch-selected-handle-size\)[\s\S]*?\/\s*2\s*-\s*var\(--m3e-comp-switch-track-outline-width\)/,
     )
-    // Pressed insets sit exactly one outline width from the nearest edge.
-    expect(css).toContain('inset-inline-start: var(--m3e-comp-switch-track-outline-width);')
+    // Pressed source offsets are 2px/22px in the outer box; from the padding
+    // edge those become 0px/20px.
+    expect(css).toContain('inset-inline-start: 0;')
     expect(css).toMatch(
-      /var\(--m3e-comp-switch-track-width\)\s*-\s*var\(--m3e-comp-switch-pressed-handle-size\)\s*-\s*var\(--m3e-comp-switch-track-outline-width\)/,
+      /var\(--m3e-comp-switch-track-width\)\s*-\s*var\(--m3e-comp-switch-pressed-handle-size\)\s*-\s*var\(--m3e-comp-switch-track-outline-width\)\s*-\s*var\(--m3e-comp-switch-track-outline-width\)/,
     )
   })
 
   it('forces the selected handle size whenever a thumb icon is present, independent of checked state', () => {
     expect(css).toContain('[data-m3e-has-thumb-icon="true"] .m3e-switch__thumb')
+  })
+
+  it('centers and constrains direct thumb artwork to the sourced 16px slot', () => {
+    expect(css).toMatch(
+      /\.m3e-switch__thumb-icon\s*{[\s\S]*?align-items:\s*center;[\s\S]*?block-size:\s*var\(--m3e-comp-switch-icon-size\);[\s\S]*?inline-size:\s*var\(--m3e-comp-switch-icon-size\);[\s\S]*?justify-content:\s*center;/,
+    )
+    expect(css).toContain('.m3e-switch__thumb-icon > .m3e-icon')
+    expect(css).toContain('--m3e-icon-size: var(--m3e-comp-switch-icon-size);')
+    expect(css).toContain('.m3e-switch__thumb-icon > svg')
+    expect(css).toContain('.m3e-switch__thumb-icon > img')
   })
 
   it('drives visual state from the native :checked/:disabled/:active pseudo-classes, not a React-rendered attribute', () => {

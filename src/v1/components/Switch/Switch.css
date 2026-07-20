@@ -49,10 +49,9 @@
         var(--m3e-sys-motion-expressive-default-effects-easing);
   }
 
-  /* Geometry mirrors the pinned source's ThumbNode measure function exactly:
-     the resting inset centers the current thumb size within the track
-     height, the checked inset reaches the far edge minus that same margin,
-     and the pressed insets are offset by exactly the track outline width. */
+  /* The source's offsets use the 52px outer track box. CSS absolute insets
+     start at this bordered element's padding box, already one outline width
+     inward, so each source offset subtracts that consumed border once. */
   .m3e-switch__thumb {
     background-color: var(--m3e-switch-thumb-color);
     border-radius: 50%;
@@ -60,7 +59,8 @@
     inline-size: var(--m3e-comp-switch-unselected-handle-size);
     inset-block: 0;
     inset-inline-start: calc(
-      (var(--m3e-comp-switch-track-height) - var(--m3e-comp-switch-unselected-handle-size)) / 2
+      (var(--m3e-comp-switch-track-height) - var(--m3e-comp-switch-unselected-handle-size)) / 2 -
+        var(--m3e-comp-switch-track-outline-width)
     );
     align-items: center;
     display: flex;
@@ -95,10 +95,26 @@
   }
 
   .m3e-switch__thumb-icon {
+    align-items: center;
     block-size: var(--m3e-comp-switch-icon-size);
     color: var(--m3e-switch-icon-color);
     display: flex;
+    flex: none;
+    font-size: var(--m3e-comp-switch-icon-size);
     inline-size: var(--m3e-comp-switch-icon-size);
+    justify-content: center;
+    line-height: 1;
+  }
+
+  .m3e-switch__thumb-icon > .m3e-icon {
+    --m3e-icon-size: var(--m3e-comp-switch-icon-size);
+  }
+
+  .m3e-switch__thumb-icon > svg,
+  .m3e-switch__thumb-icon > img {
+    block-size: 100%;
+    inline-size: 100%;
+    object-fit: contain;
   }
 
   /* Selected: track/border/thumb/icon colors, and the thumb grows to the
@@ -116,7 +132,8 @@
     inline-size: var(--m3e-comp-switch-selected-handle-size);
     inset-inline-start: calc(
       var(--m3e-comp-switch-track-width) - var(--m3e-comp-switch-selected-handle-size) -
-        (var(--m3e-comp-switch-track-height) - var(--m3e-comp-switch-selected-handle-size)) / 2
+        (var(--m3e-comp-switch-track-height) - var(--m3e-comp-switch-selected-handle-size)) / 2 -
+        var(--m3e-comp-switch-track-outline-width)
     );
   }
 
@@ -126,7 +143,8 @@
     block-size: var(--m3e-comp-switch-selected-handle-size);
     inline-size: var(--m3e-comp-switch-selected-handle-size);
     inset-inline-start: calc(
-      (var(--m3e-comp-switch-track-height) - var(--m3e-comp-switch-selected-handle-size)) / 2
+      (var(--m3e-comp-switch-track-height) - var(--m3e-comp-switch-selected-handle-size)) / 2 -
+        var(--m3e-comp-switch-track-outline-width)
     );
   }
 
@@ -136,7 +154,7 @@
   .m3e-switch__input:active:not(:disabled):not(:checked) ~ .m3e-switch__track .m3e-switch__thumb {
     block-size: var(--m3e-comp-switch-pressed-handle-size);
     inline-size: var(--m3e-comp-switch-pressed-handle-size);
-    inset-inline-start: var(--m3e-comp-switch-track-outline-width);
+    inset-inline-start: 0;
   }
 
   .m3e-switch__input:active:not(:disabled):checked ~ .m3e-switch__track .m3e-switch__thumb {
@@ -144,6 +162,7 @@
     inline-size: var(--m3e-comp-switch-pressed-handle-size);
     inset-inline-start: calc(
       var(--m3e-comp-switch-track-width) - var(--m3e-comp-switch-pressed-handle-size) -
+        var(--m3e-comp-switch-track-outline-width) -
         var(--m3e-comp-switch-track-outline-width)
     );
   }

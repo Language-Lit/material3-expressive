@@ -46,12 +46,19 @@ shapes already resolved for Checkbox and Radio.
    presence is computed once from this component's own render into
    `data-m3e-has-thumb-icon`, which is safe to key CSS off directly — unlike
    Radio's checked state, nothing external can change it without this
-   component re-rendering.
+   component re-rendering. A T13 geometry repair makes the slot reproduce the
+   source's `contentAlignment = Alignment.Center` and documented
+   `SwitchDefaults.IconSize`: direct v1 `Icon`, SVG, and image artwork is
+   centered and constrained to 16×16px inside the 24px icon-bearing handle.
 4. Every thumb inset is expressed with `calc()` directly on the registered
    `track-width`/`track-height`/`track-outline-width`/handle-size tokens,
-   reproducing `ThumbNode.measure`'s formulas verbatim rather than
-   pre-computing opaque pixel offsets, so the relationship between the
-   tokens and the rendered position stays visible in the stylesheet itself.
+   adapting `ThumbNode.measure`'s outer-box formulas rather than pre-computing
+   opaque pixel offsets. CSS absolute positioning starts at the bordered
+   track's padding box, already one 2px outline width inward; each resting
+   formula therefore subtracts that consumed outline once, the near pressed
+   inset becomes zero, and the far pressed formula subtracts it twice. This
+   preserves the source's outer starts (8/4/24px resting and 2/22px pressed)
+   while keeping the token relationship visible in the stylesheet.
 5. The state layer is a pseudo-element on the thumb, not the track, centered
    on the thumb's own position via `inset: 50%` plus `translate: -50% -50%`,
    matching the source attaching its ripple `Modifier.indication` to the
@@ -109,8 +116,11 @@ shapes already resolved for Checkbox and Radio.
   without the library reimplementing any of it, and `role="switch"` requires
   no manual `aria-checked` bookkeeping.
 - The thumb's size/inset formulas stay legible and auditable against the
-  source's own measure function, instead of hiding the same relationship
-  behind precomputed magic-number tokens.
+  source's own measure function and CSS containing-block semantics, instead of
+  hiding the same relationship behind precomputed magic-number tokens.
+- Default v1 `Icon` artwork no longer overflows the 16px thumb-content slot or
+  inherits its 24px standalone size; raw direct SVG/image artwork follows the
+  same centered slot geometry.
 - The pressed-shape snap-vs-animate asymmetry is reproduced with zero
   JavaScript, entirely through native `:active` plus a scoped
   `transition-duration` override.

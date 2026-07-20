@@ -209,9 +209,12 @@ reset, disabled state, and the forwarded ref; `role`, like `type`, is fixed
 and cannot be overridden by a caller. A decorative track and thumb draw the
 sourced 52×32px pill, sliding circle, and an optional icon slot. Every thumb
 inset is expressed with `calc()` directly on the registered track/handle
-dimension tokens, reproducing the source's own measure-function formulas
-instead of precomputed pixel offsets. The thumb's own state layer is
-anchored to its current position rather than the track's center, matching
+dimension tokens, reproducing the source's outer-box measure-function formulas
+while subtracting the 2px border already consumed by CSS's padding-box
+positioning origin. The 16×16px icon slot centers and constrains direct v1
+`Icon`, SVG, and image artwork inside the 24px icon-bearing handle. The
+thumb's own state layer is anchored to its current position rather than the
+track's center, matching
 the source attaching its ripple to the thumb element. ADR 0013 records the
 role mapping, the thumb-anchored ripple, and the pressed-shape snap/animate
 asymmetry.
