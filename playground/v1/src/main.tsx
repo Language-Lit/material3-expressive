@@ -10,10 +10,12 @@ import '@language-lit/material3-expressive/v1/styles.css'
 import { ButtonExample } from '../examples/Button.example'
 import { CardExample } from '../examples/Card.example'
 import { CheckboxExample } from '../examples/Checkbox.example'
+import { CircularProgressExample } from '../examples/CircularProgress.example'
 import { DialogExample } from '../examples/Dialog.example'
 import { FloatingActionButtonExample } from '../examples/FloatingActionButton.example'
 import { IconExample } from '../examples/Icon.example'
 import { IconButtonExample } from '../examples/IconButton.example'
+import { LinearProgressExample } from '../examples/LinearProgress.example'
 import { MenuExample } from '../examples/Menu.example'
 import { NavigationBarExample } from '../examples/NavigationBar.example'
 import { NavigationDrawerExample } from '../examples/NavigationDrawer.example'
@@ -30,6 +32,7 @@ import { TextExample } from '../examples/Text.example'
 import { TextAreaExample } from '../examples/TextArea.example'
 import { TextFieldExample } from '../examples/TextField.example'
 import { TooltipExample } from '../examples/Tooltip.example'
+import { WavyProgressExample } from '../examples/WavyProgress.example'
 import './playground.css'
 
 const root = document.getElementById('root')
@@ -70,6 +73,9 @@ createRoot(root).render(
         <NavigationRailExample />
         <NavigationDrawerExample />
         <NavigationSuiteExample />
+        <LinearProgressExample />
+        <CircularProgressExample />
+        <WavyProgressExample />
       </main>
     </Material3Provider>
   </React.StrictMode>,
