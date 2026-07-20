@@ -1,43 +1,54 @@
 # Active v1 task
 
-## P01 — Public repository private-consumer privacy scrub
+## T25 — Documentation and prerelease
 
-Status: complete
+Status: active
 Approved: 2026-07-20
-Completed: 2026-07-20
 
 ### Scope
 
-Remove sensitive information about private downstream applications from the
-public repository while preserving the public package identity
-`@language-lit/material3-expressive`.
+Complete the public v1 documentation and prepare a validated `1.0.0-next.*`
+package candidate without publishing, tagging, or redirecting stable package
+root exports.
 
-- Generalize compatibility and isolation rules so they describe any private
-  downstream consumer without naming an application.
-- Remove exact private dependency revisions, application import inventories,
-  internal domain/recipe examples, and application-specific migration tasks.
-- Keep public package API names, legacy contract fixtures, and the independent
-  v1 product roadmap intact.
-- Rewrite only the commits in `origin/main..main`, which have not been pushed,
-  so sensitive content is absent from publishable history rather than merely
-  deleted by a later commit.
+- Document installation without Tailwind, theme creation and nesting, SSR and
+  system color mode, supported components, accessibility, tokens, and public
+  examples.
+- Publish a generic legacy-to-v1 migration guide, deliberate web deviations,
+  versioned release notes, and breaking changes using only public package
+  contracts.
+- Derive or validate support claims against
+  `docs/v1/component-inventory.json`; only conformant components may be
+  presented as supported.
+- Prepare prerelease package metadata and validate the packed candidate while
+  keeping legacy root/subpath behavior frozen and v1 available only through its
+  additive exports.
+- Preserve ADR 0025: private consumer identities, repositories, revisions,
+  imports, domains, compatibility gaps, and migration plans remain outside this
+  repository.
 
 ### Expected files
 
-- `docs/V1_SPEC.md`, `AGENTS.md`, and `docs/v1/ARCHITECTURE.md`.
-- Public component documentation, conformance records, ADRs, or tests that name
-  the private application despite needing only a generic boundary statement.
-- A public-boundary ADR if needed; no component or legacy runtime source changes
-  are expected.
-- The unpushed Git history from `origin/main` through the current v1 work.
+- Public entry documentation such as `README.md` and focused guides under
+  `docs/v1/`.
+- Existing public component pages and conformance/inventory documentation where
+  truthful support claims or navigation require updates.
+- Documentation/release validation scripts and package scripts where needed.
+- `package.json` and `package-lock.json` for the prepared prerelease version;
+  generated package artifacts must not be hand-edited or committed.
+- No legacy or v1 component runtime changes are expected.
 
 ### Acceptance checks
 
-- The public package scope remains unchanged, while the current tree contains
-  no private application name, repository path, exact consumer revision,
-  application import inventory, or internal migration plan.
-- Every commit reachable from `main` but not `origin/main` passes the same
-  sensitive-pattern audit; `origin/main` itself is not rewritten.
-- The final tree preserves the v1 implementation and generic legacy-compatibility
-  boundary, has no unintended runtime diff from the pre-scrub tree, and passes
-  the focused documentation checks plus `npm run verify:v1`.
+- A new consumer can install v1, import its complete stylesheet, configure
+  default/custom/nested themes, and use SSR/system mode from public docs alone.
+- Every conformant inventory component has a discoverable public page covering
+  anatomy, variants/states, accessibility, tokens, and an example; documented
+  support claims match the machine-readable inventory.
+- The generic migration guide maps public legacy entry points, CSS/tokens, and
+  concepts to v1 without including any private-consumer information.
+- Web deviations, release notes, breaking changes, and prerelease limitations
+  are explicit, including the unchanged legacy root and non-publication status.
+- Focused documentation/release checks and `npm run verify:v1` pass against the
+  prepared package candidate. Publishing, tagging, and stable-root cutover are
+  out of scope.
