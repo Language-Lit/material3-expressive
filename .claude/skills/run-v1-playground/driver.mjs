@@ -194,6 +194,19 @@ const COMMANDS = {
     console.log('hovered', selector)
   },
 
+  async pressDown(selector) {
+    if (!page) return console.log('ERROR: launch first')
+    await page.locator(selector).hover()
+    await page.mouse.down()
+    console.log('pressed down', selector)
+  },
+
+  async release() {
+    if (!page) return console.log('ERROR: launch first')
+    await page.mouse.up()
+    console.log('released')
+  },
+
   async focus(selector) {
     if (!page) return console.log('ERROR: launch first')
     await page.locator(selector).focus()

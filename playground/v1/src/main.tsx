@@ -8,6 +8,7 @@ import {
 } from '@language-lit/material3-expressive/v1'
 import '@language-lit/material3-expressive/v1/styles.css'
 import { ButtonExample } from '../examples/Button.example'
+import { ButtonGroupExample } from '../examples/ButtonGroup.example'
 import { CardExample } from '../examples/Card.example'
 import { CheckboxExample } from '../examples/Checkbox.example'
 import { CircularProgressExample } from '../examples/CircularProgress.example'
@@ -26,6 +27,7 @@ import { RadioExample } from '../examples/Radio.example'
 import { SegmentedButtonGroupExample } from '../examples/SegmentedButtonGroup.example'
 import { SelectExample } from '../examples/Select.example'
 import { SnackbarExample } from '../examples/Snackbar.example'
+import { SplitButtonExample } from '../examples/SplitButton.example'
 import { SurfaceExample } from '../examples/Surface.example'
 import { SwitchExample } from '../examples/Switch.example'
 import { TabsExample } from '../examples/Tabs.example'
@@ -57,6 +59,8 @@ createRoot(root).render(
         <IconButtonExample />
         <FloatingActionButtonExample />
         <ButtonExample />
+        <ButtonGroupExample />
+        <SplitButtonExample />
         <CardExample />
         <CheckboxExample />
         <RadioExample />
