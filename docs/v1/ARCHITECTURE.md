@@ -369,7 +369,10 @@ the pinned source's own real Compact/Medium/Expanded width breakpoints —
 a deliberate 3-tier mapping that diverges from the pinned source's own
 2-tier `calculateFromAdaptiveInfo` (see ADR 0020 for why). Server
 rendering and pre-hydration always reflect the compact tier, corrected by
-a client effect once a real viewport exists to measure.
+a client effect once a real viewport exists to measure. Bar and rail item
+icons retain their sourced 24×24px geometry in every state; a separate
+centered background layer alone expands from zero width to the 56×32px active
+pill, while the full-size state-layer target and item layout remain stable.
 
 `LinearProgress`, `CircularProgress`, and `WavyProgress` share the native
 `<progress>` determinate/indeterminate value contract while rendering custom

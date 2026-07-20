@@ -18,10 +18,28 @@ describe('NavigationRail stylesheet contract', () => {
     expect(css).toContain('flex-direction: column')
   })
 
+  it('expands only the active background while retaining fixed indicator and icon geometry', () => {
+    expect(css).toMatch(
+      /\.m3e-navigation-rail__indicator::before\s*{[\s\S]*?inline-size:\s*0;/,
+    )
+    expect(css).toMatch(
+      /\[data-m3e-selected="true"\] \.m3e-navigation-rail__indicator::before\s*{[\s\S]*?inline-size:\s*100%;/,
+    )
+    expect(css).toMatch(
+      /\.m3e-navigation-rail__indicator\s*{[\s\S]*?block-size:\s*var\(--m3e-comp-navigation-rail-item-active-indicator-height\);[\s\S]*?inline-size:\s*var\(--m3e-comp-navigation-rail-item-active-indicator-width\);/,
+    )
+    expect(css).toMatch(
+      /\.m3e-navigation-rail__icon\s*{[\s\S]*?block-size:\s*var\(--m3e-comp-navigation-rail-item-icon-size\);[\s\S]*?inline-size:\s*var\(--m3e-comp-navigation-rail-item-icon-size\);/,
+    )
+    expect(css).not.toMatch(/transform:\s*scale/)
+  })
+
   it('uses the shared state-layer system for hover/focus/pressed item feedback', () => {
     expect(css).toContain('var(--m3e-sys-state-hover)')
     expect(css).toContain('var(--m3e-sys-state-focus)')
     expect(css).toContain('var(--m3e-sys-state-pressed)')
+    expect(css).toContain('background: currentColor')
+    expect(css).toContain('.m3e-navigation-rail__indicator::after')
   })
 
   it('dims a disabled item using color-mix against its own disabled opacity token', () => {

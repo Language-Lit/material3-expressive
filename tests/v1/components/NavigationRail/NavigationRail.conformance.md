@@ -47,8 +47,10 @@ Supported Material baseline: AndroidX Material 3 branch revision
 ## States and motion
 
 - Enabled/hovered/focused/pressed/selected/disabled all covered, the same
-  shared-state-layer-via-`currentColor` model `NavigationBar` uses. Each
-  item's pill fades/scales independently on its own selection change.
+  shared-state-layer-via-`currentColor` model `NavigationBar` uses. As in the
+  pinned layout, each 24×24px icon stays fixed while only a separate,
+  centered indicator background fades and expands from zero width to 56×32px;
+  the full-size interaction layer and item footprint do not scale.
 
 ## Web-specific deviations
 

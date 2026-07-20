@@ -1,6 +1,6 @@
 # NavigationBar
 
-`NavigationBar` renders a bottom navigation bar with a sliding pill
+`NavigationBar` renders a bottom navigation bar with a width-expanding pill
 highlight behind the selected item's icon. It uses web-native `<nav>`/
 `aria-current` navigation semantics rather than the pinned Material
 source's ported tab role — it is a persistent app-navigation region, not
@@ -35,7 +35,9 @@ import '@language-lit/material3-expressive/v1/styles.css'
   assistive technology.
 - `selectedIcon`, when supplied, replaces `icon` while that item is
   selected (a common outlined-to-filled icon swap); omit it to reuse
-  `icon` for both states.
+  `icon` for both states. Both artworks stay inside the same 24×24px box:
+  selection animates only the centered indicator background from zero width
+  to its 56×32px pill, never the icon or item footprint.
 
 ## Tokens and boundaries
 
