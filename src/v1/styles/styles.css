@@ -6,7 +6,9 @@
 @import '../components/Checkbox/Checkbox.css';
 @import '../components/CircularProgress/CircularProgress.css';
 @import '../components/Dialog/Dialog.css';
+@import '../components/FabMenu/FabMenu.css';
 @import '../components/FloatingActionButton/FloatingActionButton.css';
+@import '../components/FloatingToolbar/FloatingToolbar.css';
 @import '../components/Icon/Icon.css';
 @import '../components/IconButton/IconButton.css';
 @import '../components/LinearProgress/LinearProgress.css';

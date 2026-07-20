@@ -13,7 +13,9 @@ import { CardExample } from '../examples/Card.example'
 import { CheckboxExample } from '../examples/Checkbox.example'
 import { CircularProgressExample } from '../examples/CircularProgress.example'
 import { DialogExample } from '../examples/Dialog.example'
+import { FabMenuExample } from '../examples/FabMenu.example'
 import { FloatingActionButtonExample } from '../examples/FloatingActionButton.example'
+import { FloatingToolbarExample } from '../examples/FloatingToolbar.example'
 import { IconExample } from '../examples/Icon.example'
 import { IconButtonExample } from '../examples/IconButton.example'
 import { LinearProgressExample } from '../examples/LinearProgress.example'
@@ -82,6 +84,8 @@ createRoot(root).render(
         <CircularProgressExample />
         <WavyProgressExample />
         <LoadingIndicatorExample />
+        <FloatingToolbarExample />
+        <FabMenuExample />
       </main>
     </Material3Provider>
   </React.StrictMode>,

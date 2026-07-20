@@ -629,3 +629,34 @@ blob `1d76713a341c4030b17a9bdc0ee7e656eea22720`,
 hash-object`. `leading-icon-size` per size deviates from the sourced
 (single, non-scaling) `SplitButtonDefaults.LeadingIconSize`, instead
 reusing `Button`'s own per-size icon scale — see ADR 0023 for why.
+
+`FloatingToolbar` (T24) registers the same pinned revision,
+`FloatingToolbar.kt` blob `41a86d779b71db88b812117312f5e151af58efe7`, and
+generated `FloatingToolbarTokens.kt` blob
+`59bfee49e6fce309167337d1e51f6896267ec707` for `ContainerHeight`/
+`ContainerShape`/`ContainerLeadingSpace`/`ContainerTrailingSpace`/
+`ContainerBetweenSpace`/`ContainerExternalPadding`/
+`StandardContainerColor`/`VibrantContainerColor`. Content colors
+(`standard-content-color`/`vibrant-content-color`) are not in the
+generated token file — the source resolves `FloatingToolbarColors` from a
+`ColorScheme` extension property this project didn't fetch — so this
+project pairs each container color with Material's own conventional
+on-container role instead (`onSurface`/`onPrimaryContainer`). Only the
+plain (non-FAB-integrated) treatment is covered; see ADR 0024.
+
+`FabMenu` (T24) registers the same pinned revision,
+`FloatingActionButtonMenu.kt` blob
+`8fc5e45ec2d9d0623233026b4688b2a9c1529aca`, and two generated token
+files: `FabBaselineTokens.kt` blob `f4f350619e0c1210aea78817a832de5a255a914b`
+(the collapsed trigger's `ContainerHeight`/`IconSize`) and
+`FabMenuBaselineTokens.kt` blob `4c8771a6328389263c8735d7693309184c6c37f0`
+(the expanded trigger's `CloseButtonContainerHeight`/`CloseButtonIconSize`,
+and every `FabMenuItem` dimension) — all cross-verified against Gitiles'
+own tree-listing `id` field via `git hash-object`. `trigger-shape-
+collapsed` (`16dp`) is not in either generated token file — it is
+`FloatingActionButtonMenu.kt`'s own internal `FabInitialCornerRadius`
+constant (`private val FabInitialCornerRadius get() = 16.dp`), read
+directly from the composable source since the pinned revision hasn't yet
+promoted it to a generated token. See ADR 0024 for the full "trigger size
+never changes, only shape/color/icon-size" analysis and every other
+T24 web-specific deviation.
