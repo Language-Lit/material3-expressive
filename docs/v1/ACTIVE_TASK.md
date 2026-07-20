@@ -2,8 +2,9 @@
 
 ## T20 — Navigation bar and rail indicator geometry repair
 
-Status: active
+Status: complete
 Repair approved: 2026-07-20
+Completed: 2026-07-20
 
 ### Scope
 
