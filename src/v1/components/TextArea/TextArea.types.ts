@@ -32,6 +32,7 @@ type TextAreaNativeProps = Omit<ComponentPropsWithRef<'textarea'>, 'children'>
  * Props for a native Material multiline text field. `className` and `style`
  * describe the field root; every other prop and the forwarded ref belong to
  * the native `textarea`. Height follows the native `rows` attribute and the
- * browser's own vertical resize handle; auto-growing height is out of scope.
+ * browser's own vertical resize handle, clamped to the shared Material field
+ * minimum; auto-growing height is out of scope.
  */
 export type TextAreaProps = TextAreaNativeProps & TextAreaOwnProps

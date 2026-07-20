@@ -2,9 +2,9 @@
 
 ## T14 — TextField and TextArea geometry repair
 
-Status: complete
+Status: active
 Approved: 2026-07-20
-Completed: 2026-07-20
+Follow-up approved: 2026-07-20
 
 ### Scope
 
@@ -27,6 +27,10 @@ chrome.
 - Match the pinned multiline branch: an empty TextArea label starts at the
   ordinary 16px top padding instead of centering across all rows, while icon
   slots remain centered across the multiline container.
+- Keep the native TextArea resize affordance synchronized with the complete
+  field container by applying its 56px Material minimum to the textarea itself,
+  so the control cannot shrink independently of the label, indicator, or
+  outline.
 - Preserve the filled variant, native-truth focus/value behavior, logical RTL
   layout, forced colors, reduced motion,
   accessibility, SSR, and public types.
@@ -56,6 +60,9 @@ chrome.
   filled, outlined, TextArea, and Select states retain their intended layout;
   an empty multiline label starts at 16px and multiline icon slots are centered
   across the container, matching the pinned placement policy.
+- Resizing a TextArea changes the complete field container while the native
+  textarea continues to fill it; the resize handle cannot move above the
+  indicator/outline or shrink the field below its 56px minimum block size.
 - The outline gap follows arbitrary label content without JavaScript
   measurement, and focus/error/disabled outline width and color remain visible
   in normal and forced-colors modes.

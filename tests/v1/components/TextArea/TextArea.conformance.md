@@ -26,6 +26,11 @@ thin multiline variant rather than a separately duplicated component:
   unchanged. `TextArea` mirrors that precedent on the web: a native
   `textarea` swapped in for `input` under the shared `TextFieldChrome`
   primitive, not a separately duplicated component tree.
+- Pinned first-party Material Web TextArea resize guidance and field resize
+  propagation, accessed 2026-07-20:
+  <https://github.com/material-components/material-web/blob/b4de401eb665ec63474f39319a4ba8f2145974cc/docs/components/text-field.md#textarea>
+  and
+  <https://github.com/material-components/material-web/blob/b4de401eb665ec63474f39319a4ba8f2145974cc/field/internal/_shared.scss>
 
 Supported Material baseline: AndroidX Material 3 branch revision
 `225f50d42bf0adeb2abf4b6109befb5ab6ce4efc`, adapted to a native `textarea`
@@ -39,7 +44,9 @@ substituting a native `textarea` for the native `input`, both rendered
 through the same internal `TextFieldChrome` primitive and the same
 `.m3e-text-field__input` class so all shared CSS applies unchanged. Height
 follows the native `rows` attribute and the browser's own vertical resize
-handle; auto-growing height is out of scope.
+handle. The handle is clamped to the shared 56px minimum container block size,
+so the native control and its Material chrome cannot separate at the minimum.
+Auto-growing height is out of scope.
 
 ## Variants, shape, color, and size
 
@@ -69,7 +76,8 @@ root (driving the resting-label placement branch above) and no `type` prop,
 since native `textarea` has no `type` attribute. `rows`, `cols`, `wrap`, and
 every other native `textarea` attribute forward directly. Native vertical
 resize (`resize: vertical`) is retained as a deliberate, native web
-affordance with no first-party equivalent to defer to.
+affordance. `rows` supplies its initial height, and the shared Material 56px
+container minimum is also the native control's resize floor.
 
 ## Accessible name, description, role, state, and keyboard
 
@@ -84,6 +92,8 @@ Identical to `TextField`.
 
 ## Web-specific deviations
 
-Shares every deviation already recorded for `TextField`; there is no
-TextArea-specific geometry deviation. Native vertical resize remains the
-web-only affordance described above.
+Shares every deviation already recorded for `TextField`. Native vertical
+resize remains the web-only affordance described above; unlike the first-party
+Material Web custom element, which propagates resizing through its field
+container, this native-React adaptation keeps the handle on the actual
+`textarea` and gives it the same 56px floor as the surrounding chrome.
