@@ -1,8 +1,9 @@
-# ADR 0021: Three progress components matching the spec's own naming, CSS-`@keyframes`-driven motion, and numerically pre-sampled wave/curve paths
+# ADR 0021: Three progress components matching the spec's own naming, CSS-`@keyframes`-driven motion, and source-derived vector paths
 
 Status: accepted
 Date: 2026-07-20
 Task: T21
+Amended: 2026-07-20 (geometry and motion conformance repair)
 
 ## Context
 
@@ -40,6 +41,15 @@ restructured to match before completion, discarding the `variant`-prop
 design in favor of three components. This ADR documents the final,
 restructured design; the two-component draft is mentioned here only as
 the reason the restructuring happened, not as a design this project ships.
+
+A post-delivery visual audit found four geometry errors in the original web
+translation: the linear wave used the whole 10px view box for its centerline
+before adding a 4px stroke and was consequently clipped; the circular wave was
+a faceted radial-sine approximation rather than the source's rounded-polygon
+morph; zero-length round-capped dashes painted endpoint dots; and circular
+animation groups did not explicitly anchor their transforms to the fixed SVG
+view box. The 2026-07-20 amendment below replaces those approximations while
+preserving the public API and CSS-only animation architecture.
 
 ## Decision
 
@@ -115,7 +125,11 @@ the reason the restructuring happened, not as a design this project ships.
    normalization, rather than a value this project would otherwise have
    to compute from each path's true geometric length (materially
    different between a plain circle and a rippling wave path of the same
-   nominal diameter).
+   nominal diameter). The plain ring reserves the source's requested gap
+   plus one full stroke width for its two round caps. The wavy ring uses the
+   source's adaptive short-segment formula. At the 0% and 100% endpoints the
+   zero-length active/track path is omitted entirely, because SVG otherwise
+   paints its round cap as a stray dot.
 7. **Circular indeterminate composes three independently animated nested
    groups**, matching the source's three composed `animateFloat` values
    exactly: a continuous global rotation (`1080deg`/`6000ms` linear), a
@@ -125,49 +139,48 @@ the reason the restructuring happened, not as a design this project ships.
    separate CSS animations on nested elements compose additively — the
    direct web equivalent of Compose summing three independent
    `animateFloat` values, needing no custom easing math to merge them into
-   one animation. `circularIndeterminateTrackColor` is `Transparent` in
-   the pinned source (unlike the linear indicator's own indeterminate
-   track, which stays visible); `CircularProgress`/`WavyProgress` render
-   no track element at all in indeterminate mode, the more direct
-   translation of "invisible" than an explicit transparent element.
-8. **`WavyProgress`'s wave geometry is pre-rendered and numerically
-   sampled, not computed live at render time**: `wavePaths.ts` samples
-   `y = sin(2*PI*x / wavelength)` (linear, 8 points/cycle across a fixed,
-   documented `2400px` span) and `r(theta) = radius + sin(waveCount *
-   theta)` in polar coordinates (circular, 12 points/cycle around a full
-   closed loop, `waveCount = round(circumference / wavelength)` computed
-   once since the ring's size is fixed) into static SVG `<path>` `d`
-   strings, animated purely via CSS `transform` (`translateX`/`rotate`)
-   loops of exactly one wavelength per `wavelength/waveSpeed` — always
-   `1000ms` since the source's own default `waveSpeed` equals `wavelength`.
-   No `requestAnimationFrame` loop, no per-frame JS path regeneration.
-   The circular ripple is a sine-perturbation-of-radius approximation of
-   the source's actual `androidx.graphics.shapes` `RoundedPolygon`-morph
-   implementation, whose exact pixel-amplitude formula was not practical
-   to port; visually equivalent at this component's subtle, low amplitude.
+   one animation. Plain `CircularProgress`'s
+   `circularIndeterminateTrackColor` is `Transparent`, so it renders no
+   indeterminate track element. `WavyProgress` has its own non-transparent
+   `trackColor` default and retains the circle track in indeterminate mode,
+   pulsing its cut segment with the same sweep and gap math. Every nested
+   circular animation group uses `transform-box: view-box` and
+   `transform-origin: center`, mapping its rotations to the fixed 20px plain
+   or 24px wavy SVG center instead of the group's changing painted bounds.
+8. **`WavyProgress` uses the source's path construction rather than sampled
+   sine polylines.** The linear path repeats the pinned implementation's
+   quadratic segments across a fixed `2440px` span. Its 3px centerline
+   amplitude is `(10px container - 4px stroke) / 2`, so the complete stroke
+   fits from y=0 through y=10. `wavePaths.ts` constructs this deterministic
+   path once when the module loads; it is never regenerated per render or
+   frame. The circular path uses the exact matched endpoints produced by the
+   faithful `RoundedPolygon`/`Morph` port introduced for T22: a nine-vertex
+   circle and nine-point star (`innerRadius=.75`, outer rounding `.35/.4`,
+   inner rounding `.5`), normalized, scaled to the source's 44px stroke-safe
+   area, and recentered in the 48px view box. Both endpoints contain the same
+   27 cubic commands so the browser can interpolate them directly. CSS
+   `translateX` still travels the linear geometry by one wavelength. For the
+   circular shape, a synchronized one-ninth-path dash shift and `-40deg`
+   counter-rotation reproduce the source's shifted-segment construction: the
+   lobes travel while the active arc endpoints stay fixed. Both complete one
+   visual wavelength per `wavelength/waveSpeed` (1000ms by default), with no
+   `requestAnimationFrame` or per-frame JS path work.
 9. **Amplitude ramp**: `WavyProgress` reproduces
    `WavyProgressIndicatorDefaults.indicatorAmplitude`'s exact thresholds
    (`progress <= 0.1` or `>= 0.95` → zero amplitude). `shape="linear"`
-   applies a literal `scaleY` transition — a direct, faithful translation,
-   since the source computes linear amplitude in px as a literal fraction
-   of the container's half-height (confirmed from
-   `LinearProgressDrawingCache`'s own `y = (1f - amplitude) * halfHeight`).
-   `shape="circular"` instead cross-fades opacity between a flat circle
-   and the wave path: a ring's *radial* amplitude has no equivalent simple
-   CSS transform the way a horizontal wave's *vertical* amplitude does, so
-   this project substitutes a documented, visually equivalent technique
-   rather than attempting per-frame path regeneration. Both shapes use one
-   symmetric transition easing (`MotionTokens.DurationLong2`/
-   `EasingStandardCubicBezier`) instead of the source's direction-dependent
-   `Increasing`/`DecreasingAmplitudeAnimationSpec` pair — a deliberate,
-   minor, documented scope cut.
-10. **Track renders as a straight (non-wavy) line in `WavyProgress`, both
-    shapes** — a deliberate, documented simplification: the source's track
-    can itself carry a subordinate wave that continuously reshapes around
-    a moving gap, and replicating that exactly (a second independently
-    phased wave path, re-clipped every frame around a moving gap) is
-    disproportionate complexity for a segment that is already low-contrast
-    `secondaryContainer` against the primary wave.
+   interpolates between structurally identical flat/full quadratic paths,
+   and `shape="circular"` interpolates between the matched circle/star cubic
+   paths. This changes path geometry while preserving the 4px stroke, unlike
+   scaling the whole SVG (which also collapsed the stroke) or cross-fading
+   opacity. Increasing amplitude uses `EasingStandardCubicBezier`; decreasing
+   amplitude uses `EasingEmphasizedAccelerateCubicBezier`, matching the
+   source's direction-specific `500ms` animation specs.
+10. **Track geometry matches the source treatment:** a straight rounded line
+    for the linear shape and the matched circle path for the circular shape.
+    It does not reuse the active wave path. The circular track remains visible
+    in both modes; in indeterminate mode it shares the source's
+    global/additional/`+90deg` rotations and its open segment follows the
+    animated active sweep.
 11. **No carved gap in any indeterminate track** (`LinearProgress`,
     `WavyProgress` `shape="linear"`): the track renders as one continuous
     full-width bar under the two moving indicator segments, rather than
@@ -189,17 +202,16 @@ the reason the restructuring happened, not as a design this project ships.
     `CircularProgressIndicator`'s composables, unlike the linear
     composables' explicit LTR/RTL branch).
 13. Three new components (rather than the originally planned two) plus the
-    pre-sampled wave path data (`~21KB` raw across two `wavePaths.ts`
-    files, before minification/gzip) pushed six of nine measured
+    original pre-sampled wave path data pushed six of nine measured
     artifacts past their T19-set ceilings, several of the rest already
     down to single-digit headroom — the same threshold prior tasks
     (T13/T15/T17/T19) used to justify a proportional raise across every
     ceiling rather than only the breached ones. All nine ceilings were
     raised ~12% above this task's own measured output, following that
-    same established methodology; wave-path sample density (8 points/cycle
-    linear, 12/cycle circular) and the fixed `2400px` linear span were
-    already kept moderate specifically to limit this raise's size, not
-    left unbounded and corrected after the fact.
+    same established methodology. The geometry repair replaces the bulky
+    sampled polylines with a generated quadratic linear path and compact
+    matched 27-cubic circular endpoints; it does not require a further
+    budget increase.
 
 ## Consequences
 
@@ -220,6 +232,12 @@ the reason the restructuring happened, not as a design this project ships.
   orientations/forms in one file — distinct from `NavigationDrawer`'s own
   variant-prop precedent (T20), which unified three *lifecycle* composables
   of the *same* orientation, not two orientations of the same treatment.
+- SVG animation groups whose source rotates around a fixed canvas center
+  must explicitly use `transform-box: view-box`; the default/fill-box basis
+  is not a stable substitute when a dash's painted bounds change over time.
+- Morphing between matched `d` structures is the preferred amplitude
+  treatment here because it changes only the source geometry and preserves
+  stroke width. Whole-SVG scaling and opacity cross-fades are not equivalent.
 - This task's mid-implementation restructuring is a reminder to check
   `V1_SPEC.md` §9 and the `component-inventory.json` placeholder rows
   directly before finalizing a component's public shape, not only the

@@ -45,29 +45,36 @@ Supported Material baseline: AndroidX Material 3 branch revision
 - `'circular'`: `48px` fixed diameter (`WaveSize`, larger than
   `CircularProgress`'s plain `40px` `Size`), `15px` wavelength for both
   determinate and indeterminate (one token, unlike the linear shape's two).
-- Both: `primary`-tinted indicator, `secondaryContainer` track (straight,
-  not wavy, in both shapes — see Web-specific deviations), `4px` stroke
-  width.
+- Both: `primary`-tinted indicator, `secondaryContainer` track (a straight
+  rounded line for the linear shape and a circle for the circular shape),
+  `4px` stroke width. Unlike plain `CircularProgress`'s transparent
+  indeterminate track, the circular wavy track remains visible in both modes.
 
 ## States and motion
 
 - Wave travel: a continuous `translateX` (linear) / `rotate` (circular)
   loop of exactly one wavelength per `wavelength / waveSpeed` — always
   `1000ms` since `waveSpeed` defaults to `wavelength` in the source,
-  running continuously regardless of determinate/indeterminate mode.
+  running continuously regardless of determinate/indeterminate mode. The
+  circular path counter-rotation is paired with a synchronized one-ninth-path
+  dash shift, keeping the sweep endpoints fixed while the lobes travel.
 - Amplitude ramp: `WavyProgressIndicatorDefaults.indicatorAmplitude` zeroes
   the wave near `progress <= 0.1` or `>= 0.95` in determinate mode (always
   full amplitude when indeterminate, matching the source's own fixed
-  `amplitude: Float = 1f` default there). `'linear'` scales the wave
-  vertically via `scaleY` — a direct, faithful translation, since the
-  source computes amplitude in px as a literal fraction of the container's
-  half-height. `'circular'` cross-fades opacity between a flat circle and
-  the wave path instead (see Web-specific deviations).
+  `amplitude: Float = 1f` default there). `'linear'` interpolates between
+  structurally identical flat/full quadratic paths; `'circular'` interpolates
+  between matched 27-cubic circle/star paths. Both preserve the 4px stroke.
+  Increasing amplitude uses the source's standard easing and decreasing
+  amplitude uses its emphasized-accelerate easing, each over `500ms`.
 - Indeterminate `'linear'` reuses `LinearProgress`'s exact pre-sampled
   head/tail keyframes for the visible clip window, layering the
   wave-travel animation on top. Indeterminate `'circular'` reuses
   `CircularProgress`'s exact three-layer rotation/sweep composition,
-  adding a fourth continuous rotation for the traveling ripple.
+  adding a fourth continuous `-40deg` rotation for one nine-wave period.
+  The source's static `+90deg` indeterminate orientation is included. All
+  circular transform layers use the fixed 48px view box and its 24px center;
+  the circle track shares those layers and pulses its open segment with the
+  active sweep while preserving the adaptive cap/gap spacing.
 
 ## Accessibility
 
@@ -84,35 +91,23 @@ Supported Material baseline: AndroidX Material 3 branch revision
   split (plain vs. wavy, each internally split by orientation) is the
   precedent this component follows, rather than one component per
   orientation × treatment combination.
-- **Pre-rendered, sampled wave paths, not a literal sine/`RoundedPolygon`
-  computation at render time**: `wavePaths.ts` generates the linear sine
-  wave and the circular ripple ring by numerically sampling the target
-  curve into an SVG `<path>` `d` string ahead of time (`8`/`12` points per
-  cycle), animated purely via CSS `transform`, not `requestAnimationFrame`.
-  The circular ripple is a sine-perturbation-of-radius approximation, not
-  the source's actual `androidx.graphics.shapes` `RoundedPolygon` morph —
-  the exact polygon-morph pixel-amplitude formula was not practical to
-  port; this project's approximation is visually equivalent for a subtle,
-  low-amplitude ripple.
-- **Linear wave path pre-rendered to a fixed, generous 2400px width**, not
+- **Source-derived paths are prepared outside the render loop.** The linear
+  path is the source's repeating quadratic construction with a 3px
+  centerline amplitude, leaving exactly half the 4px stroke inside each edge
+  of the 10px container. The circular endpoints come from the faithful T22
+  offline port of the pinned `RoundedPolygon`/`Morph` implementation: a
+  nine-vertex circle and rounded nine-point star, normalized and scaled into
+  the source's stroke-safe 44px drawing area. Browser `d` interpolation and
+  CSS transforms provide motion; there is no `requestAnimationFrame` loop or
+  per-frame path regeneration.
+- **Linear wave path is generated across a fixed, generous 2440px width**, not
   computed per actual rendered width — comfortably covers realistic
   layout widths; a bar stretched wider than that would see the wave
   pattern clip at the far edge, a documented, extremely unlikely edge case
   for an ultra-wide viewport.
-- **Circular amplitude ramp uses an opacity cross-fade between a flat
-  circle and the wave path**, not a literal radial-amplitude animation —
-  a ring's radial amplitude has no equivalent simple CSS transform (unlike
-  the linear shape's straightforward vertical `scaleY`), so this project
-  substitutes a documented, visually equivalent technique.
-- **Track renders as a straight (non-wavy) line in both shapes**, even
-  though the source's own track can carry a subordinate wave that
-  continuously reshapes around a moving gap — a deliberate, documented
-  simplification: replicating that exactly is disproportionate complexity
-  for a segment that is already low-contrast `secondaryContainer` against
-  the primary wave.
-- **One symmetric amplitude-transition easing**, not the source's
-  direction-dependent `Increasing`/`DecreasingAmplitudeAnimationSpec` pair
-  — a deliberate, minor, documented scope cut.
+- **No carved gap in the indeterminate linear track:** it remains one
+  continuous full-width low-contrast bar beneath the moving wave windows,
+  matching the existing `LinearProgress` web deviation.
 - This is one of three sibling components (`LinearProgress`,
   `CircularProgress`, `WavyProgress`) matching `V1_SPEC.md` §9's own
   three-item naming — see ADR 0021 for the full rationale, including why

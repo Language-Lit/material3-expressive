@@ -48,8 +48,39 @@ describe('CircularProgress', () => {
 
   it('sizes the indicator sweep by the progress fraction via stroke-dasharray', () => {
     render(<CircularProgress aria-label="Progress" value={0.25} />)
-    const indicator = document.querySelector('.m3e-circular-progress__indicator') as SVGCircleElement
+    const indicator = document.querySelector(
+      '.m3e-circular-progress__indicator',
+    ) as SVGCircleElement
     expect(indicator.style.strokeDasharray).toBe('25 75')
+    expect(indicator.getAttribute('transform')).toBe('rotate(-90 20 20)')
+  })
+
+  it('uses the source circular phase for indeterminate motion', () => {
+    render(<CircularProgress aria-label="Loading" />)
+    const indicator = document.querySelector(
+      '.m3e-circular-progress__indicator',
+    ) as SVGCircleElement
+    expect(indicator.hasAttribute('transform')).toBe(false)
+  })
+
+  it('does not paint zero-length round-cap artifacts at either determinate endpoint', () => {
+    const { rerender } = render(<CircularProgress aria-label="Progress" value={0} />)
+    expect(document.querySelector('.m3e-circular-progress__indicator')).toBeNull()
+    expect(document.querySelector('.m3e-circular-progress__track')).not.toBeNull()
+
+    rerender(<CircularProgress aria-label="Progress" value={1} />)
+    expect(document.querySelector('.m3e-circular-progress__indicator')).not.toBeNull()
+    expect(document.querySelector('.m3e-circular-progress__track')).toBeNull()
+  })
+
+  it('includes the round caps when calculating the visible active-to-track gap', () => {
+    render(<CircularProgress aria-label="Progress" value={0.25} />)
+    const track = document.querySelector('.m3e-circular-progress__track') as SVGCircleElement
+    const [visibleTrack] = track.style.strokeDasharray.split(' ').map(Number)
+    const expectedGapPct = ((4 + 4) / (Math.PI * 40)) * 100
+
+    expect(visibleTrack).toBeCloseTo(100 - 25 - expectedGapPct * 2, 5)
+    expect(Number(track.style.strokeDashoffset)).toBeCloseTo(-(25 + expectedGapPct), 5)
   })
 
   it('renders no track element at all when indeterminate (circularIndeterminateTrackColor is Transparent in the source)', () => {

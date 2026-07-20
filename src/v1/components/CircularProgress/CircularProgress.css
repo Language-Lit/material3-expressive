@@ -13,6 +13,7 @@
   .m3e-circular-progress__track {
     fill: none;
     stroke: var(--m3e-comp-circular-progress-track-color);
+    stroke-linecap: round;
     stroke-width: var(--m3e-comp-circular-progress-stroke-width);
     transition:
       stroke-dasharray var(--m3e-sys-motion-expressive-default-spatial-duration)
@@ -40,14 +41,17 @@
   .m3e-circular-progress[data-m3e-determinate="false"] .m3e-circular-progress__global-rotate {
     animation: m3e-circular-progress-global-rotate
       var(--m3e-comp-circular-progress-indeterminate-cycle-duration) linear infinite;
-    transform-box: fill-box;
+    /* Compose rotates the complete Canvas around its fixed center. Express
+       that invariant directly instead of deriving an origin from an SVG
+       element's geometry or painted bounds. */
+    transform-box: view-box;
     transform-origin: center;
   }
 
   .m3e-circular-progress[data-m3e-determinate="false"] .m3e-circular-progress__additional-rotate {
     animation: m3e-circular-progress-additional-rotate
       var(--m3e-comp-circular-progress-indeterminate-cycle-duration) linear infinite;
-    transform-box: fill-box;
+    transform-box: view-box;
     transform-origin: center;
   }
 
@@ -106,14 +110,14 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .m3e-circular-progress__track,
-    .m3e-circular-progress__indicator {
+    .m3e-circular-progress .m3e-circular-progress__track,
+    .m3e-circular-progress[data-m3e-determinate] .m3e-circular-progress__indicator {
       transition: none;
     }
 
-    .m3e-circular-progress__global-rotate,
-    .m3e-circular-progress__additional-rotate,
-    .m3e-circular-progress__sweep {
+    .m3e-circular-progress[data-m3e-determinate="false"] .m3e-circular-progress__global-rotate,
+    .m3e-circular-progress[data-m3e-determinate="false"] .m3e-circular-progress__additional-rotate,
+    .m3e-circular-progress[data-m3e-determinate="false"] .m3e-circular-progress__sweep {
       animation: none;
     }
 

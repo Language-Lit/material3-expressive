@@ -550,18 +550,17 @@ own copy of `ProgressIndicatorTokens`/`LinearProgressIndicatorTokens`/
 `CircularProgressIndicatorTokens` values independently of `LinearProgress`/
 `CircularProgress`'s own copies, the same established duplication
 precedent. `circular-amplitude` (`1.6dp`, `ActiveWaveAmplitude`) is
-registered here (unlike `LinearProgress`'s reasoned omission of its own
-same-named linear token, whose amplitude-in-px this project instead
-derives directly from container height): the circular wavy ripple's own
-internal implementation (`CircularWavyProgressModifiers.kt`) draws by
-morphing a `RoundedPolygon` (`androidx.graphics.shapes`), not the simple
-sine-perturbation this project uses for a web-renderable approximation —
-the exact pixel-amplitude formula that polygon-morph implementation uses
-was not practical to port, so this registration uses the sourced
-`ActiveWaveAmplitude` value directly as the approximation's max-amplitude
-constant. See ADR 0021 for the full "three progress components, not two
-plus a `variant` prop" rationale and every other T21 web-specific
-deviation.
+retained here for public token compatibility. The repaired circular ripple
+does not treat it as a radial-sine offset: it uses the pinned
+`CircularWavyProgressModifiers.kt` circle/star parameters, generated through
+the faithful offline `androidx.graphics.shapes` `RoundedPolygon`/`Morph` port
+established by T22. The linear centerline amplitude is instead derived from
+the pinned container/stroke geometry: `(10px - 4px) / 2 = 3px`, keeping the
+complete stroke in bounds. `amplitude-transition-easing` maps the source's
+increasing `EasingStandardCubicBezier`; `amplitude-decreasing-transition-
+easing` maps its decreasing `EasingEmphasizedAccelerateCubicBezier`, both
+with `DurationLong2`. See ADR 0021 for the full "three progress components,
+not two plus a `variant` prop" rationale and other T21 web-specific choices.
 
 `LoadingIndicator` (T22) registers the same pinned revision,
 `LoadingIndicator.kt` blob `edf7825aa2fa1f4654c7db50db813ddfa6b9273f`,

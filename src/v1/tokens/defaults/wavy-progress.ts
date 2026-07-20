@@ -47,13 +47,12 @@ import type { ComponentTokenRegistration } from '../schema'
  * `CircularProgress`'s own plain `Size` of `40dp`). `circular-stroke-width`
  * is `ActiveThickness`. `circular-wavelength` is `ActiveWaveWavelength`
  * (`15dp`) — one value for both determinate and indeterminate circular
- * wavy, unlike the linear shape's two. `circular-amplitude` (`1.6dp`,
- * `ActiveWaveAmplitude`) documents the source's own cited max-amplitude
- * value; this project's ring wave path (`wavePaths.ts`) is pre-rendered at
- * this amplitude directly (a sine-perturbation approximation) rather than
- * matching the source's actual `RoundedPolygon`-morph implementation
- * (`androidx.graphics.shapes`), whose own exact pixel-amplitude formula was
- * not practical to port — see `wavePaths.ts` and ADR 0021.
+ * wavy, unlike the linear shape's two. `circular-amplitude` retains the
+ * generated `ActiveWaveAmplitude` (`1.6dp`) token for compatibility, though
+ * the pinned implementation's actual radial outline is governed by its
+ * normalized `RoundedPolygon.star(innerRadius = .75)` geometry rather than
+ * reading that generated token. `wavePaths.ts` now carries the exact
+ * stroke-safe circle/star Morph endpoints.
  * `circular-indeterminate-cycle-duration` (`6000ms`) is
  * `CircularAnimationProgressDuration`. The additional-rotation and
  * progress-sweep keyframe stops are expressed directly as literal CSS
@@ -70,11 +69,9 @@ import type { ComponentTokenRegistration } from '../schema'
  * of this component's wavelength tokens.
  *
  * `amplitude-transition-duration`/`-easing` are `MotionTokens.DurationLong2`
- * (`500ms`)/`EasingStandardCubicBezier`. The source uses two different
- * easings for increasing vs. decreasing amplitude
- * (`Increasing`/`DecreasingAmplitudeAnimationSpec`); this project uses one
- * symmetric easing for both directions on both shapes, a deliberate,
- * minor, documented scope cut (see ADR 0021).
+ * (`500ms`)/`EasingStandardCubicBezier` for increasing amplitude;
+ * `amplitude-decreasing-transition-easing` is the source's distinct
+ * `EasingEmphasizedAccelerateCubicBezier` for flattening the wave.
  *
  * This is the first v1 component to use CSS `@keyframes` for continuous,
  * looping motion (every prior component only ever used `transition` on a
@@ -128,5 +125,9 @@ export const defaultWavyProgressTokens = {
 
     'amplitude-transition-duration': { kind: 'string', value: '500ms' },
     'amplitude-transition-easing': { kind: 'string', value: 'cubic-bezier(0.2, 0, 0, 1)' },
+    'amplitude-decreasing-transition-easing': {
+      kind: 'string',
+      value: 'cubic-bezier(0.3, 0, 0.8, 0.15)',
+    },
   },
 } as const satisfies ComponentTokenRegistration

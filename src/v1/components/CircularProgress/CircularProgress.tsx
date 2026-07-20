@@ -13,8 +13,12 @@ const TRACK_GAP_PX = 4
 // Center = radius + half the stroke width, so the stroked circle's outer
 // edge lands exactly on the viewBox boundary (diameter = 2 * center).
 const CENTER = RADIUS + STROKE_WIDTH / 2
-const CIRCUMFERENCE = 2 * Math.PI * RADIUS
-const GAP_PCT = (TRACK_GAP_PX / CIRCUMFERENCE) * 100
+// Compose adds the active stroke width when round caps are in use so the
+// requested 4px visible gap is measured between the cap edges, not between
+// the centerline endpoints. Its angular conversion deliberately references
+// the complete 40px canvas diameter, rather than the inset centerline radius.
+const ROUND_CAP_ADJUSTED_GAP_PCT =
+  ((TRACK_GAP_PX + STROKE_WIDTH) / (Math.PI * DIAMETER)) * 100
 
 function CircularProgressRender(
   { value, max = 1, className, style, ...divProps }: CircularProgressProps,
@@ -24,7 +28,10 @@ function CircularProgressRender(
   const coercedValue = determinate ? Math.min(Math.max(value as number, 0), max) : 0
   const progressFraction = max > 0 ? coercedValue / max : 0
   const sweepPct = progressFraction * 100
-  const trackOnLenPct = Math.max(0, 100 - sweepPct - 2 * GAP_PCT)
+  const trackGapPct = Math.min(sweepPct, ROUND_CAP_ADJUSTED_GAP_PCT)
+  const trackOnLenPct = Math.max(0, 100 - sweepPct - 2 * trackGapPct)
+  const showIndicator = !determinate || sweepPct > 0
+  const showTrack = determinate && trackOnLenPct > 0
 
   return (
     <div
@@ -49,7 +56,7 @@ function CircularProgressRender(
             source (unlike the linear indicator's own indeterminate track,
             which stays visible) — no track element renders at all in
             indeterminate mode, rather than an explicit transparent one. */}
-        {determinate && (
+        {showTrack && (
           <circle
             className="m3e-circular-progress__track"
             cx={CENTER}
@@ -59,25 +66,30 @@ function CircularProgressRender(
             transform={`rotate(-90 ${CENTER} ${CENTER})`}
             style={{
               strokeDasharray: `${trackOnLenPct} ${100 - trackOnLenPct}`,
-              strokeDashoffset: -(sweepPct + GAP_PCT),
+              strokeDashoffset: -(sweepPct + trackGapPct),
             }}
           />
         )}
         <g className="m3e-circular-progress__global-rotate">
           <g className="m3e-circular-progress__additional-rotate">
-            <circle
-              className="m3e-circular-progress__indicator m3e-circular-progress__sweep"
-              cx={CENTER}
-              cy={CENTER}
-              r={RADIUS}
-              pathLength={100}
-              transform={`rotate(-90 ${CENTER} ${CENTER})`}
-              style={
-                determinate
-                  ? { strokeDasharray: `${sweepPct} ${100 - sweepPct}`, strokeDashoffset: 0 }
-                  : undefined
-              }
-            />
+            {showIndicator && (
+              <circle
+                className="m3e-circular-progress__indicator m3e-circular-progress__sweep"
+                cx={CENTER}
+                cy={CENTER}
+                r={RADIUS}
+                pathLength={100}
+                transform={determinate ? `rotate(-90 ${CENTER} ${CENTER})` : undefined}
+                style={
+                  determinate
+                    ? {
+                        strokeDasharray: `${sweepPct} ${100 - sweepPct}`,
+                        strokeDashoffset: 0,
+                      }
+                    : undefined
+                }
+              />
+            )}
           </g>
         </g>
       </svg>

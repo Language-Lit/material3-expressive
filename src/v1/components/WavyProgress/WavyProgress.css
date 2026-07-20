@@ -48,13 +48,6 @@
     transition: none;
   }
 
-  .m3e-wavy-progress__wave-amplitude {
-    block-size: 100%;
-    transform-origin: 50% 50%;
-    transition: transform var(--m3e-comp-wavy-progress-amplitude-transition-duration)
-      var(--m3e-comp-wavy-progress-amplitude-transition-easing);
-  }
-
   .m3e-wavy-progress__linear-wave-svg {
     animation-duration: var(--m3e-comp-wavy-progress-wave-travel-duration);
     animation-iteration-count: infinite;
@@ -76,7 +69,24 @@
     fill: none;
     stroke: currentColor;
     stroke-linecap: round;
+    stroke-linejoin: round;
     stroke-width: var(--m3e-comp-wavy-progress-linear-stroke-width);
+  }
+
+  /* The source scales path geometry while keeping its Stroke unchanged.
+     Interpolating between structurally identical quadratic paths preserves
+     the 4px stroke at zero amplitude; scaling the complete SVG would make
+     the active indicator disappear at the 0-10%/95-100% thresholds. */
+  .m3e-wavy-progress[data-m3e-shape="linear"][data-m3e-determinate="true"][data-m3e-amplitude="wave"]
+    .m3e-wavy-progress__linear-wave-svg path {
+    transition: d var(--m3e-comp-wavy-progress-amplitude-transition-duration)
+      var(--m3e-comp-wavy-progress-amplitude-transition-easing);
+  }
+
+  .m3e-wavy-progress[data-m3e-shape="linear"][data-m3e-determinate="true"][data-m3e-amplitude="flat"]
+    .m3e-wavy-progress__linear-wave-svg path {
+    transition: d var(--m3e-comp-wavy-progress-amplitude-transition-duration)
+      var(--m3e-comp-wavy-progress-amplitude-decreasing-transition-easing);
   }
 
   @keyframes m3e-wavy-progress-linear-wave-travel-determinate {
@@ -181,6 +191,7 @@
   .m3e-wavy-progress[data-m3e-shape="circular"] .m3e-wavy-progress__track {
     fill: none;
     stroke: var(--m3e-comp-wavy-progress-track-color);
+    stroke-linecap: round;
     stroke-width: var(--m3e-comp-wavy-progress-circular-stroke-width);
     transition:
       stroke-dasharray var(--m3e-sys-motion-expressive-default-spatial-duration)
@@ -193,15 +204,26 @@
     fill: none;
     stroke: var(--m3e-comp-wavy-progress-active-indicator-color);
     stroke-linecap: round;
+    stroke-linejoin: round;
     stroke-width: var(--m3e-comp-wavy-progress-circular-stroke-width);
   }
 
-  .m3e-wavy-progress[data-m3e-determinate="true"] .m3e-wavy-progress__indicator {
+  .m3e-wavy-progress[data-m3e-determinate="true"][data-m3e-amplitude="wave"]
+    .m3e-wavy-progress__indicator {
     transition:
+      d var(--m3e-comp-wavy-progress-amplitude-transition-duration)
+        var(--m3e-comp-wavy-progress-amplitude-transition-easing),
       stroke-dasharray var(--m3e-sys-motion-expressive-default-spatial-duration)
-        var(--m3e-sys-motion-expressive-default-spatial-easing),
-      opacity var(--m3e-comp-wavy-progress-amplitude-transition-duration)
-        var(--m3e-comp-wavy-progress-amplitude-transition-easing);
+        var(--m3e-sys-motion-expressive-default-spatial-easing);
+  }
+
+  .m3e-wavy-progress[data-m3e-determinate="true"][data-m3e-amplitude="flat"]
+    .m3e-wavy-progress__indicator {
+    transition:
+      d var(--m3e-comp-wavy-progress-amplitude-transition-duration)
+        var(--m3e-comp-wavy-progress-amplitude-decreasing-transition-easing),
+      stroke-dasharray var(--m3e-sys-motion-expressive-default-spatial-duration)
+        var(--m3e-sys-motion-expressive-default-spatial-easing);
   }
 
   .m3e-wavy-progress__wave-rotate {
@@ -209,45 +231,65 @@
     animation-iteration-count: infinite;
     animation-name: m3e-wavy-progress-wave-rotate;
     animation-timing-function: linear;
-    transform-box: fill-box;
+    transform-box: view-box;
     transform-origin: center;
   }
 
-  /* 360deg / waveCount(9) = 40deg — one full wave-cycle rotation, seamless
-     since rotating the periodic wave pattern by exactly one cycle looks
-     identical to its start. See the wavePaths module for the generation
-     details. */
-  @keyframes m3e-wavy-progress-wave-rotate {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(40deg); }
+  .m3e-wavy-progress__wave {
+    animation: m3e-wavy-progress-wave-dash-travel
+      var(--m3e-comp-wavy-progress-wave-travel-duration) linear infinite;
   }
 
-  /* Indeterminate mode only: circularIndeterminateTrackColor is Transparent
-     in the pinned source (unlike the linear shape's own indeterminate
-     track, which stays visible) — this project renders no track element at
-     all for indeterminate rather than an explicit transparent one. */
+  /* The source selects a path segment one ninth further around the repeated
+     wave, then counter-rotates the result by 40deg. Pairing the SVG rotation
+     with an equal normalized dash shift keeps the active arc's endpoints
+     fixed while the nine lobes travel through it. */
+  @keyframes m3e-wavy-progress-wave-rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(-40deg); }
+  }
+
+  @keyframes m3e-wavy-progress-wave-dash-travel {
+    from { stroke-dashoffset: 0; }
+    to { stroke-dashoffset: -11.111111; }
+  }
+
+  /* Unlike plain CircularProgress, the pinned circular wavy default keeps a
+     visible track. It shares the global/additional/+90deg rotation layers
+     with the active path while the lobes travel independently. */
   .m3e-wavy-progress[data-m3e-determinate="false"] .m3e-wavy-progress__global-rotate {
     animation: m3e-wavy-progress-global-rotate
       var(--m3e-comp-wavy-progress-circular-indeterminate-cycle-duration) linear infinite;
-    transform-box: fill-box;
+    transform: rotate(90deg);
+    transform-box: view-box;
     transform-origin: center;
   }
 
   .m3e-wavy-progress[data-m3e-determinate="false"] .m3e-wavy-progress__additional-rotate {
     animation: m3e-wavy-progress-additional-rotate
       var(--m3e-comp-wavy-progress-circular-indeterminate-cycle-duration) linear infinite;
-    transform-box: fill-box;
+    transform-box: view-box;
     transform-origin: center;
   }
 
   .m3e-wavy-progress[data-m3e-determinate="false"] .m3e-wavy-progress__sweep {
-    animation: m3e-wavy-progress-sweep-pulse
+    animation:
+      m3e-wavy-progress-sweep-pulse
+        var(--m3e-comp-wavy-progress-circular-indeterminate-cycle-duration) linear infinite,
+      m3e-wavy-progress-wave-dash-travel
+        var(--m3e-comp-wavy-progress-wave-travel-duration) linear infinite;
+  }
+
+  .m3e-wavy-progress[data-m3e-determinate="false"] .m3e-wavy-progress__track-sweep {
+    animation: m3e-wavy-progress-track-sweep-pulse
       var(--m3e-comp-wavy-progress-circular-indeterminate-cycle-duration) linear infinite;
+    stroke-dasharray: 78.425095 21.574905;
+    stroke-dashoffset: -15.787452;
   }
 
   @keyframes m3e-wavy-progress-global-rotate {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(1080deg); }
+    from { transform: rotate(90deg); }
+    to { transform: rotate(1170deg); }
   }
 
   /* CircularAnimationAdditionalRotationDuration/Delay keyframe stops
@@ -294,21 +336,46 @@
     100% { stroke-dasharray: 10 90; }
   }
 
+  /* At the source's 10%..87% sweep range the adaptive cap+gap spacing has
+     reached its full 8px, or 5.787452% of the 44px-diameter track path. */
+  @keyframes m3e-wavy-progress-track-sweep-pulse {
+    0% {
+      stroke-dasharray: 78.425095 21.574905;
+      stroke-dashoffset: -15.787452;
+      animation-timing-function: var(--m3e-comp-wavy-progress-indeterminate-sweep-easing);
+    }
+    50% {
+      stroke-dasharray: 1.425095 98.574905;
+      stroke-dashoffset: -92.787452;
+      animation-timing-function: linear;
+    }
+    100% {
+      stroke-dasharray: 78.425095 21.574905;
+      stroke-dashoffset: -15.787452;
+    }
+  }
+
   /* ---- Shared: reduced motion / forced colors ---- */
 
   @media (prefers-reduced-motion: reduce) {
-    .m3e-wavy-progress__track,
-    .m3e-wavy-progress__indicator,
-    .m3e-wavy-progress__wave-clip,
-    .m3e-wavy-progress__wave-amplitude {
+    .m3e-wavy-progress[data-m3e-shape] .m3e-wavy-progress__track,
+    .m3e-wavy-progress[data-m3e-determinate][data-m3e-amplitude]
+      .m3e-wavy-progress__indicator,
+    .m3e-wavy-progress .m3e-wavy-progress__wave-clip,
+    .m3e-wavy-progress[data-m3e-shape="linear"][data-m3e-determinate="true"][data-m3e-amplitude]
+      .m3e-wavy-progress__linear-wave-svg path {
       transition: none;
     }
 
-    .m3e-wavy-progress__linear-wave-svg,
-    .m3e-wavy-progress__wave-rotate,
-    .m3e-wavy-progress__global-rotate,
-    .m3e-wavy-progress__additional-rotate,
-    .m3e-wavy-progress__sweep {
+    .m3e-wavy-progress[data-m3e-determinate] .m3e-wavy-progress__linear-wave-svg,
+    .m3e-wavy-progress[data-m3e-shape="circular"] .m3e-wavy-progress__wave,
+    .m3e-wavy-progress[data-m3e-shape="circular"] .m3e-wavy-progress__wave-rotate,
+    .m3e-wavy-progress[data-m3e-determinate="false"] .m3e-wavy-progress__global-rotate,
+    .m3e-wavy-progress[data-m3e-determinate="false"] .m3e-wavy-progress__additional-rotate,
+    .m3e-wavy-progress[data-m3e-determinate="false"] .m3e-wavy-progress__sweep,
+    .m3e-wavy-progress[data-m3e-determinate="false"] .m3e-wavy-progress__track-sweep,
+    .m3e-wavy-progress[data-m3e-determinate="false"] .m3e-wavy-progress__indeterminate-bar1,
+    .m3e-wavy-progress[data-m3e-determinate="false"] .m3e-wavy-progress__indeterminate-bar2 {
       animation: none;
     }
 
@@ -325,6 +392,11 @@
 
     .m3e-wavy-progress[data-m3e-determinate="false"] .m3e-wavy-progress__sweep {
       stroke-dasharray: 25 75;
+    }
+
+    .m3e-wavy-progress[data-m3e-determinate="false"] .m3e-wavy-progress__track-sweep {
+      stroke-dasharray: 63.425095 36.574905;
+      stroke-dashoffset: -30.787452;
     }
   }
 

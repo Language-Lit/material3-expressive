@@ -3,6 +3,7 @@
 Status: accepted
 Date: 2026-07-20
 Task: T22
+Amended: 2026-07-20 (T21 circular-wave follow-up)
 
 ## Context
 
@@ -28,12 +29,12 @@ matched pairs produces a smooth in-between shape at any progress. `V1_SPEC.md`
 `docs/V1_SPEC.md` §14's task-table description for T22 is "Shared polygon
 shape morphing and reduced-motion fallback" — the morphing *is* the
 task, unlike T21's `WavyProgress`, where the source's own
-`RoundedPolygon`-morph-based radial amplitude (a secondary polish detail on
-top of an otherwise-portable traveling-wave animation) was substituted with
-a documented opacity cross-fade because porting the full geometry engine
-for one polish detail was disproportionate. Substituting here would mean
-shipping a component whose defining visual identity doesn't match the
-source at all.
+`RoundedPolygon`-morph-based radial amplitude was initially substituted with
+an opacity cross-fade because porting the full geometry engine solely for
+that detail was disproportionate. Once T22 had produced and validated the
+faithful offline geometry port, the T21 conformance follow-up reused it to
+generate `WavyProgress`'s exact matched circle/star endpoints as well. No
+geometry engine ships at runtime in either component.
 
 ## Decisions
 
@@ -194,6 +195,10 @@ source at all.
   outputs (`loadingIndicatorMorphs.ts`, `loadingIndicatorKeyframes.css`),
   the same relationship `wavePaths.ts`'s own generation scripts (T21) have
   to their component.
+- The same validated port now supplies `WavyProgress`'s 27-cubic matched
+  circle/star endpoints. That later T21 repair supersedes ADR 0021's original
+  sampled radial-sine/opacity-cross-fade compromise without adding runtime
+  geometry code.
 - Bundle budgets were raised to accommodate the precomputed geometry (see
   `docs/v1/bundle-budgets.json`), following the T13/T15/T17/T19/T21
   proportional-raise precedent.
