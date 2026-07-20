@@ -9,7 +9,9 @@ import { defaultDarkColorScheme, defaultLightColorScheme, defaultPalette } from 
 import { defaultDensity } from './density'
 import { defaultDialogTokens } from './dialog'
 import { defaultElevation } from './elevation'
+import { defaultFabMenuTokens } from './fab-menu'
 import { defaultFloatingActionButtonTokens } from './floating-action-button'
+import { defaultFloatingToolbarTokens } from './floating-toolbar'
 import { defaultIconTokens } from './icon'
 import { defaultIconButtonTokens } from './icon-button'
 import { defaultLinearProgressTokens } from './linear-progress'
@@ -83,6 +85,8 @@ const defaultTokenSetInput = {
     defaultButtonGroupTokens,
     defaultIconButtonTokens,
     defaultFloatingActionButtonTokens,
+    defaultFloatingToolbarTokens,
+    defaultFabMenuTokens,
     defaultCardTokens,
     defaultCheckboxTokens,
     defaultRadioTokens,

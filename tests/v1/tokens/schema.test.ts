@@ -39,7 +39,7 @@ describe('default token schema', () => {
     expect(defaultTokenSet.metadata.sources).toHaveLength(2)
     expect(defaultTokenSet.metadata.sources.every((source) => source.accessed === '2026-07-19')).toBe(true)
     expect(isDeeplyFrozen(defaultTokenSet)).toBe(true)
-    expect(defaultTokenSet.componentTokens).toHaveLength(25)
+    expect(defaultTokenSet.componentTokens).toHaveLength(27)
     expect(defaultTokenSet.componentTokens).toContainEqual(expect.objectContaining({
       component: 'surface',
       task: 'T04',
@@ -77,6 +77,22 @@ describe('default token schema', () => {
       source: expect.objectContaining({
         revision: 'f0793303999c933a40c10d79212e0580d21bdc68',
         accessed: '2026-07-19',
+      }),
+    }))
+    expect(defaultTokenSet.componentTokens).toContainEqual(expect.objectContaining({
+      component: 'floating-toolbar',
+      task: 'T24',
+      source: expect.objectContaining({
+        revision: '225f50d42bf0adeb2abf4b6109befb5ab6ce4efc',
+        accessed: '2026-07-20',
+      }),
+    }))
+    expect(defaultTokenSet.componentTokens).toContainEqual(expect.objectContaining({
+      component: 'fab-menu',
+      task: 'T24',
+      source: expect.objectContaining({
+        revision: '225f50d42bf0adeb2abf4b6109befb5ab6ce4efc',
+        accessed: '2026-07-20',
       }),
     }))
     expect(defaultTokenSet.componentTokens).toContainEqual(expect.objectContaining({

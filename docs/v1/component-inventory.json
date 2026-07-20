@@ -32,7 +32,7 @@
     { "name": "LoadingIndicator", "kind": "feedback", "task": "T22", "path": "src/v1/components/LoadingIndicator", "status": "conformant", "dependencies": [], "publicExports": ["LoadingIndicator", "LoadingIndicatorProps"] },
     { "name": "ButtonGroup", "kind": "action", "task": "T23", "path": "src/v1/components/ButtonGroup", "status": "conformant", "dependencies": [], "publicExports": ["ButtonGroup", "ButtonGroupProps"] },
     { "name": "SplitButton", "kind": "action", "task": "T23", "path": "src/v1/components/SplitButton", "status": "conformant", "dependencies": [], "publicExports": ["SplitButton", "SplitButtonProps", "SplitButtonSize", "SplitButtonVariant"] },
-    { "name": "FloatingToolbar", "kind": "navigation", "task": "T24", "path": "src/v1/components/FloatingToolbar", "status": "planned", "dependencies": [], "publicExports": ["FloatingToolbar", "FloatingToolbarProps"] },
-    { "name": "FabMenu", "kind": "navigation", "task": "T24", "path": "src/v1/components/FabMenu", "status": "planned", "dependencies": [], "publicExports": ["FabMenu", "FabMenuProps"] }
+    { "name": "FloatingToolbar", "kind": "navigation", "task": "T24", "path": "src/v1/components/FloatingToolbar", "status": "conformant", "dependencies": [], "publicExports": ["FloatingToolbar", "FloatingToolbarProps", "FloatingToolbarOrientation", "FloatingToolbarVariant"] },
+    { "name": "FabMenu", "kind": "navigation", "task": "T24", "path": "src/v1/components/FabMenu", "status": "conformant", "dependencies": [], "publicExports": ["FabMenu", "FabMenuProps", "FabMenuItem", "FabMenuItemProps"] }
   ]
 }
