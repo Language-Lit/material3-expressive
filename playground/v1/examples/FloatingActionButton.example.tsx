@@ -5,10 +5,12 @@ import {
   Icon,
   Surface,
   Text,
+  type FloatingActionButtonElevation,
   type FloatingActionButtonSize,
 } from '@language-lit/material3-expressive/v1'
 
 const sizes: readonly FloatingActionButtonSize[] = ['standard', 'medium', 'large']
+const elevations: readonly FloatingActionButtonElevation[] = ['default', 'lowered', 'none']
 
 export function FloatingActionButtonExample() {
   const [actionsOpen, setActionsOpen] = useState(false)
@@ -50,6 +52,34 @@ export function FloatingActionButtonExample() {
           />
         ))}
       </div>
+      <div className="fab-example__row" aria-label="Floating action button elevations">
+        {elevations.map((elevation) => (
+          <FloatingActionButton
+            key={elevation}
+            aria-label={`${elevation} elevation create`}
+            icon={<Icon source="add" />}
+            elevation={elevation}
+          />
+        ))}
+      </div>
+      <FloatingActionButton
+        icon={<Icon source="edit" />}
+        label="Statically collapsed compose"
+        expanded={false}
+      />
+      <div className="fab-example__row" aria-label="Toggle floating action button sizes">
+        {sizes.map((size) => (
+          <FloatingActionButton
+            key={size}
+            aria-label={`${size} toggle bookmark`}
+            icon={<Icon source="bookmark" />}
+            selectedIcon={<Icon source="bookmark" fill={1} />}
+            size={size}
+            toggle
+            defaultSelected={size !== 'standard'}
+          />
+        ))}
+      </div>
       <div className="fab-example__row">
         <FloatingActionButton
           aria-label="Creation actions"
@@ -66,6 +96,21 @@ export function FloatingActionButtonExample() {
         <FloatingActionButton
           aria-label="Unavailable"
           icon={<Icon source="block" />}
+          disabled
+        />
+        <FloatingActionButton
+          icon={<Icon source="edit" />}
+          label="Disabled compose"
+          size="large"
+          disabled
+        />
+        <FloatingActionButton
+          aria-label="Disabled toggle bookmark"
+          icon={<Icon source="bookmark" />}
+          selectedIcon={<Icon source="bookmark" fill={1} />}
+          size="medium"
+          toggle
+          defaultSelected
           disabled
         />
       </div>

@@ -19,18 +19,26 @@ export function WavyProgressExample() {
       </Text>
 
       <Text as="p" variant="labelLarge">Linear — determinate</Text>
+      <WavyProgress aria-label="Upload progress, empty" value={0} />
       <WavyProgress aria-label="Upload progress, low" value={0.05} />
       <WavyProgress aria-label="Upload progress, mid" value={0.45} />
       <WavyProgress aria-label="Upload progress, high" value={0.98} />
+      <WavyProgress aria-label="Upload progress, complete" value={1} />
+
+      <Text as="p" variant="labelLarge">Linear — custom max</Text>
+      <WavyProgress aria-label="Upload progress, custom max" value={150} max={200} />
 
       <Text as="p" variant="labelLarge">Linear — indeterminate</Text>
       <WavyProgress aria-label="Syncing" />
 
       <Text as="p" variant="labelLarge">Circular</Text>
       <div className="wavy-progress-example__row">
+        <WavyProgress aria-label="Progress, empty" shape="circular" value={0} />
         <WavyProgress aria-label="Progress, low" shape="circular" value={0.05} />
         <WavyProgress aria-label="Progress, mid" shape="circular" value={0.45} />
         <WavyProgress aria-label="Progress, high" shape="circular" value={0.98} />
+        <WavyProgress aria-label="Progress, complete" shape="circular" value={1} />
+        <WavyProgress aria-label="Progress, custom max" shape="circular" value={150} max={200} />
         <WavyProgress aria-label="Syncing" shape="circular" />
       </div>
     </Surface>

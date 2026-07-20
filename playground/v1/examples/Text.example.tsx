@@ -25,6 +25,42 @@ export function TextExample() {
           Content color is inherited
         </Text>
       </Surface>
+      <Text as="h3" variant="titleMedium" emphasis="emphasized">
+        Type scale
+      </Text>
+      <Text as="div" variant="displayLarge">
+        Display large
+      </Text>
+      <Text as="strong" variant="displayMedium">
+        Display medium
+      </Text>
+      <Text as="h1" variant="headlineLarge">
+        Headline large
+      </Text>
+      <Text as="div" variant="headlineMedium">
+        Headline medium
+      </Text>
+      <Text as="blockquote" variant="headlineSmall">
+        Headline small
+      </Text>
+      <Text as="div" variant="titleLarge">
+        Title large
+      </Text>
+      <Text as="div" variant="titleSmall">
+        Title small
+      </Text>
+      <Text as="div" variant="bodyMedium" emphasis="baseline">
+        Body medium (explicit baseline)
+      </Text>
+      <Text as="div" variant="bodySmall">
+        Body small
+      </Text>
+      <Text as="label" variant="labelMedium">
+        Label medium
+      </Text>
+      <Text as="div" variant="labelSmall">
+        Label small
+      </Text>
     </Surface>
   )
 }

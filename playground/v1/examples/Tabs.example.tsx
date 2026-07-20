@@ -50,6 +50,61 @@ export function TabsExample() {
           { value: 'overview', label: 'Overview' },
           { value: 'activity', label: 'Activity' },
           { value: 'settings', label: 'Settings' },
+          { value: 'archived', label: 'Archived', disabled: true },
+        ]}
+      />
+
+      <Tabs
+        aria-label="Scrollable section"
+        scrollable
+        items={[
+          {
+            value: 'home',
+            label: 'Home',
+            icon: <Icon source="home" />,
+            panel: <Text as="p" variant="bodyMedium">Your home feed.</Text>,
+          },
+          {
+            value: 'explore',
+            label: 'Explore',
+            icon: <Icon source="explore" />,
+            panel: <Text as="p" variant="bodyMedium">Discover new content.</Text>,
+          },
+          {
+            value: 'notifications',
+            icon: <Icon source="notifications" />,
+            panel: <Text as="p" variant="bodyMedium">Icon-only tab: no label, just an icon.</Text>,
+          },
+          {
+            value: 'messages',
+            label: 'Messages',
+            icon: <Icon source="mail" />,
+            panel: <Text as="p" variant="bodyMedium">Your conversations.</Text>,
+          },
+          {
+            value: 'favorites',
+            label: 'Favorites',
+            icon: <Icon source="star" />,
+            panel: <Text as="p" variant="bodyMedium">Items you starred.</Text>,
+          },
+          {
+            value: 'downloads',
+            label: 'Downloads',
+            icon: <Icon source="download" />,
+            href: '#downloads',
+          },
+          {
+            value: 'archive',
+            label: 'Archive',
+            icon: <Icon source="archive" />,
+            panel: <Text as="p" variant="bodyMedium">Archived items.</Text>,
+          },
+          {
+            value: 'settings-2',
+            label: 'Settings',
+            icon: <Icon source="settings" />,
+            panel: <Text as="p" variant="bodyMedium">App preferences.</Text>,
+          },
         ]}
       />
     </Surface>

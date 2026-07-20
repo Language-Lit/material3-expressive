@@ -43,6 +43,12 @@ export function SwitchExample() {
             Wi-Fi
           </Text>
         </label>
+        <label className="switch-example__row">
+          <Switch defaultChecked thumbIcon={<Icon source="check" />} />
+          <Text as="span" variant="bodyLarge">
+            Do not disturb
+          </Text>
+        </label>
       </div>
 
       <div className="switch-example__group">
@@ -56,6 +62,12 @@ export function SwitchExample() {
           <Switch disabled defaultChecked />
           <Text as="span" variant="bodyLarge">
             Unavailable and on
+          </Text>
+        </label>
+        <label className="switch-example__row">
+          <Switch disabled defaultChecked thumbIcon={<Icon source="check" />} />
+          <Text as="span" variant="bodyLarge">
+            Unavailable and on, with icon
           </Text>
         </label>
       </div>

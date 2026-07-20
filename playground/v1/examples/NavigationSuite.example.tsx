@@ -1,4 +1,10 @@
-import { Icon, NavigationSuite, Surface, Text } from '@language-lit/material3-expressive/v1'
+import {
+  FloatingActionButton,
+  Icon,
+  NavigationSuite,
+  Surface,
+  Text,
+} from '@language-lit/material3-expressive/v1'
 
 export function NavigationSuiteExample() {
   return (
@@ -21,10 +27,18 @@ export function NavigationSuiteExample() {
       <div className="navigation-suite-example__frame">
         <NavigationSuite
           aria-label="Example sections"
+          header={<FloatingActionButton aria-label="Compose" icon={<Icon source="add" />} size="medium" />}
           items={[
-            { value: 'home', label: 'Home', icon: <Icon source="home" /> },
+            {
+              value: 'home',
+              label: 'Home',
+              icon: <Icon source="home" />,
+              selectedIcon: <Icon source="home" fill={1} />,
+            },
             { value: 'favorites', label: 'Favorites', icon: <Icon source="favorite" /> },
             { value: 'settings', label: 'Settings', icon: <Icon source="settings" /> },
+            { value: 'archive', label: 'Archive', icon: <Icon source="archive" />, disabled: true },
+            { value: 'docs', label: 'Docs', icon: <Icon source="description" />, href: '#' },
           ]}
         />
       </div>

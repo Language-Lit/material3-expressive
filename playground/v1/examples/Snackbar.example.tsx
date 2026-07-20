@@ -4,6 +4,7 @@ import { Button, Snackbar, Surface, Text } from '@language-lit/material3-express
 export function SnackbarExample() {
   const [savedOpen, setSavedOpen] = useState(false)
   const [removedOpen, setRemovedOpen] = useState(false)
+  const [sentOpen, setSentOpen] = useState(false)
 
   return (
     <Surface
@@ -28,6 +29,9 @@ export function SnackbarExample() {
         <Button variant="outlined" onClick={() => setRemovedOpen(true)}>
           Show snackbar with action
         </Button>
+        <Button variant="outlined" onClick={() => setSentOpen(true)}>
+          Show snackbar with action and dismiss
+        </Button>
       </div>
 
       <Snackbar message="Saved" open={savedOpen} onOpenChange={setSavedOpen} dismissible />
@@ -36,6 +40,13 @@ export function SnackbarExample() {
         action={{ label: 'Undo', onClick: () => setRemovedOpen(false) }}
         open={removedOpen}
         onOpenChange={setRemovedOpen}
+      />
+      <Snackbar
+        message="Message sent"
+        action={{ label: 'Undo', onClick: () => setSentOpen(false) }}
+        dismissible
+        open={sentOpen}
+        onOpenChange={setSentOpen}
       />
     </Surface>
   )

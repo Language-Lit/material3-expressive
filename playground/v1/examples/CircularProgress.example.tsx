@@ -20,9 +20,12 @@ export function CircularProgressExample() {
       </Text>
 
       <div className="circular-progress-example__row">
+        <CircularProgress aria-label="Progress, empty" value={0} />
         <CircularProgress aria-label="Progress, low" value={0.05} />
         <CircularProgress aria-label="Progress, mid" value={0.45} />
         <CircularProgress aria-label="Progress, high" value={0.98} />
+        <CircularProgress aria-label="Progress, complete" value={1} />
+        <CircularProgress aria-label="Progress, custom max" value={150} max={200} />
         <CircularProgress aria-label="Loading" />
       </div>
     </Surface>

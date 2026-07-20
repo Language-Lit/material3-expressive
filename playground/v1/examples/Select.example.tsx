@@ -48,6 +48,40 @@ export function SelectExample() {
         />
         <Select label="Disabled" options={fruitOptions} defaultValue="banana" disabled />
       </div>
+
+      <div className="select-example__row">
+        <Select
+          label="Outlined with icon"
+          variant="outlined"
+          leadingIcon={<Icon source="nutrition" />}
+          options={fruitOptions}
+          defaultValue="cherry"
+        />
+        <Select
+          label="Invalid selection"
+          options={fruitOptions}
+          defaultValue="banana"
+          error
+          supportingText="Out of stock, please choose another"
+        />
+        <Select
+          label="Disabled outlined"
+          variant="outlined"
+          options={fruitOptions}
+          defaultValue="banana"
+          disabled
+        />
+      </div>
+
+      <div className="select-example__row">
+        <Select
+          label="Statically open"
+          options={fruitOptions}
+          defaultValue="apple"
+          defaultOpen
+          supportingText="Rendered open to preview the listbox, including the disabled option"
+        />
+      </div>
     </Surface>
   )
 }

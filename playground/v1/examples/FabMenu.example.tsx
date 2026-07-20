@@ -37,6 +37,10 @@ export function FabMenuExample() {
           <FabMenuItem icon={<Icon source="delete" />} onClick={() => setOpen(false)}>
             Delete
           </FabMenuItem>
+          <FabMenuItem onClick={() => setOpen(false)}>Archive</FabMenuItem>
+          <FabMenuItem icon={<Icon source="lock" />} disabled>
+            Restricted
+          </FabMenuItem>
         </FabMenu>
       </div>
     </Surface>

@@ -58,8 +58,32 @@ export function ButtonExample() {
           </Button>
         ))}
       </div>
+      <div className="button-example__row" aria-label="Square-shaped button variants">
+        {variants.map((variant) => (
+          <Button key={variant} variant={variant} shape="square">
+            {variant} square
+          </Button>
+        ))}
+      </div>
+      <div className="button-example__row" aria-label="Disabled button variants">
+        {variants.map((variant) => (
+          <Button key={variant} variant={variant} disabled>
+            Disabled {variant}
+          </Button>
+        ))}
+      </div>
       <Button variant="outlined" width="full" shape="square">
         Full-width native button
+      </Button>
+      <Button variant="filled" width="full">
+        Full-width filled button
+      </Button>
+      <Button
+        variant="elevated"
+        leadingIcon={<Icon source="add" />}
+        trailingIcon={<Icon source="arrow_forward" mirrored />}
+      >
+        Both icons
       </Button>
       <Button disabled>Disabled</Button>
     </Surface>

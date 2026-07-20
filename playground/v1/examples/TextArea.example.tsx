@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Surface, Text, TextArea } from '@language-lit/material3-expressive/v1'
+import { Icon, Surface, Text, TextArea } from '@language-lit/material3-expressive/v1'
 
 export function TextAreaExample() {
   const [feedback, setFeedback] = useState('')
@@ -28,6 +28,23 @@ export function TextAreaExample() {
           supportingText="Tell us what worked and what didn't"
         />
         <TextArea variant="outlined" label="Notes" rows={4} error supportingText="Required" />
+      </div>
+
+      <div className="text-area-example__row">
+        <TextArea
+          label="Message"
+          rows={4}
+          leadingIcon={<Icon source="edit_note" />}
+          trailingIcon={<Icon source="mic" />}
+          defaultValue="Great course, thanks!"
+        />
+        <TextArea
+          label="Comments"
+          rows={4}
+          error
+          supportingText="This field is required"
+        />
+        <TextArea label="Unavailable" rows={4} disabled defaultValue="Locked" />
       </div>
     </Surface>
   )

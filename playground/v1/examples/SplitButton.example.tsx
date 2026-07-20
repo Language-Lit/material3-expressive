@@ -1,5 +1,19 @@
 import { useState } from 'react'
-import { Icon, Surface, SplitButton, Text } from '@language-lit/material3-expressive/v1'
+import {
+  Icon,
+  Surface,
+  SplitButton,
+  Text,
+  type SplitButtonSize,
+} from '@language-lit/material3-expressive/v1'
+
+const sizes: readonly SplitButtonSize[] = [
+  'extra-small',
+  'small',
+  'medium',
+  'large',
+  'extra-large',
+]
 
 export function SplitButtonExample() {
   const [open, setOpen] = useState(false)
@@ -47,6 +61,66 @@ export function SplitButtonExample() {
           disabled
         >
           Unavailable
+        </SplitButton>
+      </div>
+
+      <div className="split-button-example__row" aria-label="Split button sizes">
+        {sizes.map((size) => (
+          <SplitButton
+            key={size}
+            variant="tonal"
+            size={size}
+            trailingIcon={<Icon source="expand_more" />}
+            trailingLabel={`More ${size} options`}
+          >
+            {size}
+          </SplitButton>
+        ))}
+      </div>
+
+      <div className="split-button-example__row" aria-label="Split button variants">
+        <SplitButton
+          variant="elevated"
+          leadingIcon={<Icon source="download" />}
+          trailingIcon={<Icon source="expand_more" />}
+          trailingLabel="More download options"
+        >
+          Download
+        </SplitButton>
+        <SplitButton
+          variant="filled"
+          trailingIcon={<Icon source="expand_more" />}
+          trailingLabel="More options"
+          disabled
+        >
+          Unavailable
+        </SplitButton>
+        <SplitButton
+          variant="tonal"
+          trailingIcon={<Icon source="expand_more" />}
+          trailingLabel="More options"
+          disabled
+        >
+          Unavailable
+        </SplitButton>
+        <SplitButton
+          variant="elevated"
+          trailingIcon={<Icon source="expand_more" />}
+          trailingLabel="More options"
+          disabled
+        >
+          Unavailable
+        </SplitButton>
+      </div>
+
+      <div className="split-button-example__row" aria-label="Statically selected split button">
+        <SplitButton
+          variant="outlined"
+          trailingIcon={<Icon source="expand_less" />}
+          trailingLabel="More options"
+          defaultSelected
+        >
+          Statically selected
         </SplitButton>
       </div>
     </Surface>

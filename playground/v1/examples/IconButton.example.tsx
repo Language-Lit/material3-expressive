@@ -50,6 +50,77 @@ export function IconButtonExample() {
           </IconButton>
         ))}
       </div>
+      <div className="icon-button-example__row" aria-label="Icon button widths (filled, toggle)">
+        {widths.map((width) => (
+          <IconButton
+            key={width}
+            aria-label={`${width} bookmark toggle`}
+            variant="filled"
+            width={width}
+            toggle
+            defaultSelected={width === 'wide'}
+            selectedIcon={<Icon source="bookmark" fill={1} />}
+          >
+            <Icon source="bookmark" />
+          </IconButton>
+        ))}
+      </div>
+      <div className="icon-button-example__row" aria-label="Square-shaped icon button variants">
+        {variants.map((variant) => (
+          <IconButton
+            key={variant}
+            aria-label={`${variant} square edit`}
+            variant={variant}
+            shape="square"
+          >
+            <Icon source="edit" />
+          </IconButton>
+        ))}
+      </div>
+      <div className="icon-button-example__row" aria-label="Icon button toggle variants">
+        <IconButton
+          aria-label="Standard toggle bold"
+          variant="standard"
+          toggle
+          defaultSelected
+          selectedIcon={<Icon source="format_bold" fill={1} />}
+        >
+          <Icon source="format_bold" />
+        </IconButton>
+        <IconButton
+          aria-label="Outlined toggle italic"
+          variant="outlined"
+          toggle
+          defaultSelected
+          selectedIcon={<Icon source="format_italic" fill={1} />}
+        >
+          <Icon source="format_italic" />
+        </IconButton>
+      </div>
+      <div className="icon-button-example__row" aria-label="Disabled icon button variants">
+        {variants
+          .filter((variant) => variant !== 'standard')
+          .map((variant) => (
+            <IconButton
+              key={variant}
+              aria-label={`Disabled ${variant}`}
+              variant={variant}
+              disabled
+            >
+              <Icon source="block" />
+            </IconButton>
+          ))}
+      </div>
+      <IconButton
+        aria-label="Disabled selected favorite"
+        variant="filled"
+        toggle
+        defaultSelected
+        disabled
+        selectedIcon={<Icon source="favorite" fill={1} />}
+      >
+        <Icon source="favorite" />
+      </IconButton>
       <div className="icon-button-example__sizes" aria-label="Expressive icon button sizes">
         {sizes.map((size) => (
           <IconButton
