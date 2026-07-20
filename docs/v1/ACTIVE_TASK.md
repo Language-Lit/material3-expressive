@@ -1,6 +1,6 @@
 # Active v1 task
 
-## T22 — Expressive loading indicator
+## T23 — Button groups and split button
 
 Status: complete
 Approved: 2026-07-20
@@ -8,126 +8,103 @@ Completed: 2026-07-20
 
 ### Scope
 
-One component, sourced from the pinned AndroidX revision
-`225f50d42bf0adeb2abf4b6109befb5ab6ce4efc`: `LoadingIndicator`, matching
-`docs/V1_SPEC.md` §9's "Feedback and overlays" list and the matching
-`docs/v1/component-inventory.json` placeholder row.
+Two components sourced from the pinned AndroidX revision
+`225f50d42bf0adeb2abf4b6109befb5ab6ce4efc`: `ButtonGroup` and
+`SplitButton`, matching `docs/V1_SPEC.md` §9's "Actions and containment"
+list and the matching `docs/v1/component-inventory.json` placeholder rows.
 
-- Covers only the pinned source's **uncontained** `LoadingIndicator`
-  composables (`progress`-driven determinate and autonomous indeterminate).
-  `ContainedLoadingIndicator` (a colored-container variant) is out of
-  scope — `V1_SPEC.md` §9 names only `LoadingIndicator`, and every prior
-  T01–T21 component has matched §9's names exactly.
-- **Determinate/indeterminate contract mirrors every other v1 progress
-  component**: `value` present (`[0, max]`) renders determinate
-  (`aria-valuenow` set); `value` omitted renders indeterminate.
-- **The defining feature of this component is real `RoundedPolygon` shape
-  morphing** (`androidx.graphics.shapes`), not a simplified approximation.
-  Unlike T21's `WavyProgress`, which substituted a documented technique
-  (opacity cross-fade) for the source's `RoundedPolygon`-morph radial
-  amplitude because that ramp was a secondary polish detail, morphing here
-  *is* the component's entire identity — a substitution would fail the
-  task. The full geometry engine (`RoundedPolygon` vertex/corner-rounding
-  construction, `Cubic` bezier math, and `Morph`'s curve-matching algorithm
-  that pairs cubics between two differently-shaped polygons) was ported
-  faithfully to an offline Python script from the pinned source's
-  `graphics/graphics-shapes` module (`RoundedPolygon.kt`, `Cubic.kt`,
-  `Features.kt`, `PolygonMeasure.kt`, `FeatureMapping.kt`, `Morph.kt`,
-  `Point.kt`, `Utils.kt`, `Shapes.kt`, `CornerRounding.kt`) plus
-  `MaterialShapes.kt`'s exact vertex/rounding data for the eight needed
-  named shapes (`Circle`, `SoftBurst`, `Cookie9Sided`, `Pentagon`, `Pill`,
-  `Sunny`, `Cookie4Sided`, `Oval`). Every shape was visually verified
-  against the known Material 3 Expressive shape gallery before use. See
-  ADR 0022 for the full port, verification, and CSS-authoring methodology.
-- **Determinate** (`Circle`→`SoftBurst`, one morph): the matched
-  `(startCubic, endCubic)` pairs `Morph.match()` produces are baked as a
-  static numeric array (`loadingIndicatorMorphs.ts`), and the component
-  performs the same plain per-coordinate `lerp` `Morph.forEachCubic` does
-  every frame, directly from the continuous `value` prop, building the SVG
-  `d` string at render time — no `requestAnimationFrame`, since it's a
-  synchronous function of props like every other determinate progress
-  component. `transform: rotate(-progress*180deg)` matches the source's
-  counterclockwise determinate rotation exactly. A CSS `transition` handles
-  smooth `d`/`transform` changes on value updates.
-- **Indeterminate** (7-shape circular loop, 650ms per shape): CSS cannot
-  animate the SVG `d` property through a sequence of *structurally
-  different* paths in one continuous `@keyframes` rule (the segment count
-  differs per shape pair). The technique: seven stacked `<path>` elements,
-  each owning one shape-pair's `@keyframes` (spanning the full 4550ms loop,
-  holding flat outside its own 650ms slot, hard-cut via `opacity`), so the
-  browser only ever interpolates between two *structurally identical*
-  `d` values per rule — always valid. Each rule's own \[0%, spring-settle%\]
-  segment uses `animation-timing-function: linear(...)`, a spring-shaped
-  easing sampled with the exact same technique `src/v1/tokens/css.ts`
-  already uses for the shared `--m3e-sys-motion-expressive-*` spring
-  tokens, applied here to the source's own morph spring
-  (`dampingRatio=0.6, stiffness=200, visibilityThreshold=0.1`, settling in
-  298ms of each 650ms). Because `linear()` easing warps *when* progress
-  advances rather than pre-sampling the path data itself, only the two
-  path endpoints need to ship (not many intermediate samples), and the
-  spring's characteristic slight overshoot-and-settle is reproduced exactly
-  by the eased value legitimately exceeding 1 mid-segment — matching the
-  source's own documented use of out-of-range progress for "bounce or
-  overshoot" effects, not an approximation.
-- **Rotation composition**: each segment's own per-slot rotation (a step
-  base of `(index+1)*90deg`, `+90deg` warped by the same per-segment
-  spring) is baked directly into that segment's own `transform` keyframe
-  stops. The continuous global rotation (`4666ms`/`360deg`, linear,
-  infinite) is a separate, always-on rotation on an outer wrapping `<g>`,
-  composed additively — the same nested-`<g>` technique
-  `CircularProgress`/`WavyProgress` already use for their own indeterminate
-  rotation layers.
-- **No per-frame `path.getBounds()` re-centering**: the source recomputes
-  and re-centers the interpolated path's own bounding box every frame.
-  Measured offline, this recentering never drifts more than ~0.6% of the
-  container size across any sampled morph — sub-pixel at this component's
-  40–48px scale — so this project bakes one static scale+recenter
-  transform per shape set (matching `calculateScaleFactor` ×
-  `ActiveIndicatorScale`) directly into the precomputed coordinates
-  instead, a documented, verified-negligible simplification.
-- Reduced motion: determinate loses its value-change `transition`;
-  indeterminate freezes on a static (non-mid-morph) shape — the first
-  segment's own start shape, matching every other progress component's
-  "static state communicates activity without motion" precedent, not
-  whatever frame the animation happened to be on.
-- No per-instance `color` prop — colors come from CSS custom properties
-  like every other v1 component.
+- **`ButtonGroup` is a layout wrapper around consumer-provided children**
+  (typically `Button`/`IconButton`), not a data-driven scope-DSL like the
+  source's `ButtonGroupScope.clickableItem`/`toggleableItem`/`customItem`
+  builder. A Kotlin `Modifier`-scoped DSL has no React equivalent; a plain
+  `children` prop is the idiomatic translation, matching how every other
+  v1 layout composite (e.g. `NavigationBar`) takes React children rather
+  than a callback-based item list.
+- **Scope cut: no automatic overflow-into-a-dropdown-menu.** The source's
+  overflow behavior requires either a `ResizeObserver`-driven client-only
+  measurement effect or reimplementing its custom intrinsic-width
+  `MeasurePolicy` in JS. Given the scope of this task also covers
+  `SplitButton`, and T24 immediately follows, this is an explicit,
+  documented cut — consumers needing overflow can use `flex-wrap` or their
+  own responsive logic. See ADR 0023.
+- **Scope cut: no "connected" button-group shape variant** (the source's
+  asymmetric pill-leading/small-radius-middle/pill-trailing row with a
+  checked-state circle morph). This would require either deep coupling
+  into arbitrary children's internal shape CSS or reimplementing
+  Button-like rendering inside `ButtonGroup` itself. `SegmentedButtonGroup`
+  (T15) already serves the single/multi-select connected-row use case this
+  variant targets. `ButtonGroup` here covers only the source's *standard*
+  (non-connected) treatment.
+- **The "expressive interaction" that remains in scope — and is the part
+  of this task's own description that most needs to survive — is
+  press-triggered neighbor compression**: pressing one child visually
+  grows it and shrinks its immediate siblings. The source achieves this
+  with a custom `MeasurePolicy` reading `Animatable` press state per
+  child. This project reproduces the same visual effect with a pure CSS
+  `:has()` selector chain reading each child's own native `:active` state
+  and a `transform: scale()` grow/shrink pair — no JS layout measurement,
+  no `requestAnimationFrame`, and no coupling to whichever component the
+  consumer places inside `ButtonGroup`. See ADR 0023 for the exact
+  selectors and why `:has()` is safe at this project's Firefox 121 floor.
+- **`SplitButton` renders its own two `<button>` elements directly**
+  (leading action button + trailing icon-only toggle button), not by
+  nesting the public `Button`/`IconButton` components — the same
+  "composite components own their internal buttons" precedent
+  `SegmentedButtonGroup` (T15) already established, avoiding CSS
+  specificity/import-order coupling to another component's internal
+  custom-property names.
+- `SplitButton` supports the full five-size scale (`extra-small`, `small`,
+  `medium`, `large`, `extra-large`) matching `Button`/`IconButton`'s own
+  established size system from T07/T08 — every other action component in
+  this project commits to that scale, and `SplitButtonXSmallTokens`
+  through `SplitButtonXLargeTokens` confirm the source itself defines all
+  five for this component (unlike `ButtonGroup`, which the source only
+  ever defines a `Small` token set for).
+- `SplitButton`'s trailing button is a toggle (`selected`/`onSelectedChange`,
+  matching `IconButton`'s own toggle contract from T08) representing
+  "the attached menu is open," morphing to a full circle when selected —
+  wiring it to an actual menu is left to the consumer (e.g. this project's
+  own `Menu`, T17), the same "expose the toggle state, don't own the
+  overlay" scoping `IconButton` itself already uses.
+- Neither component exposes per-instance `color`/`shape` JS props beyond
+  what's listed above — geometry and color come from CSS custom
+  properties like every other v1 component.
 
 ### Expected files
 
-- `src/v1/components/LoadingIndicator/`, its public barrel, and sourced
-  component-token defaults.
+- `src/v1/components/ButtonGroup/`, `SplitButton/`, their public barrels,
+  and sourced component-token defaults for both.
 - Behavior, interaction, accessibility, theme, CSS, SSR, type-contract, and
-  conformance evidence under `tests/v1/`.
-- A mirrored playground example, playground usage, and packed Vite/Next
+  conformance evidence under `tests/v1/` for both.
+- Mirrored playground examples, playground usage, and packed Vite/Next
   fixture coverage.
-- Documentation, one ADR (covering the full geometry-engine port and the
-  CSS `linear()`-easing indeterminate technique in detail),
-  `component-inventory.json` update (filling in the existing `"planned"`
-  placeholder row), and a `TOKEN_PROVENANCE.md` entry.
-- An explicit bundle-budget update if justified by measured output (the
-  precomputed morph data is expected to push several artifacts near or
-  past their T21 ceilings).
+- Documentation for both, one ADR, `component-inventory.json` updates
+  (filling in the two existing `"planned"` placeholder rows), and
+  `TOKEN_PROVENANCE.md` entries.
+- An explicit bundle-budget update only if justified by measured output.
 
 ### Acceptance checks
 
-- Determinate mode: `value`/`max` render an accurate `aria-valuenow`, and
-  the visual shape matches the `Circle`→`SoftBurst` morph fraction exactly;
-  changing `value` transitions smoothly, including near `0` and `1`.
-- Indeterminate mode loops continuously through all seven shapes with no
-  `aria-valuenow` present, announced as busy/indeterminate to assistive
-  technology, and with no visual double-exposure/ghosting between segments
-  at any point in the cycle (verified both by direct opacity inspection
-  and full-cycle screenshots).
-- Forced colors keep the shape visibly distinct from the page. All motion
-  (indeterminate loop, determinate value transitions) becomes immediate
-  under reduced motion, landing on a clean static shape.
-- Rendering and hydration remain deterministic and inject no styles; the
-  component is a pure function of props, so SSR/pre-hydration markup
-  matches the first client frame exactly with zero delta.
-- Forced colors, reduced motion, default/custom/nested theme, CSS
-  resolution, documentation, source provenance, playground example, public
-  exports, production fixtures, and inventory are covered and agree.
+- `ButtonGroup`: renders children in a horizontal flex row with the
+  sourced `BetweenSpace` gap; pressing one child visibly grows it and
+  compresses its immediate siblings, settling back on release; unaffected
+  children (more than one away from the pressed one) do not move.
+- `SplitButton`: leading and trailing buttons render as one visually
+  connected pill with a small shared inner-corner radius that visibly
+  expands on hover/press (matching the sourced per-size corner tokens);
+  the trailing button's shape becomes a full circle when `selected`.
+  All five sizes render with visibly distinct heights/padding/icon sizes
+  matching their sourced tokens.
+- Forced colors keep every part visibly distinct. All motion (shape
+  morphs, neighbor compression) becomes immediate under reduced motion.
+- Rendering and hydration remain deterministic and inject no styles; both
+  components are pure functions of props (no client-only measurement
+  effect), so SSR/pre-hydration markup matches the first client frame
+  exactly with zero delta.
+- Forced colors, RTL, reduced motion, default/custom/nested theme, CSS
+  resolution, documentation, source provenance, playground examples,
+  public exports, production fixtures, and inventory are covered and agree
+  for both components.
 - Existing typecheck, tests, legacy contracts, packed Vite/Next fixtures,
   CSS checks, architecture checks, and bundle budgets remain green through
   `npm run verify:v1`.

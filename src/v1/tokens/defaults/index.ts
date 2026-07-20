@@ -1,6 +1,7 @@
 import type { FoundationTokenSet } from '../schema'
 import { parseTokenSet } from '../validation'
 import { defaultButtonTokens } from './button'
+import { defaultButtonGroupTokens } from './button-group'
 import { defaultCardTokens } from './card'
 import { defaultCheckboxTokens } from './checkbox'
 import { defaultCircularProgressTokens } from './circular-progress'
@@ -22,6 +23,7 @@ import { defaultRadioTokens } from './radio'
 import { defaultSegmentedButtonGroupTokens } from './segmented-button-group'
 import { defaultShape } from './shape'
 import { defaultSnackbarTokens } from './snackbar'
+import { defaultSplitButtonTokens } from './split-button'
 import { defaultState } from './state'
 import { defaultSurfaceTokens } from './surface'
 import { defaultSwitchTokens } from './switch'
@@ -78,6 +80,7 @@ const defaultTokenSetInput = {
     defaultSurfaceTokens,
     defaultIconTokens,
     defaultButtonTokens,
+    defaultButtonGroupTokens,
     defaultIconButtonTokens,
     defaultFloatingActionButtonTokens,
     defaultCardTokens,
@@ -90,6 +93,7 @@ const defaultTokenSetInput = {
     defaultMenuTokens,
     defaultTooltipTokens,
     defaultSnackbarTokens,
+    defaultSplitButtonTokens,
     defaultTabsTokens,
     defaultNavigationBarTokens,
     defaultNavigationRailTokens,

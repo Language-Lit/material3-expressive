@@ -601,3 +601,31 @@ registered as a token — it is baked directly into
 same spring→`linear()` sampling technique `src/v1/tokens/css.ts` already
 applies to the shared `--m3e-sys-motion-expressive-*` tokens. See ADR 0022
 for the full geometry-port, CSS-authoring, and verification methodology.
+
+`ButtonGroup` (T23) registers the same pinned revision, `ButtonGroup.kt`
+blob `38c1a786d0337173cc7ed565927d3d6932372278`, and generated
+`ButtonGroupSmallTokens.kt` blob `ec51dcd1e1ba99d66865ec6d3554e97cf3a82a88`
+for `BetweenSpace`. `ConnectedButtonGroupSmallTokens.kt` blob
+`cf528a8557bf393c8bd30964818914d61caa24e3` was read but is not registered
+by this project's `ButtonGroup` — its `InnerCornerCornerSize`/
+`SelectedInnerCornerCornerSizePercent` values back the source's
+"connected" asymmetric-shape variant, which is out of scope here (see ADR
+0023). `pressed-scale`/`neighbor-scale` are this project's own CSS-
+transform values, not sourced token values — there is no CSS equivalent
+of the source's measured-width `ExpandedRatio` (`0.15`) to cite directly;
+ADR 0023 documents the substitution.
+
+`SplitButton` (T23) registers the same pinned revision, `SplitButton.kt`
+blob `443d0c0c74ff00bdd9fc5fea7faad255ffca0e4a`, `Button`'s own variant
+color values (registered independently here rather than shared, the same
+duplication precedent `WavyProgress`/`CircularProgress` already used), and
+five generated per-size token files: `SplitButtonXSmallTokens.kt` blob
+`754b0a615b64be6bb2601b8fae1c5dbffc30f8e7`, `SplitButtonSmallTokens.kt`
+blob `1d76713a341c4030b17a9bdc0ee7e656eea22720`,
+`SplitButtonMediumTokens.kt` blob `a3d650c72f2cf27e0cf515251b3b261980df700c`,
+`SplitButtonLargeTokens.kt` blob `c94113f650b00e0940842b65215195c16befed31`,
+`SplitButtonXLargeTokens.kt` blob `3493ff7157d427fee27f1e49f1d2d345550c7c48`
+— all cross-verified against Gitiles' own tree-listing `id` field via `git
+hash-object`. `leading-icon-size` per size deviates from the sourced
+(single, non-scaling) `SplitButtonDefaults.LeadingIconSize`, instead
+reusing `Button`'s own per-size icon scale — see ADR 0023 for why.
