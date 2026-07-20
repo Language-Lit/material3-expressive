@@ -562,3 +562,42 @@ was not practical to port, so this registration uses the sourced
 constant. See ADR 0021 for the full "three progress components, not two
 plus a `variant` prop" rationale and every other T21 web-specific
 deviation.
+
+`LoadingIndicator` (T22) registers the same pinned revision,
+`LoadingIndicator.kt` blob `edf7825aa2fa1f4654c7db50db813ddfa6b9273f`,
+`MaterialShapes.kt` blob `acb31bd3937f0fde35e169f3a47d1ec8f8a4360f` (the
+eight named shapes' exact vertex/rounding data), and generated
+`LoadingIndicatorTokens.kt` blob `ee8a50d80f45a3dea5151818526df2ade41ad8f3`
+for `ActiveIndicatorColor`/`ContainerWidth`/`ContainerHeight`. The shape
+geometry and morph-matching algorithm itself comes from the separate
+`graphics/graphics-shapes` module, same pinned revision: `RoundedPolygon.kt`
+blob `a3c53e7d9472e8e0294c285219cc8e8cb12add2b`, `Cubic.kt` blob
+`696bd9f1d0ef87debfa1306d380eab1608531e8e`, `CornerRounding.kt` blob
+`1ed9aafaacb6231c6e2da867781960158935a14e`, `Features.kt` blob
+`44a249a1052ebbfea9cb0a5faf3549f7655de408`, `PolygonMeasure.kt` blob
+`7b009099671f51240ca09b82df9db54cea9a5de8`, `FeatureMapping.kt` blob
+`86f4783076ea2ad2e31775cb447a1316f5ab1409`, `FloatMapping.kt` blob
+`f96e02fe5c19941742c2075969abbd506bd9c56a`, `Morph.kt` blob
+`6ab5c729683c56c7ae4e349a8d44b102898e0359`, `Point.kt` blob
+`d25e99b780be69b64ece992c702fea820094c141`, `Utils.kt` blob
+`1566e2261a3de75df8427d90a62158d599881290`, and `Shapes.kt` (the
+`circle`/`star` factory functions) blob
+`692cb0777f111ec3e7457f48ad4681736a869a3d` — all cross-verified against
+Gitiles' own tree-listing `id` field, using `git hash-object` rather than
+this project's earlier manual `printf`-based blob-hash construction (which
+had a subtle, unresolved bug; `git hash-object` reproduced the exact
+Gitiles `id` for every file on the first try). This algorithm was ported
+to an offline Python script (not committed — see ADR 0022) that produces
+the two runtime artifacts `LoadingIndicator` actually ships:
+`loadingIndicatorMorphs.ts` (the determinate `Circle`→`SoftBurst` matched
+cubic pairs) and `loadingIndicatorKeyframes.css` (the indeterminate
+7-shape loop's per-segment `@keyframes`). `indeterminate-cycle-duration`
+(`4550ms`) is 7 × `LoadingIndicator.kt`'s own internal
+`MorphIntervalMillis` (`650ms`); `global-rotation-duration` (`4666ms`) is
+its `GlobalRotationDurationMillis`. The per-segment morph spring
+(`dampingRatio=0.6`, `stiffness=200`, `visibilityThreshold=0.1`) is not
+registered as a token — it is baked directly into
+`loadingIndicatorKeyframes.css` as a `linear()` easing function, using the
+same spring→`linear()` sampling technique `src/v1/tokens/css.ts` already
+applies to the shared `--m3e-sys-motion-expressive-*` tokens. See ADR 0022
+for the full geometry-port, CSS-authoring, and verification methodology.

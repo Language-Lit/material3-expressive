@@ -29,7 +29,7 @@
     { "name": "LinearProgress", "kind": "feedback", "task": "T21", "path": "src/v1/components/LinearProgress", "status": "conformant", "dependencies": [], "publicExports": ["LinearProgress", "LinearProgressProps"] },
     { "name": "CircularProgress", "kind": "feedback", "task": "T21", "path": "src/v1/components/CircularProgress", "status": "conformant", "dependencies": [], "publicExports": ["CircularProgress", "CircularProgressProps"] },
     { "name": "WavyProgress", "kind": "feedback", "task": "T21", "path": "src/v1/components/WavyProgress", "status": "conformant", "dependencies": [], "publicExports": ["WavyProgress", "WavyProgressProps", "WavyProgressShape"] },
-    { "name": "LoadingIndicator", "kind": "feedback", "task": "T22", "path": "src/v1/components/LoadingIndicator", "status": "planned", "dependencies": [], "publicExports": ["LoadingIndicator", "LoadingIndicatorProps"] },
+    { "name": "LoadingIndicator", "kind": "feedback", "task": "T22", "path": "src/v1/components/LoadingIndicator", "status": "conformant", "dependencies": [], "publicExports": ["LoadingIndicator", "LoadingIndicatorProps"] },
     { "name": "ButtonGroup", "kind": "action", "task": "T23", "path": "src/v1/components/ButtonGroup", "status": "planned", "dependencies": [], "publicExports": ["ButtonGroup", "ButtonGroupProps"] },
     { "name": "SplitButton", "kind": "action", "task": "T23", "path": "src/v1/components/SplitButton", "status": "planned", "dependencies": [], "publicExports": ["SplitButton", "SplitButtonProps"] },
     { "name": "FloatingToolbar", "kind": "navigation", "task": "T24", "path": "src/v1/components/FloatingToolbar", "status": "planned", "dependencies": [], "publicExports": ["FloatingToolbar", "FloatingToolbarProps"] },
