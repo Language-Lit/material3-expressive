@@ -33,9 +33,11 @@ import '@language-lit/material3-expressive/v1/styles.css'
 ## Thumb icon
 
 `thumbIcon` reproduces the pinned `thumbContent` slot: decorative content
-drawn inside the thumb, expected to measure the sourced 16px icon size. Its
-presence keeps the thumb at the selected handle size even while unchecked,
-matching the source's own `hasContent || checked` sizing rule.
+drawn inside the thumb. The slot centers artwork in the sourced 16×16px box;
+a direct v1 `Icon`, SVG, or image is constrained to that size automatically.
+Other custom content should likewise fit the 16px box. Its presence keeps the
+thumb at the selected handle size even while unchecked, matching the source's
+own `hasContent || checked` sizing rule.
 
 ```tsx
 <Switch
@@ -62,6 +64,10 @@ animates it back to its resting size with Expressive fast-spatial motion —
 the same asymmetry the source's own snap-while-pressed animation spec
 defines. Track and thumb color transition with Expressive default-effects
 motion. Reduced motion makes every one of those changes immediate.
+
+The resting thumb's outer-box start is 8px without an icon, 4px with an icon,
+and 24px when checked; pressed starts are 2px and 22px. These logical offsets
+mirror in RTL.
 
 Current AndroidX Switch has no size, variant, or error parameter, so this
 implementation ships one form and does not invent Expressive geometry that

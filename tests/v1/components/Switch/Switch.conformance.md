@@ -50,7 +50,9 @@ input exposed with `role="switch"`.
   ships exactly one form.
 - Geometry: 52×32px track, 2px outline, 16px resting unselected thumb, 24px
   selected (or icon-bearing) thumb, 28px pressed thumb, 40px state layer,
-  16px thumb icon.
+  16px thumb icon. The icon slot centers a direct v1 `Icon`, SVG, or image in
+  that 16×16px box, leaving 4px around it inside a resting 24px icon-bearing
+  thumb.
 - `SwitchTokens` also generates Hover/Focus/Pressed-suffixed handle, track,
   and icon color roles. `SwitchColors`/`defaultSwitchColors` never read them,
   so they are not registered, matching the unread-role precedent from
@@ -76,12 +78,13 @@ input exposed with `role="switch"`.
   layer centered on the thumb's own current position, matching the source
   attaching its ripple `Modifier.indication` to the thumb element itself
   rather than the track.
-- The thumb's press-driven size (16/24/28px) and inset both reproduce the
-  source's `ThumbNode.measure` formulas exactly via `calc()` on the same
-  registered dimension tokens: resting inset centers the current thumb size
-  within the track height; the checked inset reaches the far edge minus that
-  same centering margin; pressed insets sit exactly one outline width from
-  whichever edge is nearest.
+- The thumb's press-driven size (16/24/28px) and **outer-box** inset reproduce
+  the source's `ThumbNode.measure` formulas via `calc()` on the same registered
+  dimension tokens. An absolutely positioned CSS child resolves its inline
+  inset from the bordered track's padding box, already 2px inward, so the web
+  formulas subtract that consumed outline once. The resulting LTR starts are
+  8px without content, 4px with content, 24px checked, 2px pressed-unchecked,
+  and 22px pressed-checked; logical placement mirrors them in RTL.
 - The size/inset transition uses Expressive fast-spatial motion while
   releasing a press, and snaps to zero duration while a press is active,
   reproducing the source's own `if (isPressed) SnapSpec else animationSpec`

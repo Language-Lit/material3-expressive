@@ -1,47 +1,48 @@
 # Active v1 task
 
-## T20 — Navigation bar and rail indicator geometry repair
+## T13 — Switch thumb icon and inset geometry repair
 
-Status: complete
+Status: active
 Repair approved: 2026-07-20
-Completed: 2026-07-20
 
 ### Scope
 
-Correct the existing T20 `NavigationBar` and `NavigationRail` item animation
-against the pinned AndroidX revision
-`225f50d42bf0adeb2abf4b6109befb5ab6ce4efc`. This remains a T20 conformance
-repair, not T25 or a new component task.
+Correct the existing T13 `Switch` thumb/icon translation against the pinned
+AndroidX revision `225f50d42bf0adeb2abf4b6109befb5ab6ce4efc`. This remains a
+T13 conformance repair, not T25 or a new component task.
 
-- Keep every navigation icon in its sourced 24px box in selected and
-  unselected states, including when alternate selected artwork is supplied.
-- Animate only the active indicator background from zero width to the sourced
-  56×32px pill. Do not scale the indicator wrapper, icon, or item footprint.
-- Keep the full-size pill as the hover, focus, press, and ripple/state-layer
-  target independently of the selected background's width animation.
-- Apply the same correction to bar and rail while preserving their public APIs,
-  labels, colors, disabled behavior, native navigation semantics, RTL,
-  reduced-motion and forced-colors behavior, SSR, and hydration.
+- Constrain the public `thumbIcon` slot to the sourced 16×16px icon geometry
+  and center its direct artwork inside the 24px icon-bearing thumb. Adapt the
+  library's own `Icon` component and ordinary direct SVG/image artwork without
+  requiring consumers to compensate manually.
+- Correct every resting and pressed inline thumb inset for the CSS containing
+  block created by the track's 2px border, so the thumb's outer-box offsets
+  match the pinned `ThumbNode.measure` coordinates in LTR and RTL.
+- Preserve the sourced 52×32px track, 16/24/28px handle sizes, 40px state
+  layer, checked/disabled colors, pressed snap/release motion, native checkbox
+  and switch semantics, forms, SSR, hydration, reduced motion, and forced
+  colors.
 
 ### Expected files
 
-- `src/v1/components/NavigationBar/NavigationBar.css` and
-  `src/v1/components/NavigationRail/NavigationRail.css`.
-- Focused CSS tests under `tests/v1/components/NavigationBar/` and
-  `tests/v1/components/NavigationRail/`.
-- T20 conformance records and component documentation, ADR 0020, architecture
+- `src/v1/components/Switch/Switch.css`; `Switch.tsx` only if CSS cannot fully
+  adapt the existing slot structure.
+- Focused Switch CSS/behavior tests under `tests/v1/components/Switch/`.
+- T13 conformance record and component documentation, ADR 0013, architecture
   text, and `docs/v1/component-inventory.json` review/update.
-- No TSX, public type, token, or playground change unless the CSS-only repair
-  proves insufficient.
+- The existing playground example only if the repaired component contract is
+  not sufficient to size its default `Icon` correctly.
 
 ### Acceptance checks
 
-- Selected and unselected icon wrappers remain exactly 24×24px; switching
-  selection never scales an icon or changes the navigation item's footprint.
-- The active background alone expands horizontally from zero to 56px while
-  remaining 32px high and centered behind the icon in both bar and rail.
-- The independent 56×32px state layer retains hover, focus, press, reduced
-  motion, forced-colors, and disabled behavior.
+- Icon-bearing checked and unchecked thumbs remain 24×24px, while a direct v1
+  `Icon`, SVG, or image resolves to a centered 16×16px artwork box with 4px of
+  space on each side.
+- In LTR, resting outer-box thumb starts resolve to 8px without content, 4px
+  with content, and 24px when checked; pressed starts resolve to 2px unchecked
+  and 22px checked. Logical placement mirrors in RTL.
+- State-layer centering, state colors, disabled behavior, forced colors, and
+  press/release/reduced-motion behavior remain unchanged.
 - Focused source/CSS tests pass. Per owner direction, browser automation and
   screenshots are omitted; owner performs visual confirmation before the
   required aggregate verification marks the repair complete.
