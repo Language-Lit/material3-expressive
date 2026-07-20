@@ -38,6 +38,19 @@ centering across all rows. Leading/trailing icon slots remain vertically
 centered across the container. Both choices follow the pinned measure
 policy's explicit multiline-label branch and shared icon placement.
 
+## Variants, states, and accessibility
+
+`variant="filled"` and `variant="outlined"` use the same state and color
+contract as `TextField`. Empty, populated, focused, disabled, required, invalid,
+and error presentation follows the native textarea plus the shared field chrome.
+Controlled and uncontrolled values, form submission/reset, selection, browser
+spellcheck, and keyboard editing remain native behavior.
+
+Provide a visible `label`. Supporting and error text are connected to the native
+textarea through the same generated description relationships as `TextField`.
+Focus indication remains visible in forced-colors mode, and label placement does
+not depend on animation under reduced motion.
+
 ## Tokens and boundaries
 
 `TextArea` consumes the exact same `--m3e-comp-text-field-*` registration as

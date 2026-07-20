@@ -31,6 +31,18 @@ import '@language-lit/material3-expressive/v1/styles.css'
   a client effect measures the actual width immediately after mount and
   corrects it.
 
+## Anatomy, variants, states, and accessibility
+
+Exactly one public navigation component is rendered at a time: a bar in the
+compact tier, a rail in the medium tier, or a permanent drawer in the expanded
+tier. Selection, disabled items, optional links, icon geometry, and controlled/
+uncontrolled value state are delegated to that component's public contract.
+
+Pass an accessible name such as `aria-label` to identify the navigation region.
+The rendered bar, rail, or drawer uses native navigation links/buttons and
+`aria-current`; it does not adopt tablist arrow-key behavior. Server markup is
+fully operable as a compact bar before the viewport-specific enhancement runs.
+
 ## Tokens and boundaries
 
 Theme overrides remain scoped to `Material3Provider`; `NavigationSuite`

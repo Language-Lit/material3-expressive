@@ -9,6 +9,7 @@ const checks = [
   ['Build distributable package', 'build'],
   ['Typecheck isolated v1 source', 'typecheck:v1'],
   ['Validate v1 architecture', 'check:v1:architecture'],
+  ['Validate v1 documentation', 'check:v1:docs'],
   ['Validate browser support', 'check:v1:browsers'],
   ['Validate v1 CSS boundary', 'check:v1:styles'],
   ['Validate v1 token contract', 'check:v1:tokens'],
