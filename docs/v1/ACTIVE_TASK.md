@@ -2,8 +2,9 @@
 
 ## T25 — Documentation and prerelease
 
-Status: active
+Status: complete
 Approved: 2026-07-20
+Completed: 2026-07-20
 
 ### Scope
 
