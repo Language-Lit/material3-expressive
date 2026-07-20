@@ -2,8 +2,9 @@
 
 ## T13 — Switch thumb icon and inset geometry repair
 
-Status: active
+Status: complete
 Repair approved: 2026-07-20
+Completed: 2026-07-20
 
 ### Scope
 
