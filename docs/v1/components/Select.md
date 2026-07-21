@@ -42,6 +42,9 @@ import '@language-lit/material3-expressive/v1/styles.css'
   chevron therefore reserve their own space outside the input, keeping the
   displayed value and browser-owned input area clear of both decorations even
   when downstream CSS resets input padding.
+- The trigger also inherits the shared top/content/bottom grid rows, so its
+  filled and outlined label/value placement does not depend on native input
+  block padding.
 
 ## Keyboard
 

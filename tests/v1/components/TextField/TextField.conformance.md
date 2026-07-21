@@ -65,6 +65,10 @@ provisional additions are out of scope here; see Web-specific deviations.
   start/end region or a 52px icon-bearing region (48px interactive target plus
   4px gap), with the native control confined to the middle. A transparent
   associated label behind the control preserves whole-field click-to-focus.
+- Its block layout has three structural rows too. Filled uses 24/24/8px, where
+  the first row contains the 8px top inset plus minimized 16px label;
+  outlined uses 16/24/16px. The native control occupies only the middle row,
+  so neither placement depends on native-control padding.
 
 ## Variants, shape, color, and size
 
@@ -81,6 +85,11 @@ provisional additions are out of scope here; see Web-specific deviations.
   the field grid rather than native-control padding, matching the source's
   separately measured icon/control placeables and Material Web's distinct
   start/middle/end regions.
+- Filled minimized-label and input line boxes meet exactly at 24px, matching
+  `TextFieldWithLabelVerticalPadding + labelPlaceable.height` in the pinned
+  measure policy; no additional visual gap is invented. Outlined centers the
+  24px input row between its two 16px content insets. Explicit grid rows retain
+  both relationships under unlayered input/textarea padding resets.
 - Every content color role — input, placeholder, label (resting/focus/
   error/disabled), leading icon, trailing icon, and supporting text — is
   identical between `FilledTextFieldTokens` and `OutlinedTextFieldTokens`;

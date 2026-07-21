@@ -27,6 +27,8 @@
   .m3e-text-field__field {
     --m3e-text-field-start-space: var(--m3e-comp-text-field-content-padding);
     --m3e-text-field-end-space: var(--m3e-comp-text-field-content-padding);
+    --m3e-text-field-block-start-space: var(--m3e-comp-text-field-content-padding);
+    --m3e-text-field-block-end-space: var(--m3e-comp-text-field-content-padding);
 
     box-sizing: border-box;
     display: grid;
@@ -34,6 +36,10 @@
       var(--m3e-text-field-start-space)
       minmax(0, 1fr)
       var(--m3e-text-field-end-space);
+    grid-template-rows:
+      var(--m3e-text-field-block-start-space)
+      minmax(var(--m3e-sys-typescale-baseline-body-large-line-height), auto)
+      var(--m3e-text-field-block-end-space);
     min-block-size: var(--m3e-comp-text-field-min-container-block-size);
     position: relative;
   }
@@ -69,6 +75,11 @@
   }
 
   .m3e-text-field[data-m3e-variant="filled"] .m3e-text-field__field {
+    --m3e-text-field-block-start-space: calc(
+      8px + var(--m3e-sys-typescale-baseline-body-small-line-height)
+    );
+    --m3e-text-field-block-end-space: 8px;
+
     background-color: var(--m3e-comp-text-field-filled-container-color);
     border-radius: var(--m3e-comp-text-field-filled-container-shape);
   }
@@ -87,30 +98,26 @@
     font-family: inherit;
     font-size: var(--m3e-sys-typescale-baseline-body-large-font-size);
     grid-column: 2;
-    grid-row: 1;
+    grid-row: 2;
     inline-size: 100%;
     letter-spacing: var(--m3e-sys-typescale-baseline-body-large-letter-spacing);
     line-height: var(--m3e-sys-typescale-baseline-body-large-line-height);
     margin: 0;
+    min-block-size: var(--m3e-sys-typescale-baseline-body-large-line-height);
     min-inline-size: 0;
     outline: none;
+    padding-block: 0;
     padding-inline: 0;
     position: relative;
     resize: none;
     z-index: 1;
   }
 
-  /* Horizontal space is owned by the grid tracks above, independently of the
-     native control's padding. The filled label still docks near the top of a
-     fixed 56px box, so the input's block padding is asymmetric to leave that
-     room; the outlined label floats along the border, so it is even. */
-  .m3e-text-field[data-m3e-variant="filled"] .m3e-text-field__input {
-    padding-block: 24px 8px;
-  }
-
-  .m3e-text-field[data-m3e-variant="outlined"] .m3e-text-field__input {
-    padding-block: 16px;
-  }
+  /* The grid owns block geometry as well as horizontal geometry, so an
+     unlayered consumer reset of native-control padding cannot move the caret
+     or value into the label. Filled resolves to the source's exact
+     8px + 16px label / 24px input / 8px bottom layout; outlined resolves to
+     16px / 24px / 16px. A multiline control grows only the middle row. */
 
   .m3e-text-field__input:disabled {
     color: color-mix(

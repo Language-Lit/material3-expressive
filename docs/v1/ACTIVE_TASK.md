@@ -1,10 +1,12 @@
 # Active v1 task
 
-## T14 — TextField shared-content geometry repair
+## T14 — TextField shared-content geometry repairs
 
 Status: complete
-Repair approved: 2026-07-21
-Completed: 2026-07-21
+Horizontal repair approved: 2026-07-21
+Horizontal repair completed: 2026-07-21
+Vertical repair approved: 2026-07-21
+Vertical repair completed: 2026-07-21
 
 ### Scope
 
@@ -31,6 +33,24 @@ adaptation. This remains a T14 conformance repair, not a new component task.
   APIs.
 - Keep legacy source and private downstream applications outside the repair.
 
+The approved vertical follow-up repairs the remaining reset-sensitive block
+geometry without changing Material's intended compact relationship:
+
+- Replace native-control block padding as the owner of the filled and outlined
+  label/value relationship with explicit top/content/bottom grid rows.
+- Preserve AndroidX's exact filled placement: 8px above the minimized 16px
+  label line, followed immediately by the 24px input line, followed by 8px at
+  the bottom of the 56px minimum container. Preserve the outlined 16/24/16px
+  placement.
+- Keep resting labels centered, minimized labels at their existing positions,
+  and multiline content top-aligned while allowing native `rows` and vertical
+  resize to grow the content row.
+- Apply the correction to filled and outlined `TextField`, `TextArea`, and
+  `Select`, including under representative unlayered input/textarea/button
+  padding resets.
+- Preserve the completed horizontal start/content/end repair, public APIs,
+  native behavior, accessibility, SSR, RTL, forced colors, and motion.
+
 ### Expected files
 
 - `src/v1/internal/TextFieldChrome.tsx` and
@@ -44,6 +64,11 @@ adaptation. This remains a T14 conformance repair, not a new component task.
   architecture text, and `docs/v1/component-inventory.json` review/update.
 - Mirrored playground examples only where needed to expose password/icon and
   shared-consumer combinations for visual verification.
+- `src/v1/components/TextField/TextField.css` and, if required by native
+  multiline sizing, `src/v1/components/TextArea/TextArea.css` for structural
+  block rows; no runtime component change is expected.
+- Focused TextField/TextArea/Select CSS or browser regressions proving clean and
+  reset geometry, plus T14 ADR/conformance/component-documentation updates.
 
 ### Acceptance checks
 
@@ -62,12 +87,24 @@ adaptation. This remains a T14 conformance repair, not a new component task.
 - Focused component tests, a real-browser computed-geometry smoke check, and
   `npm run verify:v1` pass with no legacy, package, CSS-token, documentation,
   or bundle-budget regressions.
+- Filled minimized labels occupy 8–24px and their input content begins at 24px;
+  outlined input content occupies the centered 16–40px row. The line boxes are
+  adjacent, not overlapped and not separated by an invented gap.
+- Those block relationships remain exact after an unlayered
+  `input, textarea, button { padding: 0 }` reset. TextArea rows and user-driven
+  vertical resize grow only the content row, and Select retains its native
+  trigger activation and popup behavior.
 
 ### Completion evidence
 
-- Focused TextField/TextArea/Select verification passed: 15 files and 99
+- Focused TextField/TextArea/Select verification passed: 15 files and 100
   tests, including native-label activation, SSR/hydration, accessibility, CSS,
   theme, and shared-consumer regressions.
+- Chrome measured all 25 playground shared-chrome controls with both clean CSS
+  and an unlayered `input, textarea, button { padding: 0 }` reset. Both runs
+  retained filled 24/24/8px and outlined 16/24/16px rows exactly; every
+  four-row textarea retained its 128px container with only the 96px middle
+  content row growing.
 - Chrome checked every one of the playground's 25 shared-chrome controls
   against the expected 16px ordinary and 52px icon-bearing edge regions under
   a representative unlayered input/textarea reset. All 25 passed in LTR and
@@ -75,7 +112,7 @@ adaptation. This remains a T14 conformance repair, not a new component task.
   native password input and Select-icon activation opened the combobox.
 - The same 25/25 LTR and 25/25 RTL geometry check passed against the
   production-built playground and assembled `dist/v1/styles.css`.
-- `npm run verify:v1` passed all 13 aggregate gates: 174 test files and 1,009
+- `npm run verify:v1` passed all 13 aggregate gates: 174 test files and 1,010
   tests, distributable/package and production-playground builds, architecture,
   docs, supported browsers, CSS, tokens, frozen legacy contracts, every bundle
   budget, and packed Vite/Next/legacy consumer fixtures.

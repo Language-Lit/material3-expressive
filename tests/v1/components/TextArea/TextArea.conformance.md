@@ -44,8 +44,8 @@ substituting a native `textarea` for the native `input`, both rendered
 through the same internal `TextFieldChrome` primitive and the same
 `.m3e-text-field__input` class so all shared CSS applies unchanged. Height
 follows the native `rows` attribute and the browser's own vertical resize
-handle. The handle is clamped to the shared 56px minimum container block size,
-so the native control and its Material chrome cannot separate at the minimum.
+handle. The shared top/content/bottom grid keeps the complete field at its
+56px minimum while `rows` and native resizing grow the middle content row.
 Auto-growing height is out of scope. Horizontally, the textarea occupies the
 shared middle content region between 16px ordinary or 52px icon-bearing edge
 regions, so its caret never depends on native-control inline padding to avoid
@@ -79,8 +79,9 @@ root (driving the resting-label placement branch above) and no `type` prop,
 since native `textarea` has no `type` attribute. `rows`, `cols`, `wrap`, and
 every other native `textarea` attribute forward directly. Native vertical
 resize (`resize: vertical`) is retained as a deliberate, native web
-affordance. `rows` supplies its initial height, and the shared Material 56px
-container minimum is also the native control's resize floor. The shared
+affordance. `rows` supplies the middle row's initial height; the grid adds the
+filled 24px/8px or outlined 16px/16px structural edge regions, and its
+one-line content floor produces the shared 56px minimum. The shared
 transparent associated label retains whole-field click-to-focus behavior in
 the start/end regions outside the textarea's middle grid track.
 
@@ -101,4 +102,5 @@ Shares every deviation already recorded for `TextField`. Native vertical
 resize remains the web-only affordance described above; unlike the first-party
 Material Web custom element, which propagates resizing through its field
 container, this native-React adaptation keeps the handle on the actual
-`textarea` and gives it the same 56px floor as the surrounding chrome.
+`textarea` while the surrounding shared grid owns the fixed Material edge
+regions.
