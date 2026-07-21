@@ -1,11 +1,69 @@
-# 1.0.0 release-readiness audit
+# Release-readiness audit
+
+## 1.0.1 — 2026-07-21
+
+Audit date: 2026-07-21  
+Release: `@language-lit/material3-expressive@1.0.1`  
+Rollback: `@language-lit/material3-expressive@0.3.0` (tag `v0.3.0`)  
+Registry publication: not performed
+
+### Recommendation
+
+**GO for a separately owner-approved `1.0.1` release.** This is a patch, not a
+cutover: the public surface is byte-for-byte identical to `1.0.0` — same 32
+conformant components, same exports, same tokens, same dependency-free
+package. The only behavioral change is the repair described below, found by
+the T29 browser rendering audit after `1.0.0` had already been published, so
+the fix exists on `main` but not yet in the registry. Publication and any
+git-tag push remain a separate owner-approved step outside this audit.
+
+### What changed since 1.0.0
+
+- `FabMenu`: `.m3e-fab-menu__item-slot` no longer sets `overflow: hidden`. The
+  slot is exactly the size of the item it wraps, and the item's elevation
+  shadow painted outside its border box, so the clip left only the shadow's
+  corners and a rounded item read as a square halo. A regression test in
+  `FabMenu.css.test.ts` asserts the slot rule stays unclipped.
+- `scripts/audit-rendering.mjs` (`npm run audit:rendering`) was added: a
+  Playwright-based check, run against the built playground, for elevation
+  shadows clipped by an ancestor and interactive targets under WCAG 2.2 SC
+  2.5.8. It requires a real browser, so it is documented in `AGENTS.md` rather
+  than folded into `npm run verify`.
+- The in-repository documentation site at `m3e.language-lit.com` (ADR 0028)
+  was added and is verified structurally by `check:site`, one of the gates
+  below; its own Next.js build is a separate CI job.
+- No export, prop type, token value, or dependency changed.
+
+### Automated verification
+
+| Gate | Command | Result |
+| --- | --- | --- |
+| Aggregate verification | `npm run verify` | Pass: 13 gates |
+| Unit, interaction, accessibility, SSR, hydration, CSS, and theme tests | `npm run test` (inside aggregate) | Pass: 165 files, 943 tests (+1 `FabMenu` regression test since `1.0.0`) |
+| Architecture, browser, CSS, and token checks | aggregate gates | Pass: 32 inventory entries, 35 stylesheets, 1,493 properties |
+| Release artifact and rollback | `npm run check:release` (inside aggregate) | Pass: 32 components; `1.0.1` and `v0.3.0` rollback verified |
+| Bundle budgets | `npm run check:bundle-size` (inside aggregate) | Pass: packed package 306,435 / 342,900 bytes; every budget green |
+| Packed consumers | `npm run check:consumer-fixtures` (inside aggregate) | Pass: Vite and Next SSR/static against the packed tarball |
+| Documentation site structure | `npm run check:site` (inside aggregate) | Pass: 32 conformant components, 31 demos, export map respected |
+
+The aggregate gate is 13 rather than `1.0.0`'s 12: `check:site` (T28) joined
+after that audit. `npm run verify` was re-run in full for this audit and
+passed at `1.0.1`.
+
+### Remaining boundaries
+
+Unchanged from `1.0.0` — see below.
+
+## 1.0.0 — 2026-07-21
 
 Audit date: 2026-07-21  
 Release: `@language-lit/material3-expressive@1.0.0`  
 Rollback: `@language-lit/material3-expressive@0.3.0` (tag `v0.3.0`)  
-Registry publication: not performed
+Registry publication: not performed at the time of this audit; published
+2026-07-21, no `v1.0.0` git tag was created at that time — backfilled onto the
+same commit as part of the `1.0.1` release above.
 
-## Recommendation
+### Recommendation
 
 **GO for a separately owner-approved `1.0.0` release.** The cutover removed the
 0.3 surface, flattened the parallel namespace, and reduced the package to a
@@ -13,7 +71,7 @@ single dependency-free surface. Every public repository gate passes. Publication
 remote release creation, and registry dist-tag changes require separate owner
 approval and are outside this audit.
 
-## Package and compatibility evidence
+### Package and compatibility evidence
 
 `npm run check:release` creates an ignored-script tarball in a temporary
 directory, inspects its manifest and file list, and removes it. The gate checks:
@@ -35,7 +93,7 @@ than an additive release. Rollback for a consumer is to restore the exact
 styles. Application-specific rollout procedures are deliberately outside this
 public repository.
 
-## Automated verification
+### Automated verification
 
 | Gate | Command | Result |
 | --- | --- | --- |
@@ -47,7 +105,7 @@ public repository.
 | Bundle budgets | `npm run check:bundle-size` (inside aggregate) | Pass: package 306,055 / 342,900 bytes; every budget green |
 | Packed consumers | `npm run check:consumer-fixtures` (inside aggregate) | Pass: Vite and Next SSR/static against the packed tarball |
 
-## Cutover effects
+### Cutover effects
 
 - The packed tarball fell from 433,861 bytes to 306,055 bytes.
 - `npm install` removed 82 packages; the package now declares no runtime
@@ -59,7 +117,7 @@ public repository.
   baselines restore the recorded 12% allowance. ADR 0027 is the required
   decision record for that budget change.
 
-## Remaining boundaries
+### Remaining boundaries
 
 - The support claim is limited to the generated component matrix.
 - The 0.3 surface is gone from this version. Consumers not ready to migrate stay

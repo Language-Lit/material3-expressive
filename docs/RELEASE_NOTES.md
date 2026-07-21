@@ -1,5 +1,35 @@
 # Release notes
 
+## 1.0.1 — 2026-07-21
+
+Status: prepared patch release. No export, prop, token, or dependency change;
+the public surface is identical to `1.0.0`.
+
+### Fixed
+
+- `FabMenu`: an item's elevation shadow was clipped to a rectangle by
+  `.m3e-fab-menu__item-slot { overflow: hidden }`, so only its corners survived
+  and a rounded item read as a square halo. The slot no longer clips; the
+  staged reveal animation is unchanged at default motion, under
+  `prefers-reduced-motion: reduce`, and under `forced-colors: active`.
+
+### Added
+
+- `scripts/audit-rendering.mjs` (`npm run audit:rendering`): a browser-based
+  audit, run against the built playground, that checks for elevation shadows
+  clipped by an ancestor and interactive targets under the WCAG 2.2 SC 2.5.8
+  floor — defects that compile, pass jsdom-based unit tests, and are still
+  wrong on screen. Not part of `npm run verify`, since it needs a real browser;
+  documented in `AGENTS.md`.
+- The in-repository documentation site at `m3e.language-lit.com`, built from
+  the library's own components and consuming only its public exports (ADR
+  0028).
+
+### Verification target
+
+Same as `1.0.0`: `npm run check:docs` and `npm run verify`. See
+[RELEASE_READINESS.md](RELEASE_READINESS.md) for the `1.0.1` audit.
+
 ## 1.0.0 — 2026-07-21
 
 Status: prepared stable release. The cutover replaces the 0.3 surface; it does
