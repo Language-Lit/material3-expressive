@@ -48,16 +48,49 @@ describe('TextField stylesheet contract', () => {
     expect(css).not.toContain('max-inline-size: 1000px')
   })
 
-  it('separates leading-icon resting content from the outlined floating inset', () => {
+  it('allocates source-aligned logical start/content/end regions instead of padding the input beneath icons', () => {
+    const inputRule = css.slice(css.indexOf('.m3e-text-field__input {'))
+    const inputRuleBody = inputRule.slice(0, inputRule.indexOf('}'))
+    const leadingRegionRule = css.slice(
+      css.indexOf('.m3e-text-field__field[data-m3e-has-leading-icon="true"] {'),
+    )
+    const leadingRegionBody = leadingRegionRule.slice(0, leadingRegionRule.indexOf('}'))
+
+    expect(css).toContain('--m3e-text-field-start-space:')
+    expect(css).toContain('--m3e-text-field-end-space:')
+    expect(css).toContain('grid-template-columns:')
+    expect(inputRuleBody).toContain('grid-column: 2')
+    expect(inputRuleBody).toContain('padding-inline: 0')
+    expect(leadingRegionBody).toContain(
+      'var(--m3e-comp-text-field-minimum-interactive-target) +',
+    )
+    expect(leadingRegionBody).toContain('var(--m3e-comp-text-field-icon-content-gap)')
+    expect(css).not.toContain(
+      '[data-m3e-has-leading-icon="true"] .m3e-text-field__input',
+    )
+    expect(css).not.toContain(
+      '[data-m3e-has-trailing-icon="true"] .m3e-text-field__input',
+    )
+  })
+
+  it('separates icon-aware resting content from the outlined floating inset', () => {
     const outlinedFloatRule = css.slice(
       css.indexOf('.m3e-text-field[data-m3e-variant="outlined"]\n    .m3e-text-field__input:focus'),
     )
     const outlinedFloatBody = outlinedFloatRule.slice(0, outlinedFloatRule.indexOf('}'))
 
-    expect(css).toContain('var(--m3e-comp-text-field-minimum-interactive-target) +')
     expect(outlinedFloatBody).toContain(
       'inset-inline-start: var(--m3e-comp-text-field-content-padding)',
     )
+    expect(outlinedFloatBody).toContain(
+      'max-inline-size: calc(100% - 2 * var(--m3e-comp-text-field-content-padding))',
+    )
+  })
+
+  it('preserves a whole-field click target outside the native control region', () => {
+    expect(css).toContain('.m3e-text-field__hit-target')
+    expect(css).toContain('inset: 0')
+    expect(css).toContain('z-index: 0')
   })
 
   it('starts a resting multiline label at the sourced top padding', () => {

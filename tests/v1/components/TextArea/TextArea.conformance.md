@@ -2,7 +2,7 @@
 
 Task: T14
 Status: conformant
-Reviewed: 2026-07-20
+Reviewed: 2026-07-21
 
 ## Primary references
 
@@ -46,7 +46,10 @@ through the same internal `TextFieldChrome` primitive and the same
 follows the native `rows` attribute and the browser's own vertical resize
 handle. The handle is clamped to the shared 56px minimum container block size,
 so the native control and its Material chrome cannot separate at the minimum.
-Auto-growing height is out of scope.
+Auto-growing height is out of scope. Horizontally, the textarea occupies the
+shared middle content region between 16px ordinary or 52px icon-bearing edge
+regions, so its caret never depends on native-control inline padding to avoid
+an icon.
 
 ## Variants, shape, color, and size
 
@@ -77,7 +80,9 @@ since native `textarea` has no `type` attribute. `rows`, `cols`, `wrap`, and
 every other native `textarea` attribute forward directly. Native vertical
 resize (`resize: vertical`) is retained as a deliberate, native web
 affordance. `rows` supplies its initial height, and the shared Material 56px
-container minimum is also the native control's resize floor.
+container minimum is also the native control's resize floor. The shared
+transparent associated label retains whole-field click-to-focus behavior in
+the start/end regions outside the textarea's middle grid track.
 
 ## Accessible name, description, role, state, and keyboard
 

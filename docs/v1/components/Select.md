@@ -37,6 +37,11 @@ import '@language-lit/material3-expressive/v1/styles.css'
   the same shape, if you need to observe or drive it directly.
 - The forwarded ref points at the visible trigger `input` — read-only, not
   editable; typing does not filter the options.
+- The read-only trigger inherits `TextFieldChrome`'s distinct logical
+  start/content/end regions. Its optional leading icon and required trailing
+  chevron therefore reserve their own space outside the input, keeping the
+  displayed value and browser-owned input area clear of both decorations even
+  when downstream CSS resets input padding.
 
 ## Keyboard
 

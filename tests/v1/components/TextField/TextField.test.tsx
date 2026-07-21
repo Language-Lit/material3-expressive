@@ -97,6 +97,18 @@ describe('TextField', () => {
     expect(screen.getByLabelText('Email').getAttribute('type')).toBe('email')
   })
 
+  it('keeps password inputs in the shared leading-icon layout', () => {
+    render(
+      <TextField label="Password" type="password" leadingIcon={<span data-testid="lock" />} />,
+    )
+    const input = screen.getByLabelText('Password')
+    const field = input.closest('.m3e-text-field__field')
+
+    expect(input.getAttribute('type')).toBe('password')
+    expect(field?.getAttribute('data-m3e-has-leading-icon')).toBe('true')
+    expect(screen.getByTestId('lock').closest('[data-m3e-position="leading"]')).not.toBeNull()
+  })
+
   it('accepts typed input through the browser like any native text input', async () => {
     const user = userEvent.setup()
     render(<TextField label="Name" />)
@@ -120,6 +132,21 @@ describe('TextField', () => {
     expect(screen.getByTestId('trailing').closest('[data-m3e-position="trailing"]')).not.toBeNull()
     expect(field?.getAttribute('data-m3e-has-leading-icon')).toBe('true')
     expect(field?.getAttribute('data-m3e-has-trailing-icon')).toBe('true')
+  })
+
+  it('keeps the complete field chrome clickable after the input moves into its content region', async () => {
+    const user = userEvent.setup()
+    render(<TextField label="Search" leadingIcon={<span />} />)
+    const input = screen.getByLabelText('Search') as HTMLInputElement
+    const hitTarget = input
+      .closest('.m3e-text-field__field')
+      ?.querySelector('.m3e-text-field__hit-target')
+
+    expect(hitTarget).toBeInstanceOf(HTMLLabelElement)
+    expect(hitTarget?.getAttribute('for')).toBe(input.id)
+    expect(hitTarget?.getAttribute('aria-hidden')).toBe('true')
+    await user.click(hitTarget as HTMLLabelElement)
+    expect(document.activeElement).toBe(input)
   })
 
   it('renders supporting text and associates it through aria-describedby', () => {

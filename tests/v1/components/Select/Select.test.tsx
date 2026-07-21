@@ -45,6 +45,19 @@ describe('Select', () => {
     expect(screen.queryByRole('listbox')).toBeNull()
   })
 
+  it('inherits icon-aware regions and activates from the shared whole-field hit target', async () => {
+    const user = userEvent.setup()
+    render(<Select label="Fruit" options={fruitOptions} leadingIcon={<span />} />)
+    const trigger = getTrigger()
+    const field = trigger.closest('.m3e-text-field__field')
+    const hitTarget = field?.querySelector('.m3e-text-field__hit-target')
+
+    expect(field?.getAttribute('data-m3e-has-leading-icon')).toBe('true')
+    expect(field?.getAttribute('data-m3e-has-trailing-icon')).toBe('true')
+    await user.click(hitTarget as HTMLLabelElement)
+    expect(trigger.getAttribute('aria-expanded')).toBe('true')
+  })
+
   it('opens the listbox on click and renders each option in display order', async () => {
     const user = userEvent.setup()
     render(<Select label="Fruit" options={fruitOptions} />)

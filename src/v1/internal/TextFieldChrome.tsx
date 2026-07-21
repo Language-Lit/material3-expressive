@@ -27,6 +27,10 @@ export interface TextFieldChromeProps {
  * composable — `TextField`/`OutlinedTextField` reuse one decoration layer
  * regardless of line count — so this internal primitive is the direct web
  * equivalent of that shared Compose layer, not a bonus abstraction.
+ * Horizontal chrome is exposed as one start/content/end layout: the native
+ * control remains the first child for native-truth sibling selectors but is
+ * placed only in the content region, while a transparent associated label
+ * preserves whole-field click-to-focus behavior across the outer regions.
  *
  * `error` and `disabled` are mirrored onto this root as `data-m3e-*`
  * attributes because they are the only two states here with no DOM-native
@@ -96,6 +100,11 @@ export function TextFieldChrome({
             {trailingIcon}
           </span>
         ) : null}
+        <label
+          className="m3e-text-field__hit-target"
+          htmlFor={fieldId}
+          aria-hidden="true"
+        />
       </span>
       {supportingText != null ? (
         <span className="m3e-text-field__supporting-text" id={supportingTextId}>

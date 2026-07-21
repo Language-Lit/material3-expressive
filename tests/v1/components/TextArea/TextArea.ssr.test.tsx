@@ -22,6 +22,7 @@ describe('TextArea server rendering', () => {
     expect(render()).toContain('data-m3e-variant="outlined"')
     expect(render()).toContain('data-m3e-error="true"')
     expect(render()).toContain('data-m3e-disabled="true"')
+    expect(render()).toContain('class="m3e-text-field__hit-target"')
   })
 
   it('hydrates without changing markup or injecting styles', async () => {

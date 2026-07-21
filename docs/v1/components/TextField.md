@@ -78,10 +78,15 @@ border-box coordinate system.
 ```
 
 `leadingIcon`/`trailingIcon` render inside a 48px touch target at the
-field's edges and adjust the input's own content padding. `supportingText`
-renders below the field and is associated through `aria-describedby`,
-composed with any caller-supplied `aria-describedby` rather than replacing
-it.
+field's edges. The field owns separate logical start, native-input, and end
+regions: an ordinary edge reserves 16px, while an icon edge reserves the 48px
+target plus a 4px content gap. The input occupies only the middle region, so
+its caret, placeholder, text, and browser-owned affordances cannot move under
+an icon when downstream CSS resets native input padding. A transparent native
+label keeps the complete field surface clickable without expanding the input
+back beneath those regions. `supportingText` renders below the field and is
+associated through `aria-describedby`, composed with any caller-supplied
+`aria-describedby` rather than replacing it.
 
 ## Tokens and boundaries
 

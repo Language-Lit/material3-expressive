@@ -2,7 +2,7 @@
 
 Task: T17
 Status: conformant
-Reviewed: 2026-07-20
+Reviewed: 2026-07-21
 
 ## Primary references
 
@@ -39,7 +39,11 @@ stylesheet, reused unchanged.
 - The visible trigger is a read-only native `input` decorated by
   `TextFieldChrome`: `label`, `variant` (`filled`/`outlined`, default
   `filled`), `leadingIcon`, `supportingText`, `error`, `disabled` all mirror
-  `TextField`'s own prop names and defaults exactly.
+  `TextField`'s own prop names and defaults exactly. It occupies the shared
+  middle content region; the optional leading icon and required trailing
+  chevron own separate 52px edge regions rather than overlaying a full-width
+  input, so downstream input-padding resets cannot move the displayed value or
+  browser-owned control area underneath either decoration.
 - A fixed chevron SVG — not a Material Symbols glyph, since baking in a font
   dependency the consumer has not opted into would break "font loading
   remains consumer-owned" — fills `TextFieldChrome`'s existing
@@ -97,6 +101,10 @@ stylesheet, reused unchanged.
   without changing the value; Tab closes.
 - A disabled option is skipped by keyboard navigation and unselectable by
   click; a disabled `Select` opens on neither click nor keyboard.
+- The shared transparent associated label keeps the full field surface
+  activatable after the trigger input is confined to its middle content
+  region; activation still dispatches through the native input's existing
+  click handler and `aria-expanded` state.
 - `name`, when supplied, renders one native `<input type="hidden">`
   carrying the current value, so `Select` still participates in native form
   submission/`FormData`/`form.reset()` despite its visible control being a

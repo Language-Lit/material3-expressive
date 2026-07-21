@@ -78,6 +78,27 @@ describe('TextArea', () => {
     expect(control.value).toBe('Line one\nLine two')
   })
 
+  it('inherits both logical icon regions and the whole-field focus target from shared chrome', async () => {
+    const user = userEvent.setup()
+    render(
+      <TextArea
+        label="Message"
+        leadingIcon={<span data-testid="leading" />}
+        trailingIcon={<span data-testid="trailing" />}
+      />,
+    )
+    const control = screen.getByLabelText('Message') as HTMLTextAreaElement
+    const field = control.closest('.m3e-text-field__field')
+    const hitTarget = field?.querySelector('.m3e-text-field__hit-target')
+
+    expect(field?.getAttribute('data-m3e-has-leading-icon')).toBe('true')
+    expect(field?.getAttribute('data-m3e-has-trailing-icon')).toBe('true')
+    expect(screen.getByTestId('leading').closest('[data-m3e-position="leading"]')).not.toBeNull()
+    expect(screen.getByTestId('trailing').closest('[data-m3e-position="trailing"]')).not.toBeNull()
+    await user.click(hitTarget as HTMLLabelElement)
+    expect(document.activeElement).toBe(control)
+  })
+
   it('renders supporting text and associates it through aria-describedby', () => {
     render(<TextArea label="Notes" supportingText="Optional" />)
     const control = screen.getByLabelText('Notes')
