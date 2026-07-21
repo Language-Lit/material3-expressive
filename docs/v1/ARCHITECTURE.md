@@ -231,7 +231,11 @@ start, native-control, and end regions explicitly: the ordinary regions are
 gap, and the control occupies only the middle region rather than stretching
 under an icon and relying on reset-sensitive input padding. A transparent,
 associated label preserves whole-field click-to-focus behavior outside that
-middle control box. This mirrors the pinned
+middle control box. The same field grid owns top, control, and bottom rows:
+filled uses 24/24/8px (an 8px inset plus the minimized 16px label, then the
+24px input line, then 8px), while outlined uses 16/24/16px. Native controls
+occupy the middle row with zero block padding, so downstream resets cannot
+collapse the label/value relationship either. This mirrors the pinned
 source's own architecture directly — `TextField`/`OutlinedTextField` have no
 distinct multiline composable, and `SecureTextField` establishes the
 precedent of swapping the underlying text-input primitive under one
@@ -244,9 +248,8 @@ clone gives the middle panel its intrinsic width, and that panel's top stroke
 scales away when the label floats. The panels paint against the field's own
 border box, keeping the outline, floating label, input, and icons in one
 coordinate system with no JS measurement. The native textarea retains vertical
-resizing, but its minimum block size is the same 56px component token as the
-shared field container, preventing browser resize state from separating the
-control from its Material chrome.
+resizing; its `rows` height grows the middle row while the shared grid keeps the
+Material top and bottom regions around it.
 `error` and `disabled` are the only two states mirrored onto the root as
 `data-m3e-*` attributes, because they are the only states unreachable by a
 plain sibling combinator from the control and neither can change without

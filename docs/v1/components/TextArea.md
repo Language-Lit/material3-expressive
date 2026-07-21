@@ -27,9 +27,9 @@ native `textarea` for the native `input`. There is no `type` prop — native
 `textarea` has none — and every other native `textarea` attribute (`rows`,
 `cols`, `wrap`, `maxLength`, …) forwards directly. Native vertical resize
 (`resize: vertical`) is kept as a deliberate web affordance. `rows` determines
-the initial height, while resizing is clamped to the shared 56px Material
-container minimum so the native control cannot become shorter than its label,
-indicator, or outline. Auto-growing height is out of scope.
+the native content-row height; the shared field grid adds the Material top and
+bottom regions and keeps the complete container at its 56px minimum.
+Auto-growing height is out of scope.
 
 ## Multiline layout
 
@@ -40,6 +40,11 @@ policy's explicit multiline-label branch and shared icon placement. On the
 inline axis, the native textarea occupies the same middle content region as
 TextField: 16px is reserved at an ordinary edge and 52px at an icon edge, so
 native textarea padding resets cannot place its caret beneath an icon.
+The same grid owns the block axis: filled textarea content starts after the
+24px label region and leaves 8px below, while outlined content has 16px above
+and below. A downstream `textarea { padding: 0 }` reset therefore changes
+neither the first content line nor the label relationship. `rows` and native
+vertical resizing grow the middle content row rather than either edge region.
 
 ## Variants, states, and accessibility
 

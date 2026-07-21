@@ -44,6 +44,9 @@ stylesheet, reused unchanged.
   chevron own separate 52px edge regions rather than overlaying a full-width
   input, so downstream input-padding resets cannot move the displayed value or
   browser-owned control area underneath either decoration.
+  The trigger also occupies the shared structural middle block row, preserving
+  filled 24/24/8px and outlined 16/24/16px label/value geometry when native
+  input block padding is reset.
 - A fixed chevron SVG — not a Material Symbols glyph, since baking in a font
   dependency the consumer has not opted into would break "font loading
   remains consumer-owned" — fills `TextFieldChrome`'s existing

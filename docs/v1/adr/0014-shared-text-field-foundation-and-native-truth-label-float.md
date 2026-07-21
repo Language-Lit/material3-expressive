@@ -53,6 +53,14 @@ the field edge beneath the icon. It also left the native control's own region,
 including browser-owned affordances, underneath trailing decoration even when
 the text happened to be padded clear.
 
+The same audit exposed the corresponding block-axis defect. The port encoded
+the source's filled 8px + 16px label / 24px input / 8px bottom placement and
+outlined 16px / 24px / 16px placement as native-control padding. An unlayered
+form-control reset therefore removed the vertical reservation and put the
+value/caret into the label. AndroidX instead measures and places label and
+input as separate placeables; its filled input starts exactly at
+`topPadding + labelPlaceable.height` (8dp + the 16dp body-small line).
+
 Every content color role (input, placeholder, label, leading icon, trailing
 icon, supporting text) is identical between `FilledTextFieldTokens` and
 `OutlinedTextFieldTokens` — Kotlin has no shared-token-file mechanism, so
@@ -158,12 +166,9 @@ documenting a dimmed one.
     icon slots continue to use the shared vertically centered placement,
     matching the source placing both icons with `Alignment.CenterVertically`
     regardless of `singleLine`. Its native vertical resize handle is retained,
-    but the textarea receives the same 56px minimum block-size token as the
-    field container. `rows` therefore remains the initial height while the
-    browser cannot shrink the control below its surrounding chrome. This is
-    the native-React equivalent of Material Web propagating resize through its
-    complete field/container instead of allowing an inner textarea to resize
-    independently.
+    and `rows` remains the native content-row height. The shared block grid
+    contributes the fixed Material edge regions around that row while retaining
+    native vertical resizing.
 13. This project's stylesheet assembler (`assembleAuthoredCss` in
     `scripts/build-styles.mjs`) inlines every `@import` with no
     deduplication. Because `styles.css` must import both `TextField.css`
@@ -192,6 +197,14 @@ documenting a dimmed one.
     continues to override its start and maximum width back to the ordinary 16px
     cutout coordinate, while filled/resting labels consume the resolved edge
     tracks.
+16. Block geometry is likewise projected into structural grid rows instead of
+    native-control padding. Filled uses a 24px start row (8px top inset plus the
+    minimized 16px label line), a minimum 24px native-control row, and an 8px
+    end row. Outlined uses 16px / 24px / 16px. The control has zero block
+    padding and occupies only the middle row, so unlayered
+    `input, textarea, button { padding: 0 }` resets cannot move content into the
+    label. Multiline `rows` and native resize grow that middle row; resting and
+    floating labels retain their existing source-aligned positions.
 
 ## Consequences
 
@@ -213,6 +226,9 @@ documenting a dimmed one.
   slots. TextField, TextArea, and Select inherit that guarantee from one shared
   layout, and representative input/textarea resets cannot collapse their
   horizontal content origin back beneath a leading icon.
+- Native-control resets can no longer collapse the source's vertical
+  label/value placement. Filled, outlined, single-line, multiline, and Select
+  consumers all inherit the same structural block rows.
 - The full CSS budget's remaining headroom is the tightest of the five
   bundle artifacts (208,286 of 215,000 bytes, ~97% used); a task with
   comparably large CSS may need a recorded budget decision sooner than the

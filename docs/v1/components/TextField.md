@@ -88,6 +88,13 @@ back beneath those regions. `supportingText` renders below the field and is
 associated through `aria-describedby`, composed with any caller-supplied
 `aria-describedby` rather than replacing it.
 
+The field also owns explicit top, input-content, and bottom rows instead of
+using native-control block padding for vertical placement. Filled resolves to
+24/24/8px: the first 24px contains the 8px top inset and minimized 16px label,
+the input line occupies the next 24px, and 8px remains below. Outlined resolves
+to 16/24/16px. Consequently, unlayered native-control padding resets cannot
+move a populated value or caret into its label.
+
 ## Tokens and boundaries
 
 `TextField` and `TextArea` share one `--m3e-comp-text-field-*` registration.

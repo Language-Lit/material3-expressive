@@ -5,12 +5,10 @@
    TextFieldChrome consumer resolves it identically. */
 @layer m3e.components {
   textarea.m3e-text-field__input {
-    /* `rows` remains the initial height, but the native resize handle must not
-       make the control shorter than the Material container around it. Without
-       this shared minimum, the textarea bottoms out at its browser-owned
-       intrinsic minimum while the chrome correctly stops at 56px, leaving the
-       resize handle floating above the indicator/outline. */
-    min-block-size: var(--m3e-comp-text-field-min-container-block-size);
+    /* `rows` remains the initial content height. The shared grid contributes
+       the Material top and bottom regions around it, and this one-line floor
+       keeps a one-row textarea aligned with the 56px single-line minimum. */
+    min-block-size: var(--m3e-sys-typescale-baseline-body-large-line-height);
     resize: vertical;
   }
 }

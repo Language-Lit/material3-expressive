@@ -73,6 +73,32 @@ describe('TextField stylesheet contract', () => {
     )
   })
 
+  it('allocates source-aligned top/content/bottom rows instead of padding the native control', () => {
+    const fieldRule = css.slice(css.indexOf('.m3e-text-field__field {'))
+    const fieldRuleBody = fieldRule.slice(0, fieldRule.indexOf('}'))
+    const inputRule = css.slice(css.indexOf('.m3e-text-field__input {'))
+    const inputRuleBody = inputRule.slice(0, inputRule.indexOf('}'))
+    const filledFieldRule = css.slice(
+      css.indexOf('.m3e-text-field[data-m3e-variant="filled"] .m3e-text-field__field {'),
+    )
+    const filledFieldRuleBody = filledFieldRule.slice(0, filledFieldRule.indexOf('}'))
+
+    expect(fieldRuleBody).toContain('--m3e-text-field-block-start-space:')
+    expect(fieldRuleBody).toContain('--m3e-text-field-block-end-space:')
+    expect(fieldRuleBody).toContain('grid-template-rows:')
+    expect(fieldRuleBody).toContain(
+      'minmax(var(--m3e-sys-typescale-baseline-body-large-line-height), auto)',
+    )
+    expect(filledFieldRuleBody).toContain(
+      '8px + var(--m3e-sys-typescale-baseline-body-small-line-height)',
+    )
+    expect(filledFieldRuleBody).toContain('--m3e-text-field-block-end-space: 8px')
+    expect(inputRuleBody).toContain('grid-row: 2')
+    expect(inputRuleBody).toContain('padding-block: 0')
+    expect(css).not.toContain('padding-block: 24px 8px')
+    expect(css).not.toContain('padding-block: 16px')
+  })
+
   it('separates icon-aware resting content from the outlined floating inset', () => {
     const outlinedFloatRule = css.slice(
       css.indexOf('.m3e-text-field[data-m3e-variant="outlined"]\n    .m3e-text-field__input:focus'),
