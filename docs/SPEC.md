@@ -619,6 +619,7 @@ important design choice must be resolved at its boundary.
 | T26 | Release readiness audit | All public package, browser, accessibility, SSR and distribution gates green |
 | T27 | Stable cutover and 0.3 removal | Root exports redirected, the 0.3 surface deleted, namespaces flattened, and `1.0.0` released (ADR 0027) |
 | T28 | Public documentation site | Inventory-driven site at `m3e.language-lit.com`, built from the library's own components and consuming only its public exports (ADR 0028) |
+| T29 | Expressive rendering audit | Browser audit of how the components paint; `FabMenu` elevation clip repaired, and a rendering gate added for defects jsdom cannot see |
 
 ## 15. Definition of project completion
 

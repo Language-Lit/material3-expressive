@@ -46,3 +46,17 @@ and obtain owner approval before changing its status to active.
 Use the narrowest relevant command while iterating. Before completing a task,
 run the aggregate verification command documented in `package.json` and all
 task-specific acceptance checks in `docs/ACTIVE_TASK.md`.
+
+The unit tests run in jsdom, which has no layout, so they cannot see a clipped
+elevation shadow, an undersized hit area, or a state layer that never paints.
+After changing component geometry, elevation, or state layers, also run the
+browser audit:
+
+```bash
+npm run build && npm run playground:build
+M3E_CHROMIUM_PATH=<chromium binary> npm run audit:rendering
+```
+
+It is not part of `npm run verify` because it needs a real browser. Its
+allowlists record which clips and target sizes are contract rather than defect;
+add to them with a reason rather than loosening a check.

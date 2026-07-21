@@ -27,6 +27,17 @@ describe('FabMenu stylesheet contract', () => {
     expect(css).toContain('transition-delay')
   })
 
+  it('does not clip the item slot, which would cut the item elevation shadow to a rectangle', () => {
+    // The slot is exactly the size of the item it wraps, and the item carries
+    // `--m3e-comp-fab-menu-item-elevation`, which paints outside its border box
+    // by definition. Any clipping here removes everything but the shadow's
+    // corners, so a rounded item reads as a square halo. The reveal is scaleY
+    // plus opacity on the slot itself, and the item scales with it, so no clip
+    // is needed to stage the animation.
+    const slotRule = css.match(/\.m3e-fab-menu__item-slot\s*\{([^}]*)\}/)?.[1] ?? ''
+    expect(slotRule).not.toMatch(/overflow\s*:\s*(hidden|clip|auto|scroll)/)
+  })
+
   it('cross-fades the trigger icon between collapsed and expanded state', () => {
     expect(css).toContain('[data-m3e-icon="default"]')
     expect(css).toContain('[data-m3e-icon="close"]')
