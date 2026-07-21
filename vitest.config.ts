@@ -6,13 +6,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'node',
-    include: [
-      'src/**/*.test.ts',
-      'src/**/*.test.tsx',
-      'tests/v1/**/*.test.ts',
-      'tests/v1/**/*.test.tsx',
-      'tailwind.preset.test.ts',
-    ],
+    include: ['tests/**/*.test.ts', 'tests/**/*.test.tsx'],
     exclude: ['node_modules', 'dist'],
   },
 })
