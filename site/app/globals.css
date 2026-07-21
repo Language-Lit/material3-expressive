@@ -37,6 +37,22 @@
   font-display: block;
 }
 
+@font-face {
+  font-family: 'Material Symbols Rounded';
+  src: url('/fonts/material-symbols-rounded.woff2') format('woff2');
+  font-weight: 100 700;
+  font-style: normal;
+  font-display: block;
+}
+
+@font-face {
+  font-family: 'Material Symbols Sharp';
+  src: url('/fonts/material-symbols-sharp.woff2') format('woff2');
+  font-weight: 100 700;
+  font-style: normal;
+  font-display: block;
+}
+
 /*
  * The typeface tokens name Roboto without providing it. Point them at the
  * self-hosted copy through the reference layer the typescale resolves through,
@@ -530,6 +546,17 @@ a:hover {
 .demo__stage {
   padding: clamp(1rem, 3vw, 2rem);
   background: var(--m3e-sys-color-surface-container-lowest);
+  /*
+   * The examples are authored against the playground's wider workbench, and
+   * some are legitimately wider than this frame — a `Tabs` row with
+   * `scrollable={false}` is an evenly distributed fixed row that cannot shrink
+   * below its content. Scroll rather than truncate; a demo cut off mid-label
+   * misrepresents the component.
+   *
+   * Setting one axis to `auto` makes the other compute to `auto` as well, so
+   * this is a scroll container on both axes by necessity.
+   */
+  overflow: auto;
 }
 
 /*
@@ -539,6 +566,15 @@ a:hover {
  */
 .demo__stage > * {
   margin-block-start: 0 !important;
+  /*
+   * Examples are `Surface` roots, and `Surface` clips to its shape
+   * (`overflow: clip`). Left to shrink, a demo whose content has a larger
+   * min-content width than this frame — a fixed `Tabs` row is the clearest
+   * case — gets silently cut off mid-label rather than overflowing where the
+   * scroll container above can reach it. Flooring the root at its min-content
+   * width lets the surface grow and the frame scroll instead.
+   */
+  min-inline-size: min-content;
 }
 
 .demo__bar {

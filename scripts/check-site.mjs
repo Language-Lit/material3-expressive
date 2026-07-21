@@ -160,7 +160,78 @@ for (const file of siteSources) {
 }
 
 // ---------------------------------------------------------------------------
-// 5. The site is not a dependency of the library, and ships no UI dependency.
+// 5. Every icon the site renders is present in a vendored font subset.
+//
+// The library ships no icon font, so a glyph with no font behind it renders as
+// its ligature text — "home" appears as the word "home". That failure is silent
+// in every build and test; only a person looking at the page catches it. This
+// gate catches it instead.
+// ---------------------------------------------------------------------------
+
+const iconScanRoots = [
+  path.join(root, 'playground/examples'),
+  path.join(siteRoot, 'ui'),
+  path.join(siteRoot, 'app'),
+]
+
+const usedIcons = new Set()
+const usedStyles = new Set()
+
+for (const scanRoot of iconScanRoots) {
+  for (const file of await walk(scanRoot)) {
+    if (!/\.tsx?$/.test(file)) continue
+    const source = await readFile(file, 'utf8')
+    for (const match of source.matchAll(/source=["']([a-z0-9_]+)["']/g)) usedIcons.add(match[1])
+    for (const match of source.matchAll(/symbolStyle=["'](\w+)["']/g)) usedStyles.add(match[1])
+  }
+}
+
+// `symbolStyle` defaults to outlined, so any glyph source needs that family.
+if (usedIcons.size > 0) usedStyles.add('outlined')
+
+const fontManifestPath = path.join(siteRoot, 'public/fonts/icons.json')
+if (!(await exists(fontManifestPath))) {
+  errors.push('site/public/fonts/icons.json is missing; run npm run generate:site-symbols')
+} else {
+  const fontManifest = JSON.parse(await readFile(fontManifestPath, 'utf8'))
+  const vendoredStyles = new Set((fontManifest.families ?? []).map((entry) => entry.style))
+
+  for (const style of usedStyles) {
+    if (!vendoredStyles.has(style)) {
+      errors.push(
+        `Icons use symbolStyle="${style}" but no Material Symbols ${style} subset is vendored. ` +
+          'Add the family to scripts/fetch-symbols-font.mjs and run npm run generate:site-symbols.',
+      )
+    }
+  }
+
+  for (const entry of fontManifest.families ?? []) {
+    if (!(await exists(path.join(siteRoot, 'public/fonts', entry.file)))) {
+      errors.push(`site/public/fonts/${entry.file} is listed in icons.json but missing`)
+    }
+  }
+
+  const vendoredIcons = new Set(fontManifest.icons ?? [])
+  const missingIcons = [...usedIcons].filter((name) => !vendoredIcons.has(name)).sort()
+  if (missingIcons.length > 0) {
+    errors.push(
+      `The vendored icon subset is missing ${missingIcons.length} icon(s) the site renders: ` +
+        `${missingIcons.join(', ')}. Run npm run generate:site-symbols.`,
+    )
+  }
+
+  // A subset that has drifted the other way is dead weight in the download.
+  const unusedIcons = [...vendoredIcons].filter((name) => !usedIcons.has(name)).sort()
+  if (unusedIcons.length > 0) {
+    errors.push(
+      `The vendored icon subset contains ${unusedIcons.length} icon(s) the site no longer ` +
+        `renders: ${unusedIcons.join(', ')}. Run npm run generate:site-symbols.`,
+    )
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 6. The site is not a dependency of the library, and ships no UI dependency.
 // ---------------------------------------------------------------------------
 
 const libraryTrees = ['src', 'tests', 'playground']
