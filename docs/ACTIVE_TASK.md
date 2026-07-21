@@ -135,7 +135,34 @@ real application does and fails the same way a real application would.
   `#67519f`, and the worst deviation across the whole set is ΔE 13.7 at
   `primary-10`, where CIELAB and HCT diverge most.
 - No horizontal overflow at 1440px or 390px on the landing, index, component,
-  and guide pages; no console or page errors on any route exercised.
+  and guide pages; no console or page errors on any route exercised. `next dev`
+  reports no hydration mismatch, which is where the deferred preference read and
+  the `systemModeFallback` snapshot would show up if they were wrong.
+
+### Defects found and fixed after first review
+
+Both were found by sweeping all 41 routes for icon-glyph fallback, content
+escaping a clipping ancestor, and horizontal overflow, rather than by reading
+the code.
+
+- **Only the outlined symbol family was vendored.** `Icon`'s `symbolStyle`
+  selects one of three families, and the Icon example demonstrates all three, so
+  `rounded` and `sharp` rendered their ligature text as serif words. All three
+  subsets are now fetched (142 kB total for 52 icons). `check-site.mjs` now
+  fails when a `symbolStyle` in use has no vendored family, when the subset is
+  missing an icon the site renders, or when it carries one the site no longer
+  renders — a glyph with no font behind it is invisible to every build and test,
+  so it needed a gate rather than vigilance.
+- **The `Tabs` demo was truncated mid-label.** `Surface` clips to its shape, and
+  the example root, as a grid item, was shrinking below the min-content width of
+  a fixed (`scrollable={false}`) tab row, so the surface cut the row off instead
+  of letting it overflow. Flooring the example root at `min-content` and making
+  the demo frame a scroll container lets it scroll instead. This is a framing
+  fault, not a component fault: the examples are authored against the
+  playground's wider workbench.
+- `WavyProgress` and `CircularProgress` were flagged by the same sweep and
+  cleared as false positives: both intentionally draw an oversized path inside
+  an `overflow: hidden` clip container to express progress.
 
 ### Deviations from the approved plan
 
