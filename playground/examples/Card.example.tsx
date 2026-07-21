@@ -99,7 +99,7 @@ export function CardExample() {
           </Card>
         ))}
       </div>
-      <Text as="output" variant="bodySmall" aria-live="polite">
+      <Text as="span" role="status" variant="bodySmall" aria-live="polite">
         Last opened: {openedCard}
       </Text>
     </Surface>

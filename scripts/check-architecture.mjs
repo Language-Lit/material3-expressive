@@ -16,6 +16,10 @@ const requiredDirectories = [
   'src/types',
   'tests',
   'playground',
+  // The documentation site is a consumer of the package, not part of it. Its
+  // boundary rules are asserted by `check:site` (ADR 0028); this entry only
+  // records that the tree is expected to exist.
+  'site',
 ]
 
 const errors = []

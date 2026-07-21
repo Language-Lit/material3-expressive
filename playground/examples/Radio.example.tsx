@@ -60,7 +60,7 @@ export function RadioExample() {
         </label>
       </div>
 
-      <Text as="output" variant="bodySmall" aria-live="polite">
+      <Text as="span" role="status" variant="bodySmall" aria-live="polite">
         Selected plan: {plan}
       </Text>
     </Surface>
