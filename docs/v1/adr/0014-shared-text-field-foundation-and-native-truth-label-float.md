@@ -2,7 +2,7 @@
 
 Status: accepted
 Date: 2026-07-20
-Amended: 2026-07-20 (T14 outlined-geometry and TextArea resize repairs)
+Amended: 2026-07-21 (T14 outlined-geometry, TextArea resize, and shared-content repairs)
 Task: T14
 
 ## Context
@@ -38,6 +38,20 @@ The same implementation also kept a leading icon's 52px expanded-label inset
 after the outlined label minimized, although the pinned measure policy moves
 that minimized label back to the ordinary 16px start padding. Decision 6
 below supersedes the original fieldset/legend adaptation.
+
+Browser verification during the 2026-07-21 T14 repair exposed a second
+transposition defect in the shared horizontal layout. AndroidX measures the
+48dp leading/trailing icon placeables separately, subtracts their widths from
+the text-control constraints, and places the text control after the leading
+placeable. Material Web likewise renders distinct `.start`, `.middle`/
+`.content`, and `.end` flex regions. The v1 adaptation instead stretched the
+native input across the complete field underneath absolutely positioned icons
+and depended on a single 52px `padding-inline-*` declaration to move its
+content clear. Because component CSS is intentionally layered, a representative
+unlayered native-control reset could override that padding and put the caret at
+the field edge beneath the icon. It also left the native control's own region,
+including browser-owned affordances, underneath trailing decoration even when
+the text happened to be padded clear.
 
 Every content color role (input, placeholder, label, leading icon, trailing
 icon, supporting text) is identical between `FilledTextFieldTokens` and
@@ -162,6 +176,22 @@ documenting a dimmed one.
     (154,653 / 28,045 gzip JS; 44,338 / 11,358 gzip declarations; 208,286 /
     18,494 gzip full CSS; 91,974 / 7,820 gzip token CSS; 284,749 packed)
     fits within them, so no recorded ceiling change is needed this task.
+15. The shared field now projects AndroidX's separately measured icon/control
+    placeables and Material Web's start/middle/end regions into three logical
+    CSS grid tracks. An ordinary edge track is the sourced 16px content
+    padding; an icon-bearing edge track is the sourced 48px minimum interactive
+    target plus 4px content gap. The native input/textarea occupies only the
+    middle track with zero inline padding, so its caret, text, placeholder, and
+    browser-owned affordances retain exact 16px/52px geometry even when a
+    downstream reset changes native-control padding. The control stays first in
+    DOM order so all native-truth sibling selectors remain intact. Because it
+    no longer spans the complete field, an empty, `aria-hidden` native `label`
+    associated through `htmlFor` covers the field behind the z-indexed control
+    and visible label, preserving whole-field click-to-focus/activation without
+    adding JavaScript or accessible-name content. The outlined floating label
+    continues to override its start and maximum width back to the ordinary 16px
+    cutout coordinate, while filled/resting labels consume the resolved edge
+    tracks.
 
 ## Consequences
 
@@ -179,6 +209,10 @@ documenting a dimmed one.
   (e.g. `Select` in T17) have a direct, already-adversarially-considered
   precedent for extending or reusing this shared foundation rather than
   reinventing floating-label mechanics from scratch.
+- Native controls and their browser-owned affordances no longer overlap icon
+  slots. TextField, TextArea, and Select inherit that guarantee from one shared
+  layout, and representative input/textarea resets cannot collapse their
+  horizontal content origin back beneath a leading icon.
 - The full CSS budget's remaining headroom is the tightest of the five
   bundle artifacts (208,286 of 215,000 bytes, ~97% used); a task with
   comparably large CSS may need a recorded budget decision sooner than the

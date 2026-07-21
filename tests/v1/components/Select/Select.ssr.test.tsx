@@ -34,6 +34,7 @@ describe('Select server rendering', () => {
     expect(first).toContain('role="combobox"')
     expect(first).toContain('value="Cherry"')
     expect(first).toContain('name="fruit"')
+    expect(first).toContain('class="m3e-text-field__hit-target"')
   })
 
   it('hydrates without changing markup or injecting styles, then mounts the listbox on open', async () => {

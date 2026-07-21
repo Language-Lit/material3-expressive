@@ -25,10 +25,47 @@
   }
 
   .m3e-text-field__field {
+    --m3e-text-field-start-space: var(--m3e-comp-text-field-content-padding);
+    --m3e-text-field-end-space: var(--m3e-comp-text-field-content-padding);
+
     box-sizing: border-box;
-    display: flex;
+    display: grid;
+    grid-template-columns:
+      var(--m3e-text-field-start-space)
+      minmax(0, 1fr)
+      var(--m3e-text-field-end-space);
     min-block-size: var(--m3e-comp-text-field-min-container-block-size);
     position: relative;
+  }
+
+  .m3e-text-field__field[data-m3e-has-leading-icon="true"] {
+    --m3e-text-field-start-space: calc(
+      var(--m3e-comp-text-field-minimum-interactive-target) +
+        var(--m3e-comp-text-field-icon-content-gap)
+    );
+  }
+
+  .m3e-text-field__field[data-m3e-has-trailing-icon="true"] {
+    --m3e-text-field-end-space: calc(
+      var(--m3e-comp-text-field-minimum-interactive-target) +
+        var(--m3e-comp-text-field-icon-content-gap)
+    );
+  }
+
+  /* The native control occupies only the middle grid region, matching the
+     source's separately measured start/content/end sections. This transparent
+     label preserves the previous whole-container click target across the
+     external content and icon regions without stretching the input back under
+     them. The input and visible label sit above it in the stacking order. */
+  .m3e-text-field__hit-target {
+    cursor: text;
+    inset: 0;
+    position: absolute;
+    z-index: 0;
+  }
+
+  .m3e-text-field[data-m3e-disabled="true"] .m3e-text-field__hit-target {
+    cursor: default;
   }
 
   .m3e-text-field[data-m3e-variant="filled"] .m3e-text-field__field {
@@ -47,43 +84,32 @@
     box-sizing: border-box;
     caret-color: var(--m3e-comp-text-field-caret-color);
     color: inherit;
-    flex: 1;
     font-family: inherit;
     font-size: var(--m3e-sys-typescale-baseline-body-large-font-size);
+    grid-column: 2;
+    grid-row: 1;
+    inline-size: 100%;
     letter-spacing: var(--m3e-sys-typescale-baseline-body-large-letter-spacing);
     line-height: var(--m3e-sys-typescale-baseline-body-large-line-height);
     margin: 0;
     min-inline-size: 0;
     outline: none;
-    padding-inline: var(--m3e-comp-text-field-content-padding);
+    padding-inline: 0;
     position: relative;
     resize: none;
     z-index: 1;
   }
 
-  /* The filled label docks near the top of a fixed 56px box, so the input's
-     own padding is asymmetric to leave that room; the outlined label floats
-     fully outside the box along the border, so its input padding is even. */
+  /* Horizontal space is owned by the grid tracks above, independently of the
+     native control's padding. The filled label still docks near the top of a
+     fixed 56px box, so the input's block padding is asymmetric to leave that
+     room; the outlined label floats along the border, so it is even. */
   .m3e-text-field[data-m3e-variant="filled"] .m3e-text-field__input {
     padding-block: 24px 8px;
   }
 
   .m3e-text-field[data-m3e-variant="outlined"] .m3e-text-field__input {
     padding-block: 16px;
-  }
-
-  .m3e-text-field__field[data-m3e-has-leading-icon="true"] .m3e-text-field__input {
-    padding-inline-start: calc(
-      var(--m3e-comp-text-field-minimum-interactive-target) +
-        var(--m3e-comp-text-field-icon-content-gap)
-    );
-  }
-
-  .m3e-text-field__field[data-m3e-has-trailing-icon="true"] .m3e-text-field__input {
-    padding-inline-end: calc(
-      var(--m3e-comp-text-field-minimum-interactive-target) +
-        var(--m3e-comp-text-field-icon-content-gap)
-    );
   }
 
   .m3e-text-field__input:disabled {
@@ -126,10 +152,12 @@
     font-family: var(--m3e-sys-typescale-baseline-body-large-font-family);
     font-size: var(--m3e-sys-typescale-baseline-body-large-font-size);
     font-weight: var(--m3e-sys-typescale-baseline-body-large-font-weight);
-    inset-inline-start: var(--m3e-comp-text-field-content-padding);
+    inset-inline-start: var(--m3e-text-field-start-space);
     letter-spacing: var(--m3e-sys-typescale-baseline-body-large-letter-spacing);
     line-height: var(--m3e-sys-typescale-baseline-body-large-line-height);
-    max-inline-size: calc(100% - 2 * var(--m3e-comp-text-field-content-padding));
+    max-inline-size: calc(
+      100% - var(--m3e-text-field-start-space) - var(--m3e-text-field-end-space)
+    );
     overflow: hidden;
     pointer-events: none;
     position: absolute;
@@ -151,13 +179,6 @@
         var(--m3e-sys-motion-expressive-fast-spatial-easing);
     white-space: nowrap;
     z-index: 1;
-  }
-
-  .m3e-text-field__field[data-m3e-has-leading-icon="true"] .m3e-text-field__label {
-    inset-inline-start: calc(
-      var(--m3e-comp-text-field-minimum-interactive-target) +
-        var(--m3e-comp-text-field-icon-content-gap)
-    );
   }
 
   /* AndroidX centers a single-line resting label, but starts a multiline
@@ -199,6 +220,7 @@
     .m3e-text-field__input:not(:placeholder-shown)
     ~ .m3e-text-field__label {
     inset-inline-start: var(--m3e-comp-text-field-content-padding);
+    max-inline-size: calc(100% - 2 * var(--m3e-comp-text-field-content-padding));
     top: 0;
     transform: translateY(-50%);
   }

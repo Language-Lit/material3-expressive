@@ -2,7 +2,7 @@
 
 Task: T14
 Status: conformant
-Reviewed: 2026-07-20
+Reviewed: 2026-07-21
 
 ## Primary references
 
@@ -16,6 +16,11 @@ Reviewed: 2026-07-20
   <https://android.googlesource.com/platform/frameworks/support/+/225f50d42bf0adeb2abf4b6109befb5ab6ce4efc/compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/FilledTextFieldTokens.kt>
 - Pinned first-party Material Web outlined-field layout, accessed 2026-07-20:
   <https://github.com/material-components/material-web/blob/b4de401eb665ec63474f39319a4ba8f2145974cc/field/internal/_outlined-field.scss>
+- Pinned first-party Material Web shared field template and start/middle/end
+  content layout, accessed 2026-07-21:
+  <https://github.com/material-components/material-web/blob/b4de401eb665ec63474f39319a4ba8f2145974cc/field/internal/field.ts>
+  and
+  <https://github.com/material-components/material-web/blob/b4de401eb665ec63474f39319a4ba8f2145974cc/field/internal/_content.scss>
 - WCAG 2.2 focus visible, target size, labels/descriptions, and reduced
   motion, accessed 2026-07-20:
   <https://www.w3.org/TR/WCAG22/>
@@ -56,6 +61,10 @@ provisional additions are out of scope here; see Web-specific deviations.
 - Optional leading/trailing icon slots.
 - Filled adds one bottom indicator line. Outlined adds one bordered,
   label-notched container built from three intrinsic-width CSS flex panels.
+- The field's horizontal layout has three logical grid regions: a 16px ordinary
+  start/end region or a 52px icon-bearing region (48px interactive target plus
+  4px gap), with the native control confined to the middle. A transparent
+  associated label behind the control preserves whole-field click-to-focus.
 
 ## Variants, shape, color, and size
 
@@ -67,6 +76,11 @@ provisional additions are out of scope here; see Web-specific deviations.
   target rule, which the pinned source itself only applies to the icon
   slots, not the field), filled uses a top-only-rounded container, outlined
   uses a fully rounded container.
+- Horizontal content begins at 16px without a leading icon and 52px with one;
+  trailing content reserves the symmetric end region. These offsets belong to
+  the field grid rather than native-control padding, matching the source's
+  separately measured icon/control placeables and Material Web's distinct
+  start/middle/end regions.
 - Every content color role — input, placeholder, label (resting/focus/
   error/disabled), leading icon, trailing icon, and supporting text — is
   identical between `FilledTextFieldTokens` and `OutlinedTextFieldTokens`;
@@ -135,9 +149,11 @@ and `TextArea`. Production CSS validation requires every literal
   data-m3e-disabled data-m3e-multiline>` wrapping `<span class="m3e-text-field__field">`,
   which contains the native control first (required so every sibling can
   read its pseudo-class state through a plain CSS combinator), then the
-  `label`, the indicator or outline, and any icons; supporting text is a
-  final sibling of the field outside that box, matching the pinned source
-  laying it out beneath the container rather than inside it.
+  visible `label`, indicator or outline, icons, and an empty `aria-hidden`
+  native-label hit target. The field is a three-track logical grid; the control
+  occupies the middle while the hit target covers the complete box behind it.
+  Supporting text is a final sibling of the field outside that box, matching
+  the pinned source laying it out beneath the container rather than inside it.
 - `error` and `disabled` are mirrored onto the root as `data-m3e-*`
   attributes because they are the only two states with no signal reachable
   by a plain sibling combinator from the control — `error` has no native
@@ -165,6 +181,9 @@ and `TextArea`. Production CSS validation requires every literal
 - The label is a native `label` associated through `htmlFor`/`id`,
   generated with `useId()` when the caller supplies none. External label
   association (`label for` pointing at a caller-supplied `id`) also works.
+- The second, empty label is `aria-hidden` and contributes no accessible-name
+  content; it only forwards pointer activation from the field's non-control
+  start/end regions to the same native input.
 - `aria-describedby` composes a caller-supplied value with the generated
   supporting-text id rather than replacing either.
 - `error` sets `aria-invalid="true"` unless the caller already set their own
@@ -177,8 +196,9 @@ and `TextArea`. Production CSS validation requires every literal
 
 ## Bidirectional, forced-color, and adaptive behavior
 
-- Layout uses logical inline/block sizing throughout, so the segmented
-  notch, icon slots, and label position all mirror correctly in RTL.
+- Layout uses logical inline/block sizing throughout, so the start/content/end
+  tracks, segmented notch, icon slots, label position, and 4px icon gap all
+  mirror correctly in RTL.
 - Forced colors keeps the field boundary, uses Highlight for focus and
   GrayText for disabled treatment, and fixes text/icon color to CanvasText.
 - Default, custom, and nested themes scope every TextField/TextArea
@@ -194,6 +214,12 @@ and `TextArea`. Production CSS validation requires every literal
   panel's top stroke scales away for the populated/focused gap. This avoids
   canvas and JS measurement while keeping the painted border and visible
   label in one coordinate system.
+- AndroidX measures and places icon and text-control content separately, while
+  Material Web renders explicit start/middle/end regions inside Shadow DOM.
+  This light-DOM React adaptation uses equivalent logical grid tracks and an
+  empty associated-label hit target. It does not depend on Shadow DOM or JS
+  focus forwarding, and it avoids using native-control inline padding as the
+  icon collision boundary.
 - The pinned source's disabled colors already resolve as true alpha
   (`fromToken(...).copy(alpha = ...)`), not the fixed-backdrop
   `compositeOver(colorScheme.surface)` pattern seen in Checkbox, Radio, and

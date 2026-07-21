@@ -62,7 +62,12 @@ export function TextFieldExample() {
       </div>
 
       <div className="text-field-example__row">
-        <TextField variant="outlined" label="Password" type="password" defaultValue="hunter2" />
+        <TextField
+          label="Password"
+          type="password"
+          leadingIcon={<Icon source="lock" />}
+          defaultValue="hunter2"
+        />
         <TextField label="Phone" type="tel" placeholder="(555) 123-4567" />
         <TextField variant="outlined" label="Website" type="url" placeholder="https://example.com" />
         <TextField label="Quantity" type="number" defaultValue="1" />

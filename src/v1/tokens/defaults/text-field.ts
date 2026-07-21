@@ -48,11 +48,13 @@ import type { ComponentTokenRegistration } from '../schema'
  *
  * `content-padding`/`icon-content-gap`/`supporting-text-top-gap` mirror
  * `TextFieldDefaults`' own named `Dp` constants (`TextFieldPadding`, the
- * icon-adjacent padding computed from `textFieldHorizontalIconPadding()`,
- * and `SupportingTopPadding`) rather than a per-token-file source. The
- * input's own vertical padding has no equivalent named constant at all — the
- * pinned source computes it inside a private `MeasurePolicy` — so it is a
- * reasoned CSS layout decision documented at its declaration, not a token.
+ * icon-adjacent gap left after `textFieldHorizontalIconPadding()`, and
+ * `SupportingTopPadding`) rather than a per-token-file source. Horizontal
+ * insets are projected as external start/content/end layout regions so native
+ * control padding resets cannot move text beneath an icon. The input's own
+ * vertical padding has no equivalent named constant at all — the pinned source
+ * computes it inside a private `MeasurePolicy` — so it is a reasoned CSS
+ * layout decision documented at its declaration, not a token.
  *
  * Disabled colors use this library's established `color-mix(..., transparent)`
  * technique. For every prior selection control that was a deliberate

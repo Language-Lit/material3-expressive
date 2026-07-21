@@ -36,7 +36,10 @@ indicator, or outline. Auto-growing height is out of scope.
 An empty resting label starts at the ordinary 16px top padding instead of
 centering across all rows. Leading/trailing icon slots remain vertically
 centered across the container. Both choices follow the pinned measure
-policy's explicit multiline-label branch and shared icon placement.
+policy's explicit multiline-label branch and shared icon placement. On the
+inline axis, the native textarea occupies the same middle content region as
+TextField: 16px is reserved at an ordinary edge and 52px at an icon edge, so
+native textarea padding resets cannot place its caret beneath an icon.
 
 ## Variants, states, and accessibility
 

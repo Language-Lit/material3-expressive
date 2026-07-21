@@ -225,7 +225,13 @@ asymmetry.
 internal `TextFieldChrome` primitive under `src/v1/internal` renders the
 label, indicator/outline, icon, and supporting-text decoration once, and
 each public component supplies only its own native control (`input` or
-`textarea`) as that primitive's first child. This mirrors the pinned
+`textarea`) as that primitive's first child. The field lays out logical
+start, native-control, and end regions explicitly: the ordinary regions are
+16px, icon-bearing regions are the sourced 48px interactive target plus 4px
+gap, and the control occupies only the middle region rather than stretching
+under an icon and relying on reset-sensitive input padding. A transparent,
+associated label preserves whole-field click-to-focus behavior outside that
+middle control box. This mirrors the pinned
 source's own architecture directly — `TextField`/`OutlinedTextField` have no
 distinct multiline composable, and `SecureTextField` establishes the
 precedent of swapping the underlying text-input primitive under one
