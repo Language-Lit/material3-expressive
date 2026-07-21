@@ -82,7 +82,7 @@ export function CheckboxExample() {
         </label>
       </div>
 
-      <Text as="output" variant="bodySmall" aria-live="polite">
+      <Text as="span" role="status" variant="bodySmall" aria-live="polite">
         Complete: {completed.length} of {lessons.length}
       </Text>
     </Surface>

@@ -16,6 +16,10 @@ const checks = [
   ['Validate release contract', 'check:release'],
   ['Validate bundle-size budgets', 'check:bundle-size'],
   ['Build packed consumer fixtures', 'check:consumer-fixtures'],
+  // Structural only: asserts the documentation site matches the inventory and
+  // respects the export map. The site's Next build is a separate CI job so
+  // routine library verification does not pay a framework build cost.
+  ['Validate documentation site', 'check:site'],
 ]
 
 for (const [label, script] of checks) {

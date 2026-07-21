@@ -47,6 +47,10 @@ complete theme and system color mode.
 
 ## Documentation
 
+The full documentation, with live component demos and an interactive theme
+playground, is at **[m3e.language-lit.com](https://m3e.language-lit.com)**. It is
+built from this repository — see [`site/`](site/README.md).
+
 - [Documentation index](docs/README.md)
 - [Getting started](docs/GETTING_STARTED.md)
 - [Theming](docs/THEMING.md)

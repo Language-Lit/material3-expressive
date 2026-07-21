@@ -53,6 +53,11 @@
     "check:tokens": "node scripts/check-tokens.mjs",
     "check:consumer-fixtures": "node scripts/verify-consumer-fixtures.mjs",
     "check:bundle-size": "node scripts/check-bundle-size.mjs",
+    "check:site": "node scripts/check-site.mjs",
+    "generate:site-demos": "node scripts/generate-site-demos.mjs",
+    "generate:site-symbols": "node scripts/fetch-symbols-font.mjs",
+    "site:dev": "npm --prefix site run dev",
+    "site:build": "npm --prefix site run build",
     "verify": "node scripts/verify.mjs",
     "prepare": "npm run build"
   },

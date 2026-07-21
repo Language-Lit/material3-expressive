@@ -547,6 +547,14 @@ The phrases “complete”, “comprehensive”, and “correct Material 3 Expre
 implementation” may be used only when qualified by the supported-component
 matrix.
 
+These requirements are satisfied by the repository Markdown and by the published
+documentation site that renders it. The site is a consumer of the package, not a
+second source of truth: it derives its component routes from
+`component-inventory.json`, its contract prose from `docs/components/`, and its
+live demonstrations from the playground examples. A component fact stated on the
+site but not in this repository is a defect in the site, and the site MUST NOT
+present a component the inventory does not mark `conformant`.
+
 ## 13. Package migration and release sequence
 
 The sequence below was executed through T27 and is retained as the record of how
@@ -610,6 +618,7 @@ important design choice must be resolved at its boundary.
 | T25 | Documentation and prerelease | Complete public docs, generic migration guide, conformance matrix and `next` release candidate |
 | T26 | Release readiness audit | All public package, browser, accessibility, SSR and distribution gates green |
 | T27 | Stable cutover and 0.3 removal | Root exports redirected, the 0.3 surface deleted, namespaces flattened, and `1.0.0` released (ADR 0027) |
+| T28 | Public documentation site | Inventory-driven site at `m3e.language-lit.com`, built from the library's own components and consuming only its public exports (ADR 0028) |
 
 ## 15. Definition of project completion
 
