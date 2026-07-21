@@ -12,7 +12,13 @@
   }
 
   .m3e-fab-menu__item-slot {
-    overflow: hidden;
+    /*
+     * Deliberately unclipped. The slot is exactly the size of the item it
+     * wraps, and the item's elevation shadow paints outside its border box, so
+     * clipping here leaves only the shadow's corners and a rounded item reads
+     * as a square halo. The staged reveal is `scaleY` plus opacity on this
+     * element, and the item scales with it, so the animation needs no clip.
+     */
     transition:
       opacity var(--m3e-sys-motion-expressive-fast-effects-duration)
         var(--m3e-sys-motion-expressive-fast-effects-easing),

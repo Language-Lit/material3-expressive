@@ -88,3 +88,24 @@ Supported Material baseline: AndroidX Material 3 branch revision
   source's `SemanticsModifierNode.shouldClearDescendantSemantics`
   (semantics only) combined with its width-collapse-to-zero (removes
   hit-testing and tab stops via zero size) than either alone would be.
+
+## T29 repair — item elevation was clipped to a rectangle
+
+`.m3e-fab-menu__item-slot` set `overflow: hidden`. The slot is exactly the size
+of the item it wraps, and the item carries
+`--m3e-comp-fab-menu-item-elevation`, which paints outside its border box, so
+the clip removed everything but the shadow's four corners: a fully rounded item
+rendered with a hard square halo. Nothing in jsdom can observe this, so every
+existing gate passed while it shipped.
+
+The clip served no purpose. The staged reveal is `scaleY` plus `opacity` on the
+slot itself and the item scales with it, so removing the declaration leaves the
+animation untouched. Verified after the repair: the reveal is still staged
+closest-to-trigger first, it is immediate under
+`prefers-reduced-motion: reduce`, it still stages under
+`forced-colors: active`, and collapse returns every slot to opacity 0 in all
+three.
+
+`FabMenu.css.test.ts` now asserts the slot declares no clipping overflow, and
+`scripts/audit-rendering.mjs` catches the general class — a shadowed child cut
+by an ancestor that has no shape of its own — in a real browser.
