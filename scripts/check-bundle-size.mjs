@@ -7,8 +7,8 @@ import { fileURLToPath } from 'node:url'
 import { gzipSync } from 'node:zlib'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
-const budgets = JSON.parse(readFileSync(path.join(root, 'docs/v1/bundle-budgets.json'), 'utf8'))
-const temporaryRoot = mkdtempSync(path.join(os.tmpdir(), 'm3e-v1-size-'))
+const budgets = JSON.parse(readFileSync(path.join(root, 'docs/bundle-budgets.json'), 'utf8'))
+const temporaryRoot = mkdtempSync(path.join(os.tmpdir(), 'm3e-size-'))
 const errors = []
 
 function resolveRelativeImport(importer, specifier) {

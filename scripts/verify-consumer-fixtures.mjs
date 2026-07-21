@@ -14,7 +14,7 @@ import process from 'node:process'
 import { fileURLToPath } from 'node:url'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
-const temporaryRoot = mkdtempSync(path.join(os.tmpdir(), 'm3e-v1-fixtures-'))
+const temporaryRoot = mkdtempSync(path.join(os.tmpdir(), 'm3e-fixtures-'))
 const rootNodeModules = path.join(root, 'node_modules')
 
 function run(command, args, cwd, environment = {}) {
@@ -49,7 +49,7 @@ function prepareFixture(name, source, tarball) {
 }
 
 try {
-  if (!existsSync(path.join(root, 'dist/v1/index.js'))) {
+  if (!existsSync(path.join(root, 'dist/index.js'))) {
     throw new Error('Package build is missing; run npm run build before consumer verification')
   }
 
@@ -71,38 +71,28 @@ try {
   const requiredPaths = [
     'dist/index.js',
     'dist/index.d.ts',
-    'dist/styles/main.css',
-    'dist/v1/index.js',
-    'dist/v1/index.d.ts',
-    'dist/v1/theme.js',
-    'dist/v1/theme.d.ts',
-    'dist/v1/tokens.js',
-    'dist/v1/tokens.d.ts',
-    'dist/v1/styles.css',
-    'dist/v1/tokens.css',
+    'dist/theme.js',
+    'dist/theme.d.ts',
+    'dist/tokens.js',
+    'dist/tokens.d.ts',
+    'dist/styles.css',
+    'dist/tokens.css',
     'package.json',
   ]
   for (const requiredPath of requiredPaths) {
     if (!packedPaths.has(requiredPath)) throw new Error(`Packed package is missing ${requiredPath}`)
   }
 
-  const vite = prepareFixture('vite', path.join(root, 'playground/v1'), tarball)
+  const vite = prepareFixture('vite', path.join(root, 'playground'), tarball)
   run(path.join(rootNodeModules, '.bin/vite'), ['build', '--config', 'vite.config.ts'], vite)
 
-  const next = prepareFixture('next', path.join(root, 'tests/v1/fixtures/next'), tarball)
+  const next = prepareFixture('next', path.join(root, 'tests/fixtures/next'), tarball)
   run(
     path.join(rootNodeModules, '.bin/next'),
     ['build', '.', '--webpack'],
     next,
     { NEXT_TELEMETRY_DISABLED: '1' },
   )
-
-  const legacy = prepareFixture(
-    'legacy-consumer',
-    path.join(root, 'tests/v1/fixtures/legacy-consumer'),
-    tarball,
-  )
-  run(path.join(rootNodeModules, '.bin/vite'), ['build', '--config', 'vite.config.ts'], legacy)
 
   console.log(`Packed-package consumer fixtures passed (${packResult.size} byte tarball).`)
 } finally {

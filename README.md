@@ -1,25 +1,27 @@
 # @language-lit/material3-expressive
 
-A framework-neutral React implementation of Material 3 Expressive. The v1
-prerelease ships precompiled CSS, typed theme and token APIs, native web
-semantics, and 32 conformant public components.
+A framework-neutral React implementation of Material 3 Expressive. It ships
+precompiled CSS, typed theme and token APIs, native web semantics, and 32
+conformant public components with no runtime dependencies.
 
-## v1 prerelease
-
-Install the `next` candidate with React 18 or React 19:
+## Install
 
 ```bash
-npm install @language-lit/material3-expressive@next
+npm install @language-lit/material3-expressive
 ```
 
-Import components from the additive v1 entry and the complete stylesheet once:
+React 18 or React 19 is the only peer requirement.
+
+## Use
+
+Import components from the package root and the complete stylesheet once:
 
 ```tsx
 import {
   Button,
   Material3Provider,
-} from '@language-lit/material3-expressive/v1'
-import '@language-lit/material3-expressive/v1/styles.css'
+} from '@language-lit/material3-expressive'
+import '@language-lit/material3-expressive/styles.css'
 
 export function App() {
   return (
@@ -30,65 +32,53 @@ export function App() {
 }
 ```
 
-v1 does not require Tailwind, a content glob, a preset, runtime style injection,
-or framework-specific adapters. `Material3Provider` defaults to the complete
-theme and system color mode.
+The library does not require Tailwind, a content glob, a preset, runtime style
+injection, or framework-specific adapters. `Material3Provider` defaults to the
+complete theme and system color mode.
 
-The package root and existing subpaths still expose the frozen legacy API during
-the prerelease. Use `/v1` explicitly; stable-root cutover is a later, separately
-approved release task.
+## Entry points
+
+| Entry | Purpose |
+| --- | --- |
+| `@language-lit/material3-expressive` | React components, provider, and hooks |
+| `@language-lit/material3-expressive/theme` | Theme creation and types; React-free |
+| `@language-lit/material3-expressive/tokens` | Token schemas, defaults, and CSS generation; React-free |
+| `@language-lit/material3-expressive/styles.css` | Complete tokens and component styles |
 
 ## Documentation
 
-- [v1 documentation](docs/v1/README.md)
-- [Getting started](docs/v1/GETTING_STARTED.md)
-- [Theming](docs/v1/THEMING.md)
-- [SSR and system color mode](docs/v1/SSR.md)
-- [Supported components](docs/v1/SUPPORTED_COMPONENTS.md)
-- [Generic legacy-to-v1 migration](docs/v1/MIGRATION.md)
-- [Web deviations](docs/v1/WEB_DEVIATIONS.md)
-- [Prerelease notes and breaking changes](docs/v1/RELEASE_NOTES.md)
+- [Documentation index](docs/README.md)
+- [Getting started](docs/GETTING_STARTED.md)
+- [Theming](docs/THEMING.md)
+- [SSR and system color mode](docs/SSR.md)
+- [Supported components](docs/SUPPORTED_COMPONENTS.md)
+- [Migrating from 0.3](docs/MIGRATION.md)
+- [Web deviations](docs/WEB_DEVIATIONS.md)
+- [Release notes and breaking changes](docs/RELEASE_NOTES.md)
 
 The supported-component matrix is generated from the machine-readable inventory.
-Only entries marked `conformant` are part of the advertised v1 prerelease
-surface.
+Only entries marked `conformant` are part of the advertised support surface.
 
-## Legacy 0.3
+## Upgrading from 0.3
 
-Existing applications can remain on the legacy release and its current entry
-points. The legacy Tailwind setup still uses the package preset and stylesheet:
-
-```ts
-import { material3Preset } from '@language-lit/material3-expressive/tailwind-preset'
-
-export default {
-  presets: [material3Preset],
-  content: [
-    './src/**/*.{ts,tsx}',
-    './node_modules/@language-lit/material3-expressive/dist/**/*.js',
-  ],
-}
-```
-
-```css
-@import '@language-lit/material3-expressive/styles';
-```
-
-Legacy and v1 styles are independent. Do not replace legacy imports or styles
-until deliberately migrating to the v1 contract.
+`1.0.0` replaces the 0.3 API entirely. The Tailwind preset, the
+`components/*` subpaths, the `./styles` export, and the legacy hooks and
+utilities are gone; imports move to the root entry and CSS moves to
+`/styles.css`. Read the [migration guide](docs/MIGRATION.md) before upgrading.
+Applications that are not ready can stay on `0.3.x`, which remains published.
 
 ## Development
 
 ```bash
 npm install
-npm run playground:v1
-npm run check:v1:docs
-npm run verify:v1
+npm run playground
+npm run check:docs
+npm run verify
 ```
 
-The v1 playground runs at `http://localhost:5173`. The aggregate verification
+The playground runs at `http://localhost:5173`. The aggregate verification
 checks types, tests, package output, architecture, documentation, CSS, tokens,
-legacy contracts, bundle budgets, and packed Vite/Next consumer fixtures.
+the release contract, bundle budgets, and packed Vite/Next consumer fixtures.
 
 ## License
 

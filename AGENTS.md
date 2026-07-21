@@ -2,12 +2,12 @@
 
 ## Required context
 
-Before changing v1, read:
+Before changing this library, read:
 
-1. `docs/V1_SPEC.md`
-2. `docs/v1/ACTIVE_TASK.md`
-3. `docs/v1/ARCHITECTURE.md`
-4. The ADRs relevant to the change in `docs/v1/adr/`
+1. `docs/SPEC.md`
+2. `docs/ACTIVE_TASK.md`
+3. `docs/ARCHITECTURE.md`
+4. The ADRs relevant to the change in `docs/adr/`
 
 The specification is normative. Only the task recorded in `ACTIVE_TASK.md` may
 be implemented. State a new task's scope, expected files, and acceptance checks
@@ -17,17 +17,19 @@ and obtain owner approval before changing its status to active.
 
 - Private downstream applications are outside this repository. Never record
   their internals here or read/edit their repositories as part of library work.
-- Legacy source outside `src/v1/` is frozen unless the owner separately approves
-  a legacy fix.
-- Before the stable cutover, the package root and existing subpaths remain
-  legacy. v1 is exposed only through additive v1 exports.
-- Code under `src/v1/` must not import legacy source.
+- `src/` is the only implementation tree. The 0.3 surface was deleted at the
+  1.0 cutover and must not be reintroduced.
+- The package exports exactly `.`, `./theme`, `./tokens`, and `./styles.css`.
+  Adding, renaming, or removing a public path is a breaking change that requires
+  owner approval and an ADR.
+- The package ships no runtime dependencies. React and React DOM are its only
+  peers.
 
-## v1 conventions
+## Conventions
 
 - Follow the dependency layers and component layout in
-  `docs/v1/ARCHITECTURE.md`.
-- Add or update `docs/v1/component-inventory.json` with every public component
+  `docs/ARCHITECTURE.md`.
+- Add or update `docs/component-inventory.json` with every public component
   change.
 - Public components use named exports and exported props types.
 - Do not deep-import another component's private files.
@@ -42,5 +44,5 @@ and obtain owner approval before changing its status to active.
 ## Verification
 
 Use the narrowest relevant command while iterating. Before completing a task,
-run the aggregate v1 verification command documented in `package.json` and all
-task-specific acceptance checks in `docs/v1/ACTIVE_TASK.md`.
+run the aggregate verification command documented in `package.json` and all
+task-specific acceptance checks in `docs/ACTIVE_TASK.md`.
