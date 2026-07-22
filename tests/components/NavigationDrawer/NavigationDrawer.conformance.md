@@ -1,8 +1,8 @@
 # NavigationDrawer conformance
 
-Task: T20
+Task: T20 (scrim dismissal repaired in T33)
 Status: conformant
-Reviewed: 2026-07-20
+Reviewed: 2026-07-22
 
 ## Primary references
 
@@ -26,7 +26,13 @@ Supported Material baseline: AndroidX Material 3 branch revision
 - `'modal'`: a native `<dialog>` (the same `showModal()`/`close()`/native
   `close` event technique ADR 0016 established for `Dialog`, independently
   duplicated rather than shared — see Web-specific deviations) sliding in
-  from the logical start edge.
+  from the logical start edge. It is dismissed by Escape or by a click on
+  the scrim, matching the source's own clickable scrim (`Scrim(onClick =
+  if (drawerState.isOpen) onDismissRequest else null)`). Neither is
+  opt-out-able: a navigation drawer never poses the forced choice that
+  earns `Dialog` its `dismissOnEscape`/`dismissOnOutsideClick` pair.
+  Selecting an item does **not** close the drawer — the source leaves that
+  to the caller's own `onClick`, which is free to set `open` to `false`.
 - `'dismissible'`: a non-modal panel that collapses its own `inline-size`
   to `0`, participating in normal document flow (pushes adjacent content),
   matching the pinned source's own non-scrimmed reveal.
@@ -72,10 +78,15 @@ Supported Material baseline: AndroidX Material 3 branch revision
   pinned source's ported `role="tab"` on `NavigationDrawerItem`, the same
   deviation `NavigationBar`'s own conformance record documents.
 - The `'modal'` variant independently duplicates Dialog's own small
-  native-`<dialog>` lifecycle (~20 lines) rather than sharing an extracted
+  native-`<dialog>` lifecycle (~35 lines) rather than sharing an extracted
   primitive — the two components' exact backdrop/escape nuances differ
   enough that a forced shared abstraction would need its own
   parameterization; see the T20 ADR.
+- Scrim dismissal is a manual hit test, not a platform behavior: native
+  `<dialog>` has no automatic outside-click close at this library's browser
+  floor (the `closedby` attribute postdates it), so a click landing on the
+  dialog element itself with coordinates outside its own box is treated as
+  a scrim click — the same technique `Dialog` uses.
 - The source's drag-to-dismiss gesture on the modal variant is excluded —
   Compose-specific gesture machinery with no clean web equivalent, the
   same basis Menu's excluded drag-select uses.

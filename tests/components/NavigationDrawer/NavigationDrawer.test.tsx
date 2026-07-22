@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 
-import { cleanup, render, screen } from '@testing-library/react'
+import { act, cleanup, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { createRef } from 'react'
 import { afterEach, beforeAll, vi } from 'vitest'
@@ -19,6 +19,25 @@ const items: NavigationItem[] = [
   { value: 'sent', label: 'Sent', icon: <span /> },
   { value: 'trash', label: 'Trash', icon: <span />, disabled: true },
 ]
+
+/**
+ * jsdom has no layout, so the modal sheet's own box has to be stated for the
+ * light-dismiss hit test to mean anything: 360px wide against the start edge,
+ * full height. Anything to its inline end is scrim.
+ */
+function stubSheetBox(dialog: HTMLDialogElement): void {
+  vi.spyOn(dialog, 'getBoundingClientRect').mockReturnValue({
+    top: 0,
+    bottom: 800,
+    left: 0,
+    right: 360,
+    width: 360,
+    height: 800,
+    x: 0,
+    y: 0,
+    toJSON: () => ({}),
+  })
+}
 
 describe('NavigationDrawer', () => {
   it('permanent variant always renders and ignores open/onOpenChange', () => {
@@ -74,6 +93,65 @@ describe('NavigationDrawer', () => {
     const dialog = document.querySelector('dialog')!
     dialog.close()
     expect(onOpenChange).toHaveBeenCalledWith(false)
+  })
+
+  it('modal variant dismisses on a scrim click', () => {
+    const onOpenChange = vi.fn()
+    render(<NavigationDrawer items={items} variant="modal" open onOpenChange={onOpenChange} />)
+    const dialog = document.querySelector('dialog')!
+    stubSheetBox(dialog)
+
+    act(() => {
+      dialog.dispatchEvent(
+        new MouseEvent('click', { bubbles: true, cancelable: true, clientX: 900, clientY: 400 }),
+      )
+    })
+    expect(onOpenChange).toHaveBeenCalledWith(false)
+  })
+
+  it('modal variant keeps a click inside its own sheet from dismissing it', () => {
+    const onOpenChange = vi.fn()
+    render(<NavigationDrawer items={items} variant="modal" open onOpenChange={onOpenChange} />)
+    const dialog = document.querySelector('dialog')!
+    stubSheetBox(dialog)
+
+    // Both paths a click can take inside the drawer: the dialog box itself,
+    // and a descendant (where `event.target` is never the dialog at all).
+    act(() => {
+      dialog.dispatchEvent(
+        new MouseEvent('click', { bubbles: true, cancelable: true, clientX: 100, clientY: 400 }),
+      )
+    })
+    act(() => {
+      screen.getByRole('button', { name: 'Sent' }).dispatchEvent(
+        new MouseEvent('click', { bubbles: true, cancelable: true, clientX: 900, clientY: 400 }),
+      )
+    })
+    expect(onOpenChange).not.toHaveBeenCalled()
+    expect(dialog.open).toBe(true)
+  })
+
+  it('modal variant lets a consumer onClick preventDefault the scrim dismissal', () => {
+    const onOpenChange = vi.fn()
+    render(
+      <NavigationDrawer
+        items={items}
+        variant="modal"
+        open
+        onOpenChange={onOpenChange}
+        onClick={(event) => event.preventDefault()}
+      />,
+    )
+    const dialog = document.querySelector('dialog')!
+    stubSheetBox(dialog)
+
+    act(() => {
+      dialog.dispatchEvent(
+        new MouseEvent('click', { bubbles: true, cancelable: true, clientX: 900, clientY: 400 }),
+      )
+    })
+    expect(onOpenChange).not.toHaveBeenCalled()
+    expect(dialog.open).toBe(true)
   })
 
   it('renders an item with href as a real link, omitting href when disabled', () => {

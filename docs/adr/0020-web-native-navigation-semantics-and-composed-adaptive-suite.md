@@ -2,6 +2,7 @@
 
 Status: accepted
 Date: 2026-07-20
+Amended: 2026-07-22 (T33 modal-drawer scrim dismissal repair)
 Task: T20
 
 ## Context
@@ -80,11 +81,20 @@ components.
    (`ModalNavigationDrawer`/`DismissibleNavigationDrawer`/
    `PermanentNavigationDrawer`) into one component with a `variant` prop.
    `'modal'` independently duplicates Dialog's own small native-`<dialog>`
-   lifecycle (~20 lines: imperative `showModal()`/`close()` plus a native
-   `close` event listener) rather than sharing an extracted primitive —
-   the two components' exact backdrop/escape nuances differ enough that a
-   forced shared abstraction would need its own parameterization, and this
-   is only the second native-`<dialog>` caller so far. It slides in by
+   lifecycle (~35 lines: imperative `showModal()`/`close()`, a native
+   `close` event listener, and the same manual outside-click hit test)
+   rather than sharing an extracted primitive — the two components' exact
+   backdrop/escape nuances differ enough that a forced shared abstraction
+   would need its own parameterization, and this is only the second
+   native-`<dialog>` caller so far. Dismissal is unconditional, unlike
+   `Dialog`'s opt-out `dismissOnOutsideClick`/`dismissOnEscape` pair: the
+   source's own scrim is clickable whenever the drawer is open
+   (`Scrim(onClick = if (drawerState.isOpen) onDismissRequest else null)`),
+   and a navigation drawer — unlike a dialog — never asks a forced choice
+   that would justify trapping the user in it. **T33 amendment:** the
+   outside-click half of this was specified here and in the component's
+   documented contract but never implemented, leaving Escape as the modal
+   variant's only dismissal path; the hit test is now wired. It slides in by
    animating `inset-inline-start` (not `transform`), so the slide
    direction auto-corrects under RTL with no JS branching, using the same
    `[open]`-attribute-driven `@starting-style` technique ADR 0016

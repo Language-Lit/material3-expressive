@@ -222,3 +222,94 @@ the export actually produces.
   cause and is now fixed, but if an assistant still reports a failure the next
   thing to check is Vercel's firewall and bot-protection settings, which are
   project configuration rather than repository state.
+
+
+---
+
+## T33 — Modal NavigationDrawer scrim dismissal
+
+Status: complete
+Approved: 2026-07-22 (owner report: the modal drawer on
+`/components/NavigationDrawer/` cannot be closed once opened)
+Completed: 2026-07-22
+
+### Scope
+
+The modal `NavigationDrawer` had exactly one dismissal path — Escape — and
+nothing on screen said so. `NavigationDrawer.tsx` wired `showModal()`/`close()`
+and a native `close` listener, but no outside-click handling, so a click on the
+scrim did nothing, and the component renders no close affordance of its own.
+A pointer user who opened it was stuck.
+
+This is a defect against two records that already specified the behavior, not a
+new feature:
+
+1. `docs/components/NavigationDrawer.md` documents the modal variant's contract
+   as "`showModal()`/`close()`, Escape/outside-click dismissal". The
+   outside-click half never existed.
+2. The pinned source's scrim is itself clickable whenever the drawer is open —
+   `Scrim(onClick = if (drawerState.isOpen) onDismissRequest else null)` in
+   `ModalNavigationDrawer` — so the omission is also a conformance gap.
+
+The repair ports `Dialog`'s existing manual light-dismiss hit test: native
+`<dialog>` has no automatic outside-click close at this library's browser floor,
+so a click landing on the dialog element itself (never a descendant) with
+coordinates outside its own rendered box is a scrim click and calls `close()`.
+
+Dismissal is unconditional. `Dialog` gates the equivalent behind
+`dismissOnOutsideClick`/`dismissOnEscape` because a dialog may pose a forced
+choice; a navigation drawer never does, and adding a prop would make a
+`NavigationDrawerProps` surface change out of a repair — a minor release and an
+ADR for an escape hatch nothing needs. A consumer that must suppress the
+dismissal already can: `onClick` runs before the library handler and
+`preventDefault()` cancels it, the documented `composeEventHandlers` contract.
+
+Auto-closing on item selection is deliberately not added — the source leaves
+that to the caller's own `onClick`, which is free to set `open` to `false`.
+
+### Expected files
+
+- Modified: `src/components/NavigationDrawer/NavigationDrawer.tsx`,
+  `tests/components/NavigationDrawer/NavigationDrawer.test.tsx`,
+  `tests/components/NavigationDrawer/NavigationDrawer.conformance.md`,
+  `docs/adr/0020-web-native-navigation-semantics-and-composed-adaptive-suite.md`,
+  `docs/SPEC.md`.
+- No CSS, token, example, or site file changes: the scrim already paints, and
+  the site renders the library, so the site is repaired by the library fix.
+- No export, prop type, or token value changes — `docs/component-inventory.json`
+  is unchanged because the public surface is unchanged.
+
+### Acceptance checks
+
+- A click on the scrim closes the modal drawer and reports `onOpenChange(false)`.
+- A click inside the sheet — on the dialog's own box and on a descendant item —
+  does not close it.
+- A consumer `onClick` calling `preventDefault()` suppresses the dismissal.
+- The scrim test fails against the unrepaired component, proving it is not
+  vacuous.
+- `npm run verify` passes.
+
+### Completion evidence
+
+- The scrim test was run against the unrepaired component before the fix
+  landed and failed with `expected "vi.fn()" to be called with arguments:
+  [ false ] / Number of calls: 0`, then passed after. The two negative tests
+  hold in both states by design — they are regression guards, not the proof.
+- 35 `NavigationDrawer` tests pass across its five files (32 before, 3 added).
+- `npm run verify` passes in full: 13 gates, `check:site` at 32 conformant
+  components and 31 demos with the export map respected. The packed tarball is
+  306,970 bytes, within budget.
+- The built `dist/index.js` carries the hit test, so the site — which consumes
+  the package through its `file:..` link — is repaired by the library fix with
+  no site-side change.
+- The defect predates `1.0.0`: the outside-click claim in
+  `docs/components/NavigationDrawer.md` and in ADR 0020 has never matched the
+  shipped component. Every published version to date has a modal drawer that
+  only Escape can close.
+
+### Not done
+
+- No release. This ships to consumers only once a patch is cut, the same
+  separation T29 and T30 used; the version is still `1.0.1`.
+- The rendering audit was not re-run. It needs a real Chromium and this change
+  alters no geometry, elevation, or state layer — only an event handler.

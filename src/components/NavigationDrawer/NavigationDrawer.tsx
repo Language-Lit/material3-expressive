@@ -5,8 +5,10 @@ import {
   type CSSProperties,
   type DialogHTMLAttributes,
   type ForwardedRef,
+  type MouseEventHandler,
   type ReactElement,
 } from 'react'
+import { composeEventHandlers } from '../../internal/composeEventHandlers'
 import { composeRefs } from '../../internal/composeRefs'
 import { useControllableState } from '../../internal/useControllableState'
 import type { NavigationDrawerProps, NavigationItem } from './NavigationDrawer.types'
@@ -108,6 +110,25 @@ function NavigationDrawerRender(
     return () => dialogEl.removeEventListener('close', handleNativeClose)
   }, [variant, setOpen])
 
+  // The pinned source's modal scrim is itself clickable
+  // (`Scrim(onClick = if (drawerState.isOpen) onDismissRequest else null)`),
+  // so tapping outside the sheet closes the drawer. Native `<dialog>` has no
+  // automatic outside-click dismissal at this library's browser floor, so this
+  // reuses Dialog's own manual light-dismiss technique: a click landing on the
+  // dialog element itself — never a descendant — with coordinates outside its
+  // own rendered box is a click on the backdrop.
+  const handleClick: MouseEventHandler<HTMLDialogElement> = (event) => {
+    const dialogEl = dialogRef.current
+    if (!dialogEl || event.target !== dialogEl) return
+    const rect = dialogEl.getBoundingClientRect()
+    const clickedInside =
+      event.clientX >= rect.left &&
+      event.clientX <= rect.right &&
+      event.clientY >= rect.top &&
+      event.clientY <= rect.bottom
+    if (!clickedInside) dialogEl.close()
+  }
+
   const isOpen = variant === 'permanent' ? true : resolvedOpen
   const mergedClassName = className ? `m3e-navigation-drawer ${className}` : 'm3e-navigation-drawer'
 
@@ -124,14 +145,16 @@ function NavigationDrawerRender(
   )
 
   if (variant === 'modal') {
+    const dialogProps = divProps as DialogHTMLAttributes<HTMLDialogElement>
     return (
       <dialog
-        {...(divProps as DialogHTMLAttributes<HTMLDialogElement>)}
+        {...dialogProps}
         ref={composeRefs(forwardedRef, dialogRef)}
         id={idProp}
         className={mergedClassName}
         style={style as CSSProperties}
         data-m3e-variant={variant}
+        onClick={composeEventHandlers(dialogProps.onClick, handleClick)}
       >
         {nav}
       </dialog>
