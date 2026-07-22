@@ -29,6 +29,59 @@ export function stripLeadingHeading(source: string): { title: string | null; bod
   return { title: match[1].trim(), body: source.slice(match[0].length) }
 }
 
+/**
+ * The opening prose of a document, flattened to one line.
+ *
+ * Every component document opens by saying what the component *is* — the one
+ * passage on the page that distinguishes it from the other thirty-one. The
+ * descriptions these pages used to publish were a fixed template with the name
+ * slotted in ("Button — anatomy, variants, states…"), which is unique per page
+ * and informative on none of them: it describes the shape of the document
+ * rather than the component, so a search result or an assistant summarising the
+ * page had nothing to quote that distinguished Button from SplitButton.
+ */
+export function leadParagraph(source: string): string | null {
+  const { body } = stripLeadingHeading(source)
+
+  for (const block of body.split(/\n\s*\n/)) {
+    const text = block.trim()
+    // Fences, tables, lists, quotes and subheadings are structure, not prose.
+    if (!text || /^(```|~~~|\||[-*+>]\s|\d+\.\s|#)/.test(text)) continue
+
+    const flattened = text
+      .replace(/`([^`]+)`/g, '$1')
+      .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+      .replace(/[*_]{2}([^*_]+)[*_]{2}/g, '$1')
+      // A hard-wrapped line ending in a slash is one token split across two
+      // lines — "icon/title/\ncontent/actions". Collapsing every newline to a
+      // space would publish "icon/title/ content/actions".
+      .replace(/\/\n[ \t]*/g, '/')
+      .replace(/\s+/g, ' ')
+      .trim()
+
+    if (flattened) return flattened
+  }
+
+  return null
+}
+
+/**
+ * Trims prose to a length a search result will actually render.
+ *
+ * A sentence boundary is preferred over an ellipsis, but only past the halfway
+ * mark — cutting a 160-character budget down to 20 because the lead opens with
+ * "It is." would lose more than the truncation saves.
+ */
+export function truncateForMeta(text: string, limit = 160): string {
+  if (text.length <= limit) return text
+
+  const sentenceEnd = text.slice(0, limit + 1).lastIndexOf('. ')
+  if (sentenceEnd >= limit * 0.5) return text.slice(0, sentenceEnd + 1)
+
+  const wordEnd = text.slice(0, limit - 1).lastIndexOf(' ')
+  return `${text.slice(0, wordEnd > 0 ? wordEnd : limit - 1).trimEnd()}…`
+}
+
 export function renderMarkdown(source: string): RenderedMarkdown {
   const headings: Heading[] = []
   const used = new Map<string, number>()

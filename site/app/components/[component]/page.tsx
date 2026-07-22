@@ -12,6 +12,7 @@ import { DocsShell } from '../../../ui/DocsShell'
 import { DemoFrame } from '../../../ui/DemoFrame'
 import { Prose } from '../../../ui/Prose'
 import { StructuredData, breadcrumbList } from '../../../ui/StructuredData'
+import { componentDescription, componentLead } from '../../../content/summaries'
 import { absoluteUrl, packageName, siteName, siteUrl } from '../../../content/site'
 
 interface PageProps {
@@ -31,7 +32,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { component: name } = await params
   const component = await getComponent(name)
   if (!component) return {}
-  const description = `${component.name} — anatomy, variants, states, accessibility, and tokens in the Material 3 Expressive React package.`
+  const description = await componentDescription(component.name)
   return {
     title: component.name,
     description,
@@ -59,6 +60,7 @@ export default async function ComponentPage({ params }: PageProps) {
 
   const demonstrated = await hasExample(component.name)
   const exampleSource = demonstrated ? await readExampleSource(component.name) : null
+  const summary = await componentLead(component.name)
 
   return (
     <DocsShell>
@@ -67,7 +69,7 @@ export default async function ComponentPage({ params }: PageProps) {
           '@context': 'https://schema.org',
           '@type': 'TechArticle',
           headline: `${component.name} — Material 3 Expressive for React`,
-          description: `${component.name} anatomy, variants, states, accessibility, and design tokens.`,
+          description: summary,
           url: absoluteUrl(`/components/${component.name}/`),
           inLanguage: 'en',
           isPartOf: { '@type': 'WebSite', name: siteName, url: siteUrl },

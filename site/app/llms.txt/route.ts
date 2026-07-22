@@ -1,5 +1,6 @@
 import { getComponentsByKind } from '../../content/inventory'
 import { docPages } from '../../content/docs'
+import { componentLead } from '../../content/summaries'
 import {
   absoluteUrl,
   npmUrl,
@@ -55,9 +56,14 @@ export async function GET() {
   for (const group of groups) {
     lines.push(`### ${group.label}`, '')
     for (const component of group.components) {
+      // The component's own opening sentence, not a description of the page's
+      // section headings. This index exists to be read instead of the site, so
+      // a line that says "anatomy, variants, states" for all thirty-two of them
+      // costs a reader the entire distinction between one component and the next.
+      const summary = await componentLead(component.name)
       lines.push(
         `- [${component.name}](${absoluteUrl(`/components/${component.name}/`)}): ` +
-          `anatomy, variants, states, accessibility, and tokens. ` +
+          `${summary} ` +
           `Exports ${component.publicExports.join(', ')}.`,
       )
     }
