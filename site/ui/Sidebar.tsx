@@ -15,8 +15,16 @@ export function Sidebar({ groups }: { groups: SidebarGroup[] }) {
     <nav className="sidebar" aria-label="Documentation">
       {groups.map((group) => (
         <div className="sidebar__group" key={group.label}>
-          <h2 className="sidebar__title">{group.label}</h2>
-          <ul className="sidebar__list">
+          {/*
+           * A group label, not a section heading. As an `h2` it entered the
+           * document outline ahead of the page's own `h1` — nine of them, on
+           * every route — so anything reading the page by its headings met
+           * "Guides, Overview, Foundations…" before it met the subject. The
+           * label is carried on the list instead, which keeps the accessible
+           * name without claiming to start a section.
+           */}
+          <p className="sidebar__title">{group.label}</p>
+          <ul className="sidebar__list" aria-label={group.label}>
             {group.links.map((link) => (
               <li key={link.href}>
                 <Link

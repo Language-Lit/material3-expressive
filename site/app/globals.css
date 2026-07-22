@@ -63,6 +63,60 @@
   --m3e-ref-typeface-plain: var(--site-font-sans), system-ui, sans-serif;
 }
 
+/*
+ * ------------------------------------------------------ the display voice
+ *
+ * A design system named Expressive should not introduce a second typeface to
+ * look expressive. Roboto Flex is now loaded with its width axis, so the site
+ * builds its display voice out of the family the typeface tokens already name:
+ * wide, heavy, and tightly tracked against an unchanged body. Width is what
+ * weight alone cannot do — at `wdth 130` the counters open and a headline reads
+ * as set rather than merely enlarged.
+ *
+ * Every value below is a public `--m3e-sys-typescale-*` custom property, so the
+ * retune goes through the same token layer a consumer would use. Nothing here
+ * touches a component's own rules.
+ *
+ * The overrides are attached to individual chrome elements rather than to a
+ * container, because a demo stage must keep rendering the library's documented
+ * type. A demo that quietly showed retuned type would be advertising something
+ * the package does not ship.
+ */
+.hero__title {
+  --m3e-sys-typescale-emphasized-display-large-font-size: clamp(2.75rem, 6.1vw, 4.75rem);
+  --m3e-sys-typescale-emphasized-display-large-line-height: 1.02;
+  --m3e-sys-typescale-emphasized-display-large-letter-spacing: -0.03em;
+  --m3e-sys-typescale-emphasized-display-large-font-weight: 780;
+  --m3e-sys-typescale-emphasized-display-large-axes-wght: 780;
+  --m3e-sys-typescale-emphasized-display-large-axes-wdth: 132;
+  --m3e-sys-typescale-emphasized-display-large-axes-opsz: 100;
+}
+
+.section__title {
+  --m3e-sys-typescale-emphasized-headline-medium-font-size: clamp(1.75rem, 3.2vw, 2.5rem);
+  --m3e-sys-typescale-emphasized-headline-medium-line-height: 1.12;
+  --m3e-sys-typescale-emphasized-headline-medium-letter-spacing: -0.02em;
+  --m3e-sys-typescale-emphasized-headline-medium-font-weight: 720;
+  --m3e-sys-typescale-emphasized-headline-medium-axes-wght: 720;
+  --m3e-sys-typescale-emphasized-headline-medium-axes-wdth: 128;
+}
+
+.page-head__title {
+  --m3e-sys-typescale-emphasized-display-small-font-size: clamp(2.125rem, 4.2vw, 3rem);
+  --m3e-sys-typescale-emphasized-display-small-line-height: 1.08;
+  --m3e-sys-typescale-emphasized-display-small-letter-spacing: -0.025em;
+  --m3e-sys-typescale-emphasized-display-small-font-weight: 750;
+  --m3e-sys-typescale-emphasized-display-small-axes-wght: 750;
+  --m3e-sys-typescale-emphasized-display-small-axes-wdth: 130;
+}
+
+.catalog__title {
+  --m3e-sys-typescale-emphasized-title-large-letter-spacing: -0.01em;
+  --m3e-sys-typescale-emphasized-title-large-font-weight: 700;
+  --m3e-sys-typescale-emphasized-title-large-axes-wght: 700;
+  --m3e-sys-typescale-emphasized-title-large-axes-wdth: 124;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -161,10 +215,20 @@ a:hover {
   display: block;
 }
 
+/* The one place the width axis is narrowed rather than widened: a wordmark
+   wants to be compact where a headline wants to be open.
+
+   Below roughly 28rem the bar's four controls leave the wordmark less room
+   than it needs, so it truncates rather than running under them. The brand
+   mark beside it keeps carrying the identity at any width. */
 .bar__name {
-  font-weight: 700;
+  font-weight: 760;
+  font-variation-settings: 'wdth' 94, 'wght' 760;
   letter-spacing: -0.01em;
   white-space: nowrap;
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .bar__version {
@@ -185,6 +249,13 @@ a:hover {
 
 .bar__mobile-only {
   display: none;
+}
+
+/* A grouping wrapper that must not become a layout box: its children are
+   direct participants in the bar's flex row. Declared here rather than inline
+   so the media query below can still take it out of the flow. */
+.bar__desktop-only {
+  display: contents;
 }
 
 @media (max-width: 60rem) {
@@ -244,6 +315,17 @@ a:hover {
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--m3e-sys-color-on-surface-variant);
+}
+
+.ramp-readout {
+  margin: 3rem 0 0;
+  display: grid;
+  gap: 0.875rem;
+}
+
+.ramp-readout figcaption {
+  color: var(--m3e-sys-color-on-surface-variant);
+  max-inline-size: 60ch;
 }
 
 /* A one-row ramp used as a section rule. */
@@ -357,7 +439,7 @@ a:hover {
 /* ------------------------------------------------------------------- hero */
 
 .hero {
-  padding-block: clamp(3rem, 8vw, 6rem) clamp(2rem, 5vw, 4rem);
+  padding-block: clamp(2.5rem, 6vw, 5rem) clamp(3rem, 7vw, 5.5rem);
 }
 
 .hero__grid {
@@ -365,28 +447,25 @@ a:hover {
   margin-inline: auto;
   padding-inline: var(--site-gutter);
   display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
-  gap: clamp(2rem, 6vw, 4.5rem);
+  grid-template-columns: minmax(0, 1.02fr) minmax(0, 1fr);
+  gap: clamp(2.5rem, 6vw, 4.5rem);
   align-items: center;
 }
 
+/* An eyebrow is a label, so it is shaped like one: the same pill the library
+   gives every other small piece of metadata on the page. */
 .hero__eyebrow {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
   font-family: var(--site-mono);
   font-size: 0.75rem;
-  letter-spacing: 0.04em;
-  color: var(--m3e-sys-color-on-surface-variant);
-  margin-block-end: 1.25rem;
-}
-
-.hero__eyebrow::before {
-  content: '';
-  inline-size: 2rem;
-  block-size: 2px;
-  border-radius: 2px;
-  background: var(--m3e-sys-color-primary);
+  letter-spacing: 0.02em;
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--m3e-sys-shape-corner-full);
+  background: var(--m3e-sys-color-secondary-container);
+  color: var(--m3e-sys-color-on-secondary-container);
+  margin: 0 0 1.5rem;
 }
 
 .hero__title {
@@ -395,8 +474,9 @@ a:hover {
 }
 
 .hero__lede {
-  margin-block: 1.25rem 0;
-  max-inline-size: 34ch;
+  margin-block: 1.5rem 0;
+  max-inline-size: 38ch;
+  font-size: 1.0625rem;
   color: var(--m3e-sys-color-on-surface-variant);
 }
 
@@ -409,17 +489,67 @@ a:hover {
 
 .hero__figure {
   display: grid;
-  gap: 0.75rem;
+  gap: 1.25rem;
+  margin: 0;
 }
 
 .hero__caption {
   color: var(--m3e-sys-color-on-surface-variant);
-  max-inline-size: 40ch;
+  max-inline-size: 42ch;
 }
 
 @media (max-width: 60rem) {
   .hero__grid {
     grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ------------------------------------------------------------ shape field */
+
+/*
+ * The generated imagery. Shapes carry tones straight from the live palette, so
+ * a source-color change recuts the artwork on the same spring the components
+ * re-tint on — the picture and the page are the same claim.
+ */
+.shape-field {
+  inline-size: 100%;
+  block-size: auto;
+  display: block;
+  overflow: visible;
+}
+
+.shape-field__shape {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: fill var(--m3e-sys-motion-expressive-default-effects-duration)
+    var(--m3e-sys-motion-expressive-default-effects-easing);
+  animation: shape-enter var(--m3e-sys-motion-expressive-slow-spatial-duration)
+    var(--m3e-sys-motion-expressive-slow-spatial-easing) backwards;
+  animation-delay: calc(var(--shape-index) * 60ms);
+}
+
+@keyframes shape-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.shape-glyph {
+  inline-size: 1.75rem;
+  block-size: 1.75rem;
+  flex: none;
+  display: block;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shape-field__shape {
+    animation: none;
+    transition: none;
   }
 }
 
@@ -448,12 +578,33 @@ a:hover {
 /* --------------------------------------------------------------- sections */
 
 .section {
-  padding-block: clamp(3rem, 7vw, 5rem);
+  padding-block: clamp(3.5rem, 8vw, 6rem);
 }
 
+/*
+ * The page needs a value structure, not four variations on white.
+ *
+ * `surface` and `surface-container-low` differ by about two percent lightness,
+ * which is correct for stacking containers inside a view and useless for
+ * telling one full-width band from the next. Tinted sections therefore step up
+ * to `surface-container`, and the closing band inverts outright. One dark
+ * moment gives the page a spine and gives the tonal ramp somewhere to read at
+ * full strength.
+ */
 .section--tinted {
-  background: var(--m3e-sys-color-surface-container-low);
-  border-block: 1px solid var(--m3e-sys-color-outline-variant);
+  background: var(--m3e-sys-color-surface-container);
+}
+
+.section--inverse {
+  background: var(--m3e-sys-color-inverse-surface);
+  color: var(--m3e-sys-color-inverse-on-surface);
+}
+
+.section--inverse code {
+  background: color-mix(in srgb, var(--m3e-sys-color-inverse-on-surface) 14%, transparent);
+  color: inherit;
+  padding: 0.1em 0.35em;
+  border-radius: var(--m3e-sys-shape-corner-extra-small);
 }
 
 .section__inner {
@@ -463,60 +614,127 @@ a:hover {
 }
 
 .section__head {
-  max-inline-size: 52ch;
   margin-block-end: 2.5rem;
 }
 
+.section__title {
+  margin: 0;
+  max-inline-size: 24ch;
+  text-wrap: balance;
+}
+
+/* The measure belongs to the running text, not to the block: a lede set to a
+   comfortable 52 characters would otherwise force the display line above it to
+   break at the same width, where it has room for half again as much. */
 .section__lede {
-  margin-block-start: 0.75rem;
+  margin-block-start: 1rem;
+  max-inline-size: 52ch;
   color: var(--m3e-sys-color-on-surface-variant);
 }
 
+.section--inverse .section__lede {
+  color: color-mix(in srgb, var(--m3e-sys-color-inverse-on-surface) 82%, transparent);
+}
+
+/*
+ * Four claims, four container roles, four corner sizes.
+ *
+ * Repeating one grey rounded rectangle four times reads as a table of figures.
+ * The color and the shape here come from `Surface`'s own `color` and `shape`
+ * props rather than from site CSS, so the row is a demonstration of the token
+ * system instead of a description of one — and the numerals inherit each
+ * container's paired content role, which is the pairing the library's contrast
+ * validation already guarantees.
+ */
 .claims {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: 0.875rem;
 }
 
 .claim {
-  padding: 1.5rem;
+  padding: 1.75rem 1.5rem;
   display: grid;
   gap: 0.5rem;
   align-content: start;
 }
 
 .claim__value {
-  font-family: var(--site-mono);
-  font-size: 2rem;
-  font-weight: 700;
+  font-size: 3rem;
   line-height: 1;
-  color: var(--m3e-sys-color-primary);
+  font-weight: 780;
+  font-variation-settings: 'wdth' 134, 'wght' 780;
+  letter-spacing: -0.03em;
+  margin-block-end: 0.25rem;
 }
 
 .claim__body {
-  color: var(--m3e-sys-color-on-surface-variant);
+  opacity: 0.86;
+}
+
+.claim code {
+  font-family: var(--site-mono);
+  font-size: 0.875em;
+  background: color-mix(in srgb, currentColor 12%, transparent);
+  padding: 0.1em 0.35em;
+  border-radius: var(--m3e-sys-shape-corner-extra-small);
 }
 
 /* ------------------------------------------------------- component listing */
 
+/*
+ * Thirty-two identically shaped grey cards is a list, not a catalogue: nothing
+ * on it is findable by eye, so every visit is a linear read.
+ *
+ * Each category now carries a shape from the same generated vocabulary the
+ * homepage draws its imagery from, repeated on the heading and on every card
+ * in the group. The shape is the landmark — a reader scanning for a navigation
+ * component looks for its mark rather than reading thirty-two names.
+ */
 .catalog {
   display: grid;
-  gap: 2.5rem;
+  gap: 3rem;
+}
+
+.catalog__head {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding-block-end: 0.75rem;
+  margin-block-end: 1rem;
+  border-block-end: 1px solid var(--m3e-sys-color-outline-variant);
+}
+
+.catalog__head .shape-glyph {
+  inline-size: 2rem;
+  block-size: 2rem;
+}
+
+.catalog__title {
+  margin: 0;
+  margin-inline-end: auto;
+}
+
+.catalog__count {
+  font-family: var(--site-mono);
+  font-size: 0.75rem;
+  color: var(--m3e-sys-color-on-surface-variant);
 }
 
 .catalog__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(13.5rem, 1fr));
   gap: 0.75rem;
 }
 
 .catalog__card {
   display: grid;
-  gap: 0.25rem;
-  padding: 1rem 1.125rem;
+  gap: 0.2rem;
+  padding: 1.125rem 1.25rem;
   text-decoration: none;
   color: inherit;
   align-content: start;
+  block-size: 100%;
 }
 
 .catalog__card:hover .catalog__name {
@@ -524,14 +742,18 @@ a:hover {
 }
 
 .catalog__name {
-  font-weight: 600;
+  font-weight: 680;
+  font-variation-settings: 'wdth' 118, 'wght' 680;
+  letter-spacing: -0.005em;
 }
 
 .catalog__meta {
   font-family: var(--site-mono);
   font-size: 0.6875rem;
+  line-height: 1.45;
   color: var(--m3e-sys-color-on-surface-variant);
 }
+
 
 /* ------------------------------------------------------------------ demos */
 
@@ -885,6 +1107,21 @@ a:hover {
     currentColor calc(var(--m3e-sys-state-hover) * 100%),
     transparent
   );
+}
+
+/*
+ * On the inverted band the ordinary container roles are wrong by construction:
+ * they are generated to sit on `surface`, not on `inverse-surface`. The inverse
+ * roles exist for exactly this case, so the buttons switch to them rather than
+ * to a hand-mixed color that would fall outside the validated scheme.
+ */
+.section--inverse .link-button--tonal {
+  background: var(--m3e-sys-color-inverse-primary);
+  color: var(--m3e-sys-color-on-primary-container);
+}
+
+.section--inverse .link-button--text {
+  color: var(--m3e-sys-color-inverse-primary);
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -37,8 +37,9 @@ export function MobileNav({ groups }: { groups: NavigationGroup[] }) {
         <nav aria-label="Documentation">
           {groups.map((group) => (
             <div className="sidebar__group" key={group.label}>
-              <h3 className="sidebar__title">{group.label}</h3>
-              <ul className="sidebar__list">
+              {/* A group label, not a section heading — see `Sidebar`. */}
+              <p className="sidebar__title">{group.label}</p>
+              <ul className="sidebar__list" aria-label={group.label}>
                 {group.links.map((link) => (
                   <li key={link.href}>
                     <Link

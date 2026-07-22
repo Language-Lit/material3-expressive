@@ -68,8 +68,14 @@ export function ThemeControls() {
         }
       >
         <div className="theme-panel">
-          <div className="theme-panel__row">
-            <Text as="h3" variant="titleSmall">
+          {/*
+           * The rows below label control groups, so they are marked up as
+           * groups rather than as `h3` sections. The panel is in the static
+           * HTML whether or not it is open, and as headings these three sat in
+           * every page's outline ahead of its `h1`.
+           */}
+          <div className="theme-panel__row" role="group" aria-label="Source color">
+            <Text as="p" variant="titleSmall">
               Source color
             </Text>
             <Text as="p" variant="bodySmall">
@@ -110,15 +116,15 @@ export function ThemeControls() {
             </p>
           )}
 
-          <div className="theme-panel__row">
-            <Text as="h3" variant="titleSmall">
+          <div className="theme-panel__row" role="group" aria-label="Generated palettes">
+            <Text as="p" variant="titleSmall">
               Generated palettes
             </Text>
             <Ramp showTones={false} />
           </div>
 
-          <div className="theme-panel__row">
-            <Text as="h3" variant="titleSmall">
+          <div className="theme-panel__row" role="group" aria-label="Color mode">
+            <Text as="p" variant="titleSmall">
               Color mode
             </Text>
             <SegmentedButtonGroup

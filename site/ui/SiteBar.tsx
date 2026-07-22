@@ -27,7 +27,10 @@ export function SiteBar({
       </Link>
 
       <nav className="bar__actions" aria-label="Site">
-        <div className="bar__desktop-only" style={{ display: 'contents' }}>
+        {/* `display: contents` belongs in the stylesheet, not here: as an inline
+            style it outranked the media query that hides this group, so these
+            links stayed on screen below 60rem and overlapped the wordmark. */}
+        <div className="bar__desktop-only">
           <Link href="/components/" className="sidebar__link">
             Components
           </Link>

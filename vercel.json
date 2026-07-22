@@ -3,5 +3,22 @@
   "framework": null,
   "installCommand": "npm install && npm install --prefix site",
   "buildCommand": "npm run site:build",
-  "outputDirectory": "site/out"
+  "outputDirectory": "site/out",
+  "headers": [
+    {
+      "comment": "Next emits the generated Open Graph card as an extensionless file, so static hosting has nothing to infer a type from and serves it with none at all. A card served without `image/png` is a card the scrapers decline to render.",
+      "source": "/opengraph-image",
+      "headers": [
+        { "key": "Content-Type", "value": "image/png" },
+        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
+      ]
+    },
+    {
+      "comment": "Retrieval agents re-read these on their own schedule; a day of staleness is cheaper than making every crawl revalidate four files.",
+      "source": "/(robots.txt|llms.txt|llms-full.txt|sitemap.xml)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=3600, must-revalidate" }
+      ]
+    }
+  ]
 }

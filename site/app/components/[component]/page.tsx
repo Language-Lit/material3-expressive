@@ -11,6 +11,8 @@ import { renderMarkdown, stripLeadingHeading } from '../../../content/markdown'
 import { DocsShell } from '../../../ui/DocsShell'
 import { DemoFrame } from '../../../ui/DemoFrame'
 import { Prose } from '../../../ui/Prose'
+import { StructuredData, breadcrumbList } from '../../../ui/StructuredData'
+import { absoluteUrl, packageName, siteName, siteUrl } from '../../../content/site'
 
 interface PageProps {
   params: Promise<{ component: string }>
@@ -29,9 +31,17 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { component: name } = await params
   const component = await getComponent(name)
   if (!component) return {}
+  const description = `${component.name} — anatomy, variants, states, accessibility, and tokens in the Material 3 Expressive React package.`
   return {
     title: component.name,
-    description: `${component.name} — anatomy, variants, states, accessibility, and tokens in the Material 3 Expressive React package.`,
+    description,
+    alternates: { canonical: `/components/${component.name}/` },
+    openGraph: {
+      type: 'article',
+      url: absoluteUrl(`/components/${component.name}/`),
+      title: component.name,
+      description,
+    },
   }
 }
 
@@ -52,6 +62,30 @@ export default async function ComponentPage({ params }: PageProps) {
 
   return (
     <DocsShell>
+      <StructuredData
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'TechArticle',
+          headline: `${component.name} — Material 3 Expressive for React`,
+          description: `${component.name} anatomy, variants, states, accessibility, and design tokens.`,
+          url: absoluteUrl(`/components/${component.name}/`),
+          inLanguage: 'en',
+          isPartOf: { '@type': 'WebSite', name: siteName, url: siteUrl },
+          about: { '@type': 'SoftwareSourceCode', name: packageName },
+          // The exports are the component's public surface, and naming them
+          // here is what lets a retrieval system answer "what do I import for
+          // a Button" without parsing a code block out of the page.
+          keywords: component.publicExports.join(', '),
+          author: { '@type': 'Person', name: 'Romullo Queiroz' },
+          license: 'https://opensource.org/licenses/MIT',
+        }}
+      />
+      <StructuredData
+        data={breadcrumbList([
+          { name: 'Components', path: '/components/' },
+          { name: component.name, path: `/components/${component.name}/` },
+        ])}
+      />
       <article>
         <div className="page-head">
           <span className="page-head__eyebrow">

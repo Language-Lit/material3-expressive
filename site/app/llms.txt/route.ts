@@ -1,0 +1,80 @@
+import { getComponentsByKind } from '../../content/inventory'
+import { docPages } from '../../content/docs'
+import {
+  absoluteUrl,
+  npmUrl,
+  packageName,
+  repositoryUrl,
+  siteName,
+} from '../../content/site'
+
+/**
+ * `/llms.txt`, per the llmstxt.org convention: one plain-text index that states
+ * what this package is and lists every guide and component page as an absolute
+ * URL with a one-line description.
+ *
+ * The site's own navigation is a client component — a crawler that does not run
+ * JavaScript sees the links, but only after several kilobytes of theme-control
+ * and drawer markup. This file is the same map with none of the chrome, which
+ * is the difference between an assistant summarising the library and an
+ * assistant summarising the navigation.
+ */
+export const dynamic = 'force-static'
+
+export async function GET() {
+  const groups = await getComponentsByKind()
+  const total = groups.reduce((sum, group) => sum + group.components.length, 0)
+
+  const lines: string[] = [
+    `# ${siteName}`,
+    '',
+    `> ${packageName} is a React implementation of Google's Material 3`,
+    `> Expressive design system: ${total} conformant components with native web`,
+    '> semantics, precompiled CSS, typed theme and token APIs, and no runtime',
+    '> dependencies. It supports React 18 and 19, server rendering, and',
+    '> light/dark/system color modes.',
+    '',
+    '- Install: `npm install ' + packageName + '`',
+    `- Package: ${npmUrl}`,
+    `- Source: ${repositoryUrl}`,
+    '- License: MIT. This is an independent implementation; Material 3 is a',
+    '  Google design system.',
+    '',
+    '## Guides',
+    '',
+    ...docPages.map(
+      (page) => `- [${page.title}](${absoluteUrl(`/docs/${page.slug}/`)}): ${page.summary}`,
+    ),
+    '',
+    '## Components',
+    '',
+    `- [All components](${absoluteUrl('/components/')}): the complete catalogue, grouped by role.`,
+    '',
+  ]
+
+  for (const group of groups) {
+    lines.push(`### ${group.label}`, '')
+    for (const component of group.components) {
+      lines.push(
+        `- [${component.name}](${absoluteUrl(`/components/${component.name}/`)}): ` +
+          `anatomy, variants, states, accessibility, and tokens. ` +
+          `Exports ${component.publicExports.join(', ')}.`,
+      )
+    }
+    lines.push('')
+  }
+
+  lines.push(
+    '## Optional',
+    '',
+    `- [Full documentation as one file](${absoluteUrl('/llms-full.txt')}): every`,
+    '  guide and component document concatenated, for ingesting in a single fetch.',
+    '',
+  )
+
+  return new Response(lines.join('\n'), {
+    headers: {
+      'content-type': 'text/plain; charset=utf-8',
+    },
+  })
+}

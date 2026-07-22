@@ -4,9 +4,18 @@ import { Icon, Surface, Text } from '@language-lit/material3-expressive'
 import { getConformantComponents } from '../content/inventory'
 import { repoRoot, docsRoot } from '../content/paths'
 import { Ramp, RampRule } from '../ui/Ramp'
+import { ShapeField } from '../ui/ShapeField'
 import { InstallCommand } from '../ui/InstallCommand'
 import { LinkButton } from '../ui/LinkButton'
 import { ThemeShowcase } from '../ui/ThemeShowcase'
+import { StructuredData } from '../ui/StructuredData'
+import {
+  packageName,
+  repositoryUrl,
+  siteDescription,
+  siteName,
+  siteUrl,
+} from '../content/site'
 
 /**
  * Every figure on this page is read from the repository at build time. A claim
@@ -39,7 +48,36 @@ export default async function HomePage() {
   const facts = await getFacts()
 
   return (
-    <>
+    // The docs routes get their `main` from `DocsShell`; the home page has no
+    // shell, and without this the only landmark on it was `body`.
+    <main>
+      <StructuredData
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'SoftwareSourceCode',
+          name: packageName,
+          alternateName: siteName,
+          description: siteDescription,
+          url: siteUrl,
+          codeRepository: repositoryUrl,
+          programmingLanguage: ['TypeScript', 'JavaScript'],
+          runtimePlatform: ['React 18', 'React 19'],
+          license: 'https://opensource.org/licenses/MIT',
+          author: { '@type': 'Person', name: 'Romullo Queiroz', url: repositoryUrl },
+          // The figures below are the same build-time reads the page renders,
+          // so the structured claim and the visible claim cannot disagree.
+          keywords: [
+            'Material 3 Expressive',
+            'Material Design 3',
+            'React components',
+            'design tokens',
+            `${facts.componentCount} components`,
+            `${facts.runtimeDependencies} runtime dependencies`,
+          ].join(', '),
+          isAccessibleForFree: true,
+          offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+        }}
+      />
       <section className="hero">
         <div className="hero__grid">
           <div>
@@ -70,12 +108,13 @@ export default async function HomePage() {
           </div>
 
           <figure className="hero__figure">
-            <Ramp />
+            <ShapeField />
             <figcaption className="hero__caption">
               <Text as="span" variant="bodyMedium">
-                These are the tonal palettes this page is currently painted
-                from. Change the source color in the theme menu and every
-                component, surface, and code block moves with them.
+                Every shape here is cut from the Material 3 Expressive geometry
+                and filled from the tonal palettes this page is currently
+                painted from. Change the source color and the artwork is recut
+                with the components.
               </Text>
             </figcaption>
           </figure>
@@ -85,7 +124,12 @@ export default async function HomePage() {
       <section className="section section--tinted">
         <div className="section__inner">
           <div className="section__head">
-            <Text as="h2" variant="headlineMedium" emphasis="emphasized">
+            <Text
+              as="h2"
+              variant="headlineMedium"
+              emphasis="emphasized"
+              className="section__title"
+            >
               One source color, one validated theme
             </Text>
             <Text as="p" variant="bodyLarge" className="section__lede">
@@ -95,13 +139,34 @@ export default async function HomePage() {
             </Text>
           </div>
           <ThemeShowcase />
+
+          {/*
+            The precise readout belongs here rather than in the hero. This is
+            the section about how palettes are generated, so this is where a
+            visitor wants to read exact tones off a grid; the hero wants a
+            picture.
+          */}
+          <figure className="ramp-readout">
+            <Ramp />
+            <figcaption>
+              <Text as="span" variant="bodySmall">
+                The complete tonal palettes behind the controls above, at the
+                tone stops the role mappings read from.
+              </Text>
+            </figcaption>
+          </figure>
         </div>
       </section>
 
       <section className="section">
         <div className="section__inner">
           <div className="section__head">
-            <Text as="h2" variant="headlineMedium" emphasis="emphasized">
+            <Text
+              as="h2"
+              variant="headlineMedium"
+              emphasis="emphasized"
+              className="section__title"
+            >
               What you actually install
             </Text>
             <Text as="p" variant="bodyLarge" className="section__lede">
@@ -109,8 +174,14 @@ export default async function HomePage() {
             </Text>
           </div>
 
+          {/*
+            The color and the corner size are `Surface` props, not site CSS.
+            Four container roles across four corner sizes is the shape and color
+            variety Material 3 Expressive asks for, expressed through the same
+            public API a consumer would reach for.
+          */}
           <div className="claims">
-            <Surface as="article" color="surface-container-low" shape="large" className="claim">
+            <Surface as="article" color="primary-container" shape="extra-large" className="claim">
               <span className="claim__value">{facts.runtimeDependencies}</span>
               <Text as="h3" variant="titleMedium">
                 Runtime dependencies
@@ -120,7 +191,12 @@ export default async function HomePage() {
               </Text>
             </Surface>
 
-            <Surface as="article" color="surface-container-low" shape="large" className="claim">
+            <Surface
+              as="article"
+              color="tertiary-container"
+              shape="large-increased"
+              className="claim"
+            >
               <span className="claim__value">{facts.jsGzip} kB</span>
               <Text as="h3" variant="titleMedium">
                 JavaScript, gzipped
@@ -131,7 +207,12 @@ export default async function HomePage() {
               </Text>
             </Surface>
 
-            <Surface as="article" color="surface-container-low" shape="large" className="claim">
+            <Surface
+              as="article"
+              color="secondary-container"
+              shape="extra-large-increased"
+              className="claim"
+            >
               <span className="claim__value">{facts.entryPoints}</span>
               <Text as="h3" variant="titleMedium">
                 Entry points
@@ -143,7 +224,12 @@ export default async function HomePage() {
               </Text>
             </Surface>
 
-            <Surface as="article" color="surface-container-low" shape="large" className="claim">
+            <Surface
+              as="article"
+              color="inverse-surface"
+              shape="extra-extra-large"
+              className="claim"
+            >
               <span className="claim__value">{facts.componentCount}</span>
               <Text as="h3" variant="titleMedium">
                 Conformant components
@@ -157,11 +243,16 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="section section--tinted">
+      <section className="section section--inverse">
         <div className="section__inner">
           <RampRule />
           <div className="section__head" style={{ marginBlockStart: '2.5rem' }}>
-            <Text as="h2" variant="headlineMedium" emphasis="emphasized">
+            <Text
+              as="h2"
+              variant="headlineMedium"
+              emphasis="emphasized"
+              className="section__title"
+            >
               Built on the platform
             </Text>
             <Text as="p" variant="bodyLarge" className="section__lede">
@@ -190,6 +281,6 @@ export default async function HomePage() {
           </Text>
         </div>
       </section>
-    </>
+    </main>
   )
 }
