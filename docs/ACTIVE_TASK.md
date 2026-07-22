@@ -364,8 +364,11 @@ No export, prop, token, or dependency changes.
 ### Completion evidence
 
 - `npm run verify` passes in full at `1.0.2`: 13 gates, 165 test files, 946
-  tests, `check:release` green against the new constant, packed tarball 306,970
+  tests, `check:release` green against the new constant, packed tarball 306,961
   of 342,900 budgeted bytes, `check:site` at 32 conformant components.
+- Re-verified after `7978299`, which changed the `repository.url` field —
+  a `package.json` edit lands in the published tarball, so the audit figures
+  above are measured against that commit, not the release-prep commit.
 
 ### Not done
 

@@ -49,7 +49,7 @@ this audit.
 | Unit, interaction, accessibility, SSR, hydration, CSS, and theme tests | `npm run test` (inside aggregate) | Pass: 165 files, 946 tests (+3 `NavigationDrawer` regression tests since `1.0.1`) |
 | Architecture, browser, CSS, and token checks | aggregate gates | Pass: 32 inventory entries, 35 stylesheets, 1,493 properties |
 | Release artifact and rollback | `npm run check:release` (inside aggregate) | Pass: 32 components; `1.0.2` and `v0.3.0` rollback verified |
-| Bundle budgets | `npm run check:bundle-size` (inside aggregate) | Pass: packed package 306,970 / 342,900 bytes; every budget green |
+| Bundle budgets | `npm run check:bundle-size` (inside aggregate) | Pass: packed package 306,961 / 342,900 bytes; every budget green |
 | Packed consumers | `npm run check:consumer-fixtures` (inside aggregate) | Pass: Vite and Next SSR/static against the packed tarball |
 | Documentation site structure | `npm run check:site` (inside aggregate) | Pass: 32 conformant components, 31 demos, export map respected |
 
