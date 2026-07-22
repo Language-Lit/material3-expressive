@@ -16,7 +16,7 @@ export const siteDescription =
 
 export const packageName = '@language-lit/material3-expressive'
 
-export const repositoryUrl = 'https://github.com/romulloqueiroz/material3-expressive'
+export const repositoryUrl = 'https://github.com/Language-Lit/material3-expressive'
 
 export const npmUrl = `https://www.npmjs.com/package/${packageName}`
 

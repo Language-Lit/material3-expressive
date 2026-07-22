@@ -5,7 +5,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/romulloqueiroz/material3-expressive.git"
+    "url": "git+https://github.com/Language-Lit/material3-expressive.git"
   },
   "type": "module",
   "sideEffects": [

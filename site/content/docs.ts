@@ -57,7 +57,7 @@ export const docPages: readonly DocPage[] = [
 ]
 
 const repositoryBlob =
-  'https://github.com/romulloqueiroz/material3-expressive/blob/main/docs'
+  'https://github.com/Language-Lit/material3-expressive/blob/main/docs'
 
 /** Documents that stay in the repository; links to them leave the site. */
 const repositoryOnlyDocs: Record<string, string> = {

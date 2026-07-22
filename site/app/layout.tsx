@@ -135,7 +135,12 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
           <a href="#content" className="visually-hidden">
             Skip to content
           </a>
-          <SiteBar version={version} index={index} groups={groups} />
+          <SiteBar
+            version={version}
+            index={index}
+            groups={groups}
+            repositoryUrl={repositoryUrl}
+          />
           <div id="content">{children}</div>
           <footer className="footer">
             <div className="footer__inner">
@@ -144,12 +149,8 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
                 this is an independent implementation.
               </span>
               <nav className="footer__links" aria-label="Footer">
-                <a href="https://github.com/romulloqueiroz/material3-expressive">
-                  Repository
-                </a>
-                <a href="https://www.npmjs.com/package/@language-lit/material3-expressive">
-                  npm
-                </a>
+                <a href={repositoryUrl}>Repository</a>
+                <a href={npmUrl}>npm</a>
                 <a href="https://m3.material.io/">Material 3</a>
               </nav>
             </div>

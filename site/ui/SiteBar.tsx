@@ -9,14 +9,22 @@ import { BrandMark } from './Ramp'
 import { Search } from './Search'
 import { ThemeControls } from './ThemeControls'
 
+/**
+ * `repositoryUrl` arrives as a prop rather than an import: it lives in
+ * `content/site`, which reaches `node:fs/promises` through the doc inventory
+ * and so cannot be pulled into a client bundle. The layout reads it on the
+ * server and hands it down, keeping the one canonical definition.
+ */
 export function SiteBar({
   version,
   index,
   groups,
+  repositoryUrl,
 }: {
   version: string
   index: SearchEntry[]
   groups: NavigationGroup[]
+  repositoryUrl: string
 }) {
   return (
     <header className="bar">
@@ -46,7 +54,7 @@ export function SiteBar({
             the platform element instead of a button that fakes one. */}
         <a
           className="sidebar__link"
-          href="https://github.com/romulloqueiroz/material3-expressive"
+          href={repositoryUrl}
           target="_blank"
           rel="noreferrer"
           aria-label="Open the repository on GitHub"
