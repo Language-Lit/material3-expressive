@@ -385,3 +385,66 @@ No export, prop, token, or dependency changes.
 - **Follow-up, security:** the publishing token was transmitted in
   conversation, so it must be treated as disclosed and revoked. See the note
   below.
+
+
+---
+
+## T35 — Repair the documentation site's Vercel deployment
+
+Status: complete
+Approved: 2026-07-22 (owner report: production build failing)
+Completed: 2026-07-22
+
+### Scope
+
+Every production deployment since `13a5860` has failed schema validation:
+
+```
+The `vercel.json` schema validation failed with the following message:
+`headers[0]` should NOT have additional property `comment`
+```
+
+`13a5860` annotated both `headers` entries with a `comment` field explaining
+why each exists. JSON has no comment syntax, and Vercel's schema is closed:
+`headers.items` declares `additionalProperties: false` and allows exactly
+`source`, `headers`, `has`, and `missing` — checked against the live schema at
+`https://openapi.vercel.sh/vercel.json` rather than inferred from the error.
+
+So the site has been undeployable for six commits, spanning the whole T33/T34
+release. The published package was never affected — `vercel.json` is not in the
+`files` allowlist, and `npm run verify` does not read it, which is why 13 green
+gates and a successful publish sat alongside a broken deploy.
+
+The two annotations were the only violation. Rather than lose what they
+recorded, their content moves here:
+
+- **`/opengraph-image` → `Content-Type: image/png`.** Next emits the generated
+  card as an extensionless file, so static hosting has nothing to infer a type
+  from and serves it with none at all. A card served without `image/png` is a
+  card the scrapers decline to render. (Already noted in T32's evidence; this
+  is the same finding.)
+- **`robots.txt`/`llms.txt`/`llms-full.txt`/`sitemap.xml` → one-hour
+  `max-age`.** Retrieval agents re-read these on their own schedule; a day of
+  staleness is cheaper than making every crawl revalidate four files.
+
+### Expected files
+
+- Modified: `vercel.json`, `docs/ACTIVE_TASK.md`.
+- No `src/`, `tests/`, `playground/`, or `site/` change, and no published
+  surface change. No `docs/SPEC.md` ledger row, matching T31 and T32: the
+  ledger records library scope, and this is deployment configuration.
+
+### Acceptance checks
+
+- `vercel.json` validates against the live Vercel schema — every key present is
+  in the allowed set, and both entries carry the required `source`/`headers`.
+- The rationale the removed comments carried survives in this record.
+- The production deployment succeeds.
+
+### Not done
+
+- Nothing prevents this recurring. Vercel validates `vercel.json` server-side
+  at deploy time, so a malformed file passes every local gate and fails only
+  after a push. A `check:site` assertion against the published schema would
+  catch it locally; that is a real gap, deliberately left for a separate task
+  rather than widened into this repair.
