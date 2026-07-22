@@ -94,6 +94,21 @@ export const metadata: Metadata = {
     title: siteName,
     description: siteDescription,
   },
+  // Search Console and Bing Webmaster Tools each prove ownership by reading a
+  // token out of the home page. Both come from the environment: a token is
+  // account state rather than source, rotating one should not be a commit, and
+  // an unset variable emits no tag at all — an empty `content` is a tag both
+  // validators reject, which reads as a broken site rather than an unclaimed
+  // one. `output: 'export'` resolves these at build time, so a token added in
+  // the Vercel project settings takes effect on the next deploy.
+  verification: {
+    ...(process.env.GOOGLE_SITE_VERIFICATION
+      ? { google: process.env.GOOGLE_SITE_VERIFICATION }
+      : {}),
+    ...(process.env.BING_SITE_VERIFICATION
+      ? { other: { 'msvalidate.01': process.env.BING_SITE_VERIFICATION } }
+      : {}),
+  },
 }
 
 async function getVersion(): Promise<string> {

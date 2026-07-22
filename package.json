@@ -1,8 +1,9 @@
 {
   "name": "@language-lit/material3-expressive",
   "version": "1.0.2",
-  "description": "Material 3 Expressive design system components for React",
+  "description": "Material 3 Expressive components for React 18 and 19 — 32 conformant components, precompiled CSS, typed theme and design-token APIs, SSR-safe, zero runtime dependencies.",
   "license": "MIT",
+  "homepage": "https://m3e.language-lit.com",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Language-Lit/material3-expressive.git"
@@ -58,6 +59,7 @@
     "generate:site-symbols": "node scripts/fetch-symbols-font.mjs",
     "site:dev": "npm --prefix site run dev",
     "site:build": "npm --prefix site run build",
+    "submit:indexnow": "node scripts/submit-indexnow.mjs",
     "verify": "node scripts/verify.mjs",
     "prepare": "npm run build",
     "audit:rendering": "node scripts/audit-rendering.mjs"
@@ -93,10 +95,18 @@
   "keywords": [
     "material-design",
     "material-3",
+    "material-3-expressive",
+    "material-design-3",
+    "m3",
     "react",
+    "react-components",
     "components",
+    "component-library",
     "ui",
-    "design-system"
+    "design-system",
+    "design-tokens",
+    "theming",
+    "typescript"
   ],
   "browserslist": [
     "Chrome >= 120",

@@ -38,6 +38,13 @@ export interface SiteRoute {
   summary: string
   /** Relative crawl priority, mirrored into the sitemap. */
   priority: number
+  /**
+   * The repository file whose content this route publishes, relative to the
+   * repository root. The sitemap reads its commit date to date the URL. Index
+   * routes name their own page component, because their content is the listing
+   * that component renders.
+   */
+  source: string
 }
 
 /**
@@ -55,30 +62,35 @@ export async function getSiteRoutes(): Promise<SiteRoute[]> {
       title: siteName,
       summary: siteDescription,
       priority: 1,
+      source: 'site/app/page.tsx',
     },
     {
       path: '/docs/',
       title: 'Guides',
       summary: 'Installation, theming, server rendering, and migration guides.',
       priority: 0.9,
+      source: 'site/app/docs/page.tsx',
     },
     ...docPages.map((page) => ({
       path: `/docs/${page.slug}/`,
       title: page.title,
       summary: page.summary,
       priority: 0.8,
+      source: `docs/${page.file}`,
     })),
     {
       path: '/components/',
       title: 'Components',
       summary: `All ${components.length} conformant components, grouped by role.`,
       priority: 0.9,
+      source: 'site/app/components/page.tsx',
     },
     ...components.map((component) => ({
       path: `/components/${component.name}/`,
       title: component.name,
       summary: `${component.name} — anatomy, variants, states, accessibility, and tokens.`,
       priority: 0.7,
+      source: `docs/components/${component.name}.md`,
     })),
   ]
 }
