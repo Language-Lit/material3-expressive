@@ -6,7 +6,7 @@ import process from 'node:process'
 import { fileURLToPath } from 'node:url'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
-const releaseVersion = '1.0.2'
+const releaseVersion = '1.0.3'
 const rollbackVersion = '0.3.0'
 const rollbackTag = `v${rollbackVersion}`
 const publicExportPaths = ['.', './theme', './tokens', './styles.css']

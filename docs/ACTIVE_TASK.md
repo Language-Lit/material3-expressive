@@ -552,3 +552,53 @@ portaled into the provider element instead.
   color question it would have answered.
 - No release. The registry still holds `1.0.2`; publishing this repair is a
   separate task, the same separation T33 and T34 used.
+
+
+---
+
+## T37 — 1.0.3 patch release
+
+Status: active
+Approved: 2026-07-22 (owner request: publish the T36 repair to npm)
+
+### Scope
+
+Prepare the T36 portal-scope repair for the registry.
+
+The registry holds `1.0.0-next.0`, `1.0.0`, and `1.0.2`, with `latest` at
+`1.0.2`. `1.0.3` is an ordinary next patch — no gap to explain this time, unlike
+T34's skip over the never-published `1.0.1`.
+
+Every published version to date carries the T36 defect, so this is the first
+release in which a portaled `Menu`, `Select` listbox, `Tooltip`, or `Snackbar`
+honors color mode, a custom theme, or a nested scope.
+
+No export, prop, token, or dependency changes. `ThemeScopeContext` and
+`usePortalThemeScope` are internal.
+
+### Expected files
+
+- Modified: `package.json`, `package-lock.json`, `scripts/check-release.mjs`
+  (its `releaseVersion` constant gates the version and must move in step),
+  `docs/RELEASE_NOTES.md`, `docs/RELEASE_READINESS.md`, `docs/ACTIVE_TASK.md`,
+  `docs/SPEC.md`.
+- No file under `src/`, `tests/`, `playground/`, or `site/` changes. This task
+  alters no behavior.
+
+### Acceptance checks
+
+- `npm run verify` passes at `1.0.3`, including `check:release`.
+- The readiness report carries the three strings the release gate matches for
+  `1.0.3`.
+- Publication and the `v1.0.3` tag are performed by the owner, not from here.
+
+### Not done
+
+- The rendering audit was not re-run, for the same reason T36 did not run it:
+  no geometry, elevation, or state layer changed.
+- **Security boundary, unlike T34:** the publishing token was again transmitted
+  in conversation, and the publish was **not** performed from the assistant
+  session — the sandbox declined to run a command carrying the credential, and
+  the step was handed back to the owner rather than worked around. The token
+  must still be treated as disclosed and revoked, exactly as T34's follow-up
+  records.

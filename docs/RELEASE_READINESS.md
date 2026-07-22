@@ -1,5 +1,54 @@
 # Release-readiness audit
 
+## 1.0.3 — 2026-07-22
+
+Audit date: 2026-07-22  
+Release: `@language-lit/material3-expressive@1.0.3`  
+Rollback: `@language-lit/material3-expressive@0.3.0` (tag `v0.3.0`)  
+Registry publication: not performed at the time of this audit.
+
+### Recommendation
+
+**GO for a separately owner-approved `1.0.3` release.** This is a patch, not a
+cutover: the public surface is byte-for-byte identical to `1.0.0` — same 32
+conformant components, same exports, same tokens, same dependency-free package.
+`ThemeScopeContext` and `usePortalThemeScope`, added by T36, are internal and
+exported from neither `.` nor `./theme`.
+
+### What changed since 1.0.2
+
+- Portaled overlays (`Menu`, `Select`'s listbox, `Tooltip`, `Snackbar`) now
+  reconstitute the enclosing theme scope on their portal root. They previously
+  inherited nothing from the provider element — a sibling, not an ancestor —
+  and resolved against `:root`'s unconditional light scheme, so color mode,
+  custom themes, and nested scopes all failed to reach them. `Tooltip` and
+  `Snackbar` were additionally inverted the wrong way, since `inverseSurface`
+  resolved against the light scheme reads as a dark chip on a dark page
+  (ADR 0029; T36).
+- No export, prop type, token value, or dependency changed.
+
+### Automated verification
+
+| Gate | Command | Result |
+| --- | --- | --- |
+| Aggregate verification | `npm run verify` | Pass: 13 gates |
+| Unit, interaction, accessibility, SSR, hydration, CSS, and theme tests | `npm run test` (inside aggregate) | Pass: 165 files, 956 tests (+10 portal-scope tests since `1.0.2`, 6 confirmed to fail against the unrepaired components) |
+| Architecture, browser, CSS, and token checks | aggregate gates | Pass: 32 inventory entries |
+| Release artifact and rollback | `npm run check:release` (inside aggregate) | Pass: 32 components; `1.0.3` and `v0.3.0` rollback verified |
+| Bundle budgets | `npm run check:bundle-size` (inside aggregate) | Pass: every budget green |
+| Packed consumers | `npm run check:consumer-fixtures` (inside aggregate) | Pass: Vite and Next SSR/static against the packed tarball |
+| Documentation site structure | `npm run check:site` (inside aggregate) | Pass: 32 conformant components, 31 demos, export map respected |
+
+### Remaining boundaries
+
+Unchanged from `1.0.0` — see below.
+
+- The rendering audit (`npm run audit:rendering`) was not re-run for this
+  release. It needs a real Chromium, and T36 changed no geometry, elevation, or
+  state layer — only which scope a portal root resolves its custom properties
+  against. A browser probe against the playground and the documentation site
+  covered the color question it would have answered.
+
 ## 1.0.2 — 2026-07-22
 
 Audit date: 2026-07-22  

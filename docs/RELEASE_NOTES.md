@@ -1,5 +1,47 @@
 # Release notes
 
+## 1.0.3 — 2026-07-22
+
+Status: prepared patch release. No export, prop, token, or dependency change;
+the public surface is identical to `1.0.0`.
+
+### Fixed
+
+- Portaled overlays ignored the theme. `Menu`, `Select`'s popup listbox,
+  `Tooltip`, and `Snackbar` render into `document.body`, which is a sibling of
+  the element `Material3Provider` renders rather than a descendant, so they
+  inherited none of its scope and resolved every custom property against
+  `:root` — which carries the light scheme unconditionally as the
+  no-JavaScript visual contract. Each now reconstitutes the enclosing scope on
+  its own portal root (ADR 0029; T36).
+
+  Three consequences, all of them user-visible:
+
+  - **Color mode.** A menu opened in a dark scope painted the light scheme.
+    Measured before the repair: `--m3e-sys-color-surface-container` resolved to
+    `#211f26` on the provider element and `#f3edf7` on the portaled menu in the
+    same document.
+  - **Custom themes.** The provider's inline block also carries density,
+    typography, shape, motion, and component-token overrides, so under a custom
+    theme a portaled overlay rendered the *default* theme in every domain, not
+    only in color.
+  - **`Tooltip` and `Snackbar` were inverted the wrong way.** Both paint
+    `inverseSurface`, so looking light on a dark page is correct; what they
+    actually rendered was the light scheme's inverse — a dark chip on a dark
+    page. The right role against the wrong scheme.
+
+  Nested scopes are honored: an overlay opened inside a nested provider carries
+  that nested scope. An overlay with no provider above it emits no scope at
+  all, so an application that puts `.m3e-theme` and `data-m3e-color-mode` on
+  `<html>` itself keeps governing `document.body`.
+
+  The defect predates `1.0.0`; every published version to date has it.
+
+### Verification target
+
+Same as `1.0.0`: `npm run check:docs` and `npm run verify`. See
+[RELEASE_READINESS.md](RELEASE_READINESS.md) for the `1.0.3` audit.
+
 ## 1.0.2 — 2026-07-22
 
 Status: prepared patch release. No export, prop, token, or dependency change;
