@@ -5,7 +5,9 @@
 Audit date: 2026-07-22  
 Release: `@language-lit/material3-expressive@1.0.2`  
 Rollback: `@language-lit/material3-expressive@0.3.0` (tag `v0.3.0`)  
-Registry publication: not performed
+Registry publication: not performed at the time of this audit; published
+2026-07-22 from commit `7978299` and confirmed as `latest`. The registry now
+holds `1.0.0-next.0`, `1.0.0`, and `1.0.2`.
 
 ### Recommendation
 

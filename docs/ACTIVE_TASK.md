@@ -370,14 +370,18 @@ No export, prop, token, or dependency changes.
   a `package.json` edit lands in the published tarball, so the audit figures
   above are measured against that commit, not the release-prep commit.
 
+- Published 2026-07-22 from commit `7978299`. `npm view` confirms the registry
+  holds `1.0.0-next.0`, `1.0.0`, and `1.0.2`, with `latest` at `1.0.2`. Tagged
+  `v1.0.2`. The `FabMenu` repair reached consumers here too, a full patch late.
+- The account's 2FA mode is `auth-and-writes`, so the publish went through a
+  granular access token with npm's bypass-2FA flag, authorized under the
+  package's "Require two-factor authentication or a granular access token with
+  bypass 2fa enabled" publishing-access setting.
+
 ### Not done
 
-- **The package is not published.** `npm publish`, and the `v1.0.2` tag that
-  follows it, are the owner's to run: publication is effectively irreversible
-  (npm's unpublish window is 72 hours and closes entirely once a dependent
-  exists). The working tree is prepared and verified, nothing more.
-- `npm whoami` returned 401 at audit time, so the publishing session will need
-  `npm login` first.
-- After publishing, the `1.0.2` readiness entry should record it. The release
-  gate matches the substring `Registry publication: not performed`, so append
-  to that line rather than replacing it — the `1.0.0` entry shows the pattern.
+- The rendering audit was not re-run for the release, for the same reason T33
+  did not run it: no geometry, elevation, or state layer changed.
+- **Follow-up, security:** the publishing token was transmitted in
+  conversation, so it must be treated as disclosed and revoked. See the note
+  below.
