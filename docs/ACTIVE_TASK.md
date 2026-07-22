@@ -558,8 +558,9 @@ portaled into the provider element instead.
 
 ## T37 — 1.0.3 patch release
 
-Status: active
+Status: complete
 Approved: 2026-07-22 (owner request: publish the T36 repair to npm)
+Completed: 2026-07-22
 
 ### Scope
 
@@ -591,6 +592,23 @@ No export, prop, token, or dependency changes. `ThemeScopeContext` and
 - The readiness report carries the three strings the release gate matches for
   `1.0.3`.
 - Publication and the `v1.0.3` tag are performed by the owner, not from here.
+
+### Completion evidence
+
+- `npm run verify` passed in full at `1.0.3` before publication: 13 gates, 165
+  test files, 956 tests, `check:release` green against the new constant.
+- Published by the owner 2026-07-22 from commit `fda9cb7`. `npm view` confirms
+  the registry holds `1.0.0-next.0`, `1.0.0`, `1.0.2`, and `1.0.3`, with
+  `latest` at `1.0.3`.
+- The published artifact was verified rather than assumed: the `1.0.3` tarball
+  was re-downloaded from the registry and its `dist/index.js` carries the
+  portal-scope code. A release that shipped only the version bump would have
+  passed every other check here.
+- Tagged `v1.0.3` at `fda9cb7`, the commit the publish was cut from. The
+  repository's own history motivates checking this: `v1.0.1` was tagged and
+  never published, and `check:release` verifies rollback against tags, so a
+  published-but-untagged version is the same class of drift in the other
+  direction.
 
 ### Not done
 
