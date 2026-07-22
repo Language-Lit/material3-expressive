@@ -12,6 +12,24 @@ afterEach(cleanup)
 
 const options: SelectOption[] = [{ value: 'apple', label: 'Apple' }]
 
+/** The popup listbox reuses `menu`'s tokens; see ADR 0017. */
+function withMenuToken(name: string, value: number | string) {
+  return defaultTheme.componentTokens.map((registration) =>
+    registration.component === 'menu'
+      ? {
+          ...registration,
+          tokens: {
+            ...registration.tokens,
+            [name]: {
+              ...registration.tokens[name],
+              value,
+            },
+          },
+        }
+      : registration,
+  )
+}
+
 function withTextFieldToken(name: string, value: number | string) {
   return defaultTheme.componentTokens.map((registration) =>
     registration.component === 'text-field'
@@ -49,5 +67,30 @@ describe('Select theme integration', () => {
       screen.getByTestId('provider').style.getPropertyValue('--m3e-comp-text-field-filled-container-color'),
     ).toBe('#123456')
     expect(document.querySelector('style')).toBeNull()
+  })
+
+  it('reconstitutes the provider scope on the portaled listbox', () => {
+    const theme = createTheme({
+      componentTokens: withMenuToken('container-max-width', '320px'),
+    })
+    render(
+      <Material3Provider theme={theme} colorMode="dark">
+        <Select label="Fruit" options={options} open onOpenChange={() => undefined} />
+      </Material3Provider>,
+    )
+
+    const listbox = screen.getByRole('listbox')
+    expect(listbox.parentElement).toBe(document.body)
+    expect(listbox.classList.contains('m3e-theme')).toBe(true)
+    expect(listbox.getAttribute('data-m3e-color-mode')).toBe('dark')
+    expect(listbox.style.getPropertyValue('--m3e-comp-menu-container-max-width')).toBe('320px')
+  })
+
+  it('claims no scope on the listbox when no provider encloses it', () => {
+    render(<Select label="Fruit" options={options} open onOpenChange={() => undefined} />)
+
+    const listbox = screen.getByRole('listbox')
+    expect(listbox.classList.contains('m3e-theme')).toBe(false)
+    expect(listbox.hasAttribute('data-m3e-color-mode')).toBe(false)
   })
 })

@@ -13,6 +13,7 @@ import { composeRefs } from '../../internal/composeRefs'
 import { computeTooltipPosition } from '../../internal/overlayPosition'
 import { useAnchoredOverlay, type AnchoredOverlayPositionArgs } from '../../internal/useAnchoredOverlay'
 import { useControllableState } from '../../internal/useControllableState'
+import { usePortalThemeScope } from '../../theme/contexts'
 import type { TooltipProps } from './Tooltip.types'
 
 interface TooltipComponent {
@@ -131,6 +132,8 @@ function TooltipRender(
     }
   }, [anchorRef, mounted, tooltipId])
 
+  const themeScope = usePortalThemeScope()
+
   if (!mounted) return null
 
   return createPortal(
@@ -139,13 +142,12 @@ function TooltipRender(
       ref={composeRefs(forwardedRef, popoverRef)}
       id={tooltipId}
       role="tooltip"
-      className={
-        className
-          ? `m3e-tooltip m3e-tooltip--${variant} ${className}`
-          : `m3e-tooltip m3e-tooltip--${variant}`
-      }
+      className={[themeScope?.className, `m3e-tooltip m3e-tooltip--${variant}`, className]
+        .filter(Boolean)
+        .join(' ')}
+      data-m3e-color-mode={themeScope?.colorMode}
       data-m3e-open={entered}
-      style={{ ...overlayStyle, ...(style as CSSProperties) }}
+      style={{ ...themeScope?.style, ...overlayStyle, ...(style as CSSProperties) }}
       onTransitionEnd={handleTransitionEnd}
       onMouseEnter={() => {
         popoverHoveredRef.current = true

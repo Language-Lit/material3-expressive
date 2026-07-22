@@ -113,6 +113,13 @@ API only at 125, after the pinned 121 floor).
 
 ## Web-specific deviations
 
+- The portal root re-applies the enclosing theme scope — the `.m3e-theme`
+  class, the color-mode attribute, and the provider's inline theme
+  differences. Portaling into `document.body` puts the menu outside the
+  provider element, which no Compose equivalent has to account for because
+  the pinned source's `Popup` inherits its `CompositionLocal`s regardless of
+  where it composes. Without this the menu resolves every color role against
+  `:root`, which carries the light scheme unconditionally (ADR 0029).
 - No portal or manual dismissal machinery was needed by any prior
   component; `Menu` (and `Select`) are the first to require a
   `ReactDOM.createPortal` target, manual outside-click/Escape dismissal via

@@ -91,4 +91,35 @@ describe('Tooltip theme integration', () => {
       screen.getByTestId('inner').style.getPropertyValue('--m3e-comp-tooltip-plain-container-color'),
     ).toBe('var(--m3e-sys-color-secondary)')
   })
+
+  it('reconstitutes the provider scope on the portal root', () => {
+    // `inverseSurface` makes this the case most easily mistaken for correct:
+    // a plain tooltip is *supposed* to look light on a dark page. Before the
+    // scope travelled, it read the light scheme's inverse — a dark tooltip on a
+    // dark page — which is the same role resolved against the wrong scheme.
+    const theme = createTheme({
+      componentTokens: withTooltipToken('plain-max-width', '240px'),
+    })
+    render(
+      <Material3Provider theme={theme} colorMode="dark">
+        <Anchored />
+      </Material3Provider>,
+    )
+
+    const tooltip = screen.getByRole('tooltip')
+    expect(tooltip.parentElement).toBe(document.body)
+    expect(tooltip.classList.contains('m3e-theme')).toBe(true)
+    expect(tooltip.getAttribute('data-m3e-color-mode')).toBe('dark')
+    expect(tooltip.style.getPropertyValue('--m3e-comp-tooltip-plain-max-width')).toBe(
+      '240px',
+    )
+  })
+
+  it('claims no scope of its own when no provider encloses it', () => {
+    render(<Anchored />)
+
+    const tooltip = screen.getByRole('tooltip')
+    expect(tooltip.classList.contains('m3e-theme')).toBe(false)
+    expect(tooltip.hasAttribute('data-m3e-color-mode')).toBe(false)
+  })
 })

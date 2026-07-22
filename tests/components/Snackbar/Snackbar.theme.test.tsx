@@ -75,4 +75,29 @@ describe('Snackbar theme integration', () => {
       screen.getByTestId('inner').style.getPropertyValue('--m3e-comp-snackbar-container-color'),
     ).toBe('var(--m3e-sys-color-secondary)')
   })
+
+  it('reconstitutes the provider scope on the portal root', () => {
+    const theme = createTheme({
+      componentTokens: withSnackbarToken('container-max-width', '480px'),
+    })
+    render(
+      <Material3Provider theme={theme} colorMode="dark">
+        <Snackbar message="Saved" open onOpenChange={() => undefined} />
+      </Material3Provider>,
+    )
+
+    const snackbar = screen.getByRole('status')
+    expect(snackbar.parentElement).toBe(document.body)
+    expect(snackbar.classList.contains('m3e-theme')).toBe(true)
+    expect(snackbar.getAttribute('data-m3e-color-mode')).toBe('dark')
+    expect(snackbar.style.getPropertyValue('--m3e-comp-snackbar-container-max-width')).toBe('480px')
+  })
+
+  it('claims no scope of its own when no provider encloses it', () => {
+    render(<Snackbar message="Saved" open onOpenChange={() => undefined} />)
+
+    const snackbar = screen.getByRole('status')
+    expect(snackbar.classList.contains('m3e-theme')).toBe(false)
+    expect(snackbar.hasAttribute('data-m3e-color-mode')).toBe(false)
+  })
 })

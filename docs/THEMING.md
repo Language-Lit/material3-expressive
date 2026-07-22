@@ -62,6 +62,26 @@ differences. A nested provider is isolated from its parent:
 </Material3Provider>
 ```
 
+## Portaled overlays
+
+`Menu`, `Select`'s popup listbox, `Tooltip`, and `Snackbar` render into
+`document.body` so they escape ancestor `overflow` and stacking contexts. That
+puts them outside the provider's element, where none of its scope would reach
+them by inheritance, so each re-applies the enclosing scope to its own portal
+root: the `.m3e-theme` class, the color-mode attribute, and the provider's
+inline theme differences.
+
+Nothing is required of a consumer. An overlay opened inside a nested provider
+carries that nested scope, and one rendered with no provider above it emits no
+scope at all — so an application that puts `.m3e-theme` and
+`data-m3e-color-mode` on `<html>` itself keeps governing `document.body`.
+
+```tsx
+<Material3Provider theme={editorTheme} colorMode="dark">
+  <Editor /> {/* a Menu opened here paints editorTheme's dark scheme */}
+</Material3Provider>
+```
+
 ## SSR and resolved mode
 
 `systemModeFallback` controls the deterministic server and hydration snapshot

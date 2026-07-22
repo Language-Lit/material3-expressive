@@ -15,6 +15,7 @@ import { composeRefs } from '../../internal/composeRefs'
 import { TextFieldChrome } from '../../internal/TextFieldChrome'
 import { useAnchoredOverlay } from '../../internal/useAnchoredOverlay'
 import { useControllableState } from '../../internal/useControllableState'
+import { usePortalThemeScope } from '../../theme/contexts'
 import type { SelectOption, SelectProps } from './Select.types'
 
 interface SelectComponent {
@@ -128,6 +129,8 @@ function SelectRender(
     onRequestClose: () => setOpen(false),
     matchAnchorWidth: true,
   })
+
+  const themeScope = usePortalThemeScope()
 
   useEffect(() => {
     if (!mounted) return
@@ -268,9 +271,12 @@ function SelectRender(
             id={listboxId}
             role="listbox"
             aria-label={typeof label === 'string' ? label : undefined}
-            className="m3e-menu m3e-select__listbox"
+            className={[themeScope?.className, 'm3e-menu m3e-select__listbox']
+              .filter(Boolean)
+              .join(' ')}
+            data-m3e-color-mode={themeScope?.colorMode}
             data-m3e-open={entered}
-            style={{ ...overlayStyle }}
+            style={{ ...themeScope?.style, ...overlayStyle }}
             onTransitionEnd={handleTransitionEnd}
           >
             {options.map((option, index) => (

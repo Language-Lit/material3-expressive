@@ -12,6 +12,7 @@ import {
 import { createPortal } from 'react-dom'
 import { composeRefs } from '../../internal/composeRefs'
 import { useControllableState } from '../../internal/useControllableState'
+import { usePortalThemeScope } from '../../theme/contexts'
 import type { SnackbarProps } from './Snackbar.types'
 
 interface SnackbarComponent {
@@ -167,6 +168,8 @@ function SnackbarRender(
     }
   }, [resolvedOpen, paused, durationMs, setOpen])
 
+  const themeScope = usePortalThemeScope()
+
   if (phase === 'closed') return null
 
   return createPortal(
@@ -174,9 +177,10 @@ function SnackbarRender(
       {...divProps}
       ref={composeRefs(forwardedRef, rootRef)}
       role="status"
-      className={className ? `m3e-snackbar ${className}` : 'm3e-snackbar'}
+      className={[themeScope?.className, 'm3e-snackbar', className].filter(Boolean).join(' ')}
+      data-m3e-color-mode={themeScope?.colorMode}
       data-m3e-open={phase === 'open'}
-      style={{ ...(style as CSSProperties) }}
+      style={{ ...themeScope?.style, ...(style as CSSProperties) }}
       onTransitionEnd={handleTransitionEnd}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}

@@ -15,6 +15,7 @@ import { createPortal } from 'react-dom'
 import { composeRefs } from '../../internal/composeRefs'
 import { useAnchoredOverlay } from '../../internal/useAnchoredOverlay'
 import { useControllableState } from '../../internal/useControllableState'
+import { usePortalThemeScope } from '../../theme/contexts'
 import type { MenuItem, MenuProps } from './Menu.types'
 
 interface MenuImplementationProps extends Omit<HTMLAttributes<HTMLDivElement>, 'children'> {
@@ -81,6 +82,7 @@ function MenuRender(
   })
 
   const enabledIndices = useMemo(() => enabledIndicesOf(items), [items])
+  const themeScope = usePortalThemeScope()
 
   // Move real DOM focus to the first enabled item once the menu mounts,
   // matching the APG menu-button pattern's own real-focus-movement model
@@ -177,9 +179,10 @@ function MenuRender(
       ref={composeRefs(forwardedRef, popoverRef)}
       id={idProp}
       role="menu"
-      className={className ? `m3e-menu ${className}` : 'm3e-menu'}
+      className={[themeScope?.className, 'm3e-menu', className].filter(Boolean).join(' ')}
+      data-m3e-color-mode={themeScope?.colorMode}
       data-m3e-open={entered}
-      style={{ ...overlayStyle, ...(style as CSSProperties) }}
+      style={{ ...themeScope?.style, ...overlayStyle, ...(style as CSSProperties) }}
       onTransitionEnd={handleTransitionEnd}
       onKeyDown={handleKeyDown}
     >

@@ -59,6 +59,7 @@ Screenshots land in `/tmp/m3e-playground-shots/` (override:
 | `setup` | `npm run build`, pack, copy `playground` into a scratch dir, link `node_modules` + `.bin`, extract the tarball into it |
 | `serve` | launch `vite` dev mode inside the fixture on a free port, poll until it responds |
 | `launch` | open a headless Chromium page at the dev server |
+| `colorscheme <light\|dark>` | emulate the OS color preference — headless Chromium reports `light`, so dark-mode defects are invisible without this; the playground provider runs `colorMode="system"`, so this is what resolves its scope dark |
 | `section <name>` | screenshot just `.<name>-example` (the convention every `playground/examples/<Name>.example.tsx` follows — `checkbox`, `card`, `button`, `icon-button`, `fab`, `icon`, `surface`, `text`) |
 | `ss [name]` | full-page screenshot |
 | `click <css-sel>` / `hover <css-sel>` / `focus <css-sel>` | real Playwright interaction, not a DOM `.click()` — proves event handlers, not just markup |

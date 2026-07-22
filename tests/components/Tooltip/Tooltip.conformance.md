@@ -94,6 +94,11 @@ anchor positioning is available across this library's browser floor.
 
 ## Web-specific deviations
 
+- The portal root re-applies the enclosing theme scope (ADR 0029). This
+  component made the defect hardest to see: a plain tooltip paints
+  `inverseSurface`, which is `neutral-20` in light and `neutral-90` in dark,
+  so looking light on a dark page is correct. What it rendered before was the
+  *light* scheme's inverse — the right role against the wrong scheme.
 - No caret/pointer triangle: the pinned source draws it via
   `CacheDrawScope`/`LayoutCoordinates` custom geometry with no clean web
   equivalent, the same basis prior tasks already excluded

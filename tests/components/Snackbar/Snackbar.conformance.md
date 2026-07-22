@@ -92,6 +92,9 @@ precedent every other component already follows.
 
 ## Web-specific deviations
 
+- The portal root re-applies the enclosing theme scope (ADR 0029). Like
+  `Tooltip`, this component paints `inverseSurface` and so appeared plausible
+  in dark mode while resolving against the light scheme.
 - Single controlled component instead of a headless queue/host pair (see
   Anatomy).
 - Pausable auto-dismiss timer (see States and motion) — the source has no

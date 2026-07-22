@@ -118,6 +118,9 @@ stylesheet, reused unchanged.
 
 ## Web-specific deviations
 
+- The portaled listbox re-applies the enclosing theme scope, for the same
+  reason and by the same mechanism as `Menu`'s popup — it is the same portal
+  root contract, and it reads the same `menu` tokens (ADR 0029).
 - No native `<select>` element — see Supported Material baseline above.
 - `SelectOption.label` is constrained to `string`, narrower than
   `MenuItem.label`'s `ReactNode`, a deliberate scope-narrowing since the

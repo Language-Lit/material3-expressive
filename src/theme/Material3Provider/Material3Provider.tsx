@@ -2,7 +2,12 @@
 
 import { useMemo, type CSSProperties } from 'react'
 import { useSystemColorMode } from '../color-mode-store'
-import { Material3ThemeContext, ResolvedColorModeContext } from '../contexts'
+import {
+  Material3ThemeContext,
+  ResolvedColorModeContext,
+  THEME_SCOPE_CLASS,
+  ThemeScopeContext,
+} from '../contexts'
 import { createThemeStyleOverrides } from '../style-overrides'
 import { defaultTheme, parseTheme } from '../theme'
 import type { ResolvedColorMode } from '../theme.types'
@@ -33,26 +38,35 @@ export function Material3Provider({
     [colorMode, parsedTheme],
   )
   const mergedStyle = { ...themeStyle, ...style } as CSSProperties
-  const mergedClassName = className ? `m3e-theme ${className}` : 'm3e-theme'
+  const mergedClassName = className ? `${THEME_SCOPE_CLASS} ${className}` : THEME_SCOPE_CLASS
+  // Carries this scope to portal roots, which render outside the element below.
+  // The consumer's own `className`/`style` stay out of it: a portaled overlay
+  // reproduces the token scope, not the wrapper's layout or appearance.
+  const themeScope = useMemo(
+    () => ({ className: THEME_SCOPE_CLASS, colorMode, style: themeStyle }) as const,
+    [colorMode, themeStyle],
+  )
 
   return (
     <Material3ThemeContext.Provider value={parsedTheme}>
       <ResolvedColorModeContext.Provider value={resolvedMode}>
-        <div
-          {...elementProps}
-          className={mergedClassName}
-          style={mergedStyle}
-          data-m3e-color-mode={colorMode}
-          data-m3e-resolved-color-mode={resolvedMode}
-          suppressHydrationWarning={
-            suppressHydrationWarning ?? (preventColorSchemeFlash && colorMode === 'system')
-          }
-        >
-          {preventColorSchemeFlash ? (
-            <script nonce={nonce} dangerouslySetInnerHTML={{ __html: initializeColorMode }} />
-          ) : null}
-          {children}
-        </div>
+        <ThemeScopeContext.Provider value={themeScope}>
+          <div
+            {...elementProps}
+            className={mergedClassName}
+            style={mergedStyle}
+            data-m3e-color-mode={colorMode}
+            data-m3e-resolved-color-mode={resolvedMode}
+            suppressHydrationWarning={
+              suppressHydrationWarning ?? (preventColorSchemeFlash && colorMode === 'system')
+            }
+          >
+            {preventColorSchemeFlash ? (
+              <script nonce={nonce} dangerouslySetInnerHTML={{ __html: initializeColorMode }} />
+            ) : null}
+            {children}
+          </div>
+        </ThemeScopeContext.Provider>
       </ResolvedColorModeContext.Provider>
     </Material3ThemeContext.Provider>
   )

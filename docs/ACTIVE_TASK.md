@@ -320,8 +320,10 @@ that to the caller's own `onClick`, which is free to set `open` to `false`.
 
 ## T34 — 1.0.2 patch release
 
-Status: active
+Status: complete
 Approved: 2026-07-22 (owner request: publish the fix to npm)
+Completed: 2026-07-22 (status flipped under T36; the evidence below already
+recorded the publication)
 
 ### Scope
 
@@ -448,3 +450,105 @@ recorded, their content moves here:
   after a push. A `check:site` assertion against the published schema would
   catch it locally; that is a real gap, deliberately left for a separate task
   rather than widened into this repair.
+
+
+---
+
+## T36 — Portaled overlays lose the theme scope
+
+Status: complete
+Approved: 2026-07-22 (owner report: menus render light in dark mode)
+Completed: 2026-07-22
+
+### Scope
+
+`Menu`, `Select`'s popup listbox, `Tooltip`, and `Snackbar` portal into
+`document.body`, which is a sibling of the provider's `.m3e-theme` element
+rather than a descendant. Every ingredient of a theme scope reaches a component
+by inheritance — the class the generated stylesheet keys its base and alias
+declarations on, the `data-m3e-color-mode` attribute its light/dark rules select
+through, and the provider's inline differences from the default theme — so a
+portaled overlay inherits none of them and resolves against `:root`, which
+carries the light scheme unconditionally as the no-JavaScript visual contract.
+
+Measured in the playground with the provider scope resolved dark:
+`--m3e-sys-color-surface-container` read `#211f26` on the provider element and
+`#f3edf7` on the portaled menu in the same document, painting
+`rgb(243, 237, 247)`.
+
+The color-mode symptom is the visible half. The same inline block carries
+density, typography, shape, motion, and component-token overrides, so under a
+custom theme a portaled overlay rendered the default theme in every domain.
+`Menu.theme.test.tsx` asserted a `container-max-width` override on the provider
+element and never on the menu meant to obey it, which is why the gap survived a
+full conformance pass.
+
+`Tooltip` and `Snackbar` paint `inverseSurface` — `neutral-20` light,
+`neutral-90` dark — so a light-looking tooltip on a dark page is correct and the
+defect read as intentional. They were rendering the light scheme's inverse: the
+right role against the wrong scheme.
+
+The repair carries the scope to the portal root through React context, so the
+nearest provider wins and a nested scope travels out with its own overlay. See
+ADR 0029 for the alternatives considered, including why the overlays are not
+portaled into the provider element instead.
+
+### Expected files
+
+- Modified: `src/theme/contexts.ts`,
+  `src/theme/Material3Provider/Material3Provider.tsx`,
+  `src/components/Menu/Menu.tsx`, `src/components/Select/Select.tsx`,
+  `src/components/Tooltip/Tooltip.tsx`, `src/components/Snackbar/Snackbar.tsx`,
+  the four matching `tests/components/*/*.theme.test.tsx`, the four matching
+  `*.conformance.md`, `docs/THEMING.md`, `docs/SPEC.md`,
+  `docs/ACTIVE_TASK.md`.
+- Added: `docs/adr/0029-portal-roots-reconstitute-the-enclosing-theme-scope.md`.
+- Also modified: `.claude/skills/run-playground/driver.mjs`, which had no way to
+  emulate the OS color preference. Headless Chromium reports `light`, so no
+  dark-mode defect was visible to the playground driver at all.
+- No CSS, token, example, or site file changes: the generated stylesheet already
+  carries every rule this needs, and the site consumes the package.
+- No export, prop type, or token value changes — `ThemeScopeContext` and
+  `usePortalThemeScope` stay internal, so `docs/component-inventory.json` is
+  unchanged.
+
+### Acceptance checks
+
+- With the provider resolved dark, a portaled `Menu`, `Select` listbox,
+  `Tooltip`, and `Snackbar` each resolve their container role against the dark
+  scheme in a real browser, not just in the DOM contract.
+- A custom theme's component-token override reaches the portal root.
+- An overlay opened inside a nested provider carries the *nested* scope.
+- Without any provider, an overlay emits neither the class nor the mode
+  attribute, so a document-level scope still governs.
+- The new tests fail against the unrepaired components, proving they are not
+  vacuous.
+- `npm run verify` passes.
+
+### Completion evidence
+
+- The browser probe that measured the defect now measures the repair, on the
+  same page with the OS preference emulated dark: the menu paints
+  `rgb(33, 31, 38)` against the provider's `#211f26`, and its label reads
+  `rgb(230, 224, 233)` — the dark scheme's `onSurface`. `Select`'s listbox
+  matches. `Tooltip` and `Snackbar` paint `rgb(230, 224, 233)` on
+  `rgb(50, 47, 53)`, the dark scheme's `inverseSurface`/`inverseOnSurface`
+  pair, inverted the correct way for the first time.
+- The four theme tests were run against the unrepaired components before the fix
+  landed: 6 failed, 15 passed. The four "no provider" cases pass in both states
+  by design — they are regression guards against emitting a scope where none was
+  asked for, not the proof.
+- 146 tests pass across the four components and the theme suite (136 before,
+  10 added).
+- `npm run verify` passes in full: 13 gates, 165 test files, 956 tests,
+  packed tarball 308,547 of 342,900 budgeted bytes, `check:site` at 32
+  conformant components.
+
+### Not done
+
+- The rendering audit was not re-run. It needs a real Chromium and this change
+  alters no geometry, elevation, or state layer — only which scope a portal root
+  resolves its custom properties against. The playground probe above covers the
+  color question it would have answered.
+- No release. The registry still holds `1.0.2`; publishing this repair is a
+  separate task, the same separation T33 and T34 used.

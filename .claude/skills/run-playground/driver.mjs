@@ -157,6 +157,18 @@ const COMMANDS = {
     console.log('launched, on', page.url())
   },
 
+  // Emulates the OS color preference. The playground's provider runs
+  // `colorMode="system"`, so this is what makes its scope — and the generated
+  // `prefers-color-scheme` rules — actually resolve dark, without editing
+  // `playground/src/main.tsx`. Dark-mode defects are invisible otherwise:
+  // headless Chromium reports `light` by default.
+  async colorscheme(value) {
+    if (!page) return console.log('ERROR: launch first')
+    const scheme = value === 'dark' ? 'dark' : 'light'
+    await page.emulateMedia({ colorScheme: scheme })
+    console.log('color scheme:', scheme)
+  },
+
   // Screenshots one `<component>-example` section (the convention every
   // playground/examples/<Name>.example.tsx follows) instead of the whole
   // page. Pass the lowercase component name, e.g. `section checkbox`.

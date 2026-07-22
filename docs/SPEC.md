@@ -623,6 +623,7 @@ important design choice must be resolved at its boundary.
 | T30 | 1.0.1 patch release | The T29 `FabMenu` repair released as `1.0.1`; no export, prop, token, or dependency change from `1.0.0` |
 | T33 | Modal drawer scrim dismissal | `NavigationDrawer`'s modal variant dismissed on a scrim click, closing a gap between its documented contract and its behavior (ADR 0020, amended) |
 | T34 | 1.0.2 patch release | The T33 drawer repair and the never-published T29 `FabMenu` repair released together as `1.0.2`; no export, prop, token, or dependency change from `1.0.0` |
+| T36 | Portal roots carry the theme scope | `Menu`, `Select`, `Tooltip` and `Snackbar` portal into `document.body` and inherited no scope from the provider element; each now reconstitutes it, so color mode, custom themes and nested scopes reach a portaled overlay (ADR 0029) |
 
 ## 15. Definition of project completion
 
