@@ -310,6 +310,71 @@ that to the caller's own `onClick`, which is free to set `open` to `false`.
 ### Not done
 
 - No release. This ships to consumers only once a patch is cut, the same
-  separation T29 and T30 used; the version is still `1.0.1`.
+  separation T29 and T30 used; the version is still `1.0.1`. **Superseded by
+  T34**, which cuts that patch.
 - The rendering audit was not re-run. It needs a real Chromium and this change
   alters no geometry, elevation, or state layer — only an event handler.
+
+
+---
+
+## T34 — 1.0.2 patch release
+
+Status: active
+Approved: 2026-07-22 (owner request: publish the fix to npm)
+
+### Scope
+
+Prepare the T33 `NavigationDrawer` repair for the registry.
+
+The audit that motivated the version number: `npm view
+@language-lit/material3-expressive versions` reports `1.0.0-next.0` and `1.0.0`
+only. `1.0.1` was prepared under T30, recorded "Registry publication: not
+performed", and no publish ever followed — but its `v1.0.1` tag *was* pushed to
+`origin` at `13d9449`. So the registry is a full patch behind what the
+repository believes it shipped, and the T29 `FabMenu` repair has never reached a
+consumer either.
+
+Republishing the current tree as `1.0.1` would place content in the registry
+that the already-pushed tag does not describe. The release moves to `1.0.2`
+instead; `1.0.1` stays a version that never existed on npm, and `1.0.2` carries
+both patches. A consumer upgrading from `1.0.0` gets the `FabMenu` elevation
+repair as well as the drawer one.
+
+No export, prop, token, or dependency changes.
+
+### Expected files
+
+- Modified: `package.json`, `scripts/check-release.mjs` (its `releaseVersion`
+  constant gates the version and must move in step), `docs/RELEASE_NOTES.md`,
+  `docs/RELEASE_READINESS.md`, `docs/ACTIVE_TASK.md`, `docs/SPEC.md`.
+- No file under `src/`, `tests/`, `playground/`, or `site/` changes. This task
+  alters no behavior.
+
+### Acceptance checks
+
+- `npm run verify` passes at `1.0.2`, including `check:release`.
+- The readiness report carries the three strings the release gate matches for
+  `1.0.2`.
+- The release notes state plainly that `1.0.1` was never published and that
+  `1.0.2` carries both patches, so the gap in the registry's version sequence
+  is explained rather than silent.
+- Publication and the `v1.0.2` tag are performed by the owner, not from here.
+
+### Completion evidence
+
+- `npm run verify` passes in full at `1.0.2`: 13 gates, 165 test files, 946
+  tests, `check:release` green against the new constant, packed tarball 306,970
+  of 342,900 budgeted bytes, `check:site` at 32 conformant components.
+
+### Not done
+
+- **The package is not published.** `npm publish`, and the `v1.0.2` tag that
+  follows it, are the owner's to run: publication is effectively irreversible
+  (npm's unpublish window is 72 hours and closes entirely once a dependent
+  exists). The working tree is prepared and verified, nothing more.
+- `npm whoami` returned 401 at audit time, so the publishing session will need
+  `npm login` first.
+- After publishing, the `1.0.2` readiness entry should record it. The release
+  gate matches the substring `Registry publication: not performed`, so append
+  to that line rather than replacing it — the `1.0.0` entry shows the pattern.

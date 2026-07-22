@@ -622,6 +622,7 @@ important design choice must be resolved at its boundary.
 | T29 | Expressive rendering audit | Browser audit of how the components paint; `FabMenu` elevation clip repaired, and a rendering gate added for defects jsdom cannot see |
 | T30 | 1.0.1 patch release | The T29 `FabMenu` repair released as `1.0.1`; no export, prop, token, or dependency change from `1.0.0` |
 | T33 | Modal drawer scrim dismissal | `NavigationDrawer`'s modal variant dismissed on a scrim click, closing a gap between its documented contract and its behavior (ADR 0020, amended) |
+| T34 | 1.0.2 patch release | The T33 drawer repair and the never-published T29 `FabMenu` repair released together as `1.0.2`; no export, prop, token, or dependency change from `1.0.0` |
 
 ## 15. Definition of project completion
 

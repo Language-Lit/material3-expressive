@@ -1,11 +1,74 @@
 # Release-readiness audit
 
+## 1.0.2 — 2026-07-22
+
+Audit date: 2026-07-22  
+Release: `@language-lit/material3-expressive@1.0.2`  
+Rollback: `@language-lit/material3-expressive@0.3.0` (tag `v0.3.0`)  
+Registry publication: not performed
+
+### Recommendation
+
+**GO for a separately owner-approved `1.0.2` release.** This is a patch, not a
+cutover: the public surface is byte-for-byte identical to `1.0.0` — same 32
+conformant components, same exports, same tokens, same dependency-free package.
+
+The version skips `1.0.1` deliberately. `npm view` reports the registry holds
+only `1.0.0-next.0` and `1.0.0`: the `1.0.1` audit below recorded
+"Registry publication: not performed" and no publish ever followed, while the
+`v1.0.1` tag was pushed to `origin` at `13d9449`. Republishing that tree as
+`1.0.1` would put content in the registry that the pushed tag does not
+describe, so the release moves forward instead and `1.0.1` remains a version
+that never existed on npm. `1.0.2` therefore ships two patches, not one — a
+consumer on `1.0.0` receives the `FabMenu` repair as well.
+
+Publication and any git-tag push remain a separate owner-approved step outside
+this audit.
+
+### What changed since 1.0.0
+
+- `NavigationDrawer`: the `'modal'` variant now dismisses on a scrim click. It
+  previously wired `showModal()`/`close()` and a native `close` listener but no
+  outside-click handling, so Escape was its only dismissal path and a pointer
+  user who opened it was stuck. The repair ports `Dialog`'s existing manual
+  light-dismiss hit test — native `<dialog>` has no automatic outside-click
+  close at this library's browser floor. It closes a gap against two records
+  that already specified the behavior: the component's documented contract and
+  the pinned source's own clickable scrim (ADR 0020, amended; T33). Three
+  regression tests were added, one of which was confirmed to fail against the
+  unrepaired component.
+- `FabMenu`, `scripts/audit-rendering.mjs`, and the documentation site: as
+  described in the `1.0.1` audit below, all carried forward unpublished.
+- No export, prop type, token value, or dependency changed.
+
+### Automated verification
+
+| Gate | Command | Result |
+| --- | --- | --- |
+| Aggregate verification | `npm run verify` | Pass: 13 gates |
+| Unit, interaction, accessibility, SSR, hydration, CSS, and theme tests | `npm run test` (inside aggregate) | Pass: 165 files, 946 tests (+3 `NavigationDrawer` regression tests since `1.0.1`) |
+| Architecture, browser, CSS, and token checks | aggregate gates | Pass: 32 inventory entries, 35 stylesheets, 1,493 properties |
+| Release artifact and rollback | `npm run check:release` (inside aggregate) | Pass: 32 components; `1.0.2` and `v0.3.0` rollback verified |
+| Bundle budgets | `npm run check:bundle-size` (inside aggregate) | Pass: packed package 306,970 / 342,900 bytes; every budget green |
+| Packed consumers | `npm run check:consumer-fixtures` (inside aggregate) | Pass: Vite and Next SSR/static against the packed tarball |
+| Documentation site structure | `npm run check:site` (inside aggregate) | Pass: 32 conformant components, 31 demos, export map respected |
+
+### Remaining boundaries
+
+Unchanged from `1.0.0` — see below.
+
+- The rendering audit (`npm run audit:rendering`) was not re-run for this
+  release. It needs a real Chromium, and T33 changed an event handler only —
+  no geometry, elevation, or state layer moved.
+
 ## 1.0.1 — 2026-07-21
 
 Audit date: 2026-07-21  
 Release: `@language-lit/material3-expressive@1.0.1`  
 Rollback: `@language-lit/material3-expressive@0.3.0` (tag `v0.3.0`)  
-Registry publication: not performed
+Registry publication: not performed — and never performed afterwards. The
+`v1.0.1` tag was pushed, but the version was never published; its contents ship
+in `1.0.2` above.
 
 ### Recommendation
 

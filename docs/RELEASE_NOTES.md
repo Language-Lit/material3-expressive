@@ -1,9 +1,48 @@
 # Release notes
 
-## 1.0.1 — 2026-07-21
+## 1.0.2 — 2026-07-22
 
 Status: prepared patch release. No export, prop, token, or dependency change;
 the public surface is identical to `1.0.0`.
+
+`1.0.1` was prepared and tagged but never reached the registry, so `1.0.2`
+carries **both** patches. A consumer upgrading from `1.0.0` receives the
+`FabMenu` repair below as well as the `NavigationDrawer` one.
+
+### Fixed
+
+- `NavigationDrawer`: the `'modal'` variant could not be closed by pointer. It
+  wired `showModal()`/`close()` and a native `close` listener but no
+  outside-click handling, and it renders no close affordance of its own, so
+  Escape was its only dismissal path — with nothing on screen saying so. A
+  click on the scrim now closes it, matching both the component's own
+  documented contract ("Escape/outside-click dismissal") and the pinned
+  source's clickable scrim. Dismissal is unconditional; a consumer that needs
+  to suppress it can `preventDefault()` in `onClick`, which runs first.
+- `FabMenu` (carried from the unpublished `1.0.1`): an item's elevation shadow
+  was clipped to a rectangle by `.m3e-fab-menu__item-slot { overflow: hidden }`,
+  so only its corners survived and a rounded item read as a square halo. The
+  slot no longer clips; the staged reveal animation is unchanged at default
+  motion, under `prefers-reduced-motion: reduce`, and under
+  `forced-colors: active`.
+
+### Added
+
+Carried from the unpublished `1.0.1`: `scripts/audit-rendering.mjs`
+(`npm run audit:rendering`) and the in-repository documentation site at
+`m3e.language-lit.com` (ADR 0028). Neither is part of the published package.
+
+### Verification target
+
+Same as `1.0.0`: `npm run check:docs` and `npm run verify`. See
+[RELEASE_READINESS.md](RELEASE_READINESS.md) for the `1.0.2` audit.
+
+## 1.0.1 — 2026-07-21
+
+Status: prepared but never published. The `v1.0.1` tag exists on `main`, but the
+version was never pushed to the registry — the registry went `1.0.0` straight to
+`1.0.2`, which carries this patch's contents. No export, prop, token, or
+dependency change; the public surface is identical to `1.0.0`.
 
 ### Fixed
 
