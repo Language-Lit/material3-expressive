@@ -53,6 +53,13 @@ if (!floatingActionButtonRegistration || floatingActionButtonRegistration.task !
   errors.push('Default component-token registry is missing the sourced T09 FloatingActionButton registration')
 }
 
+const chipRegistration = api.defaultTokenSet.componentTokens.find(
+  (registration) => registration.component === 'chip',
+)
+if (!chipRegistration || chipRegistration.task !== 'T38') {
+  errors.push('Default component-token registry is missing the sourced T38 Chip registration')
+}
+
 const checkboxRegistration = api.defaultTokenSet.componentTokens.find(
   (registration) => registration.component === 'checkbox',
 )

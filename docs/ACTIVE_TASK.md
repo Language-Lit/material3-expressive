@@ -620,3 +620,146 @@ No export, prop, token, or dependency changes. `ThemeScopeContext` and
   the step was handed back to the owner rather than worked around. The token
   must still be treated as disclosed and revoked, exactly as T34's follow-up
   records.
+
+
+---
+
+## T38 — Material 3 Expressive Chip family
+
+Status: complete
+Approved: 2026-07-23 (owner request: expand the supported catalogue one
+component task at a time, with every original-source behavior accounted for)
+Completed: 2026-07-23
+
+### Scope
+
+Add one public, discriminated `Chip` component covering all four Material chip
+purposes from the pinned AndroidX implementation:
+
+- assist;
+- filter;
+- input;
+- suggestion.
+
+The flat and elevated treatments are supported wherever the pinned source
+defines them: assist, filter, and suggestion have both; input is flat only.
+Filter and input chips support controlled and uncontrolled selection. All chips
+render one native `<button type="button">`, with selectable chips exposing
+their state through `aria-pressed`; this translates the source's button and
+selection behavior onto native web activation, focus, disabled, form, and
+event-cancellation semantics.
+
+This task is source-completeness gated. The conformance record and ADR must
+inventory every non-deprecated public composable, defaults object, slot,
+state-resolution path, geometry value, shape, color, outline, elevation,
+typography role, arrangement rule, and motion used by:
+
+- AndroidX `Chip.kt` at revision
+  `225f50d42bf0adeb2abf4b6109befb5ab6ce4efc`;
+- `AssistChipTokens.kt`, `FilterChipTokens.kt`, `InputChipTokens.kt`,
+  `SuggestionChipTokens.kt`, and the expressive `ChipsTokens.kt` at that same
+  revision;
+- the pinned AndroidX `ChipTest.kt` and `ChipScreenshotTest.kt`.
+
+Each source item must be marked implemented, adapted to a named native-web
+contract, or excluded with a concrete reason. Deprecated binary-compatibility
+overloads, Compose `Modifier`/`InteractionSource` plumbing, arbitrary
+per-instance token objects, and Compose-only layout machinery are not public
+React APIs, but their observable output remains in scope. Generated token names
+that the pinned implementation never reads are recorded as unread rather than
+registered as fictitious runtime behavior.
+
+The observable contract includes:
+
+- the 32px visual container inside a minimum 48px interaction target;
+- label, leading-icon, trailing-icon, and input-avatar slots, with avatar
+  precedence and sourced 18px/24px slot geometry;
+- slot-aware 8px/4px spacing and logical 4px/8px input-chip edge padding;
+- flat outlines, selected outline removal, elevated containers, all enabled,
+  disabled, selected, hover, focus, press, and available dragged elevation
+  values;
+- input-avatar clipping and disabled opacity;
+- the expressive unselected, selected, and pressed shape set for filter/input
+  chips, including immediate reduced-motion outcomes;
+- retained leading/trailing content during selectable-slot exit motion;
+- long-label/trailing-slot containment, intrinsic sizing, large-text growth,
+  RTL, forced-colors, SSR, and hydration behavior.
+
+No runtime dependency or package export path changes. Publication is a separate
+task.
+
+### Expected files
+
+- Added: `src/components/Chip/Chip.tsx`,
+  `src/components/Chip/Chip.types.ts`, `src/components/Chip/Chip.css`,
+  `src/components/Chip/index.ts`, `src/tokens/defaults/chip.ts`,
+  `docs/components/Chip.md`, `playground/examples/Chip.example.tsx`,
+  the mirrored `tests/components/Chip/*` suite and conformance record, and a
+  Chip API/source-translation ADR.
+- Modified: `src/components/index.ts`, `src/styles/styles.css`,
+  `src/tokens/defaults/index.ts`, `docs/component-inventory.json`,
+  `docs/SPEC.md`, `docs/ARCHITECTURE.md`, `docs/ACTIVE_TASK.md`, and the
+  relevant token, documentation, playground, site-demo, rendering-audit, and
+  bundle-budget registries.
+- Generated documentation and site-demo artifacts are regenerated with their
+  documented scripts rather than hand-edited.
+
+### Acceptance checks
+
+- The source-completeness ledger accounts for every item named above and is
+  enforced by focused token/CSS/type/behavior tests rather than prose alone.
+- All four chip purposes, supported treatments, slots, selection modes, and
+  state combinations render their sourced output; TypeScript rejects elevated
+  input chips and selection props on momentary chips.
+- Native click, Enter/Space activation, focus, disabled, cancellation, form
+  safety, ref forwarding, controlled/uncontrolled selection, and accessible
+  naming/state behavior pass user-event and accessibility tests.
+- Light/dark, custom-token scope, RTL, forced-colors, reduced-motion, large
+  text, SSR, hydration, long-label, intrinsic-size, and slot-transition cases
+  pass.
+- Component-token source metadata pins the exact AndroidX revision and access
+  date; no raw palette, shape, elevation, or motion value is hidden in
+  component CSS when a source or system token exists.
+- The public inventory, documentation page, example, named exports, complete
+  stylesheet, token-only stylesheet, and built package agree.
+- Narrow component, token, CSS, documentation, architecture, type, and
+  production-build checks pass while iterating.
+- `npm run verify` passes.
+- Because this task changes geometry, elevation, and state layers:
+
+  ```bash
+  npm run build && npm run playground:build
+  M3E_CHROMIUM_PATH=<chromium binary> npm run audit:rendering
+  ```
+
+  passes in a real browser, with any allowlist addition carrying a specific
+  Material-contract reason.
+
+### Completion evidence
+
+- The executable source ledger accounts for all 19 current public
+  composable/default/value-class entries, all 14 deprecated compatibility
+  entries, eight pinned implementation anomalies, all 220 generated token
+  declarations (118 read, 102 deliberately unread), all 59 pinned `ChipTest`
+  cases, and all 34 pinned `ChipScreenshotTest` cases.
+- The mirrored Chip suite passes 44 focused tests across behavior,
+  accessibility, CSS, types, themes, SSR/hydration, and source completeness.
+  The aggregate suite passes 171 files and 1,000 tests.
+- `npm run verify` passes all 13 gates: source typecheck, tests, package and
+  playground production builds, architecture, docs, browser floor, CSS,
+  tokens, release contract, bundle budgets, packed Vite/Next consumer
+  fixtures, and site consistency.
+- The required real-browser audit passes in Chrome after a production package
+  and playground build. T38 strengthened that gate to check Chip's 48px target,
+  32px visual minimum, centering, 18px icon and 24px avatar slots, collapsed
+  absent slots, and constrained-label/trailing-slot non-overlap in addition to
+  the existing shadow-clip and target-size checks. No allowlist was added.
+- The documentation site production build passes and statically generates all
+  50 routes, including the new Chip contract page and live example. The
+  inventory-derived matrix now reports 33 conformant components and the site
+  registry 32 demos.
+- Existing bundle ceilings remain sufficient; the packed package is 321,754 /
+  342,900 bytes and the full stylesheet is 401,858 / 417,600 bytes. No budget
+  baseline was loosened.
+- Publication is outside T38. The working package remains `1.0.3`; a release
+  version and registry action require a separately approved task.

@@ -1,0 +1,666 @@
+@layer m3e.components {
+  .m3e-chip {
+    --m3e-chip-container-color: transparent;
+    --m3e-chip-label-color: inherit;
+    --m3e-chip-leading-color: var(--m3e-chip-label-color);
+    --m3e-chip-trailing-color: var(--m3e-chip-label-color);
+    --m3e-chip-outline-color: transparent;
+    --m3e-chip-outline-width: 0px;
+    --m3e-chip-container-shadow: var(--m3e-sys-elevation-level0-shadow);
+    --m3e-chip-hover-container-shadow: var(--m3e-chip-container-shadow);
+    --m3e-chip-focus-container-shadow: var(--m3e-chip-container-shadow);
+    --m3e-chip-pressed-container-shadow: var(--m3e-chip-container-shadow);
+    --m3e-chip-dragged-container-shadow: var(--m3e-chip-container-shadow);
+    --m3e-chip-disabled-container-color: transparent;
+    --m3e-chip-disabled-container-opacity: 0;
+    --m3e-chip-disabled-content-color: inherit;
+    --m3e-chip-disabled-content-opacity: var(--m3e-sys-state-disabled);
+    --m3e-chip-disabled-leading-color: var(--m3e-chip-disabled-content-color);
+    --m3e-chip-disabled-leading-opacity: var(--m3e-chip-disabled-content-opacity);
+    --m3e-chip-disabled-trailing-color: var(--m3e-chip-disabled-content-color);
+    --m3e-chip-disabled-trailing-opacity: var(--m3e-chip-disabled-content-opacity);
+    --m3e-chip-disabled-outline-color: transparent;
+    --m3e-chip-disabled-outline-opacity: 0;
+    --m3e-chip-disabled-container-shadow: var(--m3e-sys-elevation-level0-shadow);
+    --m3e-chip-padding-start: var(--m3e-comp-chip-content-padding);
+    --m3e-chip-padding-end: var(--m3e-comp-chip-content-padding);
+    --m3e-chip-leading-spacing: var(--m3e-comp-chip-horizontal-spacing);
+    --m3e-chip-trailing-spacing: var(--m3e-comp-chip-horizontal-spacing);
+
+    align-items: center;
+    appearance: none;
+    background: transparent;
+    border: 0;
+    color: inherit;
+    cursor: pointer;
+    display: inline-grid;
+    font: inherit;
+    inline-size: fit-content;
+    justify-items: center;
+    margin: 0;
+    max-inline-size: 100%;
+    min-block-size: var(--m3e-comp-chip-minimum-interactive-target);
+    min-inline-size: var(--m3e-comp-chip-minimum-interactive-target);
+    padding: 0;
+    text-align: start;
+    touch-action: manipulation;
+    user-select: none;
+    vertical-align: middle;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .m3e-chip[data-m3e-selectable="true"] {
+    max-inline-size: min(100%, var(--m3e-comp-chip-maximum-width));
+  }
+
+  .m3e-chip__container {
+    align-items: center;
+    background-color: var(--m3e-chip-container-color);
+    border-color: var(--m3e-chip-outline-color);
+    border-radius: var(--m3e-comp-chip-container-shape);
+    border-style: solid;
+    border-width: var(--m3e-chip-outline-width);
+    box-shadow: var(--m3e-chip-container-shadow);
+    box-sizing: border-box;
+    color: var(--m3e-chip-label-color);
+    display: flex;
+    inline-size: fit-content;
+    max-inline-size: 100%;
+    min-block-size: var(--m3e-comp-chip-container-height);
+    min-inline-size: 0;
+    overflow: hidden;
+    overflow: clip;
+    padding-inline-end: var(--m3e-chip-padding-end);
+    padding-inline-start: var(--m3e-chip-padding-start);
+    position: relative;
+    transition:
+      background-color var(--m3e-sys-motion-expressive-default-effects-duration)
+        var(--m3e-sys-motion-expressive-default-effects-easing),
+      border-color var(--m3e-sys-motion-expressive-default-effects-duration)
+        var(--m3e-sys-motion-expressive-default-effects-easing),
+      border-radius var(--m3e-sys-motion-expressive-fast-spatial-duration)
+        var(--m3e-sys-motion-expressive-fast-spatial-easing),
+      box-shadow var(--m3e-sys-motion-expressive-default-effects-duration)
+        var(--m3e-sys-motion-expressive-default-effects-easing),
+      color var(--m3e-sys-motion-expressive-default-effects-duration)
+        var(--m3e-sys-motion-expressive-default-effects-easing);
+  }
+
+  .m3e-chip__container::before {
+    background: currentColor;
+    border-radius: inherit;
+    content: "";
+    inset: 0;
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    transition: opacity var(--m3e-sys-motion-expressive-fast-effects-duration)
+      var(--m3e-sys-motion-expressive-fast-effects-easing);
+  }
+
+  .m3e-chip__label,
+  .m3e-chip__slot {
+    position: relative;
+  }
+
+  .m3e-chip__label {
+    flex: 1 1 auto;
+    min-inline-size: 0;
+    overflow-wrap: anywhere;
+    text-align: start;
+  }
+
+  .m3e-chip__slot {
+    align-items: center;
+    block-size: var(--m3e-comp-chip-icon-size);
+    display: inline-flex;
+    flex: none;
+    font-size: var(--m3e-comp-chip-icon-size);
+    inline-size: var(--m3e-comp-chip-icon-size);
+    justify-content: center;
+    opacity: 1;
+    overflow: hidden;
+  }
+
+  .m3e-chip__slot[data-m3e-position="leading"] {
+    color: var(--m3e-chip-leading-color);
+    margin-inline-end: var(--m3e-chip-leading-spacing);
+  }
+
+  .m3e-chip__slot[data-m3e-position="trailing"] {
+    color: var(--m3e-chip-trailing-color);
+    margin-inline-start: var(--m3e-chip-trailing-spacing);
+  }
+
+  .m3e-chip__slot[data-m3e-slot="avatar"] {
+    block-size: var(--m3e-comp-chip-avatar-size);
+    border-radius: var(--m3e-comp-chip-avatar-shape);
+    inline-size: var(--m3e-comp-chip-avatar-size);
+  }
+
+  .m3e-chip__slot > .m3e-icon {
+    --m3e-icon-size: var(--m3e-comp-chip-icon-size);
+  }
+
+  .m3e-chip__slot > svg,
+  .m3e-chip__slot > img {
+    block-size: 100%;
+    inline-size: 100%;
+  }
+
+  /* The source always arranges three children. A missing outer slot therefore
+     keeps zero width but still contributes its adjacent spacing. */
+  .m3e-chip__slot[data-m3e-visible="false"] {
+    inline-size: 0;
+    opacity: 0;
+  }
+
+  /* Only selectable chips use AnimatedVisibility. The computed transition on
+     the destination state gives the source's slow-in/fast-out asymmetry. */
+  .m3e-chip[data-m3e-selectable="true"] .m3e-chip__slot {
+    transition:
+      inline-size var(--m3e-sys-motion-expressive-fast-spatial-duration)
+        var(--m3e-sys-motion-expressive-fast-spatial-easing),
+      opacity var(--m3e-sys-motion-expressive-slow-effects-duration)
+        var(--m3e-sys-motion-expressive-slow-effects-easing);
+  }
+
+  .m3e-chip[data-m3e-selectable="true"]
+    .m3e-chip__slot[data-m3e-visible="false"] {
+    transition:
+      inline-size var(--m3e-sys-motion-expressive-default-effects-duration)
+        var(--m3e-sys-motion-expressive-default-effects-easing),
+      opacity var(--m3e-sys-motion-expressive-fast-effects-duration)
+        var(--m3e-sys-motion-expressive-fast-effects-easing);
+  }
+
+  .m3e-chip[data-m3e-selectable="true"][data-m3e-shape="expressive"]
+    .m3e-chip__slot,
+  .m3e-chip[data-m3e-selectable="true"][data-m3e-shape="expressive"]
+    .m3e-chip__slot[data-m3e-visible="false"] {
+    transition:
+      inline-size var(--m3e-sys-motion-expressive-fast-spatial-duration)
+        var(--m3e-sys-motion-expressive-fast-spatial-easing),
+      opacity var(--m3e-sys-motion-expressive-default-effects-duration)
+        var(--m3e-sys-motion-expressive-default-effects-easing);
+  }
+
+  .m3e-chip[data-m3e-selectable="false"] .m3e-chip__slot {
+    transition: none;
+  }
+
+  /* Expressive overloads use compact arrangement only when an outer slot
+     exists. With trailing only, ChipArrangement intentionally uses its
+     second spacing value before the label too. */
+  .m3e-chip[data-m3e-shape="expressive"][data-m3e-has-leading="true"] {
+    --m3e-chip-leading-spacing: var(--m3e-comp-chip-compact-horizontal-spacing);
+  }
+
+  .m3e-chip[data-m3e-shape="expressive"][data-m3e-has-trailing="true"] {
+    --m3e-chip-leading-spacing: var(--m3e-comp-chip-compact-horizontal-spacing);
+    --m3e-chip-trailing-spacing: var(--m3e-comp-chip-compact-horizontal-spacing);
+  }
+
+  .m3e-chip[data-m3e-kind="input"] {
+    --m3e-chip-padding-start: var(--m3e-comp-chip-input-padding-start);
+    --m3e-chip-padding-end: var(--m3e-comp-chip-input-padding-end);
+  }
+
+  .m3e-chip[data-m3e-kind="input"][data-m3e-has-leading="true"] {
+    --m3e-chip-padding-start: var(--m3e-comp-chip-input-leading-padding-start);
+  }
+
+  .m3e-chip[data-m3e-kind="input"][data-m3e-has-avatar="true"] {
+    --m3e-chip-padding-start: var(--m3e-comp-chip-input-avatar-padding-start);
+  }
+
+  .m3e-chip[data-m3e-kind="input"][data-m3e-has-trailing="true"] {
+    --m3e-chip-padding-end: var(--m3e-comp-chip-input-trailing-padding-end);
+  }
+
+  .m3e-chip[data-m3e-shape="expressive"] .m3e-chip__container {
+    border-radius: var(--m3e-comp-chip-expressive-unselected-shape);
+  }
+
+  .m3e-chip[data-m3e-shape="expressive"][data-m3e-selected="true"]
+    .m3e-chip__container {
+    border-radius: var(--m3e-comp-chip-expressive-selected-shape);
+  }
+
+  .m3e-chip[data-m3e-shape="expressive"]:active:not(:disabled)
+    .m3e-chip__container {
+    border-radius: var(--m3e-comp-chip-expressive-pressed-shape);
+  }
+
+  .m3e-chip:focus-visible {
+    outline: none;
+  }
+
+  .m3e-chip:focus-visible .m3e-chip__container {
+    box-shadow: var(--m3e-chip-focus-container-shadow);
+    outline-color: var(--m3e-comp-chip-focus-ring-color);
+    outline-offset: var(--m3e-comp-chip-focus-ring-offset);
+    outline-style: solid;
+    outline-width: var(--m3e-comp-chip-focus-ring-width);
+  }
+
+  .m3e-chip:focus-visible:not(:disabled) .m3e-chip__container::before {
+    opacity: var(--m3e-sys-state-focus);
+  }
+
+  .m3e-chip:active:not(:disabled) .m3e-chip__container {
+    box-shadow: var(--m3e-chip-pressed-container-shadow);
+  }
+
+  .m3e-chip:active:not(:disabled) .m3e-chip__container::before {
+    opacity: var(--m3e-sys-state-pressed);
+  }
+
+  .m3e-chip[data-m3e-dragged="true"]:not(:disabled) .m3e-chip__container {
+    box-shadow: var(--m3e-chip-dragged-container-shadow);
+  }
+
+  @media (hover: hover) {
+    .m3e-chip:hover:not(:disabled) .m3e-chip__container {
+      box-shadow: var(--m3e-chip-hover-container-shadow);
+    }
+
+    .m3e-chip:hover:not(:disabled) .m3e-chip__container::before {
+      opacity: var(--m3e-sys-state-hover);
+    }
+
+    .m3e-chip:active:not(:disabled) .m3e-chip__container {
+      box-shadow: var(--m3e-chip-pressed-container-shadow);
+    }
+
+    .m3e-chip:active:not(:disabled) .m3e-chip__container::before {
+      opacity: var(--m3e-sys-state-pressed);
+    }
+
+    .m3e-chip[data-m3e-dragged="true"]:not(:disabled) .m3e-chip__container {
+      box-shadow: var(--m3e-chip-dragged-container-shadow);
+    }
+  }
+
+  .m3e-chip:disabled {
+    cursor: default;
+  }
+
+  .m3e-chip:disabled .m3e-chip__container {
+    background-color: color-mix(
+      in srgb,
+      var(--m3e-chip-disabled-container-color)
+        calc(var(--m3e-chip-disabled-container-opacity) * 100%),
+      transparent
+    );
+    border-color: color-mix(
+      in srgb,
+      var(--m3e-chip-disabled-outline-color)
+        calc(var(--m3e-chip-disabled-outline-opacity) * 100%),
+      transparent
+    );
+    box-shadow: var(--m3e-chip-disabled-container-shadow);
+    color: var(--m3e-chip-disabled-content-color);
+  }
+
+  .m3e-chip:disabled .m3e-chip__label,
+  .m3e-chip:disabled .m3e-chip__slot[data-m3e-visible="true"] {
+    opacity: var(--m3e-chip-disabled-content-opacity);
+  }
+
+  .m3e-chip:disabled .m3e-chip__slot[data-m3e-position="leading"] {
+    color: var(--m3e-chip-disabled-leading-color);
+    opacity: var(--m3e-chip-disabled-leading-opacity);
+  }
+
+  .m3e-chip:disabled .m3e-chip__slot[data-m3e-position="trailing"] {
+    color: var(--m3e-chip-disabled-trailing-color);
+    opacity: var(--m3e-chip-disabled-trailing-opacity);
+  }
+
+  .m3e-chip:disabled .m3e-chip__slot[data-m3e-slot="avatar"] {
+    opacity: var(--m3e-comp-chip-input-disabled-avatar-opacity);
+  }
+
+  .m3e-chip[data-m3e-kind="assist"] {
+    --m3e-chip-label-color: var(--m3e-comp-chip-assist-label-color);
+    --m3e-chip-leading-color: var(--m3e-comp-chip-assist-icon-color);
+    --m3e-chip-trailing-color: var(--m3e-comp-chip-assist-icon-color);
+    --m3e-chip-disabled-content-color: var(--m3e-comp-chip-assist-disabled-label-color);
+    --m3e-chip-disabled-content-opacity: var(
+      --m3e-comp-chip-assist-disabled-label-opacity
+    );
+    --m3e-chip-disabled-leading-color: var(--m3e-comp-chip-assist-disabled-icon-color);
+    --m3e-chip-disabled-leading-opacity: var(
+      --m3e-comp-chip-assist-disabled-icon-opacity
+    );
+    --m3e-chip-disabled-trailing-color: var(--m3e-comp-chip-assist-disabled-icon-color);
+    --m3e-chip-disabled-trailing-opacity: var(
+      --m3e-comp-chip-assist-disabled-icon-opacity
+    );
+    --m3e-chip-dragged-container-shadow: var(--m3e-comp-chip-assist-flat-dragged-shadow);
+  }
+
+  .m3e-chip[data-m3e-kind="assist"][data-m3e-variant="flat"] {
+    --m3e-chip-outline-color: var(--m3e-comp-chip-assist-flat-outline-color);
+    --m3e-chip-outline-width: var(--m3e-comp-chip-assist-flat-outline-width);
+    --m3e-chip-container-shadow: var(--m3e-comp-chip-assist-flat-shadow);
+    --m3e-chip-disabled-outline-color: var(
+      --m3e-comp-chip-assist-flat-disabled-outline-color
+    );
+    --m3e-chip-disabled-outline-opacity: var(
+      --m3e-comp-chip-assist-flat-disabled-outline-opacity
+    );
+  }
+
+  .m3e-chip[data-m3e-kind="assist"][data-m3e-variant="elevated"] {
+    --m3e-chip-container-color: var(--m3e-comp-chip-assist-elevated-container-color);
+    --m3e-chip-container-shadow: var(--m3e-comp-chip-assist-elevated-shadow);
+    --m3e-chip-hover-container-shadow: var(
+      --m3e-comp-chip-assist-elevated-hover-shadow
+    );
+    --m3e-chip-focus-container-shadow: var(
+      --m3e-comp-chip-assist-elevated-focus-shadow
+    );
+    --m3e-chip-pressed-container-shadow: var(
+      --m3e-comp-chip-assist-elevated-pressed-shadow
+    );
+    --m3e-chip-dragged-container-shadow: var(
+      --m3e-comp-chip-assist-elevated-dragged-shadow
+    );
+    --m3e-chip-disabled-container-color: var(
+      --m3e-comp-chip-assist-elevated-disabled-container-color
+    );
+    --m3e-chip-disabled-container-opacity: var(
+      --m3e-comp-chip-assist-elevated-disabled-container-opacity
+    );
+    --m3e-chip-disabled-container-shadow: var(
+      --m3e-comp-chip-assist-elevated-disabled-shadow
+    );
+  }
+
+  .m3e-chip[data-m3e-kind="filter"] {
+    --m3e-chip-label-color: var(--m3e-comp-chip-filter-unselected-label-color);
+    --m3e-chip-leading-color: var(
+      --m3e-comp-chip-filter-unselected-leading-icon-color
+    );
+    --m3e-chip-trailing-color: var(
+      --m3e-comp-chip-filter-unselected-trailing-icon-color
+    );
+    --m3e-chip-disabled-content-color: var(--m3e-comp-chip-filter-disabled-label-color);
+    --m3e-chip-disabled-content-opacity: var(
+      --m3e-comp-chip-filter-disabled-label-opacity
+    );
+    --m3e-chip-disabled-leading-color: var(
+      --m3e-comp-chip-filter-disabled-leading-icon-color
+    );
+    --m3e-chip-disabled-leading-opacity: var(
+      --m3e-comp-chip-filter-disabled-leading-icon-opacity
+    );
+    --m3e-chip-disabled-trailing-color: var(
+      --m3e-comp-chip-filter-disabled-trailing-icon-color
+    );
+    --m3e-chip-disabled-trailing-opacity: var(
+      --m3e-comp-chip-filter-disabled-trailing-icon-opacity
+    );
+  }
+
+  .m3e-chip[data-m3e-kind="filter"][data-m3e-shape="expressive"] {
+    --m3e-chip-leading-color: var(
+      --m3e-comp-chip-filter-expressive-unselected-leading-icon-color
+    );
+  }
+
+  .m3e-chip[data-m3e-kind="filter"][data-m3e-selected="true"] {
+    --m3e-chip-label-color: var(--m3e-comp-chip-filter-selected-label-color);
+    --m3e-chip-leading-color: var(--m3e-comp-chip-filter-selected-leading-icon-color);
+    --m3e-chip-trailing-color: var(
+      --m3e-comp-chip-filter-selected-trailing-icon-color
+    );
+  }
+
+  .m3e-chip[data-m3e-kind="filter"][data-m3e-variant="flat"] {
+    --m3e-chip-outline-color: var(
+      --m3e-comp-chip-filter-flat-unselected-outline-color
+    );
+    --m3e-chip-outline-width: var(
+      --m3e-comp-chip-filter-flat-unselected-outline-width
+    );
+    --m3e-chip-container-shadow: var(--m3e-comp-chip-filter-flat-shadow);
+    --m3e-chip-hover-container-shadow: var(--m3e-comp-chip-filter-flat-hover-shadow);
+    --m3e-chip-focus-container-shadow: var(--m3e-comp-chip-filter-flat-focus-shadow);
+    --m3e-chip-pressed-container-shadow: var(
+      --m3e-comp-chip-filter-flat-pressed-shadow
+    );
+    --m3e-chip-dragged-container-shadow: var(
+      --m3e-comp-chip-filter-flat-dragged-shadow
+    );
+    --m3e-chip-disabled-outline-color: var(
+      --m3e-comp-chip-filter-flat-disabled-unselected-outline-color
+    );
+    --m3e-chip-disabled-outline-opacity: var(
+      --m3e-comp-chip-filter-flat-disabled-unselected-outline-opacity
+    );
+    --m3e-chip-disabled-container-shadow: var(
+      --m3e-comp-chip-filter-flat-disabled-shadow
+    );
+  }
+
+  .m3e-chip[data-m3e-kind="filter"][data-m3e-variant="flat"][data-m3e-selected="true"] {
+    --m3e-chip-container-color: var(
+      --m3e-comp-chip-filter-flat-selected-container-color
+    );
+    --m3e-chip-outline-width: var(--m3e-comp-chip-filter-flat-selected-outline-width);
+    --m3e-chip-disabled-container-color: var(
+      --m3e-comp-chip-filter-flat-disabled-selected-container-color
+    );
+    --m3e-chip-disabled-container-opacity: var(
+      --m3e-comp-chip-filter-flat-disabled-selected-container-opacity
+    );
+    --m3e-chip-disabled-outline-opacity: 0;
+  }
+
+  .m3e-chip[data-m3e-kind="filter"][data-m3e-variant="elevated"] {
+    --m3e-chip-container-color: var(
+      --m3e-comp-chip-filter-elevated-unselected-container-color
+    );
+    --m3e-chip-container-shadow: var(--m3e-comp-chip-filter-elevated-shadow);
+    --m3e-chip-hover-container-shadow: var(
+      --m3e-comp-chip-filter-elevated-hover-shadow
+    );
+    --m3e-chip-focus-container-shadow: var(
+      --m3e-comp-chip-filter-elevated-focus-shadow
+    );
+    --m3e-chip-pressed-container-shadow: var(
+      --m3e-comp-chip-filter-elevated-pressed-shadow
+    );
+    --m3e-chip-dragged-container-shadow: var(
+      --m3e-comp-chip-filter-elevated-dragged-shadow
+    );
+    --m3e-chip-disabled-container-color: var(
+      --m3e-comp-chip-filter-elevated-disabled-container-color
+    );
+    --m3e-chip-disabled-container-opacity: var(
+      --m3e-comp-chip-filter-elevated-disabled-container-opacity
+    );
+    --m3e-chip-disabled-container-shadow: var(
+      --m3e-comp-chip-filter-elevated-disabled-shadow
+    );
+    /* The elevated default uses DisabledLeadingIconOpacity for its trailing
+       icon, although a same-valued trailing opacity token exists. */
+    --m3e-chip-disabled-trailing-opacity: var(
+      --m3e-comp-chip-filter-disabled-leading-icon-opacity
+    );
+  }
+
+  .m3e-chip[data-m3e-kind="filter"][data-m3e-variant="elevated"][data-m3e-selected="true"] {
+    --m3e-chip-container-color: var(
+      --m3e-comp-chip-filter-elevated-selected-container-color
+    );
+  }
+
+  .m3e-chip[data-m3e-kind="input"] {
+    --m3e-chip-label-color: var(--m3e-comp-chip-input-unselected-label-color);
+    --m3e-chip-leading-color: var(
+      --m3e-comp-chip-input-unselected-leading-icon-color
+    );
+    --m3e-chip-trailing-color: var(
+      --m3e-comp-chip-input-unselected-trailing-icon-color
+    );
+    --m3e-chip-outline-color: var(--m3e-comp-chip-input-unselected-outline-color);
+    --m3e-chip-outline-width: var(--m3e-comp-chip-input-unselected-outline-width);
+    --m3e-chip-container-shadow: var(--m3e-comp-chip-input-shadow);
+    --m3e-chip-dragged-container-shadow: var(--m3e-comp-chip-input-dragged-shadow);
+    --m3e-chip-disabled-content-color: var(--m3e-comp-chip-input-disabled-label-color);
+    --m3e-chip-disabled-content-opacity: var(
+      --m3e-comp-chip-input-disabled-label-opacity
+    );
+    --m3e-chip-disabled-leading-color: var(
+      --m3e-comp-chip-input-disabled-leading-icon-color
+    );
+    --m3e-chip-disabled-leading-opacity: var(
+      --m3e-comp-chip-input-disabled-leading-icon-opacity
+    );
+    --m3e-chip-disabled-trailing-color: var(
+      --m3e-comp-chip-input-disabled-trailing-icon-color
+    );
+    --m3e-chip-disabled-trailing-opacity: var(
+      --m3e-comp-chip-input-disabled-trailing-icon-opacity
+    );
+    --m3e-chip-disabled-outline-color: var(
+      --m3e-comp-chip-input-disabled-unselected-outline-color
+    );
+    --m3e-chip-disabled-outline-opacity: var(
+      --m3e-comp-chip-input-disabled-unselected-outline-opacity
+    );
+  }
+
+  .m3e-chip[data-m3e-kind="input"][data-m3e-selected="true"] {
+    --m3e-chip-container-color: var(--m3e-comp-chip-input-selected-container-color);
+    --m3e-chip-label-color: var(--m3e-comp-chip-input-selected-label-color);
+    --m3e-chip-leading-color: var(--m3e-comp-chip-input-selected-leading-icon-color);
+    --m3e-chip-trailing-color: var(
+      --m3e-comp-chip-input-selected-trailing-icon-color
+    );
+    --m3e-chip-outline-width: var(--m3e-comp-chip-input-selected-outline-width);
+    --m3e-chip-disabled-container-color: var(
+      --m3e-comp-chip-input-disabled-selected-container-color
+    );
+    --m3e-chip-disabled-container-opacity: var(
+      --m3e-comp-chip-input-disabled-selected-container-opacity
+    );
+    --m3e-chip-disabled-outline-opacity: 0;
+  }
+
+  .m3e-chip[data-m3e-kind="suggestion"] {
+    --m3e-chip-label-color: var(--m3e-comp-chip-suggestion-label-color);
+    --m3e-chip-leading-color: var(--m3e-comp-chip-suggestion-icon-color);
+    --m3e-chip-disabled-content-color: var(
+      --m3e-comp-chip-suggestion-disabled-label-color
+    );
+    --m3e-chip-disabled-content-opacity: var(
+      --m3e-comp-chip-suggestion-disabled-label-opacity
+    );
+    --m3e-chip-disabled-leading-color: var(
+      --m3e-comp-chip-suggestion-disabled-icon-color
+    );
+    --m3e-chip-disabled-leading-opacity: var(
+      --m3e-comp-chip-suggestion-disabled-icon-opacity
+    );
+    --m3e-chip-dragged-container-shadow: var(
+      --m3e-comp-chip-suggestion-flat-dragged-shadow
+    );
+  }
+
+  .m3e-chip[data-m3e-kind="suggestion"][data-m3e-variant="flat"] {
+    --m3e-chip-outline-color: var(--m3e-comp-chip-suggestion-flat-outline-color);
+    --m3e-chip-outline-width: var(--m3e-comp-chip-suggestion-flat-outline-width);
+    --m3e-chip-container-shadow: var(--m3e-comp-chip-suggestion-flat-shadow);
+    --m3e-chip-disabled-outline-color: var(
+      --m3e-comp-chip-suggestion-flat-disabled-outline-color
+    );
+    --m3e-chip-disabled-outline-opacity: var(
+      --m3e-comp-chip-suggestion-flat-disabled-outline-opacity
+    );
+  }
+
+  .m3e-chip[data-m3e-kind="suggestion"][data-m3e-variant="elevated"] {
+    --m3e-chip-container-color: var(
+      --m3e-comp-chip-suggestion-elevated-container-color
+    );
+    --m3e-chip-container-shadow: var(--m3e-comp-chip-suggestion-elevated-shadow);
+    --m3e-chip-hover-container-shadow: var(
+      --m3e-comp-chip-suggestion-elevated-hover-shadow
+    );
+    --m3e-chip-focus-container-shadow: var(
+      --m3e-comp-chip-suggestion-elevated-focus-shadow
+    );
+    --m3e-chip-pressed-container-shadow: var(
+      --m3e-comp-chip-suggestion-elevated-pressed-shadow
+    );
+    --m3e-chip-dragged-container-shadow: var(
+      --m3e-comp-chip-suggestion-elevated-dragged-shadow
+    );
+    --m3e-chip-disabled-container-color: var(
+      --m3e-comp-chip-suggestion-elevated-disabled-container-color
+    );
+    /* This cross-family read is literal source behavior, not consolidation. */
+    --m3e-chip-disabled-container-opacity: var(
+      --m3e-comp-chip-assist-elevated-disabled-container-opacity
+    );
+    --m3e-chip-disabled-container-shadow: var(
+      --m3e-comp-chip-suggestion-elevated-disabled-shadow
+    );
+    /* Unlike the flat default, the elevated default reads AssistChipTokens
+       for its disabled icon. */
+    --m3e-chip-disabled-leading-color: var(--m3e-comp-chip-assist-disabled-icon-color);
+    --m3e-chip-disabled-leading-opacity: var(
+      --m3e-comp-chip-assist-disabled-icon-opacity
+    );
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .m3e-chip__container,
+    .m3e-chip__container::before,
+    .m3e-chip__slot,
+    .m3e-chip__slot[data-m3e-visible="false"] {
+      transition: none;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .m3e-chip__container {
+      background: ButtonFace;
+      border-color: ButtonText;
+      border-width: var(--m3e-comp-chip-assist-flat-outline-width);
+      box-shadow: none;
+      color: ButtonText;
+      forced-color-adjust: none;
+    }
+
+    .m3e-chip__container::before {
+      display: none;
+    }
+
+    .m3e-chip[data-m3e-selected="true"] .m3e-chip__container {
+      background: Highlight;
+      border-color: Highlight;
+      color: HighlightText;
+    }
+
+    .m3e-chip:focus-visible .m3e-chip__container {
+      outline-color: Highlight;
+    }
+
+    .m3e-chip:disabled .m3e-chip__container {
+      background: ButtonFace;
+      border-color: GrayText;
+      color: GrayText;
+    }
+
+    .m3e-chip:disabled .m3e-chip__label,
+    .m3e-chip:disabled .m3e-chip__slot[data-m3e-visible="true"] {
+      opacity: 1;
+    }
+  }
+}

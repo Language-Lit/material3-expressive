@@ -13,6 +13,7 @@ import { ButtonExample } from '@examples/Button.example'
 import { ButtonGroupExample } from '@examples/ButtonGroup.example'
 import { CardExample } from '@examples/Card.example'
 import { CheckboxExample } from '@examples/Checkbox.example'
+import { ChipExample } from '@examples/Chip.example'
 import { CircularProgressExample } from '@examples/CircularProgress.example'
 import { DialogExample } from '@examples/Dialog.example'
 import { FabMenuExample } from '@examples/FabMenu.example'
@@ -46,6 +47,7 @@ export const demoRegistry: Record<string, ComponentType> = {
   ButtonGroup: ButtonGroupExample,
   Card: CardExample,
   Checkbox: CheckboxExample,
+  Chip: ChipExample,
   CircularProgress: CircularProgressExample,
   Dialog: DialogExample,
   FabMenu: FabMenuExample,

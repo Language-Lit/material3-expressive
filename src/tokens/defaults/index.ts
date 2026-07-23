@@ -3,6 +3,7 @@ import { parseTokenSet } from '../validation'
 import { defaultButtonTokens } from './button'
 import { defaultButtonGroupTokens } from './button-group'
 import { defaultCardTokens } from './card'
+import { defaultChipTokens } from './chip'
 import { defaultCheckboxTokens } from './checkbox'
 import { defaultCircularProgressTokens } from './circular-progress'
 import { defaultDarkColorScheme, defaultLightColorScheme, defaultPalette } from './color'
@@ -88,6 +89,7 @@ const defaultTokenSetInput = {
     defaultFloatingToolbarTokens,
     defaultFabMenuTokens,
     defaultCardTokens,
+    defaultChipTokens,
     defaultCheckboxTokens,
     defaultRadioTokens,
     defaultSwitchTokens,

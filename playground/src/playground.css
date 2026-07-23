@@ -199,6 +199,39 @@
   gap: 1rem;
 }
 
+.chip-example {
+  display: grid;
+  gap: 1rem;
+  margin-block-start: 2rem;
+  padding: 1.5rem;
+}
+
+.chip-example__row {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.chip-example__avatar {
+  align-items: center;
+  background: var(--m3e-sys-color-primary-container);
+  block-size: 100%;
+  color: var(--m3e-sys-color-on-primary-container);
+  display: inline-flex;
+  inline-size: 100%;
+  justify-content: center;
+}
+
+.chip-example__constrained {
+  max-inline-size: 13.75rem;
+}
+
+.chip-example__large-type {
+  --m3e-sys-typescale-baseline-label-large-font-size: 2rem;
+  --m3e-sys-typescale-baseline-label-large-line-height: 2.5rem;
+}
+
 .dialog-example {
   display: grid;
   gap: 1rem;

@@ -1,6 +1,7 @@
 export * from './Button'
 export * from './ButtonGroup'
 export * from './Card'
+export * from './Chip'
 export * from './Checkbox'
 export * from './CircularProgress'
 export * from './Dialog'

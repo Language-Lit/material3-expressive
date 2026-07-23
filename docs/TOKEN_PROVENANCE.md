@@ -659,3 +659,20 @@ directly from the composable source since the pinned revision hasn't yet
 promoted it to a generated token. See ADR 0024 for the full "trigger size
 never changes, only shape/color/icon-size" analysis and every other
 T24 web-specific deviation.
+
+`Chip` (T38) registers AndroidX Material 3 revision
+`225f50d42bf0adeb2abf4b6109befb5ab6ce4efc`, accessed 2026-07-23,
+from `Chip.kt` and the five generated token files
+`AssistChipTokens.kt`, `FilterChipTokens.kt`, `InputChipTokens.kt`,
+`SuggestionChipTokens.kt`, and Expressive `ChipsTokens.kt`. The generated
+files declare 220 roles; the pinned implementation literally reads 118 and
+leaves 102 unread. The registration therefore exposes 122 web tokens after
+consolidating identical resolution paths instead of inventing interaction
+states for unread generated roles. Cross-family reads are preserved rather
+than normalized: elevated suggestion uses assist-chip disabled icon and
+container-opacity roles, and elevated filter uses its disabled leading-icon
+opacity for the trailing icon. Geometry defined directly by `Chip.kt`—the
+48px minimum target, 8px/4px content arrangement, retained selectable slots,
+avatar precedence, and Expressive shape transitions—is also represented.
+The exhaustive generated-role, source-surface, first-party-test, and known-
+anomaly ledger is recorded in ADR 0030 and the Chip conformance record.

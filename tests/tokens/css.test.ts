@@ -54,6 +54,14 @@ describe('token CSS generation', () => {
       '--m3e-comp-card-elevated-hover-container-shadow: var(--m3e-sys-elevation-level2-shadow);',
     )
     expect(css).toContain('--m3e-comp-card-outlined-outline-width: 1px;')
+    expect(css).toContain('--m3e-comp-chip-container-height: 32px;')
+    expect(css).toContain('--m3e-comp-chip-icon-size: 18px;')
+    expect(css).toContain(
+      '--m3e-comp-chip-expressive-selected-shape: var(--m3e-sys-shape-corner-full);',
+    )
+    expect(css).toContain(
+      '--m3e-comp-chip-filter-elevated-hover-shadow: var(--m3e-sys-elevation-level2-shadow);',
+    )
     expect(css).toContain('--m3e-comp-checkbox-container-size: 18px;')
     expect(css).toContain(
       '--m3e-comp-checkbox-checked-container-color: var(--m3e-sys-color-primary);',
@@ -132,7 +140,7 @@ describe('token CSS generation', () => {
     const definitions = new Set(
       [...css.matchAll(/(--m3e-[a-z0-9-]+)\s*:/g)].map((match) => match[1]),
     )
-    expect(definitions.size).toBe(1493)
+    expect(definitions.size).toBe(1615)
     for (const match of css.matchAll(/var\(\s*(--m3e-[a-z0-9-]+)/g)) {
       expect(definitions.has(match[1]), match[1]).toBe(true)
     }

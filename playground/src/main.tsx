@@ -11,6 +11,7 @@ import '@language-lit/material3-expressive/styles.css'
 import { ButtonExample } from '../examples/Button.example'
 import { ButtonGroupExample } from '../examples/ButtonGroup.example'
 import { CardExample } from '../examples/Card.example'
+import { ChipExample } from '../examples/Chip.example'
 import { CheckboxExample } from '../examples/Checkbox.example'
 import { CircularProgressExample } from '../examples/CircularProgress.example'
 import { DialogExample } from '../examples/Dialog.example'
@@ -85,6 +86,7 @@ createRoot(root).render(
         <ButtonGroupExample />
         <SplitButtonExample />
         <CardExample />
+        <ChipExample />
         <CheckboxExample />
         <RadioExample />
         <SwitchExample />

@@ -401,6 +401,21 @@ Amplitude changes interpolate path geometry so stroke width remains constant.
 ADR 0021 records the progress-specific geometry and motion decisions; ADR
 0022 records the shared offline geometry provenance.
 
+`Chip` establishes the compact-action/selection boundary. One required
+`kind` discriminant maps the pinned source's assist, filter, input, and
+suggestion composables onto a single native `<button>` implementation; assist
+and suggestion are momentary, while filter and input use controlled or
+uncontrolled `aria-pressed` state. A stable three-child visual row preserves
+the source's zero-width-slot spacing, input avatar precedence, 18/24px slot
+geometry, and retained selectable-slot exit content. Standard and Expressive
+filter/input shape paths remain explicit: the latter morph medium → full →
+small across unselected, selected, and pressed state. Generated Chip roles are
+registered only when the pinned implementation reads them; the executable
+source ledger freezes all read/unread token roles plus every upstream behavior
+and screenshot case. Native draggable events keep the source's otherwise easy
+to lose Level 4 dragged elevation reachable. ADR 0030 records the API mapping,
+toggle semantics, source-completeness boundary, and Compose-to-CSS adaptations.
+
 ## Styling
 
 Component CSS is authored beside the component. `src/styles/styles.css`

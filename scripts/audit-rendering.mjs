@@ -227,6 +227,58 @@ for (const hit of small) {
   findings.push(`Interactive target under 44px: ${hit.element} is ${hit.size}`)
 }
 
+// --- Chip source geometry ---------------------------------------------------
+// T38 translates a 32dp visual container inside a 48dp interaction target,
+// fixed 18dp icon / 24dp avatar slots, zero-width absent slots, and a flexible
+// label that must not consume its trailing icon.
+const chipGeometry = await page.evaluate(() => {
+  const results = []
+  for (const chip of document.querySelectorAll('.m3e-chip')) {
+    const root = chip.getBoundingClientRect()
+    const container = chip.querySelector('.m3e-chip__container')?.getBoundingClientRect()
+    if (!container) {
+      results.push('missing visual container')
+      continue
+    }
+    if (root.width < 47.5 || root.height < 47.5) {
+      results.push(`target ${Math.round(root.width)}x${Math.round(root.height)}`)
+    }
+    if (container.height < 31.5) {
+      results.push(`visual height ${container.height.toFixed(1)}px`)
+    }
+    if (Math.abs(root.top + root.height / 2 - (container.top + container.height / 2)) > 1) {
+      results.push('visual container is not centered in target')
+    }
+
+    for (const slot of chip.querySelectorAll('.m3e-chip__slot')) {
+      const box = slot.getBoundingClientRect()
+      const visible = slot.getAttribute('data-m3e-visible') === 'true'
+      const expected = slot.getAttribute('data-m3e-slot') === 'avatar' ? 24 : 18
+      if (visible && (Math.abs(box.width - expected) > 0.6 || Math.abs(box.height - expected) > 0.6)) {
+        results.push(
+          `${slot.getAttribute('data-m3e-slot')} slot ${box.width.toFixed(1)}x${box.height.toFixed(1)}`,
+        )
+      }
+      if (!visible && box.width > 0.6) {
+        results.push(`hidden ${slot.getAttribute('data-m3e-position')} slot is ${box.width.toFixed(1)}px`)
+      }
+    }
+
+    const label = chip.querySelector('.m3e-chip__label')?.getBoundingClientRect()
+    const trailing = chip.querySelector(
+      '.m3e-chip__slot[data-m3e-position="trailing"][data-m3e-visible="true"]',
+    )?.getBoundingClientRect()
+    if (label && trailing) {
+      const rtl = getComputedStyle(chip).direction === 'rtl'
+      const overlaps = rtl ? label.left < trailing.right - 0.5 : label.right > trailing.left + 0.5
+      if (overlaps) results.push('label overlaps trailing slot')
+    }
+  }
+  return results
+})
+
+for (const finding of chipGeometry) findings.push(`Chip geometry: ${finding}`)
+
 await browser.close()
 server.close()
 
@@ -238,6 +290,6 @@ if (findings.length > 0) {
 }
 
 process.stdout.write(
-  'Rendering audit passed: no clipped elevation shadows and no undersized interactive targets ' +
-    'outside the recorded exemptions\n',
+  'Rendering audit passed: no clipped elevation shadows, undersized interactive targets outside ' +
+    'the recorded exemptions, or Chip source-geometry defects\n',
 )

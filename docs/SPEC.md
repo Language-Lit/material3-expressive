@@ -469,10 +469,12 @@ The 1.0 stable claim covers only the following components once each becomes
 - `FloatingToolbar`
 - `FabMenu`
 
-Additional components such as chips, slider, search, sheets, list items, app bars,
-and carousel belong to a documented 1.x scope. Changes to stable core scope
-require an independent Material/web product rationale; consumer-specific
-migration needs remain outside this public repository.
+Additional components such as slider, search, sheets, list items, app bars, and
+carousel belong to a documented 1.x scope. The Chip family entered that scope
+under approved T38 and is now conformant; the remaining listed families are
+still deferred. Changes to stable core scope require an independent
+Material/web product rationale; consumer-specific migration needs remain outside
+this public repository.
 
 ## 10. Private downstream consumer boundary
 
@@ -625,6 +627,7 @@ important design choice must be resolved at its boundary.
 | T34 | 1.0.2 patch release | The T33 drawer repair and the never-published T29 `FabMenu` repair released together as `1.0.2`; no export, prop, token, or dependency change from `1.0.0` |
 | T36 | Portal roots carry the theme scope | `Menu`, `Select`, `Tooltip` and `Snackbar` portal into `document.body` and inherited no scope from the provider element; each now reconstitutes it, so color mode, custom themes and nested scopes reach a portaled overlay (ADR 0029) |
 | T37 | 1.0.3 patch release | The T36 portal-scope repair released as `1.0.3`; no export, prop, token, or dependency change from `1.0.0` |
+| T38 | Material 3 Expressive Chip family | One discriminated native-button `Chip` API covers assist, filter, input, and suggestion purposes, including every flat/elevated treatment, selectable state, slot, token, shape, elevation, and observable motion path in the pinned AndroidX source |
 
 ## 15. Definition of project completion
 
