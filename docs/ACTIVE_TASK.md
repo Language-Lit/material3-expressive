@@ -1075,3 +1075,81 @@ The inventory gains one List Item family/page containing both named exports.
   probe. No rendering allowlist was changed.
 - Publication remains outside T40. The working package stays `1.1.0`; a
   version and registry action require a separately approved release task.
+
+
+---
+
+## T41 — Material catalog parity roadmap
+
+Status: complete
+Approved: 2026-07-24 (owner request: make full primitive-then-composite
+Material catalog coverage the official cross-document roadmap)
+
+### Scope
+
+Create a documentation-only, source-dated
+[roadmap](MATERIAL_CATALOG_ROADMAP.md) for complete coverage of the official
+Material 3 component catalog. The roadmap separates:
+
+- public primitives;
+- public composite components;
+- tested composition recipes that should not become package exports.
+
+Every family shown on the official Material 3 Components index at the source
+snapshot date receives exactly one current disposition: `conformant`,
+`partial`, `planned`, or `excluded`. Existing inventory entries remain the only
+source of stable support claims; a roadmap row does not advertise an
+implementation.
+
+Future component tasks must freeze the relevant first-party surfaces and
+classify every documented variant, state, token, behavior, and composition as a
+public API, a tested recipe, a native-web adaptation, or an exclusion with a
+concrete reason. Composite implementation follows completion of the remaining
+primitive tranche. Catalog reconciliation and recipe parity follow composite
+implementation.
+
+No runtime, public API, token, generated artifact, dependency, package export,
+inventory status, or publication change is in scope.
+
+### Expected files
+
+- Added: `docs/MATERIAL_CATALOG_ROADMAP.md` and a roadmap-governance ADR.
+- Modified: `docs/SPEC.md`, `docs/ARCHITECTURE.md`,
+  `docs/ACTIVE_TASK.md`, and `docs/README.md`.
+
+### Acceptance checks
+
+- The roadmap names its first-party catalog URL and access date and accounts
+  for every top-level family visible in that snapshot exactly once.
+- The roadmap defines primitive, composite, recipe, status, sequencing, and
+  exclusion rules without weakening the inventory-backed conformance model.
+- Project completion requires catalog-family disposition plus variant/recipe
+  reconciliation; planned roadmap work is not presented as stable support.
+- The specification, architecture, documentation index, active-task record,
+  and accepted ADR cross-link the canonical roadmap.
+- Local Markdown links resolve and `npm run check:docs`,
+  `npm run check:architecture`, and `npm run verify` pass.
+
+### Completion evidence
+
+- The rendered first-party Material 3 Components index was frozen on
+  2026-07-24 as 36 sequential family rows: 25 Conformant, 2 Partial, 9 Planned,
+  and 0 Excluded. The aggregate `all-buttons` route is explicitly classified
+  outside the family count.
+- The roadmap separates primitive, composite, mixed, and recipe delivery;
+  preserves `component-inventory.json` as the sole stable conformance truth;
+  and requires a public API, tested recipe, native-web adaptation, or concrete
+  exclusion for every detailed family-ledger entry.
+- The official sequence now finishes Badges and Divider, then implements the
+  seven wholly planned composite families, closes the partial Lists and
+  Toolbars families, and finishes with a refreshed catalog audit. Expanding
+  lists are named explicitly in the recipe tranche and completeness contract.
+- `docs/SPEC.md`, `docs/ARCHITECTURE.md`, `docs/README.md`, this task record,
+  and accepted ADR 0033 link the canonical roadmap. No runtime, token,
+  inventory, export, dependency, generated artifact, version, or release claim
+  changed.
+- `npm run check:docs` and `npm run check:architecture` pass. `npm run verify`
+  passes all 13 gates with 183 files / 1,096 tests, 35 conformant inventory
+  entries, 1,691 generated token properties, both packed consumer builds, and
+  the documentation-site check. The successful aggregate run used an isolated
+  temporary npm cache because the user-level cache contains root-owned files.

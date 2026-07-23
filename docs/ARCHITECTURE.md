@@ -479,6 +479,19 @@ SSR, migration, deviation, and release guides against package metadata. ADR 0026
 records the inventory-backed documentation decision; ADR 0027 records the 1.0
 cutover that removed the 0.3 surface and its Tailwind peer.
 
+The [Material catalog parity roadmap](MATERIAL_CATALOG_ROADMAP.md) is a separate
+future-coverage ledger. It classifies official families as primitive,
+composite, mixed, or recipe-backed and deliberately does not feed the generated
+support matrix. A roadmap row can become a stable claim only through an
+approved component task that adds or updates the mirrored implementation,
+tests, conformance record, documentation, example, and inventory entry.
+
+Composite roadmap work follows completion of the remaining primitive tranche.
+Where an official specimen is pure composition, it stays out of the export map
+and is delivered as a documented, playground-backed, accessibility-tested
+recipe. Behavior-owning abstractions follow the normal public component layout.
+ADR 0033 records this boundary and the final catalog-reconciliation gate.
+
 ## Decisions and generated output
 
 Cross-cutting decisions live in `docs/adr/`. Generated files must identify

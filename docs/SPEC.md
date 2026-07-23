@@ -112,6 +112,9 @@ The library MUST provide:
 - Light, dark, system, custom, and nested theme scopes.
 - Explicitly documented Material conformance and documented web deviations.
 - A truthful supported-component matrix.
+- A source-dated, primitive-first roadmap to complete the official Material
+  component catalog, including composite widgets and tested composition
+  recipes.
 
 ### 2.2 Non-goals
 
@@ -476,9 +479,12 @@ carousel belong to a documented 1.x scope. The Chip family entered that scope
 under approved T38 and is now conformant. The Slider family entered that scope
 under approved T39 and is now conformant. The List Item family entered that
 scope under approved T40 and is now conformant; the remaining listed families
-are still deferred. Changes to stable core scope require an independent
-Material/web product rationale; consumer-specific migration needs remain outside
-this public repository.
+are still deferred. The complete future boundary, including every current
+official catalog family and composition recipes such as expanding lists, is the
+[Material catalog parity roadmap](MATERIAL_CATALOG_ROADMAP.md) governed by ADR
+0033. A roadmap entry is not a stable support claim. Changes to stable core
+scope require an independent Material/web product rationale; consumer-specific
+migration needs remain outside this public repository.
 
 ## 10. Private downstream consumer boundary
 
@@ -634,13 +640,23 @@ important design choice must be resolved at its boundary.
 | T38 | Material 3 Expressive Chip family | One discriminated native-button `Chip` API covers assist, filter, input, and suggestion purposes, including every flat/elevated treatment, selectable state, slot, token, shape, elevation, and observable motion path in the pinned AndroidX source |
 | T39 | Material 3 Expressive Slider family | Native-range-backed `Slider` and `RangeSlider` cover horizontal, vertical, centered, continuous, stepped, overlapping-thumb, token, geometry, state, and observable motion paths in the pinned AndroidX source |
 | T40 | Material 3 Expressive List Item family | `ListItem` and `SegmentedListItem` cover passive, action, native radio/checkbox selection, line geometry, grouping, token, shape, elevation, state, and observable motion paths in the pinned AndroidX source |
+| T41 | Material catalog parity roadmap | Source-dated ledger of every official Material component family, separated into primitive, composite, mixed, and tested-recipe delivery with primitive-first sequencing and an explicit catalog-parity completion gate (ADR 0033) |
 
 ## 15. Definition of project completion
 
-The library is complete when its advertised component matrix is
+Supported-matrix completion means the library's advertised component matrix is
 conformant, all public package gates pass, and its documentation truthfully
-describes the supported Material 3 Expressive surface. Completion does not
-depend on adoption by any particular downstream application.
+describes the supported Material 3 Expressive surface.
+
+Full Material catalog parity additionally requires every gate in
+[the catalog roadmap](MATERIAL_CATALOG_ROADMAP.md#catalog-parity-completion-gate):
+the current official family index is fully dispositioned, no row remains
+Planned or Partial, and no documented variant or composition remains
+unclassified. A recipe may satisfy a composition without becoming a public
+export, but it must pass its documented accessibility, example, and browser
+checks. Until those conditions pass, completion claims MUST be qualified by the
+supported-component matrix. Completion does not depend on adoption by any
+particular downstream application.
 
 Stable cutover additionally requires passing Vite and Next.js production
 fixtures, publishing an exact generic API/token/CSS migration guide,

@@ -10,6 +10,8 @@ no Tailwind requirement.
 2. [Configure themes and nested scopes](THEMING.md).
 3. [Configure SSR and system color mode](SSR.md).
 4. Browse the generated [supported-component matrix](SUPPORTED_COMPONENTS.md).
+5. Review the source-dated
+   [Material catalog parity roadmap](MATERIAL_CATALOG_ROADMAP.md).
 
 Upgrading from `0.3.x`? Read the [migration guide](MIGRATION.md), the documented
 [web deviations](WEB_DEVIATIONS.md), and the [release notes](RELEASE_NOTES.md).
@@ -33,9 +35,10 @@ The package advertises only components marked `conformant` in
 to its public page, while its colocated conformance record contains the detailed
 source and verification evidence.
 
-Additional Material components are not implied by the package name. Items such
-as chips, sliders, search, sheets, list items, app bars, and carousel remain
-outside the 1.0 matrix unless a later public task adds and verifies them.
+Additional Material components are not implied by the package name. The
+catalog roadmap records every current official family, including planned and
+partial work, but only a later approved task and `conformant` inventory status
+can add an item to the package's stable support claim.
 
 ## Contributing
 
