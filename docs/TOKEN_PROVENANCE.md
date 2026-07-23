@@ -676,3 +676,26 @@ opacity for the trailing icon. Geometry defined directly by `Chip.kt`—the
 avatar precedence, and Expressive shape transitions—is also represented.
 The exhaustive generated-role, source-surface, first-party-test, and known-
 anomaly ledger is recorded in ADR 0030 and the Chip conformance record.
+
+`Slider` and `RangeSlider` (T39) register AndroidX Material 3 revision
+`225f50d42bf0adeb2abf4b6109befb5ab6ce4efc`, accessed 2026-07-23.
+`Slider.kt` is blob `49ae732acecdaf0c62d6e3afe98c5fb2ced77377`;
+generated `SliderTokens.kt` v2_3_5 is blob
+`607a2e87f50827d26fd78cefc7cc8c380cb5d18a`; `SliderTest.kt` and
+`SliderScreenshotTest.kt` are blobs
+`4565310203edabcefeb84a5eee0ab5648575fdf9` and
+`a63ff58deece394abf598768aef86480f4fafba4`.
+
+The generated file declares 51 roles. The pinned implementation literally
+reads 15: handle color/shape/4×44px dimensions, active/inactive and disabled
+track colors/opacities, disabled handle color/opacity, 16px inactive-track
+height, 6px active-handle leading space, and 4px stop size. The 36-role
+complement stays unread; notably active track height, trailing handle space,
+state-specific colors/widths, stop-color roles, and value-indicator roles do
+not create fictitious web states. Direct implementation geometry contributes
+the 2px thumb-facing corner, half-track 8px external corner, halved 2px
+interaction handle, and 4px inset-focus padding. The 48px target and
+forced-color-capable focus ring are web/foundation treatment. Crossed tick
+color identities and disabled handle precomposition over `surface` are
+preserved. ADR 0031, `Slider.source.test.ts`, and the Slider conformance record
+hold the complete role/source/test/anomaly ledger.

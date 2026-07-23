@@ -221,6 +221,24 @@ the source attaching its ripple to the thumb element. ADR 0013 records the
 role mapping, the thumb-anchored ripple, and the pressed-shape snap/animate
 asymmetry.
 
+`Slider` and `RangeSlider` establish the native-range-backed multi-geometry
+boundary. Each semantic thumb is an independently focusable
+`input type="range"` that owns naming, accessible value state, forms, reset,
+disabled state, and refs; an `aria-hidden` sibling tree draws the sourced
+track, asymmetric corners, ticks, stops, focus ring, and 4×44px handles.
+`Slider` folds horizontal and current vertical source paths into an
+orientation/direction API, while `RangeSlider` retains two inputs and dynamic
+non-crossing semantic bounds. One shared resolution module owns clamping,
+first-minimum discrete snapping, 1% continuous keyboard deltas, RTL/Page-key
+asymmetry, pointer-to-value scaling, and ordinary/centered/range track
+segmentation. Root pointer capture is the web adapter for the source's
+tap/slop/drag and nearest-overlap-thumb rules because HTML has no native
+two-thumb range and native range appearance cannot host this authored
+geometry. Visual slots stay passive below `aria-hidden`; provider tokens
+replace arbitrary Compose color objects. The executable source ledger freezes
+all current/deprecated paths, generated reads, upstream tests, screenshots,
+and known anomalies. ADR 0031 records the semantic split and translation.
+
 `TextField` and `TextArea` establish the shared-foundation boundary: an
 internal `TextFieldChrome` primitive under `src/internal` renders the
 label, indicator/outline, icon, and supporting-text decoration once, and

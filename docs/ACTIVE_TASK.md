@@ -763,3 +763,169 @@ task.
   baseline was loosened.
 - Publication is outside T38. The working package remains `1.0.3`; a release
   version and registry action require a separately approved task.
+
+
+---
+
+## T39 — Material 3 Expressive Slider family
+
+Status: complete
+Approved: 2026-07-23 (owner request: continue the deferred catalogue one
+component family at a time without omitting any original-source behavior)
+Completed: 2026-07-23
+
+### Scope
+
+Add a complete Slider family from the same pinned AndroidX Material 3 revision
+used by T38:
+
+- a single-value `Slider`;
+- a two-value `RangeSlider`;
+- horizontal and current Expressive vertical orientation;
+- the source's ordinary and centered track treatments.
+
+The public React API must support controlled and uncontrolled values, continuous
+and discrete steps, enabled/disabled state, change-finished notification,
+logical direction, custom passive thumb/track/tick/stop-indicator presentation
+where it can preserve the native-web contract, and every observable source
+geometry/state path. `Slider` maps the source's `VerticalSlider` onto a typed
+orientation/direction option rather than adding a third nearly identical React
+component. `RangeSlider` remains separate because it owns two independently
+focusable slider semantics and a non-crossing ordered value.
+
+Native web semantics win over Compose plumbing. Each semantic thumb is a native
+`<input type="range">` so forms, labels, accessible value state, focus,
+keyboard operation, disabled state, and browser activation remain platform
+owned. The authored track, handle, ticks, stop indicator, focus treatment, and
+range geometry are decorative siblings. The range pair must keep both native
+inputs independently nameable while preventing values from crossing and
+preserving the pinned source's overlapping-thumb selection behavior.
+
+This task is source-completeness gated. Before implementation, an executable
+ledger must account for every current and deprecated public composable,
+`SliderDefaults` overload/value, `SliderColors`, `SliderPositions`,
+`SliderState`, `RangeSliderState`, internal observable resolution path, and
+known source anomaly in:
+
+- AndroidX `Slider.kt` at revision
+  `225f50d42bf0adeb2abf4b6109befb5ab6ce4efc`;
+- generated `SliderTokens.kt` at that revision (51 declarations);
+- pinned `SliderTest.kt` (55 tests);
+- pinned `SliderScreenshotTest.kt` (50 tests).
+
+Each source item must be marked implemented, adapted to a named native-web
+contract, or excluded with a concrete reason. Compose `Modifier`,
+`MutableInteractionSource`, draw scopes, state objects, and arbitrary
+per-instance color objects are not copied as React mechanisms, but their
+observable semantics and output stay in scope. Generated names the pinned
+implementation never reads are classified as unread rather than registered as
+fictitious behavior.
+
+The observable contract includes value coercion, continuous/discrete snapping,
+tap and drag, completion callbacks, zero/constrained dimensions, RTL, vertical
+top-to-bottom and bottom-to-top direction, minimum target behavior, active and
+inactive track segmentation, range-thumb overlap and collision, centered
+tracks, ticks and endpoint stop indicators, handle width changes on focus and
+press, disabled resolution, focus rings, custom theme tokens, forced colors,
+reduced motion, SSR, hydration, form participation, and ref forwarding.
+
+No runtime dependency or package export path changes. Publication is a separate
+task.
+
+### Expected files
+
+- Added: `src/components/Slider/Slider.tsx`,
+  `src/components/Slider/RangeSlider.tsx`,
+  `src/components/Slider/Slider.types.ts`, `src/components/Slider/Slider.css`,
+  `src/components/Slider/index.ts`, `src/tokens/defaults/slider.ts`,
+  `docs/components/Slider.md`, `playground/examples/Slider.example.tsx`,
+  the mirrored `tests/components/Slider/*` suite and conformance record, and a
+  Slider API/source-translation ADR.
+- Modified: `src/components/index.ts`, `src/styles/styles.css`,
+  `src/tokens/defaults/index.ts`, `docs/component-inventory.json`,
+  `docs/SPEC.md`, `docs/ARCHITECTURE.md`, `docs/ACTIVE_TASK.md`,
+  `docs/TOKEN_PROVENANCE.md`, and the relevant token, documentation,
+  playground, site-demo, rendering-audit, release-count, and bundle registries.
+- Generated documentation and site-demo artifacts are regenerated through
+  their documented scripts rather than hand-edited.
+
+### Acceptance checks
+
+- The executable source ledger freezes every public/deprecated source entry,
+  all 51 generated token declarations with their literal read/unread
+  classification, all 55 pinned behavior tests, all 50 pinned screenshot
+  tests, and every discovered implementation anomaly.
+- `Slider` and `RangeSlider` pass controlled/uncontrolled, continuous/stepped,
+  coercion, pointer, touch-equivalent, keyboard, completion, disabled, form,
+  cancellation, ref, orientation, direction, RTL, overlap, and collision tests.
+- Each semantic thumb has a correct native accessible name, min/max/now state,
+  independent focus, forced-colors focus indication, and no serious or critical
+  automated accessibility violation.
+- Sourced handle, track, gap, corner, tick, stop-indicator, state, and centered
+  geometry passes CSS/token tests and a real-browser audit; jsdom assertions are
+  not treated as evidence for physical layout.
+- Light/dark, custom-token scope, reduced motion, SSR/hydration, production
+  styles, the public inventory, documentation, example, root exports,
+  token-only stylesheet, and packed package agree.
+- Narrow component/token/CSS/type/documentation/architecture checks pass while
+  iterating, followed by `npm run verify`.
+- Because this task changes interactive geometry and state layers:
+
+  ```bash
+  npm run build && npm run playground:build
+  M3E_CHROMIUM_PATH=<chromium binary> npm run audit:rendering
+  ```
+
+  passes without an unexplained allowlist addition.
+
+### Completion evidence
+
+- The public root exports `Slider`, `RangeSlider`, their props/value/state
+  types, and no new package subpath. Both semantic controls are native range
+  inputs; the package still has zero runtime dependencies and React/React DOM
+  remain its only peers.
+- `Slider.source.test.ts` freezes the four pinned upstream blobs and line
+  counts, all 25 current entries, five deprecated entries, 25 observable
+  implementation paths, 13 source anomalies, all 51 generated declarations
+  partitioned into 15 read and 36 unread roles, all 55 behavior tests, and all
+  50 screenshot cases.
+- The focused Slider suite passes 58 tests across behavior, accessibility,
+  CSS, theme, SSR/hydration, types, source identity, production styles, and
+  conformance. It covers controlled/uncontrolled state, semantic and pointer
+  tie differences, continuous/discrete values, source slop consumption,
+  sub-slop press coordinates, out-of-bounds and zero-size mapping, scrolling
+  cancellation, keyboard/Page asymmetry, forms/reset, disabled state, refs,
+  vertical reversal, CSS/HTML RTL, range selection/overlap/collision, dynamic
+  semantic bounds, and completion timing.
+- Track translation retains source details that are easy to flatten away:
+  discrete points project between corner centers; reversed vertical direction
+  reverses complete colored segments and gap sides; centered tracks distinguish
+  the real thumb's 8px gap from the virtual center's 6px gap; focus grows those
+  gaps by 4px without moving anchors; physical CSS masks remove ticks/stops
+  from gaps; and logical negative margins keep fixed-size handles/ticks/stops
+  centered in RTL.
+- The strengthened real-Chromium rendering audit passes without an allowlist
+  addition. It measures 48px targets, 16px tracks, horizontal 4×44px and
+  vertical 44×4px handles, 8px thumb gaps, 6px centered virtual gaps, RTL
+  discrete positions, bottom-to-top active placement, 8→12px focus gaps with
+  invariant anchors, 4→2px focused handles, and pixel-level tick suppression
+  in centered and constrained layouts.
+- The token registry emits 1,641 resolved custom properties, including 26
+  Slider properties. Light/dark, nested custom scopes, crossed tick roles,
+  disabled compositing, forced colors, reduced motion, and token-only output
+  pass their relevant gates.
+- Documentation generation reports 34 conformant component pages. The
+  production playground builds with continuous, stepped, centered, RTL, range,
+  and both vertical-direction examples; the generated site registry reports 33
+  demos and the exact export map.
+- T39 legitimately exceeded four T27 bundle ceilings. ADR 0031 records the
+  measured 352,500-byte JavaScript closure (61,654 gzip), 81,461-byte
+  declaration closure (18,976 gzip), 414,869-byte full CSS (45,036 gzip),
+  124,371-byte token CSS (10,891 gzip), and 352,618-byte package, then applies
+  the established approximately-12% proportional headroom to every artifact.
+- `npm run verify` passes all 13 gates: 177 files / 1,058 tests, distributable
+  and playground builds, architecture, documentation, browser support, CSS,
+  tokens, release contract, bundle budgets, Vite/Next packed consumers, and
+  site structure. The task-specific build/playground/Chrome audit also passes.
+- Publication remains outside T39. The working package is still `1.0.3`; a
+  version and registry action require a separately approved release task.

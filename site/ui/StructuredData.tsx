@@ -4,7 +4,7 @@ import { absoluteUrl } from '../content/site'
  * Emits a JSON-LD block.
  *
  * The site's prose already says what the package is, but it says it in
- * sentences — a retrieval system has to infer that "32 conformant components"
+ * sentences — a retrieval system has to infer that "34 conformant components"
  * is a count, that the install line names the package, and that MIT is the
  * license. Schema.org states those as facts, which is the difference between a
  * summary that guesses and one that quotes.

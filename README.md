@@ -1,7 +1,7 @@
 # @language-lit/material3-expressive
 
 A framework-neutral React implementation of Material 3 Expressive. It ships
-precompiled CSS, typed theme and token APIs, native web semantics, and 32
+precompiled CSS, typed theme and token APIs, native web semantics, and 34
 conformant public components with no runtime dependencies.
 
 ## Install

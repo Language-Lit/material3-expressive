@@ -81,6 +81,13 @@ if (!switchRegistration || switchRegistration.task !== 'T13') {
   errors.push('Default component-token registry is missing the sourced T13 Switch registration')
 }
 
+const sliderRegistration = api.defaultTokenSet.componentTokens.find(
+  (registration) => registration.component === 'slider',
+)
+if (!sliderRegistration || sliderRegistration.task !== 'T39') {
+  errors.push('Default component-token registry is missing the sourced T39 Slider registration')
+}
+
 const textFieldRegistration = api.defaultTokenSet.componentTokens.find(
   (registration) => registration.component === 'text-field',
 )

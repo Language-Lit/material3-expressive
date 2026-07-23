@@ -25,6 +25,7 @@ import { defaultNavigationRailTokens } from './navigation-rail'
 import { defaultRadioTokens } from './radio'
 import { defaultSegmentedButtonGroupTokens } from './segmented-button-group'
 import { defaultShape } from './shape'
+import { defaultSliderTokens } from './slider'
 import { defaultSnackbarTokens } from './snackbar'
 import { defaultSplitButtonTokens } from './split-button'
 import { defaultState } from './state'
@@ -93,6 +94,7 @@ const defaultTokenSetInput = {
     defaultCheckboxTokens,
     defaultRadioTokens,
     defaultSwitchTokens,
+    defaultSliderTokens,
     defaultTextFieldTokens,
     defaultSegmentedButtonGroupTokens,
     defaultDialogTokens,

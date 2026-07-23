@@ -30,6 +30,7 @@ import { NavigationSuiteExample } from '../examples/NavigationSuite.example'
 import { RadioExample } from '../examples/Radio.example'
 import { SegmentedButtonGroupExample } from '../examples/SegmentedButtonGroup.example'
 import { SelectExample } from '../examples/Select.example'
+import { SliderExample } from '../examples/Slider.example'
 import { SnackbarExample } from '../examples/Snackbar.example'
 import { SplitButtonExample } from '../examples/SplitButton.example'
 import { SurfaceExample } from '../examples/Surface.example'
@@ -90,6 +91,7 @@ createRoot(root).render(
         <CheckboxExample />
         <RadioExample />
         <SwitchExample />
+        <SliderExample />
         <TextFieldExample />
         <TextAreaExample />
         <SegmentedButtonGroupExample />

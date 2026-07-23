@@ -206,7 +206,7 @@ for (const hit of clipped) {
 const small = await page.evaluate(() => {
   const results = []
   const selector =
-    'button,[role=tab],[role=menuitem],[role=menuitemcheckbox],input[type=checkbox],input[type=radio],a[href],[role=switch]'
+    'button,[role=tab],[role=menuitem],[role=menuitemcheckbox],input[type=checkbox],input[type=radio],input[type=range],a[href],[role=switch]'
   for (const element of document.querySelectorAll(selector)) {
     const box = element.getBoundingClientRect()
     if (box.width === 0 || box.height === 0) continue
@@ -279,6 +279,358 @@ const chipGeometry = await page.evaluate(() => {
 
 for (const finding of chipGeometry) findings.push(`Chip geometry: ${finding}`)
 
+// --- Slider source geometry -------------------------------------------------
+// T39 keeps a 16px track and 4x44px handle inside a minimum 48px target,
+// transposes axes for vertical orientation, projects discrete points between
+// the 8px corner centers, and clips ticks/stops out of physical thumb gaps.
+const sliderGeometry = await page.evaluate(() => {
+  const results = []
+  for (const slider of document.querySelectorAll('.m3e-slider')) {
+    const root = slider.getBoundingClientRect()
+    const track = slider.querySelector('.m3e-slider__track')?.getBoundingClientRect()
+    const thumbs = [...slider.querySelectorAll('.m3e-slider__thumb')].map((thumb) =>
+      thumb.getBoundingClientRect(),
+    )
+    const vertical = slider.getAttribute('data-m3e-orientation') === 'vertical'
+    const rtl = getComputedStyle(slider).direction === 'rtl'
+
+    if (root.width < 47.5 || root.height < 47.5) {
+      results.push(`target ${root.width.toFixed(1)}x${root.height.toFixed(1)}`)
+    }
+    if (!track) {
+      results.push('missing track')
+      continue
+    }
+    const trackThickness = vertical ? track.width : track.height
+    if (Math.abs(trackThickness - 16) > 0.6) {
+      results.push(`track thickness ${trackThickness.toFixed(1)}px`)
+    }
+    for (const thumb of thumbs) {
+      const main = vertical ? thumb.height : thumb.width
+      const cross = vertical ? thumb.width : thumb.height
+      if (Math.abs(main - 4) > 0.6 || Math.abs(cross - 44) > 0.6) {
+        results.push(
+          `${vertical ? 'vertical' : 'horizontal'} handle ` +
+            `${thumb.width.toFixed(1)}x${thumb.height.toFixed(1)}`,
+        )
+      }
+      const rootCenter = vertical
+        ? root.left + root.width / 2
+        : root.top + root.height / 2
+      const thumbCenter = vertical
+        ? thumb.left + thumb.width / 2
+        : thumb.top + thumb.height / 2
+      if (Math.abs(rootCenter - thumbCenter) > 1) {
+        results.push('handle is not centered on the cross axis')
+      }
+
+      const thumbMainCenter = vertical
+        ? thumb.top + thumb.height / 2
+        : thumb.left + thumb.width / 2
+      const segmentBoxes = [
+        ...slider.querySelectorAll('.m3e-slider__track-segment'),
+      ].map((segment) => segment.getBoundingClientRect())
+      const beforeEdges = segmentBoxes
+        .map((segment) => (vertical ? segment.bottom : segment.right))
+        .filter((edge) => edge <= thumbMainCenter + 0.5)
+      const afterEdges = segmentBoxes
+        .map((segment) => (vertical ? segment.top : segment.left))
+        .filter((edge) => edge >= thumbMainCenter - 0.5)
+      const before =
+        beforeEdges.length > 0
+          ? thumbMainCenter - Math.max(...beforeEdges)
+          : undefined
+      const after =
+        afterEdges.length > 0
+          ? Math.min(...afterEdges) - thumbMainCenter
+          : undefined
+      for (const gap of [before, after]) {
+        if (gap === undefined || gap > 16) continue
+        if (Math.abs(gap - 8) > 0.75) {
+          results.push(`thumb-track gap ${gap.toFixed(1)}px`)
+        }
+      }
+    }
+
+    for (const window of slider.querySelectorAll(
+      '.m3e-slider__tick-window,.m3e-slider__stop-window',
+    )) {
+      const styles = getComputedStyle(window)
+      const mask = styles.maskImage || styles.webkitMaskImage
+      if (!mask || mask === 'none') {
+        results.push('tick/stop physical-gap mask is missing')
+      }
+    }
+
+    for (const point of slider.querySelectorAll(
+      '.m3e-slider__tick,.m3e-slider__stop',
+    )) {
+      const box = point.getBoundingClientRect()
+      const pointCross = vertical
+        ? box.left + box.width / 2
+        : box.top + box.height / 2
+      const trackCross = vertical
+        ? track.left + track.width / 2
+        : track.top + track.height / 2
+      if (Math.abs(pointCross - trackCross) > 0.75) {
+        results.push('tick/stop is not centered on the cross axis')
+      }
+    }
+
+    for (const tick of slider.querySelectorAll('.m3e-slider__tick')) {
+      if (vertical) continue
+      const fraction = Number(tick.getAttribute('data-m3e-fraction'))
+      const expectedOffset = 8 + fraction * (track.width - 16)
+      const expected = rtl
+        ? track.right - expectedOffset
+        : track.left + expectedOffset
+      const tickBox = tick.getBoundingClientRect()
+      const actual = tickBox.left + tickBox.width / 2
+      if (Math.abs(actual - expected) > 0.75) {
+        results.push(
+          `discrete ${rtl ? 'RTL ' : ''}tick position ` +
+            `${actual.toFixed(1)}px, expected ${expected.toFixed(1)}px`,
+        )
+      }
+    }
+
+    if (slider.getAttribute('data-m3e-centered') === 'true') {
+      const center = vertical
+        ? track.top + track.height / 2
+        : track.left + track.width / 2
+      const segmentBoxes = [
+        ...slider.querySelectorAll('.m3e-slider__track-segment'),
+      ].map((segment) => segment.getBoundingClientRect())
+      const beforeEdges = segmentBoxes
+        .map((segment) => (vertical ? segment.bottom : segment.right))
+        .filter((edge) => edge <= center + 0.5)
+      const afterEdges = segmentBoxes
+        .map((segment) => (vertical ? segment.top : segment.left))
+        .filter((edge) => edge >= center - 0.5)
+      if (beforeEdges.length > 0 && afterEdges.length > 0) {
+        const centerGaps = [
+          center - Math.max(...beforeEdges),
+          Math.min(...afterEdges) - center,
+        ].sort((a, b) => a - b)
+        if (
+          Math.abs(centerGaps[0]) > 0.75 ||
+          Math.abs(centerGaps[1] - 6) > 0.75
+        ) {
+          results.push(
+            `centered virtual-handle gaps ${centerGaps
+              .map((gap) => gap.toFixed(1))
+              .join('/')}px`,
+          )
+        }
+      }
+    }
+
+    const reversedInput = slider.querySelector(
+      'input[aria-label="Bottom to top level"]',
+    )
+    if (reversedInput) {
+      const active = slider
+        .querySelector('.m3e-slider__track-segment[data-m3e-active="true"]')
+        ?.getBoundingClientRect()
+      const thumb = thumbs[0]
+      if (
+        !active ||
+        active.top < thumb.top + thumb.height / 2 ||
+        Math.abs(active.bottom - track.bottom) > 0.75
+      ) {
+        results.push('bottom-to-top active track is not painted below its thumb')
+      }
+    }
+  }
+  return results
+})
+
+for (const finding of sliderGeometry) findings.push(`Slider geometry: ${finding}`)
+
+const focusInput = page.getByRole('slider', { name: /Volume/ }).first()
+if ((await focusInput.count()) > 0) {
+  const focusRoot = focusInput.locator('..')
+  await focusRoot.scrollIntoViewIfNeeded()
+  const readFocusGeometry = () =>
+    focusRoot.evaluate((slider) => {
+      const track = slider.querySelector('.m3e-slider__track')?.getBoundingClientRect()
+      const thumb = slider.querySelector('.m3e-slider__thumb')?.getBoundingClientRect()
+      const handle = slider.querySelector('.m3e-slider__handle')?.getBoundingClientRect()
+      if (!track || !thumb || !handle) return undefined
+      const center = thumb.left + thumb.width / 2
+      const segments = [
+        ...slider.querySelectorAll('.m3e-slider__track-segment'),
+      ].map((segment) => segment.getBoundingClientRect())
+      const before = Math.max(
+        ...segments
+          .map((segment) => segment.right)
+          .filter((edge) => edge <= center + 0.5),
+      )
+      const after = Math.min(
+        ...segments
+          .map((segment) => segment.left)
+          .filter((edge) => edge >= center - 0.5),
+      )
+      return {
+        track: [track.left, track.top, track.width, track.height],
+        thumb: [thumb.left, thumb.top, thumb.width, thumb.height],
+        handleWidth: handle.width,
+        gaps: [center - before, after - center],
+      }
+    })
+  const beforeFocus = await readFocusGeometry()
+  await focusInput.evaluate((input) => input.focus({ preventScroll: true }))
+  await page.waitForTimeout(50)
+  const afterFocus = await readFocusGeometry()
+  if (!beforeFocus || !afterFocus) {
+    findings.push('Slider geometry: focus-invariance probe is missing')
+  } else {
+    for (const [before, after] of [
+      [beforeFocus.track, afterFocus.track],
+      [beforeFocus.thumb, afterFocus.thumb],
+    ]) {
+      if (before.some((value, index) => Math.abs(value - after[index]) > 0.5)) {
+        findings.push('Slider geometry: focus moved the track or thumb anchor')
+        break
+      }
+    }
+    if (
+      beforeFocus.gaps.some((gap) => Math.abs(gap - 8) > 0.75) ||
+      afterFocus.gaps.some((gap) => Math.abs(gap - 12) > 0.75)
+    ) {
+      findings.push(
+        `Slider geometry: focus gaps changed from ${beforeFocus.gaps
+          .map((gap) => gap.toFixed(1))
+          .join('/')} to ${afterFocus.gaps
+          .map((gap) => gap.toFixed(1))
+          .join('/')}px`,
+      )
+    }
+    if (
+      Math.abs(beforeFocus.handleWidth - 4) > 0.75 ||
+      Math.abs(afterFocus.handleWidth - 2) > 0.75
+    ) {
+      findings.push(
+        `Slider geometry: focus handle width changed from ` +
+          `${beforeFocus.handleWidth.toFixed(1)} to ${afterFocus.handleWidth.toFixed(1)}px`,
+      )
+    }
+  }
+  await focusInput.evaluate((input) => input.blur())
+}
+
+async function sampleLocatorPixels(locator, points) {
+  const screenshot = await locator.screenshot({ animations: 'disabled' })
+  return page.evaluate(
+    async ({ imageBase64, samplePoints }) => {
+      const image = new Image()
+      image.src = `data:image/png;base64,${imageBase64}`
+      await image.decode()
+      const canvas = document.createElement('canvas')
+      canvas.width = image.naturalWidth
+      canvas.height = image.naturalHeight
+      const context = canvas.getContext('2d', { willReadFrequently: true })
+      context.drawImage(image, 0, 0)
+      return samplePoints.map(({ x, y }) => [
+        ...context.getImageData(
+          Math.max(0, Math.min(canvas.width - 1, Math.round(x))),
+          Math.max(0, Math.min(canvas.height - 1, Math.round(y))),
+          1,
+          1,
+        ).data,
+      ])
+    },
+    {
+      imageBase64: screenshot.toString('base64'),
+      samplePoints: points,
+    },
+  )
+}
+
+function pixelDistance(first, second) {
+  return Math.max(
+    Math.abs(first[0] - second[0]),
+    Math.abs(first[1] - second[1]),
+    Math.abs(first[2] - second[2]),
+    Math.abs(first[3] - second[3]),
+  )
+}
+
+// A DOM rectangle remains present when CSS masks its paint, so two pixel probes
+// make the tick-gap assertion physical rather than merely checking declarations.
+const centeredSlider = page
+  .locator('.slider-example .m3e-slider[data-m3e-centered="true"]')
+  .first()
+if ((await centeredSlider.count()) > 0) {
+  await centeredSlider.scrollIntoViewIfNeeded()
+  const probe = await centeredSlider.evaluate((slider) => {
+    const root = slider.getBoundingClientRect()
+    const track = slider.querySelector('.m3e-slider__track')?.getBoundingClientRect()
+    const centerTick = slider
+      .querySelector('.m3e-slider__tick[data-m3e-fraction="0.5"]')
+      ?.getBoundingClientRect()
+    if (!track || !centerTick) return undefined
+    const x = centerTick.left + centerTick.width / 2 - root.left
+    const y = centerTick.top + centerTick.height / 2 - root.top
+    return {
+      points: [
+        { x: x + 1, y },
+        { x: x + 4, y },
+      ],
+    }
+  })
+  if (!probe) {
+    findings.push('Slider geometry: centered tick-mask pixel probe is missing')
+  } else {
+    const [maskedCenter, adjacentTrack] = await sampleLocatorPixels(
+      centeredSlider,
+      probe.points,
+    )
+    if (pixelDistance(maskedCenter, adjacentTrack) > 12) {
+      findings.push(
+        'Slider geometry: centered tick still paints inside the 6px virtual-center gap',
+      )
+    }
+  }
+}
+
+const narrowSlider = page.getByRole('slider', { name: 'Reading speed' }).locator('..')
+if ((await narrowSlider.count()) > 0) {
+  await narrowSlider.scrollIntoViewIfNeeded()
+  const probe = await narrowSlider.evaluate(async (slider) => {
+    slider.style.inlineSize = '48px'
+    await new Promise((resolve) =>
+      requestAnimationFrame(() => requestAnimationFrame(resolve)),
+    )
+    const root = slider.getBoundingClientRect()
+    const nearTick = slider
+      .querySelector('.m3e-slider__tick[data-m3e-fraction="0.5"]')
+      ?.getBoundingClientRect()
+    if (!nearTick) return undefined
+    const x = nearTick.left + nearTick.width / 2 - root.left
+    const y = nearTick.top + nearTick.height / 2 - root.top
+    return {
+      points: [
+        { x, y },
+        { x, y: y - 12 },
+      ],
+    }
+  })
+  if (!probe) {
+    findings.push('Slider geometry: constrained tick-mask pixel probe is missing')
+  } else {
+    const [maskedGap, adjacentSurface] = await sampleLocatorPixels(
+      narrowSlider,
+      probe.points,
+    )
+    if (pixelDistance(maskedGap, adjacentSurface) > 12) {
+      findings.push(
+        'Slider geometry: constrained tick still paints inside the physical thumb gap',
+      )
+    }
+  }
+}
+
 await browser.close()
 server.close()
 
@@ -291,5 +643,5 @@ if (findings.length > 0) {
 
 process.stdout.write(
   'Rendering audit passed: no clipped elevation shadows, undersized interactive targets outside ' +
-    'the recorded exemptions, or Chip source-geometry defects\n',
+    'the recorded exemptions, or Chip/Slider source-geometry defects\n',
 )

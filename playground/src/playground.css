@@ -143,6 +143,37 @@
   gap: 0.5rem;
 }
 
+.slider-example {
+  display: grid;
+  gap: 1rem;
+  margin-block-start: 2rem;
+  padding: 1.5rem;
+}
+
+.slider-example__field {
+  display: grid;
+  gap: 0.25rem;
+  inline-size: min(100%, 36rem);
+}
+
+.slider-example__vertical-row {
+  align-items: start;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+.slider-example__vertical-field {
+  align-items: center;
+  display: grid;
+  gap: 0.5rem;
+  justify-items: center;
+}
+
+.slider-example__vertical-field .m3e-slider {
+  block-size: 10rem;
+}
+
 .icon-button-example__row,
 .icon-button-example__sizes {
   align-items: center;

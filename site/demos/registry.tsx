@@ -31,6 +31,7 @@ import { NavigationSuiteExample } from '@examples/NavigationSuite.example'
 import { RadioExample } from '@examples/Radio.example'
 import { SegmentedButtonGroupExample } from '@examples/SegmentedButtonGroup.example'
 import { SelectExample } from '@examples/Select.example'
+import { SliderExample } from '@examples/Slider.example'
 import { SnackbarExample } from '@examples/Snackbar.example'
 import { SplitButtonExample } from '@examples/SplitButton.example'
 import { SurfaceExample } from '@examples/Surface.example'
@@ -65,6 +66,7 @@ export const demoRegistry: Record<string, ComponentType> = {
   Radio: RadioExample,
   SegmentedButtonGroup: SegmentedButtonGroupExample,
   Select: SelectExample,
+  Slider: SliderExample,
   Snackbar: SnackbarExample,
   SplitButton: SplitButtonExample,
   Surface: SurfaceExample,
