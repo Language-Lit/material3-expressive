@@ -5,7 +5,11 @@
 Audit date: 2026-07-23  
 Release: `@language-lit/material3-expressive@1.1.0`  
 Rollback: `@language-lit/material3-expressive@0.3.0` (tag `v0.3.0`)  
-Registry publication: not performed at the time of this audit.
+Registry publication: not performed at the time of this audit; published
+2026-07-23 from commit `b109c18` and confirmed as `latest`. The registry now
+holds `1.0.0-next.0`, `1.0.0`, `1.0.2`, `1.0.3`, and `1.1.0`. The published
+tarball's shasum is `307848e67389e7aa8fee1b2991488aaf9c79d467`, matching the
+locally packed artifact the release audit verified.
 
 ### Recommendation
 
