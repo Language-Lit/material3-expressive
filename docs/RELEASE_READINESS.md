@@ -1,5 +1,33 @@
 # Release-readiness audit
 
+## Unreleased T40 working tree — 2026-07-24
+
+Audit date: 2026-07-24
+
+Working package version: `@language-lit/material3-expressive@1.1.0`
+
+Registry publication: not performed; publication requires a separate task.
+
+`ListItem` and `SegmentedListItem` add one inventory family and two named
+component exports. The matrix rises from the published `1.1.0` count of 34 to
+35. The package export paths, runtime dependencies, and peer dependencies do
+not change.
+
+### Verification
+
+| Gate | Result |
+| --- | --- |
+| Unit, interaction, accessibility, SSR, hydration, CSS, theme, source ledger | Pass: 183 files, 1,096 tests |
+| Architecture and documentation | Pass: 35 conformant inventory entries/pages |
+| Tokens and CSS | Pass: 1,691 resolved custom properties; 38 stylesheets |
+| Release artifact and rollback | Pass: 35 components; `1.1.0` working identity and `v0.3.0` rollback |
+| Bundle budgets | Pass: 366,647-byte packed package within the existing 395,000-byte ceiling; every artifact green |
+| Documentation site | Pass: 35 conformant components and 34 demos |
+| Real-Chromium rendering audit | Pass: List Item line heights, spacing, input coverage, segmented gaps/corners, plus existing clip/target/Chip/Slider probes |
+
+`npm run verify` passes all 13 gates, including the Vite and Next.js packed
+consumer builds. No registry or remote-release claim is made.
+
 ## 1.1.0 — 2026-07-23
 
 Audit date: 2026-07-23  

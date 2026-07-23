@@ -21,6 +21,7 @@ import { FloatingToolbarExample } from '../examples/FloatingToolbar.example'
 import { IconExample } from '../examples/Icon.example'
 import { IconButtonExample } from '../examples/IconButton.example'
 import { LinearProgressExample } from '../examples/LinearProgress.example'
+import { ListItemExample } from '../examples/ListItem.example'
 import { LoadingIndicatorExample } from '../examples/LoadingIndicator.example'
 import { MenuExample } from '../examples/Menu.example'
 import { NavigationBarExample } from '../examples/NavigationBar.example'
@@ -88,6 +89,7 @@ createRoot(root).render(
         <SplitButtonExample />
         <CardExample />
         <ChipExample />
+        <ListItemExample />
         <CheckboxExample />
         <RadioExample />
         <SwitchExample />

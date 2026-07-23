@@ -16,6 +16,7 @@ import { defaultFloatingToolbarTokens } from './floating-toolbar'
 import { defaultIconTokens } from './icon'
 import { defaultIconButtonTokens } from './icon-button'
 import { defaultLinearProgressTokens } from './linear-progress'
+import { defaultListItemTokens } from './list-item'
 import { defaultLoadingIndicatorTokens } from './loading-indicator'
 import { defaultMenuTokens } from './menu'
 import { defaultMotion } from './motion'
@@ -106,6 +107,7 @@ const defaultTokenSetInput = {
     defaultNavigationBarTokens,
     defaultNavigationRailTokens,
     defaultNavigationDrawerTokens,
+    defaultListItemTokens,
     defaultLinearProgressTokens,
     defaultCircularProgressTokens,
     defaultWavyProgressTokens,

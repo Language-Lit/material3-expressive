@@ -447,6 +447,8 @@ The 1.0 stable claim covers only the following components once each becomes
 - `TextField`
 - `TextArea`
 - `Select`
+- `ListItem`
+- `SegmentedListItem`
 
 ### Feedback and overlays
 
@@ -469,11 +471,12 @@ The 1.0 stable claim covers only the following components once each becomes
 - `FloatingToolbar`
 - `FabMenu`
 
-Additional components such as slider, search, sheets, list items, app bars, and
+Additional components such as search, sheets, app bars, and
 carousel belong to a documented 1.x scope. The Chip family entered that scope
 under approved T38 and is now conformant. The Slider family entered that scope
-under approved T39 and is now conformant; the remaining listed families are still
-deferred. Changes to stable core scope require an independent
+under approved T39 and is now conformant. The List Item family entered that
+scope under approved T40 and is now conformant; the remaining listed families
+are still deferred. Changes to stable core scope require an independent
 Material/web product rationale; consumer-specific migration needs remain outside
 this public repository.
 
@@ -630,6 +633,7 @@ important design choice must be resolved at its boundary.
 | T37 | 1.0.3 patch release | The T36 portal-scope repair released as `1.0.3`; no export, prop, token, or dependency change from `1.0.0` |
 | T38 | Material 3 Expressive Chip family | One discriminated native-button `Chip` API covers assist, filter, input, and suggestion purposes, including every flat/elevated treatment, selectable state, slot, token, shape, elevation, and observable motion path in the pinned AndroidX source |
 | T39 | Material 3 Expressive Slider family | Native-range-backed `Slider` and `RangeSlider` cover horizontal, vertical, centered, continuous, stepped, overlapping-thumb, token, geometry, state, and observable motion paths in the pinned AndroidX source |
+| T40 | Material 3 Expressive List Item family | `ListItem` and `SegmentedListItem` cover passive, action, native radio/checkbox selection, line geometry, grouping, token, shape, elevation, state, and observable motion paths in the pinned AndroidX source |
 
 ## 15. Definition of project completion
 

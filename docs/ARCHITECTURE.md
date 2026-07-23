@@ -434,6 +434,20 @@ and screenshot case. Native draggable events keep the source's otherwise easy
 to lose Level 4 dragged elevation reachable. ADR 0030 records the API mapping,
 toggle semantics, source-completeness boundary, and Compose-to-CSS adaptations.
 
+`ListItem` and `SegmentedListItem` establish the native-semantic whole-row
+boundary. One interaction discriminant selects a passive `div`/`li`, native
+button action, native radio single selection, or native checkbox multiple
+selection. The semantic element owns keyboard, focus, disabled state, forms,
+reset, cancellation, and refs; one wrapping visual grid preserves the five
+source slots and 56/72/88px line geometry. Segmented index/count derive logical
+outer corners without a list coordinator. Native input `:checked` state keeps
+radio groups truthful when a sibling changes, and native drag events expose
+the reorder-list Level 4 path. Generated `ListTokens` and
+`ReorderListTokens` stay separately attributable; an executable ledger freezes
+their complete read/unread partitions and every pinned upstream test. ADR 0032
+records the interaction mapping, precedence, long-press exclusion, and
+source-completeness boundary.
+
 ## Styling
 
 Component CSS is authored beside the component. `src/styles/styles.css`

@@ -929,3 +929,149 @@ task.
   site structure. The task-specific build/playground/Chrome audit also passes.
 - Publication remains outside T39. The working package is still `1.0.3`; a
   version and registry action require a separately approved release task.
+
+
+---
+
+## T40 — Material 3 Expressive List Item family
+
+Status: complete
+Approved: 2026-07-24 (owner request: add `ListItem` and
+`SegmentedListItem`, with particular care around correct component tokens)
+
+### Scope
+
+Add one public List Item family containing two named exports:
+
+- `ListItem`;
+- `SegmentedListItem`.
+
+Both exports use one discriminated interaction model covering passive content,
+native button actions, native-radio-backed single selection, and
+native-checkbox-backed multiple selection. The native semantic element owns
+activation, keyboard behavior, focus, disabled state, form participation,
+reset, cancellation, and the forwarded ref. Controlled and uncontrolled
+selection are supported where meaningful.
+
+The shared anatomy includes headline, leading, trailing, overline, and
+supporting slots; one-, two-, and three-line geometry; short-item centering and
+tall-item top alignment; intrinsic and constrained sizing; logical layout and
+RTL. `SegmentedListItem` accepts validated `index` and `count` values and
+reproduces the first, middle, last, and only-item corner treatment plus the
+sourced segmented gap.
+
+This task is source-completeness gated against immutable AndroidX revision
+`a90df2fc27e026b9ad2ed569f203a260c1041fab`. The executable ledger covers:
+
+- `ListItem.kt` and `ListItemDefaults.kt`;
+- generated `ListTokens.kt` v29.0.0, containing 120 declarations;
+- generated `ReorderListTokens.kt` v29.0.0, containing nine declarations;
+- `ListItemTest.kt` and `InteractiveListTest.kt`, containing 44 behavior tests;
+- `ListItemScreenshotTest.kt` and `InteractiveListScreenshotTest.kt`,
+  containing 27 screenshot tests.
+
+Every current/deprecated composable, defaults path, value class, state
+resolution, geometry, typography, shape, color, elevation, and motion path must
+be implemented, adapted to a named native-web contract, or excluded with a
+concrete reason. Only generated roles the pinned implementation observes are
+registered. Direct implementation geometry is recorded separately rather than
+hidden as unexplained CSS. `ReorderListTokens` remains a distinct source family
+for dragged colors and shape, even where values could be flattened.
+
+Long-press is excluded as a public pointer-only React API because the web has no
+equivalent native keyboard activation. Native drag events keep the source's
+dragged visual state reachable. Arbitrary Compose color/shape/elevation objects,
+`Modifier`, `InteractionSource`, measure policies, and semantics DSL are
+platform mechanisms rather than React APIs, but their observable output remains
+in scope.
+
+No runtime dependency, peer dependency, or package export-path change.
+Publication is a separate task.
+
+### Expected files
+
+- Added: `src/components/ListItem/ListItem.tsx`,
+  `src/components/ListItem/ListItem.types.ts`,
+  `src/components/ListItem/ListItem.css`,
+  `src/components/ListItem/index.ts`,
+  `src/tokens/defaults/list-item.ts`, `docs/components/ListItem.md`,
+  `playground/examples/ListItem.example.tsx`, the mirrored
+  `tests/components/ListItem/*` suite and conformance record, and a List Item
+  API/source-translation ADR.
+- Modified: `src/components/index.ts`, `src/styles/styles.css`,
+  `src/tokens/defaults/index.ts`, `docs/component-inventory.json`,
+  `docs/SPEC.md`, `docs/ARCHITECTURE.md`, `docs/ACTIVE_TASK.md`,
+  `docs/TOKEN_PROVENANCE.md`, and the relevant token, documentation,
+  playground, site-demo, rendering-audit, release-count, and bundle registries.
+- Generated documentation and site-demo artifacts are regenerated through
+  their documented scripts rather than hand-edited.
+
+The inventory gains one List Item family/page containing both named exports.
+
+### Acceptance checks
+
+- The executable ledger freezes every pinned upstream file identity,
+  declaration, current/deprecated surface, behavior test, screenshot test, and
+  discovered implementation anomaly.
+- Registered component tokens match sourced reads, including the distinct
+  `ReorderListTokens` dragged-state roles. Generated-but-unread names remain
+  explicitly classified instead of becoming fictitious runtime behavior.
+- Passive, action, radio, and checkbox modes pass native click, Enter/Space,
+  focus, disabled, cancellation, form/reset, ref, controlled/uncontrolled, and
+  accessible name/state behavior tests.
+- Type tests reject invalid interaction/state combinations and invalid
+  segmented `index`/`count` combinations.
+- Sourced height, padding, alignment, slot spacing, segmented gap, corners,
+  elevation, state precedence, typography, and motion pass focused CSS/token
+  tests and real-browser measurement.
+- Light/dark, scoped token overrides, RTL, large text, forced colors, reduced
+  motion, SSR/hydration, production styles, public exports, inventory,
+  documentation, examples, complete/token-only stylesheets, and packed
+  consumers agree.
+- Narrow component/token/CSS/type/documentation/architecture checks pass while
+  iterating, followed by `npm run verify`.
+- Because this task changes geometry, elevation, and state layers:
+
+  ```bash
+  npm run build && npm run playground:build
+  M3E_CHROMIUM_PATH=<chromium binary> npm run audit:rendering
+  ```
+
+  passes without an unexplained allowlist addition.
+
+### Completion evidence
+
+- `ListItem` and `SegmentedListItem` are public named exports with passive,
+  native-button action, native-radio single-selection, and native-checkbox
+  multiple-selection branches. Controlled/uncontrolled state, form/reset,
+  cancellation, refs, disabled behavior, drag state, SSR, and hydration pass.
+- The pinned ledger freezes eight file identities; all 120 `ListTokens` and
+  nine `ReorderListTokens` declarations; their 46/74 and 7/2 read/unread
+  partitions; 25 current and 13 deprecated source-surface entries; all 44
+  behavior and 27 screenshot cases; and four translation-sensitive source
+  details.
+- The token registry adds 50 resolved List Item properties and emits 1,691
+  custom properties overall. Sourced 56/72/88px heights, 16/10/12px padding,
+  12px slot spacing, 2px segmented gap, logical corners, content roles,
+  disabled opacity, selected colors, distinct Reorder List dragged colors/
+  shape, Level 4 dragged shadow, typography, and motion paths are covered.
+- The focused List Item suite passes 38 behavior, accessibility, CSS, theme,
+  SSR/hydration, and source-ledger tests; compile-only type cases accept all
+  valid refs/modes and reject invalid state/interaction/segmented combinations.
+  The full suite passes 183 files / 1,096 tests.
+- Documentation generation reports 35 conformant component pages; the site
+  registry reports 34 demos. Architecture, CSS, token, browser-support,
+  release, and site checks pass.
+- Bundle checks remain within the existing ADR 0031 ceilings: 369,231-byte
+  JavaScript closure (64,462 gzip), 88,240-byte declaration closure (20,150
+  gzip), 432,367-byte full CSS (46,838 gzip), 128,129-byte token CSS (11,199
+  gzip), and a 366,647-byte packed package.
+- `npm run verify` passes all 13 gates, including distributable/playground
+  builds and both Vite and Next.js packed consumers.
+- The required real-Chromium audit passes after
+  `npm run build && npm run playground:build`, measuring List Item line
+  minimums, logical padding, slot spacing, full-row native inputs, segmented
+  gap/corners, and selected state shape alongside every existing rendering
+  probe. No rendering allowlist was changed.
+- Publication remains outside T40. The working package stays `1.1.0`; a
+  version and registry action require a separately approved release task.

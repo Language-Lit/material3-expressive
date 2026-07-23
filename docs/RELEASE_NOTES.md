@@ -1,5 +1,21 @@
 # Release notes
 
+## Unreleased
+
+Status: additive post-`1.1.0` work; publication requires a separately approved
+release task.
+
+### Added
+
+- **`ListItem` and `SegmentedListItem`.** One native-semantic family covers
+  passive rows, native button actions, radio-backed single selection, and
+  checkbox-backed multiple selection. It preserves the pinned AndroidX
+  56/72/88px line geometry, segmented gaps/corners, selected/disabled/dragged
+  state resolution, and distinct `ReorderListTokens` ownership (ADR 0032;
+  T40). Controlled and uncontrolled selection, native forms/reset, SSR,
+  logical RTL layout, forced colors, reduced motion, and scoped component-token
+  overrides are covered.
+
 ## 1.1.0 — 2026-07-23
 
 Status: prepared minor release. Additive only — two new components, no change to

@@ -89,6 +89,28 @@
   padding: 1rem;
 }
 
+.list-item-example {
+  display: grid;
+  gap: 1rem;
+  margin-block-start: 2rem;
+  padding: 1.5rem;
+}
+
+.list-item-example__list {
+  inline-size: min(100%, 36rem);
+}
+
+.list-item-example__avatar {
+  align-items: center;
+  background: var(--m3e-sys-color-primary-container);
+  border-radius: var(--m3e-sys-shape-corner-full);
+  color: var(--m3e-sys-color-on-primary-container);
+  display: inline-flex;
+  block-size: 2.5rem;
+  inline-size: 2.5rem;
+  justify-content: center;
+}
+
 .checkbox-example {
   display: grid;
   gap: 1rem;

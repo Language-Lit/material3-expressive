@@ -62,6 +62,14 @@ describe('token CSS generation', () => {
     expect(css).toContain(
       '--m3e-comp-chip-filter-elevated-hover-shadow: var(--m3e-sys-elevation-level2-shadow);',
     )
+    expect(css).toContain('--m3e-comp-list-item-one-line-container-height: 56px;')
+    expect(css).toContain('--m3e-comp-list-item-segmented-gap: 2px;')
+    expect(css).toContain(
+      '--m3e-comp-list-item-selected-container-color: var(--m3e-sys-color-secondary-container);',
+    )
+    expect(css).toContain(
+      '--m3e-comp-list-item-reorder-dragged-container-shadow: var(--m3e-sys-elevation-level4-shadow);',
+    )
     expect(css).toContain('--m3e-comp-slider-track-height: 16px;')
     expect(css).toContain('--m3e-comp-slider-handle-width: 4px;')
     expect(css).toContain(
@@ -145,7 +153,7 @@ describe('token CSS generation', () => {
     const definitions = new Set(
       [...css.matchAll(/(--m3e-[a-z0-9-]+)\s*:/g)].map((match) => match[1]),
     )
-    expect(definitions.size).toBe(1641)
+    expect(definitions.size).toBe(1691)
     for (const match of css.matchAll(/var\(\s*(--m3e-[a-z0-9-]+)/g)) {
       expect(definitions.has(match[1]), match[1]).toBe(true)
     }

@@ -279,6 +279,106 @@ const chipGeometry = await page.evaluate(() => {
 
 for (const finding of chipGeometry) findings.push(`Chip geometry: ${finding}`)
 
+// --- List Item source geometry ---------------------------------------------
+// T40 preserves the 56/72/88px minimum line heights, 16px logical edge
+// padding, 12px slot spacing, full-row native selection input, and segmented
+// 2px gap / logical outer-corner treatment.
+const listItemGeometry = await page.evaluate(() => {
+  const results = []
+  const expectedMinimums = { 1: 56, 2: 72, 3: 88 }
+  for (const item of document.querySelectorAll('.m3e-list-item')) {
+    const root = item.getBoundingClientRect()
+    const styles = getComputedStyle(item)
+    const lines = item.getAttribute('data-m3e-lines')
+    const expectedMinimum = expectedMinimums[lines]
+    if (expectedMinimum && root.height < expectedMinimum - 0.5) {
+      results.push(`${lines}-line height ${root.height.toFixed(1)}px`)
+    }
+    if (
+      Math.abs(Number.parseFloat(styles.paddingInlineStart) - 16) > 0.6 ||
+      Math.abs(Number.parseFloat(styles.paddingInlineEnd) - 16) > 0.6
+    ) {
+      results.push(
+        `inline padding ${styles.paddingInlineStart}/${styles.paddingInlineEnd}`,
+      )
+    }
+
+    const leading = item.querySelector('.m3e-list-item__leading')
+    const trailing = item.querySelector('.m3e-list-item__trailing')
+    if (
+      leading &&
+      Math.abs(Number.parseFloat(getComputedStyle(leading).marginInlineEnd) - 12) >
+        0.6
+    ) {
+      results.push('leading slot spacing is not 12px')
+    }
+    if (
+      trailing &&
+      Math.abs(
+        Number.parseFloat(getComputedStyle(trailing).marginInlineStart) - 12,
+      ) > 0.6
+    ) {
+      results.push('trailing slot spacing is not 12px')
+    }
+
+    const input = item.querySelector('.m3e-list-item__input')
+    if (input) {
+      const inputBox = input.getBoundingClientRect()
+      if (
+        Math.abs(inputBox.left - root.left) > 0.6 ||
+        Math.abs(inputBox.right - root.right) > 0.6 ||
+        Math.abs(inputBox.top - root.top) > 0.6 ||
+        Math.abs(inputBox.bottom - root.bottom) > 0.6
+      ) {
+        results.push('native selection input does not cover the row')
+      }
+    }
+
+    if (item.getAttribute('data-m3e-segmented') !== 'true') continue
+    const position = item.getAttribute('data-m3e-position')
+    const radii = {
+      topStart: Number.parseFloat(styles.borderStartStartRadius),
+      topEnd: Number.parseFloat(styles.borderStartEndRadius),
+      bottomStart: Number.parseFloat(styles.borderEndStartRadius),
+      bottomEnd: Number.parseFloat(styles.borderEndEndRadius),
+    }
+    if (
+      (position === 'middle' || position === 'last') &&
+      Math.abs(Number.parseFloat(styles.marginBlockStart) - 2) > 0.6
+    ) {
+      results.push(`${position} segmented gap is not 2px`)
+    }
+    if (
+      position === 'first' &&
+      !(
+        radii.topStart > radii.bottomStart &&
+        radii.topEnd > radii.bottomEnd
+      )
+    ) {
+      results.push('first segmented item lacks outer top corners')
+    }
+    if (
+      position === 'last' &&
+      !(
+        radii.bottomStart > radii.topStart &&
+        radii.bottomEnd > radii.topEnd
+      )
+    ) {
+      results.push('last segmented item lacks outer bottom corners')
+    }
+    if (
+      position === 'middle' &&
+      input?.matches(':checked') &&
+      new Set(Object.values(radii).map((value) => value.toFixed(1))).size !== 1
+    ) {
+      results.push('selected middle segmented item does not use one state shape')
+    }
+  }
+  return results
+})
+
+for (const finding of listItemGeometry) findings.push(`List Item geometry: ${finding}`)
+
 // --- Slider source geometry -------------------------------------------------
 // T39 keeps a 16px track and 4x44px handle inside a minimum 48px target,
 // transposes axes for vertical orientation, projects discrete points between
@@ -643,5 +743,5 @@ if (findings.length > 0) {
 
 process.stdout.write(
   'Rendering audit passed: no clipped elevation shadows, undersized interactive targets outside ' +
-    'the recorded exemptions, or Chip/Slider source-geometry defects\n',
+    'the recorded exemptions, or Chip/List Item/Slider source-geometry defects\n',
 )

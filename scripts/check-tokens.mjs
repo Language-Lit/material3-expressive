@@ -60,6 +60,13 @@ if (!chipRegistration || chipRegistration.task !== 'T38') {
   errors.push('Default component-token registry is missing the sourced T38 Chip registration')
 }
 
+const listItemRegistration = api.defaultTokenSet.componentTokens.find(
+  (registration) => registration.component === 'list-item',
+)
+if (!listItemRegistration || listItemRegistration.task !== 'T40') {
+  errors.push('Default component-token registry is missing the sourced T40 List Item registration')
+}
+
 const checkboxRegistration = api.defaultTokenSet.componentTokens.find(
   (registration) => registration.component === 'checkbox',
 )

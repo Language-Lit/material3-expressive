@@ -39,7 +39,7 @@ describe('default token schema', () => {
     expect(defaultTokenSet.metadata.sources).toHaveLength(2)
     expect(defaultTokenSet.metadata.sources.every((source) => source.accessed === '2026-07-19')).toBe(true)
     expect(isDeeplyFrozen(defaultTokenSet)).toBe(true)
-    expect(defaultTokenSet.componentTokens).toHaveLength(29)
+    expect(defaultTokenSet.componentTokens).toHaveLength(30)
     expect(defaultTokenSet.componentTokens).toContainEqual(expect.objectContaining({
       component: 'surface',
       task: 'T04',
@@ -117,6 +117,14 @@ describe('default token schema', () => {
       source: expect.objectContaining({
         revision: '225f50d42bf0adeb2abf4b6109befb5ab6ce4efc',
         accessed: '2026-07-23',
+      }),
+    }))
+    expect(defaultTokenSet.componentTokens).toContainEqual(expect.objectContaining({
+      component: 'list-item',
+      task: 'T40',
+      source: expect.objectContaining({
+        revision: 'a90df2fc27e026b9ad2ed569f203a260c1041fab',
+        accessed: '2026-07-24',
       }),
     }))
     expect(defaultTokenSet.componentTokens).toContainEqual(expect.objectContaining({

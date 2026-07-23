@@ -699,3 +699,22 @@ forced-color-capable focus ring are web/foundation treatment. Crossed tick
 color identities and disabled handle precomposition over `surface` are
 preserved. ADR 0031, `Slider.source.test.ts`, and the Slider conformance record
 hold the complete role/source/test/anomaly ledger.
+
+`ListItem` and `SegmentedListItem` (T40) register AndroidX Material 3 revision
+`a90df2fc27e026b9ad2ed569f203a260c1041fab`, accessed 2026-07-24.
+`ListItem.kt` and `ListItemDefaults.kt` are blobs
+`549d6a0fabca8f7e82cfa1a0cfcd1f1133bcc19e` and
+`64a3db9821aac60854c43ea510d6e007f7468725`. Generated
+`ListTokens.kt` and `ReorderListTokens.kt` v29.0.0 are blobs
+`9c1823f65873878d6b3e746cf0393522c0b980c2` and
+`b3a47ce590a467424d8e240c14899c57395e69d8`.
+
+The generated files declare 120 and nine roles. The implementation literally
+reads 46 List roles and seven Reorder List roles; their 74/2-role complements
+remain recorded but unregistered. Reorder dragged colors and shape retain a
+`reorder-dragged-*` name while Level 4 dragged elevation correctly remains a
+List token. Direct source behavior contributes precision-pointer 12px block
+padding and state precedence; the density target and forced-color-capable focus
+ring are web/foundation treatment. ADR 0032, `ListItem.source.test.ts`, and the
+conformance record contain the complete surface, source-test, screenshot, and
+anomaly ledger.
