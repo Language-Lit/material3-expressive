@@ -1,5 +1,36 @@
 # Release notes
 
+## 1.1.0 — 2026-07-23
+
+Status: prepared minor release. Additive only — two new components, no change to
+any existing export, prop, token, dependency, or export-map path. A consumer on
+`1.0.3` upgrades without edits.
+
+### Added
+
+- **`Slider` and `RangeSlider`.** A native-range slider family ported from
+  AndroidX Material 3 `Slider.kt` at the pinned revision
+  `225f50d42bf0adeb2abf4b6109befb5ab6ce4efc` (ADR 0031; T39). `Slider` covers
+  continuous, stepped, centered, and vertical paths behind an `orientation`
+  option, with `topToBottom` replacing the legacy `reverseDirection`;
+  `RangeSlider` owns two semantic thumbs constrained not to cross. Each semantic
+  thumb is a real `<input type="range">` — carrying role, value, name, focus,
+  disabled state, form participation, and ref — beneath an `aria-hidden`
+  Material rendering tree. Pointer gestures and keyboard deltas follow the pinned
+  tap/slop/RTL/vertical/nearest-thumb rules rather than a browser's default
+  range increments. The whole 48px track is the interactive target; the root
+  shows `cursor: pointer` so the affordance matches that target rather than only
+  the 4px handle.
+- **`Chip`.** A compact action and selection control covering the assist,
+  filter, input, and suggestion purposes through a discriminated API that
+  rejects invalid prop combinations at the type level, rendering as a native
+  `<button>`.
+
+### Verification target
+
+`npm run verify` (13 gates). See [RELEASE_READINESS.md](RELEASE_READINESS.md)
+for the `1.1.0` audit.
+
 ## 1.0.3 — 2026-07-22
 
 Status: prepared patch release. No export, prop, token, or dependency change;

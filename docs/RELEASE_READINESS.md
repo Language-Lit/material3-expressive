@@ -1,5 +1,70 @@
 # Release-readiness audit
 
+## 1.1.0 — 2026-07-23
+
+Audit date: 2026-07-23  
+Release: `@language-lit/material3-expressive@1.1.0`  
+Rollback: `@language-lit/material3-expressive@0.3.0` (tag `v0.3.0`)  
+Registry publication: not performed at the time of this audit.
+
+### Recommendation
+
+**GO for a separately owner-approved `1.1.0` release.** This is the first
+*minor* since `1.0.0`, not a patch: it adds public API rather than repairing an
+identical surface. Two new conformant components join the package — the
+`Slider`/`RangeSlider` family and `Chip` — lifting the matrix from 32 to 34.
+Every addition is backward compatible; no existing export, prop, token value,
+dependency, or export-map path changed, so a consumer on `1.0.3` upgrades
+without edits. Publication, the `v1.1.0` tag, and any dist-tag change remain a
+separate owner-approved step outside this audit.
+
+### What changed since 1.0.3
+
+- **`Slider` and `RangeSlider` (T39, ADR 0031).** A native-range slider family
+  ported from AndroidX Material 3 `Slider.kt` at the pinned revision
+  `225f50d42bf0adeb2abf4b6109befb5ab6ce4efc`. `Slider` carries the source's
+  horizontal and vertical composables behind an `orientation` option
+  (`topToBottom` replaces the legacy `reverseDirection`); `RangeSlider` owns two
+  semantic thumbs. One native `<input type="range">` backs each semantic thumb
+  for role, value, naming, focus, disabled state, forms, and refs, beneath an
+  `aria-hidden` Material rendering tree; pointer gestures and keyboard deltas are
+  resolved against the pinned tap/slop/RTL/vertical/nearest-thumb rules. New
+  exports: `Slider`, `RangeSlider`, and their prop/state types. The 4px handle,
+  16px track, and 2px pressed handle are the sourced dimensions; the root now
+  carries `cursor: pointer` (and `cursor: default` when disabled) so the
+  affordance matches the full 48px interactive target rather than only the
+  handle.
+- **`Chip` (feat).** A compact action and selection control covering the assist,
+  filter, input, and suggestion purposes through a discriminated API that
+  rejects invalid prop combinations at the type level, rendering as a native
+  `<button>`. New exports: `Chip`, `ChipKind`, `ChipVariant`, `ChipShape`,
+  `ChipProps`.
+- No existing export, prop type, token value, dependency, or export-map path
+  changed. The package still ships zero runtime dependencies and the closed
+  export set `.`, `./theme`, `./tokens`, `./styles.css`.
+
+### Automated verification
+
+| Gate | Command | Result |
+| --- | --- | --- |
+| Aggregate verification | `npm run verify` | Pass: 13 gates |
+| Unit, interaction, accessibility, SSR, hydration, CSS, and theme tests | `npm run test` (inside aggregate) | Pass: 177 files, 1,058 tests (+`Slider` and `Chip` suites since `1.0.3`) |
+| Architecture, browser, CSS, and token checks | aggregate gates | Pass: 34 inventory entries |
+| Release artifact and rollback | `npm run check:release` (inside aggregate) | Pass: 34 components; `1.1.0` and `v0.3.0` rollback verified |
+| Bundle budgets | `npm run check:bundle-size` (inside aggregate) | Pass: packed package within the T39 ceiling (395,000 bytes); every budget green |
+| Packed consumers | `npm run check:consumer-fixtures` (inside aggregate) | Pass: Vite and Next SSR/static against the packed tarball |
+| Documentation site structure | `npm run check:site` (inside aggregate) | Pass: 34 conformant components, export map respected |
+
+### Remaining boundaries
+
+- The rendering audit (`npm run audit:rendering`) needs a real Chromium and is
+  not part of `npm run verify`. The Slider family's physical 48px targets and
+  sourced geometry were verified in a real browser via the playground driver
+  (ADR 0031); the two new components add geometry rather than change existing
+  components' geometry.
+- No registry availability, dist-tag, or remote release claim is made by this
+  local audit.
+
 ## 1.0.3 — 2026-07-22
 
 Audit date: 2026-07-22  
