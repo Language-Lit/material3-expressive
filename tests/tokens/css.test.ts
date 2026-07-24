@@ -157,7 +157,7 @@ describe('token CSS generation', () => {
     const definitions = new Set(
       [...css.matchAll(/(--m3e-[a-z0-9-]+)\s*:/g)].map((match) => match[1]),
     )
-    expect(definitions.size).toBe(1702)
+    expect(definitions.size).toBe(1715)
     for (const match of css.matchAll(/var\(\s*(--m3e-[a-z0-9-]+)/g)) {
       expect(definitions.has(match[1]), match[1]).toBe(true)
     }

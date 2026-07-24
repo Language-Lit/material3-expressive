@@ -10,6 +10,7 @@
 
 import type { ComponentType } from 'react'
 import { BadgeExample } from '@examples/Badge.example'
+import { BottomSheetExample } from '@examples/BottomSheet.example'
 import { ButtonExample } from '@examples/Button.example'
 import { ButtonGroupExample } from '@examples/ButtonGroup.example'
 import { CardExample } from '@examples/Card.example'
@@ -48,6 +49,7 @@ import { WavyProgressExample } from '@examples/WavyProgress.example'
 
 export const demoRegistry: Record<string, ComponentType> = {
   Badge: BadgeExample,
+  BottomSheet: BottomSheetExample,
   Button: ButtonExample,
   ButtonGroup: ButtonGroupExample,
   Card: CardExample,

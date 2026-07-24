@@ -595,3 +595,55 @@
   gap: 1.5rem;
   min-block-size: 14rem;
 }
+
+.bottom-sheet-example {
+  display: grid;
+  gap: 1rem;
+  margin-block-start: 2rem;
+  padding: 1.5rem;
+}
+
+.bottom-sheet-example__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.bottom-sheet-example__content {
+  display: grid;
+  gap: 0.75rem;
+  padding-block: 0.5rem 1.5rem;
+  padding-inline: 1.5rem;
+}
+
+.bottom-sheet-example__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/*
+ * A standard sheet docks against whatever box the consumer gives it. This one
+ * is a fixed-height, clipped, relatively positioned container so the sheet has
+ * a bottom edge to rest on and its peek height is visible.
+ */
+/*
+ * No `overflow: hidden` here: the sheet clips its own content in the peek and
+ * hidden states, so a clipping wrapper would add nothing except a cut through
+ * the sheet's elevation shadow.
+ */
+.bottom-sheet-example__dock {
+  block-size: 18rem;
+  border-radius: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 1rem;
+  position: relative;
+}
+
+.bottom-sheet-example__dock > .m3e-bottom-sheet {
+  inset-block-end: 0;
+  inset-inline: 0;
+  position: absolute;
+}

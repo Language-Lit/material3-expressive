@@ -771,3 +771,38 @@ and the item's own read `LabelTextFont` are both `labelLarge`, so the
 typescale is not in dispute. ADR 0035, `Badge.source.test.ts`, and the
 conformance record carry the complete surface, generated-role, source-test,
 and anomaly ledger.
+
+## Bottom sheet (T45)
+
+`SheetBottomTokens` declares nine roles and the four pinned sheet sources read
+seven. Both unread roles are recorded rather than registered.
+`DockedStandardContainerElevation` has no resolution path at all:
+`BottomSheetDefaults.Elevation` reads `DockedModalContainerElevation`, and both
+the modal and the standard sheet use it. The two are both `ElevationTokens.Level1`,
+so `container-shadow` renders identically either way — but it is registered from
+the role the source actually resolves, which is the "prefer the value the code
+uses over an unread token" rule T42 had to apply retroactively to `Tabs`.
+`FocusIndicatorColor` (`Secondary`) is likewise unread, and this library's focus
+indication is the shared `sys.state` treatment, so there is no sheet-specific
+role to attach it to.
+
+`drag-handle-shape` is `MaterialTheme.shapes.extraLarge`, the source's own
+default for `BottomSheetDefaults.DragHandle`, not `cornerFull`. At 28px against
+the sourced 32x4 bar the corners clamp to a pill, so the two are visually
+indistinguishable; the sourced role is registered so a theme that retunes
+`cornerExtraLarge` moves the handle with it.
+
+`peek-height` (56dp), `container-max-width` (640dp), and `drag-handle-spacing`
+(the private `DragHandleVerticalPadding`, 22dp) are `BottomSheetDefaults`
+constants rather than generated roles. The 22px is load-bearing rather than
+decorative: 22 + 4 + 22 is the 48px target Material's accessibility guidance
+requires of a sheet's resize affordance, so the sourced spacing and the
+accessibility requirement agree.
+
+`scrim-color`/`scrim-opacity` come from `ScrimTokens` (`Scrim` at `0.32f`),
+which `BottomSheetDefaults.ScrimColor` composes. They carry the same values
+`dialog` registered but with stronger provenance: the dialog pair had to be
+cross-validated against material-web, because the pinned Compose dialog dims its
+window with an Android platform default rather than a token, whereas the sheet
+reads a real generated one. A theme test pins the two registrations together so
+they cannot drift apart.

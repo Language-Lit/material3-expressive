@@ -146,9 +146,14 @@ if (!pointer.hover || !pointer.fine) {
 // census of the families with source-geometry probes turns that into a failure.
 const census = await page.evaluate(() =>
   Object.fromEntries(
-    ['.m3e-chip', '.m3e-list-item', '.m3e-slider', '.m3e-divider', '.m3e-badge'].map(
-      (selector) => [selector, document.querySelectorAll(selector).length],
-    ),
+    [
+      '.m3e-chip',
+      '.m3e-list-item',
+      '.m3e-slider',
+      '.m3e-divider',
+      '.m3e-badge',
+      '.m3e-bottom-sheet',
+    ].map((selector) => [selector, document.querySelectorAll(selector).length]),
   ),
 )
 const missing = Object.entries(census).filter(([, count]) => count === 0)
@@ -257,6 +262,12 @@ for (const hit of small) {
 const chipGeometry = await page.evaluate(() => {
   const results = []
   for (const chip of document.querySelectorAll('.m3e-chip')) {
+    // An element inside a `display: none` subtree — the contents of a closed
+    // `<dialog>`, for instance — generates no boxes at all, so every measurement
+    // below would read zero and report a defect the component does not have. A
+    // collapsed-but-rendered element still generates a rect, so it is still
+    // audited; only genuinely unrendered subtrees are skipped.
+    if (chip.getClientRects().length === 0) continue
     const root = chip.getBoundingClientRect()
     const container = chip.querySelector('.m3e-chip__container')?.getBoundingClientRect()
     if (!container) {
@@ -310,6 +321,12 @@ const listItemGeometry = await page.evaluate(() => {
   const results = []
   const expectedMinimums = { 1: 56, 2: 72, 3: 88 }
   for (const item of document.querySelectorAll('.m3e-list-item')) {
+    // An element inside a `display: none` subtree — the contents of a closed
+    // `<dialog>`, for instance — generates no boxes at all, so every measurement
+    // below would read zero and report a defect the component does not have. A
+    // collapsed-but-rendered element still generates a rect, so it is still
+    // audited; only genuinely unrendered subtrees are skipped.
+    if (item.getClientRects().length === 0) continue
     const root = item.getBoundingClientRect()
     const styles = getComputedStyle(item)
     const lines = item.getAttribute('data-m3e-lines')
@@ -411,6 +428,12 @@ for (const finding of listItemGeometry) findings.push(`List Item geometry: ${fin
 const dividerGeometry = await page.evaluate(() => {
   const results = []
   for (const divider of document.querySelectorAll('.m3e-divider')) {
+    // An element inside a `display: none` subtree — the contents of a closed
+    // `<dialog>`, for instance — generates no boxes at all, so every measurement
+    // below would read zero and report a defect the component does not have. A
+    // collapsed-but-rendered element still generates a rect, so it is still
+    // audited; only genuinely unrendered subtrees are skipped.
+    if (divider.getClientRects().length === 0) continue
     const box = divider.getBoundingClientRect()
     const styles = getComputedStyle(divider)
     const vertical = divider.getAttribute('data-m3e-orientation') === 'vertical'
@@ -477,6 +500,93 @@ const dividerGeometry = await page.evaluate(() => {
 
 for (const finding of dividerGeometry) findings.push(`Divider geometry: ${finding}`)
 
+// --- Bottom Sheet source geometry -------------------------------------------
+// T45 keeps the sourced 32x4 drag-handle bar inside a 48px interactive box
+// (22px of `DragHandleVerticalPadding` above and below), rounds only the top
+// corners with `CornerExtraLargeTop`, caps the container at the sourced 640px,
+// and rests a standard sheet on its peek height. jsdom sees none of it: the
+// handle target, the corner asymmetry, and whether the peek band actually
+// clipped are all layout facts.
+const bottomSheetGeometry = await page.evaluate(() => {
+  const results = []
+  for (const sheet of document.querySelectorAll('.m3e-bottom-sheet')) {
+    const container = sheet.querySelector('.m3e-bottom-sheet__container')
+    // Skip a closed modal sheet: a `display: none` subtree generates no boxes,
+    // so every measurement below would read zero.
+    if (!container || container.getClientRects().length === 0) continue
+
+    const variant = sheet.getAttribute('data-m3e-variant')
+    const state = sheet.getAttribute('data-m3e-state')
+    const box = container.getBoundingClientRect()
+    const styles = getComputedStyle(container)
+
+    if (box.width > 640.6) {
+      results.push(`${variant} container ${box.width.toFixed(1)}px exceeds the sourced 640px cap`)
+    }
+
+    // `CornerExtraLargeTop` is 28px on the top corners and square below.
+    const top = Number.parseFloat(styles.borderStartStartRadius)
+    const bottom = Number.parseFloat(styles.borderEndStartRadius)
+    if (state !== 'hidden' && Math.abs(top - 28) > 0.6) {
+      results.push(`${variant} top corner ${top.toFixed(1)}px is not the sourced 28px`)
+    }
+    if (bottom > 0.6) {
+      results.push(`${variant} bottom corner ${bottom.toFixed(1)}px should be square`)
+    }
+
+    if (/^(?:transparent|rgba\(0, 0, 0, 0\))$/.test(styles.backgroundColor)) {
+      results.push(`${variant} container paints no background color`)
+    }
+
+    const handle = container.querySelector('.m3e-bottom-sheet__drag-handle')
+    if (handle && handle.getClientRects().length > 0) {
+      const handleBox = handle.getBoundingClientRect()
+      // 22 + 4 + 22. This is both the sourced spacing and the target size the
+      // Material accessibility guidance requires of a resize affordance.
+      if (Math.abs(handleBox.height - 48) > 0.6) {
+        results.push(`drag handle target ${handleBox.height.toFixed(1)}px is not 48px`)
+      }
+      const bar = handle.querySelector('.m3e-bottom-sheet__drag-handle-bar')
+      if (bar) {
+        const barBox = bar.getBoundingClientRect()
+        if (Math.abs(barBox.width - 32) > 0.6 || Math.abs(barBox.height - 4) > 0.6) {
+          results.push(
+            `drag handle bar ${barBox.width.toFixed(1)}x${barBox.height.toFixed(1)} is not the sourced 32x4`,
+          )
+        }
+        // The bar must be centred on the sheet, as the source's `Box` with
+        // `Alignment.Center` places it.
+        const barCentre = barBox.left + barBox.width / 2
+        const sheetCentre = box.left + box.width / 2
+        if (Math.abs(barCentre - sheetCentre) > 1) {
+          results.push('drag handle bar is not centred on the sheet')
+        }
+      }
+    }
+
+    // A standard sheet resting at its peek height must actually clip to that
+    // band; if it renders at full content height the peek anchor did nothing.
+    if (variant === 'standard' && state === 'partiallyExpanded') {
+      const content = container.querySelector('.m3e-bottom-sheet__content')
+      if (content && content.scrollHeight - box.height < 1) {
+        results.push(
+          `standard sheet at peek height ${box.height.toFixed(1)}px did not clip its content`,
+        )
+      }
+      const parent = sheet.parentElement
+      if (parent) {
+        const parentBox = parent.getBoundingClientRect()
+        if (box.bottom - parentBox.bottom > 0.6) {
+          results.push('standard sheet escapes the bottom edge of its container')
+        }
+      }
+    }
+  }
+  return results
+})
+
+for (const finding of bottomSheetGeometry) findings.push(`Bottom Sheet geometry: ${finding}`)
+
 // --- Badge source geometry --------------------------------------------------
 // T43 sizes the small badge 6px on both axes and the large one from a 16px
 // minimum that grows with its count, and anchors both at the top-trailing
@@ -486,6 +596,12 @@ for (const finding of dividerGeometry) findings.push(`Divider geometry: ${findin
 const badgeGeometry = await page.evaluate(() => {
   const results = []
   for (const badge of document.querySelectorAll('.m3e-badge')) {
+    // An element inside a `display: none` subtree — the contents of a closed
+    // `<dialog>`, for instance — generates no boxes at all, so every measurement
+    // below would read zero and report a defect the component does not have. A
+    // collapsed-but-rendered element still generates a rect, so it is still
+    // audited; only genuinely unrendered subtrees are skipped.
+    if (badge.getClientRects().length === 0) continue
     const box = badge.getBoundingClientRect()
     const styles = getComputedStyle(badge)
     const large = badge.getAttribute('data-m3e-variant') === 'large'
@@ -514,6 +630,12 @@ const badgeGeometry = await page.evaluate(() => {
 
   // Placement is a property of the anchor, not the badge alone.
   for (const slot of document.querySelectorAll('.m3e-badge-anchor__badge')) {
+    // An element inside a `display: none` subtree — the contents of a closed
+    // `<dialog>`, for instance — generates no boxes at all, so every measurement
+    // below would read zero and report a defect the component does not have. A
+    // collapsed-but-rendered element still generates a rect, so it is still
+    // audited; only genuinely unrendered subtrees are skipped.
+    if (slot.getClientRects().length === 0) continue
     const anchor = slot.parentElement
     const badge = slot.querySelector('.m3e-badge')
     if (!anchor || !badge) continue
@@ -561,6 +683,12 @@ for (const finding of badgeGeometry) findings.push(`Badge geometry: ${finding}`)
 const sliderGeometry = await page.evaluate(() => {
   const results = []
   for (const slider of document.querySelectorAll('.m3e-slider')) {
+    // An element inside a `display: none` subtree — the contents of a closed
+    // `<dialog>`, for instance — generates no boxes at all, so every measurement
+    // below would read zero and report a defect the component does not have. A
+    // collapsed-but-rendered element still generates a rect, so it is still
+    // audited; only genuinely unrendered subtrees are skipped.
+    if (slider.getClientRects().length === 0) continue
     const root = slider.getBoundingClientRect()
     const track = slider.querySelector('.m3e-slider__track')?.getBoundingClientRect()
     const thumbs = [...slider.querySelectorAll('.m3e-slider__thumb')].map((thumb) =>
@@ -918,5 +1046,5 @@ if (findings.length > 0) {
 
 process.stdout.write(
   'Rendering audit passed: no clipped elevation shadows, undersized interactive targets outside ' +
-    'the recorded exemptions, or Chip/List Item/Slider/Divider/Badge source-geometry defects\n',
+    'the recorded exemptions, or Chip/List Item/Slider/Divider/Badge/Bottom Sheet source-geometry defects\n',
 )

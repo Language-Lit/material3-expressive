@@ -1748,3 +1748,212 @@ this task completes the source-currency half.
 - `npm run verify` passes all fourteen gates (1,195 tests; 1,702 generated
   custom properties; 37 conformant components; 375,729-byte packed tarball; site
   and consumer fixtures build).
+
+## T45 — Material 3 Bottom sheet family
+
+Status: complete
+Approved: 2026-07-24 (owner request: open the roadmap's composite tranche,
+starting with Bottom sheets)
+Completed: 2026-07-24
+
+### Scope
+
+The [Material catalog parity roadmap](MATERIAL_CATALOG_ROADMAP.md) closed tranche
+P in T44 and gates tranche C behind it. This is the first composite: catalog row
+3, Bottom sheets, currently Planned with no coverage.
+
+The pinned source is `a90df2fc27e026b9ad2ed569f203a260c1041fab` — the reference
+snapshot T44 adopted. This is not an assumption: all eleven upstream sheet files
+were fetched at that revision and at `androidx-main` HEAD
+(`0f056f78299610de8a8dc1511671519aab75657d`, 2026-07-23) and are byte-identical,
+so the family joins the unified snapshot rather than fragmenting it. The
+executable ledger covers `BottomSheet.kt`, `BottomSheetScaffold.kt`,
+`ModalBottomSheet.kt`, `SheetDefaults.kt`, generated `SheetBottomTokens.kt`, and
+the six pinned test files — `BottomSheetTest.kt` (11),
+`BottomSheetScaffoldTest.kt` (33), `ModalBottomSheetTest.kt` (17),
+`ModalBottomSheetDialogTest.kt` (5), `ModalBottomSheetScreenshotTest.kt` (5), and
+`SheetStateTest.kt` (14), 85 cases in total.
+
+Upstream splits the family across three public composables. `BottomSheet` is the
+surface and gesture behavior rendered inline; `ModalBottomSheet` wraps it in a
+platform dialog window with a scrim; `BottomSheetScaffold` is an app-shell layout
+that owns `topBar`, `snackbarHost`, and `content(PaddingValues)` and docks a
+peek-height sheet beneath them. Five translation decisions carry the design, all
+recorded in ADR 0037:
+
+- One public `BottomSheet` with `variant="modal" | "standard"` collapses the two
+  sheet composables, following the one-component-per-variant rule
+  `NavigationDrawer` established for exactly this modal/permanent split rather
+  than the one-component-per-axis rule ADR 0031 set for `VerticalSlider`.
+- `BottomSheetScaffold`'s *scaffold* is excluded as an export and delivered as a
+  documented recipe. Its `topBar`/`snackbarHost`/`content` slots are app-shell
+  composition that public components already compose with no hidden behavior,
+  which the roadmap's completeness contract names as the recipe case. Its
+  *sheet* behavior is not excluded: `peekHeight` is what `variant="standard"`
+  anchors on.
+- Modal renders a native `<dialog>` driven by `showModal()`, reusing the
+  technique ADR 0016 established for `Dialog` — backdrop, focus trap, inert
+  background, and focus restoration are native, and `::backdrop` paints the
+  scrim. It duplicates that small lifecycle rather than sharing it, the same
+  call `NavigationDrawer` made and for the same reason.
+- The three `SheetValue`s become a `value`/`defaultValue`/`onValueChange` triple
+  over `'hidden' | 'partiallyExpanded' | 'expanded'`, this library's universal
+  `useControllableState` shape. The partial anchor is source-exact and differs by
+  variant, as upstream's does: modal shows `min(50%, content)` of its container,
+  standard shows `peekHeight` (56px).
+- The drag handle is a real `<button>`, so the M3 accessibility page's keyboard
+  contract — Tab reaches the handle, Space/Enter cycles the available heights —
+  is native rather than reconstructed, and it carries the source's own click
+  cycle and `dismiss`/`expand`/`collapse` action labels.
+
+Dragging is handle-only, using the pointer-capture session `Slider` established,
+with the source's `PositionalThreshold` (56dp) and `VelocityThreshold` (125dp)
+deciding the settle target. Upstream additionally drags the whole surface through
+a nested-scroll connection that steals scroll from sheet content; that is
+deliberately not ported, because the M3 accessibility page requires a
+single-pointer alternative to any drag regardless, and a handle-only drag does
+not have to arbitrate against a scrollable content area.
+
+Excluded with reasons: predictive back and its five screenshot cases (an Android
+system-gesture concept with no web equivalent), `securePolicy` (an Android window
+flag), `verticalScaleUp`/`verticalScaleDown` (artifacts of Compose spring
+overshoot, which CSS transitions do not produce), and the deprecated
+`rememberModalBottomSheetState`/`rememberStandardBottomSheetState`/hidden `Saver`
+and constructor overloads (Kotlin binary-compatibility shims, the same class T44
+classified for `RangeSliderLegacy`). `standardWindowInsets` is not excluded but
+adapted: `safeDrawing.only(Bottom)` becomes `env(safe-area-inset-bottom)`, a
+genuine web equivalent.
+
+No runtime dependency, peer dependency, or package export-path change. No token
+is removed or renamed. Publication is a separate task.
+
+### Expected files
+
+- Added: `src/components/BottomSheet/BottomSheet.tsx`,
+  `src/components/BottomSheet/BottomSheet.types.ts`,
+  `src/components/BottomSheet/BottomSheet.css`,
+  `src/components/BottomSheet/index.ts`,
+  `src/tokens/defaults/bottom-sheet.ts`, `docs/components/BottomSheet.md`,
+  `playground/examples/BottomSheet.example.tsx`, the mirrored
+  `tests/components/BottomSheet/*` suite and conformance record, and ADR 0037.
+- Modified: `src/components/index.ts`, `src/styles/styles.css`,
+  `src/tokens/defaults/index.ts`, `docs/component-inventory.json`,
+  `docs/SPEC.md`, `docs/ARCHITECTURE.md`, `docs/TOKEN_PROVENANCE.md`,
+  `docs/MATERIAL_CATALOG_ROADMAP.md`, `docs/ACTIVE_TASK.md`,
+  `tests/tokens/schema.test.ts`, `tests/tokens/css.test.ts`,
+  `scripts/check-release.mjs`, `package.json`, `site/content/site.ts`,
+  `playground/src/main.tsx`, `playground/src/playground.css`.
+- Generated: `docs/SUPPORTED_COMPONENTS.md`, `site/demos/registry.tsx`.
+
+### Acceptance checks
+
+- The executable ledger freezes all eleven pinned blob identities, the nine
+  generated `SheetBottomTokens` declarations partitioned 7 read / 2 unread, the
+  current and deprecated source entries, all 85 pinned test cases, and every
+  recorded exclusion with its reason.
+- Both variants render their sourced output across all three states; the modal
+  variant opens through `showModal()` and dismisses on Escape and scrim click,
+  and the standard variant does neither.
+- The drag handle is a button carrying the source's click cycle and action
+  labels; Space/Enter and pointer drag reach the same states, and the positional
+  and velocity thresholds settle to the sourced target.
+- TypeScript rejects an open variant, an open state, a mismatched ref, and a
+  `peekHeight` on the modal variant.
+- Light/dark, scoped token overrides, RTL, forced colors, reduced motion, SSR,
+  hydration, public exports, inventory, documentation, example, and packed
+  consumers agree.
+- `npm run verify` passes.
+- Because this task adds component geometry:
+
+  ```bash
+  npm run build && npm run playground:build
+  M3E_CHROMIUM_PATH=<chromium binary> npm run audit:rendering
+  ```
+
+  passes without an unexplained allowlist addition.
+
+### Completion evidence
+
+- `BottomSheet` is a public named export with `variant`, `value`/`defaultValue`/
+  `onValueChange`, `confirmValueChange`, `peekHeight`, `dragHandle`,
+  `gesturesEnabled`, `dismissOnEscape`, and `dismissOnScrimClick`. The package
+  still has zero runtime dependencies, React/React DOM remain its only peers,
+  and no export path, prop, or token was removed or renamed.
+- The pin was verified rather than assumed. All eleven upstream sheet files were
+  fetched at `a90df2fc…` and at `androidx-main` HEAD
+  (`0f056f78299610de8a8dc1511671519aab75657d`, committed 2026-07-23) and hashed:
+  every one is byte-identical, so the family extends T44's unified reference
+  snapshot instead of opening a second one.
+- `BottomSheet.source.test.ts` freezes the eleven pinned blob identities, the
+  nine generated declarations partitioned 7 read / 2 unread, 86 current and 7
+  deprecated source entries, all 85 pinned test cases, six exclusions, and five
+  native-web adaptations.
+- The scope's test-case count was wrong when the task was approved and was
+  corrected during execution. The initial survey reported 78 cases; extracting
+  `@Test` methods directly from the six pinned files gives 85 — `BottomSheetTest`
+  11 (not 9), `BottomSheetScaffoldTest` 33 (not 31), `ModalBottomSheetTest` 17
+  (not 16), and `ModalBottomSheetDialogTest` 5 (not 3). The ledger and the
+  acceptance check now assert the extracted number.
+- The seven-file suite passes 90 tests across behavior, drag, accessibility,
+  CSS, theme, SSR/hydration, and the source ledger. Twelve compile-only type
+  cases reject an open variant, an open state, a `peekHeight` on either spelling
+  of the modal variant, a non-boolean `dragHandle`, a CSS-length peek height, a
+  state-returning `confirmValueChange`, and an event-shaped `onValueChange`;
+  `tsc --noEmit` passes, so every `@ts-expect-error` is load-bearing. The root
+  ref is asserted positively rather than as a rejection, because the root is a
+  `<dialog>` or a `<div>` by variant and no single element type is correct for
+  both.
+- Three defects were found and fixed during execution rather than shipped:
+  - **The top corners never rounded.** `CornerExtraLargeTop` is a four-value
+    `border-radius` shorthand (`28px 28px 0px 0px`), which is invalid in the
+    per-corner longhand the first draft used, so the declaration was dropped and
+    the sheet rendered square. Only the browser audit could see this; the fix
+    consumes the token through the shorthand, as `TextField` already does for
+    `CornerExtraSmallTop`, and a CSS test now forbids the longhand form.
+  - **Every controlled sheet was warned for a mistake it had not made.**
+    `defaultValue` carried a destructuring default, so it was never `undefined`
+    and the "use either value or defaultValue" check fired on all controlled
+    usage. The default moved to the `useControllableState` call and two tests
+    pin both directions.
+  - **The drag offset never resolved.** It was written as a `--m3e-comp-*`
+    custom property with no token definition; the CSS gate caught it. It is a
+    runtime measurement rather than a design value, so it is now a local
+    `--m3e-bottom-sheet-drag-offset` with a resting default, matching the
+    convention the other components use for non-token variables.
+- The rendering audit gained a Bottom Sheet probe measuring the 48px handle
+  target, the sourced 32x4 bar and its centring, the 28px top corners with
+  square bottom corners, the 640px cap, a painted container, and whether a
+  standard sheet at peek height actually clips and stays inside its container.
+  The probe proved itself non-vacuous by catching the corner defect above on its
+  first run. `.m3e-bottom-sheet` joins the census that fails the audit if the
+  playground renders none of a probed family.
+- The audit's existing probes were corrected in the same pass. They measured
+  every matching element including those inside a closed `<dialog>`, which is a
+  `display: none` subtree where everything reads zero; this family is the first
+  to put audited components inside one, and it produced six false findings. The
+  six geometry loops now skip elements that generate no boxes at all, which was
+  proven not to blunt them: seeding a zero-height rule into the built stylesheet
+  still fails the audit on four visible dividers, and removing it restores green.
+- The playground example's docked container no longer sets `overflow: hidden`,
+  which the audit correctly reported as cutting the sheet's elevation shadow.
+  The sheet clips its own content in the peek and hidden states, so the wrapper
+  added nothing but the clip. No allowlist entry was added.
+- The token registry adds 13 Bottom Sheet properties and emits 1,715 overall,
+  seven of them from generated roles the source resolves. Both unread roles are
+  recorded in the ledger, ADR 0037, and the conformance record rather than
+  silently dropped, and `drag-handle-shape` registers the source's
+  `MaterialTheme.shapes.extraLarge` rather than the pill it visually clamps to.
+- `npm run verify` passes all 14 gates: 202 test files / 1,285 tests, 38
+  conformant inventory entries, 38 documentation pages, 41 stylesheets, both
+  packed consumer fixtures, and the site check at 37 demos.
+- Only the declaration-closure ceiling was raised, and with a recorded decision:
+  95,381 bytes measured against a 93,000 ceiling, about 2.5% over, essentially
+  this component's own declarations and their consumer-facing documentation.
+  Its baseline is rebased and its ceiling raised to 109,000/24,800 preserving
+  the headroom ratio that artifact already encoded. The four passing
+  artifacts — JavaScript closure, both stylesheets, and the packed package —
+  keep their existing ceilings, unlike ADR 0031, which rebased everything.
+- The required real-Chromium audit passes after a production package and
+  playground build, with no allowlist change.
+- Publication remains outside T45. The working package stays `1.1.0`; a version
+  and registry action require a separately approved release task.

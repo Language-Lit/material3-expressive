@@ -478,8 +478,9 @@ Additional components such as search, sheets, app bars, and
 carousel belong to a documented 1.x scope. The Chip family entered that scope
 under approved T38 and is now conformant. The Slider family entered that scope
 under approved T39 and is now conformant. The List Item family entered that
-scope under approved T40 and is now conformant; the remaining listed families
-are still deferred. The complete future boundary, including every current
+scope under approved T40 and is now conformant. The Bottom sheet family entered
+that scope under approved T45 and is now conformant, opening the roadmap's
+composite tranche; the remaining listed families are still deferred. The complete future boundary, including every current
 official catalog family and composition recipes such as expanding lists, is the
 [Material catalog parity roadmap](MATERIAL_CATALOG_ROADMAP.md) governed by ADR
 0033. A roadmap entry is not a stable support claim. Changes to stable core
@@ -644,6 +645,7 @@ important design choice must be resolved at its boundary.
 | T42 | Material 3 Divider primitive | One `Divider` covers both source composables through an `orientation` prop, with an HTML-content-model `as` choice, an explicit decorative/semantic split, token-adapted thickness and color, and the first family whose generated token file has no unread remainder; corrects the `Tabs` divider from an unread generated role to the value its source renders (ADR 0034) |
 | T43 | Material 3 Badge family | `Badge` selects its variant from content as the source does, `BadgeAnchor` reproduces the source's offset, RTL, and out-of-flow placement, and an optional `badge` reaches every component the pinned source anchors one to; separates the drawer's end-side badge from the anchored pill and puts its color on the read path rather than an unread generated role (ADR 0035) |
 | T44 | Primitive-family source refresh | Closes the roadmap's primitive tranche by diffing all fifteen primitive families against `androidx-main` HEAD, verifying them current, re-pinning the eleven byte-identical components onto the reference snapshot `a90df2fc…`, and retaining the four with a non-substantive upstream delta (experimental→stable graduation, binary-compat shims, KDoc) with the delta classified; adds no component and changes no public surface (ADR 0036) |
+| T45 | Material 3 Bottom sheet family | Opens the roadmap's composite tranche. One `BottomSheet` covers both source sheet composables through a `variant` prop: modal renders a native `<dialog>` with a `::backdrop` scrim, focus trap and inert background, standard docks inline as a `region`. The three `SheetValue`s become the controllable-state triple with a `confirmValueChange` veto, the peek anchor stays variant-specific as the source's is, the drag handle is a real button carrying Material's Tab/Space/Enter contract and its required non-drag alternative, and dragging is handle-only with the source's positional and velocity thresholds. `BottomSheetScaffold`'s app-shell slots are deferred to a recipe while its sheet behavior is retained (ADR 0037) |
 
 ## 15. Definition of project completion
 

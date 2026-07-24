@@ -528,3 +528,26 @@ ADR 0033 records this boundary and the final catalog-reconciliation gate.
 Cross-cutting decisions live in `docs/adr/`. Generated files must identify
 their source and regeneration command. CI reproduces and compares contract
 artifacts rather than accepting manually edited output.
+
+`BottomSheet` opens the composite tranche of the catalog roadmap. Its two
+source sheet composables collapse into one `variant` prop, following the
+one-component-per-variant rule `NavigationDrawer` set for the same
+modal/non-modal split rather than the one-component-per-axis rule `Slider` and
+`Divider` used. The modal variant renders a native `<dialog>` driven by
+`showModal()`, so the top layer, `::backdrop` scrim, focus trap, inert
+background, and focus restoration are all native; because the sheet is a child
+of that dialog rather than the dialog box itself, a scrim click is identified by
+target alone and needs none of the bounding-rect arithmetic `Dialog` and
+`NavigationDrawer` require. The standard variant is a docked `region`, not a
+dialog, because it leaves the page interactive.
+
+`BottomSheetScaffold` is deliberately not an export. Its `topBar`,
+`snackbarHost`, and padded content slots are app-shell composition that public
+components already express, which the roadmap's completeness contract makes a
+recipe; its *sheet* behavior is retained as the standard variant's peek-height
+anchor. The three `SheetValue`s become this library's controllable-state triple,
+the drag handle is a real `<button>` so Material's Tab/Space/Enter contract and
+its required non-drag alternative are native, and dragging is handle-only with
+the source's own positional and velocity thresholds deciding the settle. ADR
+0037 records the variant mapping, the scaffold split, the `region`/`dialog`
+semantics, the handle-only narrowing, and the exclusions.

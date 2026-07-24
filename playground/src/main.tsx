@@ -9,6 +9,7 @@ import {
 } from '@language-lit/material3-expressive'
 import '@language-lit/material3-expressive/styles.css'
 import { BadgeExample } from '../examples/Badge.example'
+import { BottomSheetExample } from '../examples/BottomSheet.example'
 import { ButtonExample } from '../examples/Button.example'
 import { ButtonGroupExample } from '../examples/ButtonGroup.example'
 import { CardExample } from '../examples/Card.example'
@@ -93,6 +94,7 @@ createRoot(root).render(
         <ChipExample />
         <ListItemExample />
         <DividerExample />
+        <BottomSheetExample />
         <BadgeExample />
         <CheckboxExample />
         <RadioExample />

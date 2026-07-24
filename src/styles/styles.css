@@ -1,6 +1,7 @@
 @layer m3e.tokens, m3e.base, m3e.components, m3e.utilities;
 
 @import '../components/Badge/Badge.css';
+@import '../components/BottomSheet/BottomSheet.css';
 @import '../components/Button/Button.css';
 @import '../components/ButtonGroup/ButtonGroup.css';
 @import '../components/Card/Card.css';

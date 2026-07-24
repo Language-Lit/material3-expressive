@@ -22,6 +22,7 @@
     { "name": "TextArea", "kind": "input", "task": "T14", "path": "src/components/TextArea", "status": "conformant", "dependencies": ["TextField"], "publicExports": ["TextArea", "TextAreaProps", "TextAreaVariant"] },
     { "name": "SegmentedButtonGroup", "kind": "input", "task": "T15", "path": "src/components/SegmentedButtonGroup", "status": "conformant", "dependencies": [], "publicExports": ["SegmentedButtonGroup", "SegmentedButtonGroupProps", "SegmentedButtonGroupSegment"] },
     { "name": "Dialog", "kind": "overlay", "task": "T16", "path": "src/components/Dialog", "status": "conformant", "dependencies": [], "publicExports": ["Dialog", "DialogProps", "DialogRole"] },
+    { "name": "BottomSheet", "kind": "overlay", "task": "T45", "path": "src/components/BottomSheet", "status": "conformant", "dependencies": [], "publicExports": ["BottomSheet", "BottomSheetProps", "BottomSheetState", "BottomSheetVariant"] },
     { "name": "Menu", "kind": "overlay", "task": "T17", "path": "src/components/Menu", "status": "conformant", "dependencies": [], "publicExports": ["Menu", "MenuItem", "MenuProps"] },
     { "name": "Select", "kind": "input", "task": "T17", "path": "src/components/Select", "status": "conformant", "dependencies": ["Menu", "TextField"], "publicExports": ["Select", "SelectOption", "SelectProps", "SelectVariant"] },
     { "name": "Tooltip", "kind": "overlay", "task": "T18", "path": "src/components/Tooltip", "status": "conformant", "dependencies": [], "publicExports": ["Tooltip", "TooltipPlacement", "TooltipProps", "TooltipVariant"] },

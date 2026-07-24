@@ -1,0 +1,209 @@
+@layer m3e.components {
+  /*
+   * The modal root is the native `<dialog>` itself. It is stretched to the
+   * whole viewport and made transparent so it contributes no visible box of
+   * its own: it exists to own the top layer, the focus trap and the
+   * `::backdrop` scrim, while the sheet is the child container. Because the
+   * sheet is a descendant rather than the dialog box, a click whose target is
+   * the dialog element is unambiguously a scrim click and needs no
+   * bounding-rect test.
+   */
+  .m3e-bottom-sheet[data-m3e-variant="modal"] {
+    background: none;
+    block-size: 100%;
+    border: 0;
+    inline-size: 100%;
+    inset: 0;
+    max-block-size: 100%;
+    max-inline-size: 100%;
+    padding: 0;
+  }
+
+  .m3e-bottom-sheet[data-m3e-variant="modal"]:not([open]) {
+    display: none;
+  }
+
+  .m3e-bottom-sheet[data-m3e-variant="modal"][open] {
+    align-items: flex-end;
+    display: flex;
+    justify-content: center;
+  }
+
+  .m3e-bottom-sheet[data-m3e-variant="modal"]::backdrop {
+    background-color: var(--m3e-comp-bottom-sheet-scrim-color);
+    opacity: var(--m3e-comp-bottom-sheet-scrim-opacity);
+  }
+
+  /*
+   * The standard root docks the sheet inline with no scrim and no top layer,
+   * so it stays a plain block the consumer positions. It only carries the
+   * max-width centring the source applies through `widthIn(max = sheetMaxWidth)`.
+   */
+  .m3e-bottom-sheet[data-m3e-variant="standard"] {
+    display: flex;
+    inline-size: 100%;
+    justify-content: center;
+  }
+
+  .m3e-bottom-sheet__container {
+    /*
+     * Live drag distance, written by the component while a pointer is down and
+     * removed when it settles. It is a runtime measurement rather than a
+     * design value, so it is a local `--m3e-bottom-sheet-*` variable with a
+     * resting default rather than a registered `--m3e-comp-*` token.
+     */
+    --m3e-bottom-sheet-drag-offset: 0px;
+
+    background-color: var(--m3e-comp-bottom-sheet-container-color);
+    /*
+     * `CornerExtraLargeTop` is a four-value `border-radius` shorthand
+     * (`28px 28px 0px 0px`), not a single corner length, so it is consumed
+     * through the shorthand — the same way `TextField` consumes
+     * `CornerExtraSmallTop`. Assigning it to a per-corner longhand is invalid
+     * and silently squares the sheet off.
+     */
+    border-radius: var(--m3e-comp-bottom-sheet-container-shape);
+    box-shadow: var(--m3e-comp-bottom-sheet-container-shadow);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    inline-size: 100%;
+    max-inline-size: var(--m3e-comp-bottom-sheet-container-max-width);
+    /*
+     * `standardWindowInsets` is `safeDrawing` restricted to its bottom side:
+     * the source keeps sheet content clear of the system bar at the bottom of
+     * the window. The web equivalent is the safe-area inset, which is zero on
+     * displays that have no such intrusion.
+     */
+    padding-block-end: env(safe-area-inset-bottom, 0px);
+    transform: translateY(var(--m3e-bottom-sheet-drag-offset));
+    transition:
+      block-size var(--m3e-sys-motion-expressive-default-spatial-duration)
+        var(--m3e-sys-motion-expressive-default-spatial-easing),
+      max-block-size var(--m3e-sys-motion-expressive-default-spatial-duration)
+        var(--m3e-sys-motion-expressive-default-spatial-easing),
+      transform var(--m3e-sys-motion-expressive-default-spatial-duration)
+        var(--m3e-sys-motion-expressive-default-spatial-easing);
+  }
+
+  /*
+   * While a pointer is down the sheet must track the finger exactly rather
+   * than ease toward each intermediate offset.
+   */
+  .m3e-bottom-sheet__container[data-m3e-dragging] {
+    transition: none;
+  }
+
+  /*
+   * The source anchors a modal sheet's partially expanded state at
+   * `fullHeight - min(fullHeight / 2, sheetHeight)` — that is, it reveals the
+   * lesser of half the container and the sheet's own content height. A
+   * `max-block-size` of 50% expresses exactly that minimum, because a shorter
+   * sheet keeps its content height.
+   */
+  .m3e-bottom-sheet[data-m3e-variant="modal"][data-m3e-state="partiallyExpanded"]
+    .m3e-bottom-sheet__container {
+    max-block-size: 50%;
+  }
+
+  .m3e-bottom-sheet[data-m3e-variant="modal"][data-m3e-state="expanded"]
+    .m3e-bottom-sheet__container {
+    max-block-size: 100%;
+  }
+
+  /*
+   * A standard sheet rests at `layoutHeight - peekHeightPx`: the peek height
+   * is the visible band, not a cap on a taller sheet, so it is a fixed
+   * block-size rather than a maximum.
+   */
+  .m3e-bottom-sheet[data-m3e-variant="standard"][data-m3e-state="partiallyExpanded"]
+    .m3e-bottom-sheet__container {
+    block-size: var(--m3e-comp-bottom-sheet-peek-height);
+    overflow: hidden;
+  }
+
+  .m3e-bottom-sheet[data-m3e-variant="standard"][data-m3e-state="hidden"]
+    .m3e-bottom-sheet__container {
+    block-size: 0;
+    border-radius: var(--m3e-comp-bottom-sheet-hidden-container-shape);
+    overflow: hidden;
+  }
+
+  /*
+   * `DockedMinimizedContainerShape` is `CornerNone`: the source squares the
+   * container off in the hidden state rather than keeping the expanded
+   * 28px top corners.
+   */
+  .m3e-bottom-sheet[data-m3e-variant="modal"][data-m3e-state="hidden"]
+    .m3e-bottom-sheet__container {
+    border-radius: var(--m3e-comp-bottom-sheet-hidden-container-shape);
+  }
+
+  /*
+   * 22px of padding above and below a 4px bar makes the button's box exactly
+   * the 48px target the Material accessibility guidance requires of a sheet's
+   * resize affordance, while the painted bar stays the sourced 32x4.
+   */
+  .m3e-bottom-sheet__drag-handle {
+    align-items: center;
+    appearance: none;
+    background: none;
+    border: 0;
+    cursor: grab;
+    display: flex;
+    flex: none;
+    justify-content: center;
+    padding-block: var(--m3e-comp-bottom-sheet-drag-handle-spacing);
+    padding-inline: 0;
+    touch-action: none;
+    inline-size: 100%;
+  }
+
+  .m3e-bottom-sheet__drag-handle:active {
+    cursor: grabbing;
+  }
+
+  .m3e-bottom-sheet__drag-handle-bar {
+    background-color: var(--m3e-comp-bottom-sheet-drag-handle-color);
+    block-size: var(--m3e-comp-bottom-sheet-drag-handle-height);
+    border-radius: var(--m3e-comp-bottom-sheet-drag-handle-shape);
+    display: block;
+    inline-size: var(--m3e-comp-bottom-sheet-drag-handle-width);
+  }
+
+  .m3e-bottom-sheet__content {
+    flex: 1 1 auto;
+    min-block-size: 0;
+    overflow-y: auto;
+  }
+
+  /*
+   * A sheet whose handle is hidden has no affordance to inset the content
+   * from the container's top edge, so the content owns that spacing instead.
+   */
+  .m3e-bottom-sheet__drag-handle + .m3e-bottom-sheet__content {
+    padding-block-start: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .m3e-bottom-sheet__container {
+      transition: none;
+    }
+  }
+
+  /*
+   * Forced-colors mode drops author backgrounds, so the sheet would otherwise
+   * lose both its surface and the handle bar, and the scrim would stop
+   * separating the sheet from the content behind it.
+   */
+  @media (forced-colors: active) {
+    .m3e-bottom-sheet__container {
+      border: 1px solid CanvasText;
+    }
+
+    .m3e-bottom-sheet__drag-handle-bar {
+      background-color: CanvasText;
+      forced-color-adjust: none;
+    }
+  }
+}

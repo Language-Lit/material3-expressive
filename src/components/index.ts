@@ -1,4 +1,5 @@
 export * from './Badge'
+export * from './BottomSheet'
 export * from './Button'
 export * from './ButtonGroup'
 export * from './Card'
