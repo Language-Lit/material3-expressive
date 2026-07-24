@@ -153,6 +153,7 @@ const census = await page.evaluate(() =>
       '.m3e-divider',
       '.m3e-badge',
       '.m3e-bottom-sheet',
+      '.m3e-app-bar',
     ].map((selector) => [selector, document.querySelectorAll(selector).length]),
   ),
 )
@@ -586,6 +587,113 @@ const bottomSheetGeometry = await page.evaluate(() => {
 })
 
 for (const finding of bottomSheetGeometry) findings.push(`Bottom Sheet geometry: ${finding}`)
+
+// --- App Bar scroll coupling and source geometry -----------------------------
+// T46's substance is scroll-driven and entirely invisible to jsdom: sticky
+// pinning, the on-scroll container-color swap, the collapse fraction, and the
+// sourced 64/152 heights are all layout facts. This probe actually scrolls
+// the playground's inner panels and asserts the outcomes.
+const appBarScroll = await page.evaluate(async () => {
+  const results = []
+  const settle = (extraMs = 60) =>
+    new Promise((resolve) =>
+      requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(resolve, extraMs))),
+    )
+
+  const bars = [...document.querySelectorAll('.m3e-app-bar')]
+  for (const bar of bars) {
+    if (bar.getClientRects().length === 0) continue
+    const row = bar.querySelector('.m3e-app-bar__row')
+    const rowBox = row?.getBoundingClientRect()
+    if (!rowBox || Math.abs(rowBox.height - 64) > 0.6) {
+      results.push(`bar row height ${rowBox?.height.toFixed(1)}px is not the sourced 64px`)
+    }
+  }
+
+  const pinned = document.querySelector('.m3e-app-bar[data-m3e-scroll-behavior="pinned"]')
+  const pinnedPanel = pinned?.parentElement
+  if (pinned && pinnedPanel) {
+    const restColor = getComputedStyle(pinned).backgroundColor
+    pinnedPanel.scrollTop = 120
+    await settle()
+    if (!pinned.hasAttribute('data-m3e-scrolled')) {
+      results.push('pinned bar is not marked scrolled after its panel scrolls')
+    }
+    const barBox = pinned.getBoundingClientRect()
+    const panelBox = pinnedPanel.getBoundingClientRect()
+    if (Math.abs(barBox.top - panelBox.top) > 1) {
+      results.push(
+        `pinned bar sits ${(barBox.top - panelBox.top).toFixed(1)}px from its scrollport top instead of sticking`,
+      )
+    }
+    const scrolledColor = getComputedStyle(pinned).backgroundColor
+    if (scrolledColor === restColor) {
+      results.push('pinned bar container color did not swap to the on-scroll role')
+    }
+    pinnedPanel.scrollTop = 0
+    // The swap is transitioned with the default-effects tokens, so the return
+    // leg needs the transition to finish before the computed color is final.
+    await settle(700)
+    if (getComputedStyle(pinned).backgroundColor !== restColor) {
+      results.push('pinned bar container color did not return at the top')
+    }
+  } else {
+    results.push('no pinned app bar rendered; the pinned probe is vacuous')
+  }
+
+  const collapsing = document.querySelector(
+    '.m3e-app-bar[data-m3e-scroll-behavior="exitUntilCollapsed"]',
+  )
+  const collapsingPanel = collapsing?.parentElement
+  if (collapsing && collapsingPanel) {
+    const expandedRow = collapsing.querySelector('.m3e-app-bar__expanded-row')
+    const restHeight = collapsing.getBoundingClientRect().height
+    // The example is large flexible with a subtitle: 152px sourced.
+    if (Math.abs(restHeight - 152) > 1) {
+      results.push(`large flexible bar rests at ${restHeight.toFixed(1)}px, not the sourced 152px`)
+    }
+
+    collapsingPanel.scrollTop = 400
+    await settle()
+    const fraction = getComputedStyle(collapsing)
+      .getPropertyValue('--m3e-app-bar-collapsed-fraction')
+      .trim()
+    if (fraction !== '1') {
+      results.push(`collapse fraction is ${fraction || 'unset'} after a deep scroll, not 1`)
+    }
+    const collapsedHeight = collapsing.getBoundingClientRect().height
+    if (Math.abs(collapsedHeight - 64) > 1) {
+      results.push(`collapsed bar is ${collapsedHeight.toFixed(1)}px, not the 64px collapsed row`)
+    }
+    if ((expandedRow?.getBoundingClientRect().height ?? 0) > 0.5) {
+      results.push('expanded row did not collapse to zero height')
+    }
+    if (!collapsing.hasAttribute('data-m3e-collapsed')) {
+      results.push('semantics threshold did not cross on a full collapse')
+    }
+    const collapsedTitle = collapsing.querySelector(
+      '.m3e-app-bar__row .m3e-app-bar__title-group',
+    )
+    if (collapsedTitle && getComputedStyle(collapsedTitle).opacity !== '1') {
+      results.push('collapsed title copy is not fully visible at fraction 1')
+    }
+
+    collapsingPanel.scrollTop = 0
+    await settle()
+    if (Math.abs(collapsing.getBoundingClientRect().height - restHeight) > 1) {
+      results.push('bar did not restore its expanded height at the top')
+    }
+    if (collapsing.hasAttribute('data-m3e-collapsed')) {
+      results.push('semantics threshold did not cross back at the top')
+    }
+  } else {
+    results.push('no collapsing app bar rendered; the collapse probe is vacuous')
+  }
+
+  return results
+})
+
+for (const finding of appBarScroll) findings.push(`App Bar scroll: ${finding}`)
 
 // --- Badge source geometry --------------------------------------------------
 // T43 sizes the small badge 6px on both axes and the large one from a 16px
@@ -1046,5 +1154,5 @@ if (findings.length > 0) {
 
 process.stdout.write(
   'Rendering audit passed: no clipped elevation shadows, undersized interactive targets outside ' +
-    'the recorded exemptions, or Chip/List Item/Slider/Divider/Badge/Bottom Sheet source-geometry defects\n',
+    'the recorded exemptions, or Chip/List Item/Slider/Divider/Badge/Bottom Sheet/App Bar source-geometry defects\n',
 )

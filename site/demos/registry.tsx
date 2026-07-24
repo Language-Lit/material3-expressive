@@ -9,6 +9,7 @@
 // client-only rendering of it.
 
 import type { ComponentType } from 'react'
+import { AppBarExample } from '@examples/AppBar.example'
 import { BadgeExample } from '@examples/Badge.example'
 import { BottomSheetExample } from '@examples/BottomSheet.example'
 import { ButtonExample } from '@examples/Button.example'
@@ -48,6 +49,7 @@ import { TooltipExample } from '@examples/Tooltip.example'
 import { WavyProgressExample } from '@examples/WavyProgress.example'
 
 export const demoRegistry: Record<string, ComponentType> = {
+  AppBar: AppBarExample,
   Badge: BadgeExample,
   BottomSheet: BottomSheetExample,
   Button: ButtonExample,

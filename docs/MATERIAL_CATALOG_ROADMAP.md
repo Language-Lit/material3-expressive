@@ -68,7 +68,7 @@ must never be projected into stable documentation as support claims.
 
 | # | Official family | Delivery | Current coverage | Roadmap status | Remaining completion work |
 | ---: | --- | --- | --- | --- | --- |
-| 1 | [App bars](https://m3.material.io/components/app-bars/overview) | Composite | None | Planned | Top app bar family, scrolling behavior, expressive variants, and recipes |
+| 1 | [App bars](https://m3.material.io/components/app-bars/overview) | Composite | `AppBar` | Partial | Reconcile the overflow-action system (`AppBarRow`/`AppBarColumn`, behavior-owning per the completeness contract) in its own approved task; the search app bar specimen is row 25's source (`AppBarWithSearch` in `SearchBar.kt`) |
 | 2 | [Badges](https://m3.material.io/components/badges/overview) | Primitive | `Badge`, `BadgeAnchor` | Conformant | Reconcile new upstream variants at the final catalog audit |
 | 3 | [Bottom sheets](https://m3.material.io/components/bottom-sheets/overview) | Composite | `BottomSheet` | Conformant | Reconcile new upstream variants at the final catalog audit; publish the `BottomSheetScaffold` app-shell recipe |
 | 4 | [Button groups](https://m3.material.io/components/button-groups/overview) | Composite | `ButtonGroup` | Conformant | Reconcile new upstream variants at the final catalog audit |
@@ -102,10 +102,10 @@ must never be projected into stable documentation as support claims.
 | 32 | [Tabs](https://m3.material.io/components/tabs/overview) | Composite | `Tabs` | Conformant | Reconcile new upstream variants at the final catalog audit |
 | 33 | [Text fields](https://m3.material.io/components/text-fields/overview) | Primitive | `TextField`, `TextArea` | Conformant | Reconcile new upstream variants at the final catalog audit |
 | 34 | [Time pickers](https://m3.material.io/components/time-pickers/overview) | Composite | None | Planned | Dial/input modes, locale boundary, validation, focus, and dialog composition |
-| 35 | [Toolbars](https://m3.material.io/components/toolbars/overview) | Mixed | `FloatingToolbar` | Partial | Reconcile the full toolbar family, including docked/floating and expansion/overflow compositions |
+| 35 | [Toolbars](https://m3.material.io/components/toolbars/overview) | Mixed | `FloatingToolbar` | Partial | Reconcile the full toolbar family, including docked/floating and expansion/overflow compositions, plus the bottom app bar the current design index files here (`BottomAppBar`/`FlexibleBottomAppBar`, pinned in row 1's `AppBar.kt`; the flexible variant already reads `DockedToolbarTokens` — T46 recorded the disposition) |
 | 36 | [Tooltips](https://m3.material.io/components/tooltips/overview) | Composite | `Tooltip` | Conformant | Reconcile new upstream variants at the final catalog audit |
 
-Snapshot accounting: 28 Conformant + 2 Partial + 6 Planned = 36 families;
+Snapshot accounting: 28 Conformant + 3 Partial + 5 Planned = 36 families;
 0 Excluded. Changing those totals requires changing a row in the same approved
 task.
 

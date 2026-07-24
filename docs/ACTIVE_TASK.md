@@ -1957,3 +1957,241 @@ is removed or renamed. Publication is a separate task.
   playground build, with no allowlist change.
 - Publication remains outside T45. The working package stays `1.1.0`; a version
   and registry action require a separately approved release task.
+
+## T46 — Material 3 App bar family (top app bars)
+
+Status: complete
+Approved: 2026-07-24 (owner request: continue the composite tranche with App
+bars; scope amendments — Partial landing, deferred overflow DSL — reviewed and
+approved in discussion)
+Completed: 2026-07-24
+
+### Scope
+
+Catalog row 1, App bars, currently Planned with no coverage. This task ports the
+top app bar family; the row lands **Partial**, not Conformant, and that is the
+honest status by design rather than a shortfall (see the boundary below).
+
+The pinned source is `a90df2fc27e026b9ad2ed569f203a260c1041fab`, the reference
+snapshot T44 adopted and T45 extended. Verified, not assumed: all eighteen
+app-bar files — `AppBar.kt`, `AppBarRow.kt`, `AppBarColumn.kt`, `AppBarDsl.kt`,
+the seven token files (`AppBarTokens`, `AppBarSmallTokens`, `AppBarMediumTokens`,
+`AppBarMediumFlexibleTokens`, `AppBarLargeTokens`, `AppBarLargeFlexibleTokens`,
+`BottomAppBarTokens`) plus `DockedToolbarTokens`, and the six pinned test files —
+were fetched at that revision and at `androidx-main` HEAD
+(`477f94858de4569261d2ba58329e928d2683b7eb`, committed 2026-07-24) and are
+byte-identical, so the family joins the unified snapshot. The executable ledger
+covers the six pinned test files: `AppBarTest.kt` (105),
+`AppBarScreenshotTest.kt` (26), `AppBarRowTest.kt` (8),
+`AppBarRowScreenshotTest.kt` (3), `AppBarColumnTest.kt` (8), and
+`AppBarColumnScreenshotTest.kt` (3), 153 cases in total, each counted by
+extracting `@Test` methods from the fetched files.
+
+The family boundary follows the current official catalog, not the source file:
+
+- **In scope — the six top-bar composables.** One public `AppBar` collapses
+  `TopAppBar`, `CenterAlignedTopAppBar`, `MediumTopAppBar`,
+  `MediumFlexibleTopAppBar`, `LargeTopAppBar`, and `LargeFlexibleTopAppBar`
+  through `size`, `flexible`, `titleAlignment`, and `subtitle` props. The source
+  itself collapses these — center-aligned is the small bar with a centered
+  title (the current design index merged the specimen away), and every two-row
+  variant delegates to one `TwoRowsTopAppBar` — and baseline-versus-flexible is
+  a token-family axis (Large is 152px/headline-medium where Large flexible is
+  120px/display-small), so it is a prop, not parallel exports. Baseline Medium
+  and Large ship: upstream keeps them stable, and the design site's
+  "not recommended" note is recorded in documentation, not spent as an
+  exclusion.
+- **Deferred to row 35 (Toolbars): `BottomAppBar` and `FlexibleBottomAppBar`.**
+  They live in the same pinned `AppBar.kt`, but the current design index no
+  longer files them under App bars — the bottom app bar is documented under
+  Toolbars as "no longer recommended... replaced with the docked toolbar", and
+  `FlexibleBottomAppBar` already reads `DockedToolbarTokens` for its geometry.
+  Row 35 is where that reconciliation already lives. This is the first time one
+  row's pinned file carries another row's components; the ledger accounts for
+  them and ADR 0038 records the split.
+- **Deferred to row 25 (Search): `AppBarWithSearch`.** The design site lists a
+  "Search app bar" specimen under App bars, but its source is `SearchBar.kt` —
+  a separate file that borrows `AppBarTokens` colors without composing any top
+  app bar — and the guidelines' own rule is "don't transform app bars into a
+  search app bar."
+- **Deferred to a named follow-up: the overflow-action system**
+  (`AppBarRow`/`AppBarColumn`/`AppBarDsl` and their 22 pinned tests). The
+  guidelines document trailing actions collapsing into an overflow menu as
+  family behavior, and auto-overflow is behavior-owning — it measures available
+  width and relocates items into a menu, which a recipe composed from `Menu`
+  and `IconButton` cannot express. Per the completeness contract that makes it
+  an API, not a recipe, so the row stays Partial until it is reconciled. This
+  is the `Lists` pattern, not the `BottomSheetScaffold` pattern.
+
+The genuinely new machinery is scroll coupling. Compose drives the bar through a
+nested-scroll connection with no web analog, so a new internal primitive
+observes a scroll container (window by default, an element ref opt-in) and
+produces exactly three outputs: a scrolled flag, a collapse fraction, and an
+enter-always offset. `position: sticky` supplies pinning natively. The sourced
+behaviors map as: `pinned` — sticky, container color swaps through the sourced
+on-scroll role on any overlap; `enterAlways` — the bar translates away tracking
+scroll deltas and returns immediately on scroll-up, with an idle snap to fully
+shown or hidden replacing the source's fling-settle; `exitUntilCollapsed` — the
+two-row bar's expanded row shrinks with a collapse fraction derived
+deterministically from scroll position, which also gives the source's
+"stay collapsed until scrolled back to the top" for free. Single-row bars snap
+their container color (the source animates a binary swap at 0.01 overlap);
+two-row bars blend it continuously with the fraction, painted as a scrolled
+color overlay whose opacity is the fraction — alpha-compositing an opaque color
+is exactly the source's lerp. The two-row title crossfade carries the source's
+`TopTitleAlphaEasing` cubic-bezier(.8, 0, .8, .15), evaluated in the primitive,
+and the accessibility semantics swap between the two title rows crosses at
+fraction 0.5, exactly as the source hides one row's semantics from the other.
+
+Accessibility decisions, recorded in ADR 0038: the root is a `<header>`
+(`banner` in context); the title is a slot, not an automatic heading, following
+the specification's rule that typography roles never determine document
+structure; and because the accessibility page requires "maintain access to app
+bar actions when content is scrolled", an enter-always bar reveals itself when
+focus lands inside it. The collapse fraction gets no controlled prop — it is a
+scroll-derived measurement, like T45's drag offset, not enumerable state; a
+documented deviation from the controlled/uncontrolled rule.
+
+Excluded with reasons: the bar-drag gesture (dragging the bar itself to resize —
+a touch affordance the web reserves for scrolling; the scroll coupling is the
+port), fling settle (`settleAppBar`, velocity-based — replaced by the idle
+snap), the touch-exploration auto-disable (TalkBack detection is an Android
+service query; the web equivalent is the focus-reveal above), `contentPadding`
+(defaults to zero and exists for Compose inset composition), and the deprecated
+hidden overloads plus per-variant `*TopAppBarColors` factories (compat shims,
+the T44 class).
+
+No runtime dependency, peer dependency, or package export-path change. No token
+is removed or renamed. Publication is a separate task.
+
+### Expected files
+
+- Added: `src/components/AppBar/AppBar.tsx`, `src/components/AppBar/AppBar.types.ts`,
+  `src/components/AppBar/AppBar.css`, `src/components/AppBar/index.ts`,
+  `src/internal/useAppBarScroll.ts`, `src/tokens/defaults/app-bar.ts`,
+  `docs/components/AppBar.md`, `playground/examples/AppBar.example.tsx`, the
+  mirrored `tests/components/AppBar/*` suite and conformance record, and ADR
+  0038.
+- Modified: `src/components/index.ts`, `src/styles/styles.css`,
+  `src/tokens/defaults/index.ts`, `docs/component-inventory.json`,
+  `docs/SPEC.md`, `docs/ARCHITECTURE.md`, `docs/TOKEN_PROVENANCE.md`,
+  `docs/MATERIAL_CATALOG_ROADMAP.md` (row 1 to Partial with named remainder;
+  row 35 gains the bottom-bar/docked-toolbar item), `docs/ACTIVE_TASK.md`,
+  `tests/tokens/schema.test.ts`, `tests/tokens/css.test.ts`,
+  `scripts/check-release.mjs`, `scripts/audit-rendering.mjs` (a probe that
+  scrolls), `package.json`, `site/content/site.ts`, `playground/src/main.tsx`,
+  `playground/src/playground.css`.
+- Generated: `docs/SUPPORTED_COMPONENTS.md`, `site/demos/registry.tsx`.
+
+### Acceptance checks
+
+- The executable ledger freezes all eighteen pinned blob identities; partitions
+  the 29 declarations across `AppBarTokens` (6 read by top bars, 1 read only by
+  the deferred bottom bar, 7 unread) and the five tier files (all 15 read);
+  accounts for every current and deprecated source entry including the
+  deferred-elsewhere composables; freezes all 153 pinned test cases; and
+  records every exclusion and disposition with its reason.
+- All six variant combinations render their sourced geometry and typography:
+  64px small (title-large), 112px medium (headline-small), 112/136px medium
+  flexible (headline-medium, label-large subtitle), 152px large
+  (headline-medium), 120/152px large flexible (display-small, title-medium
+  subtitle), collapsed rows at 64px small typography.
+- The three scroll behaviors produce their sourced outcomes in jsdom-simulated
+  scroll tests: pinned swaps the container color both ways; enter-always hides,
+  reveals on scroll-up, snaps at idle, and reveals on focus-within; exit-until-
+  collapsed tracks the fraction, crossfades the titles through the sourced
+  easing, and swaps title semantics at 0.5.
+- TypeScript rejects `flexible` on a small bar, `subtitle` and `titleAlignment`
+  on baseline medium/large, an open size, an open scroll behavior, and a
+  mismatched ref.
+- Light/dark, scoped token overrides, RTL, forced colors, reduced motion, SSR,
+  hydration, public exports, inventory, documentation, example, and packed
+  consumers agree.
+- `npm run verify` passes.
+- Because this task adds component geometry and scroll-driven rendering:
+
+  ```bash
+  npm run build && npm run playground:build
+  M3E_CHROMIUM_PATH=<chromium binary> npm run audit:rendering
+  ```
+
+  passes with a new probe that actually scrolls the page — asserting the
+  pinned color swap, the collapse fraction, sticky pinning, and the sourced
+  heights — and the probe is proven non-vacuous.
+
+### Completion evidence
+
+- `AppBar` is a public named export with `size`, `flexible`, `titleAlignment`,
+  `subtitle`, `navigationIcon`, `actions`, `scrollBehavior`, and
+  `scrollContainer`. The package still has zero runtime dependencies,
+  React/React DOM remain its only peers, and no export path, prop, or token was
+  removed or renamed.
+- The pin was verified rather than assumed: all eighteen upstream app-bar files
+  hash identically at `a90df2fc…` and at `androidx-main` HEAD
+  (`477f94858de4569261d2ba58329e928d2683b7eb`, 2026-07-24), extending the
+  unified snapshot for a third consecutive task. Every one of the 153 pinned
+  test cases was counted by extracting `@Test` methods from the fetched files.
+- `AppBar.source.test.ts` freezes the eighteen blob identities; partitions
+  `AppBarTokens` 6 read / 1 bottom-bar-read / 7 unread and the five tier files
+  15/15 read; accounts for 121 in-scope current entries at parameter
+  granularity, 16 dispositioned entries at composable granularity (7 to the
+  Toolbars row, 9 to the overflow follow-up), and 10 deprecated entries; and
+  freezes the 153 test cases partitioned 92/13/19/7/22 by disposition, plus six
+  exclusions, five native-web adaptations, and five recorded anomalies —
+  including `LeadingSpace`/`TrailingSpace` being shadowed by the hand-tuned
+  4dp constant the code actually reads.
+- The nine-file suite passes 76 focused tests across behavior, scroll coupling,
+  accessibility, CSS, theme, SSR/hydration, and the ledger. The scroll suite
+  drives jsdom scroll events through all three behaviors: the pinned swap both
+  ways, enter-always hide/reveal/idle-snap/focus-reveal with fake timers, and
+  exit-until-collapsed fraction math against the sourced ranges, the sourced
+  easing curve (asserted equal to the primitive's own evaluation and below the
+  diagonal), and the 0.5 semantics swap in both directions. Eleven compile-only
+  type cases reject `flexible` on small, `subtitle`/`titleAlignment` on
+  baseline two-row bars, `exitUntilCollapsed` on a single-row bar, open unions,
+  children, a missing title, and an element where a ref is required.
+- Two defects were found and fixed during execution rather than shipped:
+  - **Every baseline medium/large bar was warned for a prop it never passed.**
+    `titleAlignment` carried a destructuring default, so the invalid-prop check
+    could never see "not given" — the same trap T45's completion evidence
+    documents for `defaultValue`, now caught by the no-warning-for-valid-combos
+    test instead of by a consumer.
+  - **The scroll primitive dirtied resting markup at mount.** Its initial
+    application wrote fraction 0 and offset 0px inline even on a page at rest,
+    which the hydration test surfaced as a server/client innerHTML divergence.
+    A page at rest now writes nothing — the stylesheet's resting defaults
+    already express that state — while a page restored mid-scroll still applies
+    its position at mount.
+- The rendering audit gained its first probe that scrolls: it drives the
+  playground's two inner scroll panels and asserts the 64px row, sticky
+  pinning against the scrollport top, the on-scroll color swap and its return,
+  the 152px resting height, fraction 1 with a fully collapsed expanded row and
+  the crossed semantics threshold after a deep scroll, the collapsed title at
+  full opacity, and full restoration at the top. It reports its own vacuity if
+  either coupled bar is missing. Proven non-vacuous in both directions: seeding
+  a zero collapse range and a suppressed color swap into the built stylesheet
+  produced exactly the two expected findings, and restoring returned green. The
+  probe's first draft also caught its own timing naivety — the return-leg color
+  check ran mid-transition — which is recorded here because the fix (waiting
+  out the effects transition) is load-bearing for anyone extending the probe.
+- The token registry adds 17 App bar properties and emits 1,732 overall. The
+  two consequential unread roles are recorded in the ledger, the provenance
+  document, and ADR 0038 rather than silently dropped.
+- `npm run verify` passes all 14 gates: 209 test files / 1,361 tests, 39
+  conformant inventory entries, 39 documentation pages, 42 stylesheets, both
+  packed consumer fixtures, and the site check at 38 demos (the icon subset
+  regenerated for the example's `arrow_back`).
+- Three bundle ceilings were raised with a recorded decision, each breached
+  marginally by real component code (JS closure +0.5%, its gzip +0.2%, packed
+  +1.7%): their baselines rebased to measured T46 output and ceilings restored
+  to the ~12% headroom each artifact already encoded, per ADR 0038. The
+  declaration and both stylesheet ceilings keep their existing values —
+  measured at 99,035/109,000, 450,798/464,700, and 130,443/139,300, all inside
+  their prior budgets.
+- Catalog row 1 lands **Partial by design**: the behavior-owning
+  overflow-action system is named in the row's remaining work, the bottom bars
+  are dispositioned to row 35 with the roadmap row updated in this task, and
+  the search app bar is recorded as row 25's source. Snapshot accounting moves
+  to 28 Conformant + 3 Partial + 5 Planned.
+- Publication remains outside T46. The working package stays `1.1.0`; a version
+  and registry action require a separately approved release task.

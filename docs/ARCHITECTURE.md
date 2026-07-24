@@ -551,3 +551,27 @@ its required non-drag alternative are native, and dragging is handle-only with
 the source's own positional and velocity thresholds deciding the settle. ADR
 0037 records the variant mapping, the scaffold split, the `region`/`dialog`
 semantics, the handle-only narrowing, and the exclusions.
+
+`AppBar` continues the composite tranche and introduces the library's first
+scroll coupling. One export covers the six top-bar composables through
+`size` × `flexible` × `titleAlignment` × `subtitle` — the source itself treats
+center alignment as a small-bar configuration and drives every two-row variant
+through one builder, and baseline-versus-flexible is a token-family axis rather
+than new anatomy. The catalog row deliberately lands Partial: the
+overflow-action system is behavior-owning upstream and is deferred to a named
+follow-up, the bottom bars are dispositioned to the Toolbars row where the
+current design index files them, and the search app bar belongs to the Search
+row's own source.
+
+`useAppBarScroll` is the new internal primitive: it observes one named scroll
+container (window by default) and writes exactly three outputs imperatively —
+a scrolled flag, a collapse fraction with its eased title alpha, and an
+enter-always offset — so scroll-frequency updates never re-render the bar.
+Pinning itself is `position: sticky`; the primitive never repositions
+anything. The two-row title crossfade evaluates the source's own cubic-bezier
+in JS because CSS cannot apply an easing to a custom property, and the
+accessibility swap between the two title copies crosses at the source's 0.5
+threshold. The primitive is deliberately app-bar-shaped rather than a generic
+scroll service; a second consumer is the signal to extract a shared core. ADR
+0038 records the variant collapse, the three-way row split, the behavior
+mappings with their exclusions, and the non-controllable fraction.

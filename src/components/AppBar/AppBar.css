@@ -1,0 +1,363 @@
+@layer m3e.components {
+  /*
+   * The root is a plain header band. `isolation: isolate` gives the two-row
+   * scrolled-color overlay (a negative-z-index ::before) a stacking context
+   * to paint inside, so it sits above the bar's background and below its
+   * content in every positioning mode.
+   */
+  .m3e-app-bar {
+    /*
+     * Live scroll measurements, written by the scroll primitive while a
+     * coupling is active and removed on teardown. Runtime values rather than
+     * design values, so they are local `--m3e-app-bar-*` variables with
+     * resting defaults, the same convention as the bottom sheet's drag
+     * offset.
+     */
+    --m3e-app-bar-collapsed-fraction: 0;
+    --m3e-app-bar-top-title-alpha: 0;
+    --m3e-app-bar-offset: 0px;
+
+    background-color: var(--m3e-comp-app-bar-container-color);
+    box-sizing: border-box;
+    display: block;
+    inline-size: 100%;
+    isolation: isolate;
+    position: relative;
+    transition: background-color
+      var(--m3e-sys-motion-expressive-default-effects-duration)
+      var(--m3e-sys-motion-expressive-default-effects-easing);
+  }
+
+  /*
+   * The three scroll couplings all keep the bar at the container's top edge;
+   * `position: sticky` is the platform's own pinning.
+   */
+  .m3e-app-bar[data-m3e-scroll-behavior="pinned"],
+  .m3e-app-bar[data-m3e-scroll-behavior="enterAlways"],
+  .m3e-app-bar[data-m3e-scroll-behavior="exitUntilCollapsed"] {
+    inset-block-start: 0;
+    position: sticky;
+    z-index: 1;
+  }
+
+  /*
+   * A single-row bar swaps its container color once anything scrolls under
+   * it — the source animates a binary swap at any overlap — while a two-row
+   * bar blends continuously with the collapse fraction below.
+   */
+  .m3e-app-bar[data-m3e-size="small"][data-m3e-scrolled] {
+    background-color: var(--m3e-comp-app-bar-on-scroll-container-color);
+  }
+
+  /*
+   * The two-row blend: an overlay painted in the on-scroll color whose
+   * opacity is the collapse fraction. Alpha-compositing an opaque color over
+   * the container color is exactly the source's srgb lerp.
+   */
+  .m3e-app-bar:not([data-m3e-size="small"])::before {
+    background-color: var(--m3e-comp-app-bar-on-scroll-container-color);
+    content: "";
+    inset: 0;
+    opacity: var(--m3e-app-bar-collapsed-fraction, 0);
+    pointer-events: none;
+    position: absolute;
+    z-index: -1;
+  }
+
+  /*
+   * The enter-always coupling translates the whole bar away by the
+   * accumulated scroll offset. No transition while tracking scroll — the bar
+   * must follow the finger exactly; the settle transition exists only for
+   * the idle snap and the focus-within reveal, which set `data-m3e-settling`.
+   */
+  .m3e-app-bar[data-m3e-scroll-behavior="enterAlways"] {
+    transform: translateY(calc(-1 * var(--m3e-app-bar-offset, 0px)));
+  }
+
+  .m3e-app-bar[data-m3e-settling] {
+    transition:
+      background-color var(--m3e-sys-motion-expressive-default-effects-duration)
+        var(--m3e-sys-motion-expressive-default-effects-easing),
+      transform var(--m3e-sys-motion-expressive-default-spatial-duration)
+        var(--m3e-sys-motion-expressive-default-spatial-easing);
+  }
+
+  /*
+   * The single row of a small bar, and the collapsed row of a two-row bar:
+   * the shared 64px container with the source's hand-tuned 4px horizontal
+   * padding (the generated LeadingSpace/TrailingSpace roles are declared but
+   * unread; the code reads its own constant).
+   */
+  .m3e-app-bar__row {
+    align-items: center;
+    block-size: var(--m3e-comp-app-bar-container-height);
+    box-sizing: border-box;
+    display: flex;
+    padding-inline: var(--m3e-comp-app-bar-horizontal-padding);
+  }
+
+  .m3e-app-bar__navigation {
+    align-items: center;
+    color: var(--m3e-comp-app-bar-leading-icon-color);
+    display: flex;
+    flex: none;
+  }
+
+  /*
+   * The source insets the title by TopAppBarTitleInset when there is no
+   * navigation icon, keeping text 16px from the edge: 4px row padding plus
+   * this 12px. With an icon present the icon's own box supplies the offset.
+   */
+  .m3e-app-bar__row > .m3e-app-bar__title-group:first-child {
+    margin-inline-start: var(--m3e-comp-app-bar-title-inset);
+  }
+
+  .m3e-app-bar__title-group {
+    color: var(--m3e-comp-app-bar-title-color);
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    justify-content: center;
+    min-inline-size: 0;
+  }
+
+  .m3e-app-bar[data-m3e-title-alignment="center"] .m3e-app-bar__title-group {
+    align-items: center;
+    text-align: center;
+  }
+
+  .m3e-app-bar__actions {
+    align-items: center;
+    color: var(--m3e-comp-app-bar-trailing-icon-color);
+    display: flex;
+    flex: none;
+    margin-inline-start: auto;
+  }
+
+  .m3e-app-bar__subtitle {
+    color: var(--m3e-comp-app-bar-subtitle-color);
+  }
+
+  /* Row (small and collapsed) typography: the small tier's title-large. */
+  .m3e-app-bar__row .m3e-app-bar__title {
+    font-family: var(--m3e-sys-typescale-baseline-title-large-font-family);
+    font-size: var(--m3e-sys-typescale-baseline-title-large-font-size);
+    font-variation-settings:
+      "GRAD" var(--m3e-sys-typescale-baseline-title-large-axes-grad),
+      "opsz" var(--m3e-sys-typescale-baseline-title-large-axes-opsz),
+      "wdth" var(--m3e-sys-typescale-baseline-title-large-axes-wdth),
+      "wght" var(--m3e-sys-typescale-baseline-title-large-axes-wght);
+    font-weight: var(--m3e-sys-typescale-baseline-title-large-font-weight);
+    letter-spacing: var(--m3e-sys-typescale-baseline-title-large-letter-spacing);
+    line-height: var(--m3e-sys-typescale-baseline-title-large-line-height);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .m3e-app-bar__row .m3e-app-bar__subtitle {
+    font-family: var(--m3e-sys-typescale-baseline-label-medium-font-family);
+    font-size: var(--m3e-sys-typescale-baseline-label-medium-font-size);
+    font-variation-settings:
+      "GRAD" var(--m3e-sys-typescale-baseline-label-medium-axes-grad),
+      "opsz" var(--m3e-sys-typescale-baseline-label-medium-axes-opsz),
+      "wdth" var(--m3e-sys-typescale-baseline-label-medium-axes-wdth),
+      "wght" var(--m3e-sys-typescale-baseline-label-medium-axes-wght);
+    font-weight: var(--m3e-sys-typescale-baseline-label-medium-font-weight);
+    letter-spacing: var(--m3e-sys-typescale-baseline-label-medium-letter-spacing);
+    line-height: var(--m3e-sys-typescale-baseline-label-medium-line-height);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /*
+   * On a two-row bar the collapsed row's title copy fades in with the
+   * sourced TopTitleAlphaEasing, evaluated by the scroll primitive into
+   * --m3e-app-bar-top-title-alpha; it rests invisible at fraction 0.
+   */
+  .m3e-app-bar:not([data-m3e-size="small"])
+    .m3e-app-bar__row
+    > .m3e-app-bar__title-group {
+    opacity: var(--m3e-app-bar-top-title-alpha, 0);
+  }
+
+  /*
+   * The expanded row shrinks from the tier's collapse range to nothing as
+   * the fraction rises, clipping its title, and the title fades with
+   * 1 − fraction — both exactly the source's TwoRowsTopAppBar wiring.
+   */
+  .m3e-app-bar__expanded-row {
+    block-size: calc(
+      var(--m3e-app-bar-collapse-range) *
+        (1 - var(--m3e-app-bar-collapsed-fraction, 0))
+    );
+    box-sizing: border-box;
+    display: flex;
+    overflow: hidden;
+    padding-inline: var(--m3e-comp-app-bar-horizontal-padding);
+  }
+
+  .m3e-app-bar__expanded-row .m3e-app-bar__title-group {
+    justify-content: flex-end;
+    margin-inline-start: var(--m3e-comp-app-bar-title-inset);
+    opacity: calc(1 - var(--m3e-app-bar-collapsed-fraction, 0));
+  }
+
+  /* Sourced collapse ranges: tier expanded height minus the shared 64px row. */
+  .m3e-app-bar[data-m3e-size="medium"] {
+    --m3e-app-bar-collapse-range: calc(
+      var(--m3e-comp-app-bar-medium-container-height) -
+        var(--m3e-comp-app-bar-container-height)
+    );
+  }
+
+  .m3e-app-bar[data-m3e-size="medium"][data-m3e-flexible] {
+    --m3e-app-bar-collapse-range: calc(
+      var(--m3e-comp-app-bar-medium-flexible-container-height) -
+        var(--m3e-comp-app-bar-container-height)
+    );
+  }
+
+  .m3e-app-bar[data-m3e-size="medium"][data-m3e-flexible][data-m3e-subtitle] {
+    --m3e-app-bar-collapse-range: calc(
+      var(--m3e-comp-app-bar-medium-flexible-subtitle-container-height) -
+        var(--m3e-comp-app-bar-container-height)
+    );
+  }
+
+  .m3e-app-bar[data-m3e-size="large"] {
+    --m3e-app-bar-collapse-range: calc(
+      var(--m3e-comp-app-bar-large-container-height) -
+        var(--m3e-comp-app-bar-container-height)
+    );
+  }
+
+  .m3e-app-bar[data-m3e-size="large"][data-m3e-flexible] {
+    --m3e-app-bar-collapse-range: calc(
+      var(--m3e-comp-app-bar-large-flexible-container-height) -
+        var(--m3e-comp-app-bar-container-height)
+    );
+  }
+
+  .m3e-app-bar[data-m3e-size="large"][data-m3e-flexible][data-m3e-subtitle] {
+    --m3e-app-bar-collapse-range: calc(
+      var(--m3e-comp-app-bar-large-flexible-subtitle-container-height) -
+        var(--m3e-comp-app-bar-container-height)
+    );
+  }
+
+  /* The source's hand-tuned expanded-title bottom paddings per tier. */
+  .m3e-app-bar[data-m3e-size="medium"] .m3e-app-bar__expanded-row
+    .m3e-app-bar__title-group {
+    padding-block-end: var(--m3e-comp-app-bar-medium-title-bottom-padding);
+  }
+
+  .m3e-app-bar[data-m3e-size="large"] .m3e-app-bar__expanded-row
+    .m3e-app-bar__title-group {
+    padding-block-end: var(--m3e-comp-app-bar-large-title-bottom-padding);
+  }
+
+  /* Expanded-row typography per tier. */
+  .m3e-app-bar[data-m3e-size="medium"] .m3e-app-bar__expanded-row .m3e-app-bar__title {
+    font-family: var(--m3e-sys-typescale-baseline-headline-small-font-family);
+    font-size: var(--m3e-sys-typescale-baseline-headline-small-font-size);
+    font-variation-settings:
+      "GRAD" var(--m3e-sys-typescale-baseline-headline-small-axes-grad),
+      "opsz" var(--m3e-sys-typescale-baseline-headline-small-axes-opsz),
+      "wdth" var(--m3e-sys-typescale-baseline-headline-small-axes-wdth),
+      "wght" var(--m3e-sys-typescale-baseline-headline-small-axes-wght);
+    font-weight: var(--m3e-sys-typescale-baseline-headline-small-font-weight);
+    letter-spacing: var(--m3e-sys-typescale-baseline-headline-small-letter-spacing);
+    line-height: var(--m3e-sys-typescale-baseline-headline-small-line-height);
+  }
+
+  .m3e-app-bar[data-m3e-size="medium"][data-m3e-flexible]
+    .m3e-app-bar__expanded-row
+    .m3e-app-bar__title,
+  .m3e-app-bar[data-m3e-size="large"]:not([data-m3e-flexible])
+    .m3e-app-bar__expanded-row
+    .m3e-app-bar__title {
+    font-family: var(--m3e-sys-typescale-baseline-headline-medium-font-family);
+    font-size: var(--m3e-sys-typescale-baseline-headline-medium-font-size);
+    font-variation-settings:
+      "GRAD" var(--m3e-sys-typescale-baseline-headline-medium-axes-grad),
+      "opsz" var(--m3e-sys-typescale-baseline-headline-medium-axes-opsz),
+      "wdth" var(--m3e-sys-typescale-baseline-headline-medium-axes-wdth),
+      "wght" var(--m3e-sys-typescale-baseline-headline-medium-axes-wght);
+    font-weight: var(--m3e-sys-typescale-baseline-headline-medium-font-weight);
+    letter-spacing: var(--m3e-sys-typescale-baseline-headline-medium-letter-spacing);
+    line-height: var(--m3e-sys-typescale-baseline-headline-medium-line-height);
+  }
+
+  .m3e-app-bar[data-m3e-size="large"][data-m3e-flexible]
+    .m3e-app-bar__expanded-row
+    .m3e-app-bar__title {
+    font-family: var(--m3e-sys-typescale-baseline-display-small-font-family);
+    font-size: var(--m3e-sys-typescale-baseline-display-small-font-size);
+    font-variation-settings:
+      "GRAD" var(--m3e-sys-typescale-baseline-display-small-axes-grad),
+      "opsz" var(--m3e-sys-typescale-baseline-display-small-axes-opsz),
+      "wdth" var(--m3e-sys-typescale-baseline-display-small-axes-wdth),
+      "wght" var(--m3e-sys-typescale-baseline-display-small-axes-wght);
+    font-weight: var(--m3e-sys-typescale-baseline-display-small-font-weight);
+    letter-spacing: var(--m3e-sys-typescale-baseline-display-small-letter-spacing);
+    line-height: var(--m3e-sys-typescale-baseline-display-small-line-height);
+  }
+
+  .m3e-app-bar[data-m3e-size="medium"][data-m3e-flexible]
+    .m3e-app-bar__expanded-row
+    .m3e-app-bar__subtitle {
+    font-family: var(--m3e-sys-typescale-baseline-label-large-font-family);
+    font-size: var(--m3e-sys-typescale-baseline-label-large-font-size);
+    font-variation-settings:
+      "GRAD" var(--m3e-sys-typescale-baseline-label-large-axes-grad),
+      "opsz" var(--m3e-sys-typescale-baseline-label-large-axes-opsz),
+      "wdth" var(--m3e-sys-typescale-baseline-label-large-axes-wdth),
+      "wght" var(--m3e-sys-typescale-baseline-label-large-axes-wght);
+    font-weight: var(--m3e-sys-typescale-baseline-label-large-font-weight);
+    letter-spacing: var(--m3e-sys-typescale-baseline-label-large-letter-spacing);
+    line-height: var(--m3e-sys-typescale-baseline-label-large-line-height);
+  }
+
+  .m3e-app-bar[data-m3e-size="large"][data-m3e-flexible]
+    .m3e-app-bar__expanded-row
+    .m3e-app-bar__subtitle {
+    font-family: var(--m3e-sys-typescale-baseline-title-medium-font-family);
+    font-size: var(--m3e-sys-typescale-baseline-title-medium-font-size);
+    font-variation-settings:
+      "GRAD" var(--m3e-sys-typescale-baseline-title-medium-axes-grad),
+      "opsz" var(--m3e-sys-typescale-baseline-title-medium-axes-opsz),
+      "wdth" var(--m3e-sys-typescale-baseline-title-medium-axes-wdth),
+      "wght" var(--m3e-sys-typescale-baseline-title-medium-axes-wght);
+    font-weight: var(--m3e-sys-typescale-baseline-title-medium-font-weight);
+    letter-spacing: var(--m3e-sys-typescale-baseline-title-medium-letter-spacing);
+    line-height: var(--m3e-sys-typescale-baseline-title-medium-line-height);
+  }
+
+  /*
+   * Collapse and offset are scroll-derived state and still apply under
+   * reduced motion; only the decorative transitions go.
+   */
+  @media (prefers-reduced-motion: reduce) {
+    .m3e-app-bar,
+    .m3e-app-bar[data-m3e-settling] {
+      transition: none;
+    }
+  }
+
+  /*
+   * Forced-colors mode drops both container colors, so the band would
+   * otherwise dissolve into the page; a border keeps the boundary, and the
+   * scrolled overlay has no meaning without author colors.
+   */
+  @media (forced-colors: active) {
+    .m3e-app-bar {
+      border-block-end: 1px solid CanvasText;
+    }
+
+    .m3e-app-bar:not([data-m3e-size="small"])::before {
+      background-color: Canvas;
+    }
+  }
+}

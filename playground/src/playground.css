@@ -647,3 +647,29 @@
   inset-inline: 0;
   position: absolute;
 }
+
+.app-bar-example {
+  display: grid;
+  gap: 1rem;
+  margin-block-start: 2rem;
+  padding: 1.5rem;
+}
+
+/*
+ * Each panel is an inner scroll container so the example exercises the
+ * explicit scrollContainer ref: the page itself never needs to move for the
+ * bars to pin, fill, and collapse.
+ */
+.app-bar-example__panel {
+  block-size: 16rem;
+  border-radius: 1rem;
+  overflow-y: auto;
+  position: relative;
+}
+
+.app-bar-example__content {
+  display: grid;
+  gap: 1rem;
+  padding-block: 1rem 12rem;
+  padding-inline: 1rem;
+}

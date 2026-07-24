@@ -480,7 +480,10 @@ under approved T38 and is now conformant. The Slider family entered that scope
 under approved T39 and is now conformant. The List Item family entered that
 scope under approved T40 and is now conformant. The Bottom sheet family entered
 that scope under approved T45 and is now conformant, opening the roadmap's
-composite tranche; the remaining listed families are still deferred. The complete future boundary, including every current
+composite tranche. The top app bar family entered that scope under approved T46
+and is now conformant as a component, with its catalog row Partial pending the
+overflow-action reconciliation; the remaining listed families are still
+deferred. The complete future boundary, including every current
 official catalog family and composition recipes such as expanding lists, is the
 [Material catalog parity roadmap](MATERIAL_CATALOG_ROADMAP.md) governed by ADR
 0033. A roadmap entry is not a stable support claim. Changes to stable core
@@ -646,6 +649,7 @@ important design choice must be resolved at its boundary.
 | T43 | Material 3 Badge family | `Badge` selects its variant from content as the source does, `BadgeAnchor` reproduces the source's offset, RTL, and out-of-flow placement, and an optional `badge` reaches every component the pinned source anchors one to; separates the drawer's end-side badge from the anchored pill and puts its color on the read path rather than an unread generated role (ADR 0035) |
 | T44 | Primitive-family source refresh | Closes the roadmap's primitive tranche by diffing all fifteen primitive families against `androidx-main` HEAD, verifying them current, re-pinning the eleven byte-identical components onto the reference snapshot `a90df2fc…`, and retaining the four with a non-substantive upstream delta (experimental→stable graduation, binary-compat shims, KDoc) with the delta classified; adds no component and changes no public surface (ADR 0036) |
 | T45 | Material 3 Bottom sheet family | Opens the roadmap's composite tranche. One `BottomSheet` covers both source sheet composables through a `variant` prop: modal renders a native `<dialog>` with a `::backdrop` scrim, focus trap and inert background, standard docks inline as a `region`. The three `SheetValue`s become the controllable-state triple with a `confirmValueChange` veto, the peek anchor stays variant-specific as the source's is, the drag handle is a real button carrying Material's Tab/Space/Enter contract and its required non-drag alternative, and dragging is handle-only with the source's positional and velocity thresholds. `BottomSheetScaffold`'s app-shell slots are deferred to a recipe while its sheet behavior is retained (ADR 0037) |
+| T46 | Material 3 App bar family (top) | One `AppBar` covers the six top-bar composables through `size` × `flexible` × `titleAlignment` × `subtitle`, with sourced heights and typography per tier and a scroll primitive producing a scrolled flag, a collapse fraction, and an enter-always offset from window or element scroll. Pinning is native `position: sticky`; single-row bars snap their container color while two-row bars blend it with the fraction; the title crossfade carries the sourced cubic-bezier(.8, 0, .8, .15) with the semantics swap at 0.5; an enter-always bar reveals on focus-within per the accessibility guidance. Bottom bars are dispositioned to the Toolbars row, the search app bar to the Search row, and the behavior-owning overflow-action system to a named follow-up, so catalog row 1 lands Partial by design (ADR 0038) |
 
 ## 15. Definition of project completion
 

@@ -8,6 +8,7 @@ import {
   validateTokenSet,
 } from '@language-lit/material3-expressive'
 import '@language-lit/material3-expressive/styles.css'
+import { AppBarExample } from '../examples/AppBar.example'
 import { BadgeExample } from '../examples/Badge.example'
 import { BottomSheetExample } from '../examples/BottomSheet.example'
 import { ButtonExample } from '../examples/Button.example'
@@ -95,6 +96,7 @@ createRoot(root).render(
         <ListItemExample />
         <DividerExample />
         <BottomSheetExample />
+        <AppBarExample />
         <BadgeExample />
         <CheckboxExample />
         <RadioExample />

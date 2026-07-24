@@ -1,5 +1,6 @@
 import type { FoundationTokenSet } from '../schema'
 import { parseTokenSet } from '../validation'
+import { defaultAppBarTokens } from './app-bar'
 import { defaultBadgeTokens } from './badge'
 import { defaultBottomSheetTokens } from './bottom-sheet'
 import { defaultButtonTokens } from './button'
@@ -118,6 +119,7 @@ const defaultTokenSetInput = {
     defaultDividerTokens,
     defaultBadgeTokens,
     defaultBottomSheetTokens,
+    defaultAppBarTokens,
   ],
 } satisfies FoundationTokenSet
 

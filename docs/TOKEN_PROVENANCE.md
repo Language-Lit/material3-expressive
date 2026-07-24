@@ -806,3 +806,33 @@ cross-validated against material-web, because the pinned Compose dialog dims its
 window with an Android platform default rather than a token, whereas the sheet
 reads a real generated one. A theme test pins the two registrations together so
 they cannot drift apart.
+
+## App bar (T46)
+
+`AppBarTokens` declares fourteen roles; the pinned top-bar composables resolve
+six — the `topAppBarColors()` set — and every one is registered. Of the other
+eight: `ContainerElevation` is read only by `FlexibleBottomAppBar`, which the
+current design index files under Toolbars, so it travels with that row's
+disposition rather than being registered for a family that never resolves it;
+and seven are unread. Two of the unread roles matter beyond bookkeeping.
+`LeadingSpace`/`TrailingSpace` are declared at 4dp, but the implementation
+reads its own private `TopAppBarHorizontalPadding = 4.dp` instead — the values
+agree today, yet only the constant is on the read path, so `horizontal-padding`
+registers the constant, per the prefer-the-read-path rule T42 established.
+`OnScrollContainerElevation` (Level2) is unread because top bars change color,
+not elevation, on scroll — the registered pair is `container-color`/
+`on-scroll-container-color`.
+
+All fifteen tier-file roles are read. The seven height tokens carry them
+(64/112/112/136/152/120/152), with the `LargeContainerHeight` roles selecting
+the taller flexible container when a subtitle is present. Title and subtitle
+fonts are consumed directly from the baseline typescale custom properties per
+tier rather than re-registered, as every component here does.
+
+Three hand-tuned source constants are registered because the code reads them:
+`title-inset` (`TopAppBarTitleInset`, 16dp − 4dp — the icon-less title's extra
+inset), and the two-row expanded-title bottom paddings (24dp medium, 28dp
+large). `TopTitleAlphaEasing` — cubic-bezier(.8, 0, .8, .15) — is not a token;
+it is evaluated in `useAppBarScroll`, since CSS cannot apply an easing curve to
+a custom property, and the eased value reaches the stylesheet as
+`--m3e-app-bar-top-title-alpha`.
