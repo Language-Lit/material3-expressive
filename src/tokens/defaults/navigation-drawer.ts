@@ -19,6 +19,19 @@ import type { ComponentTokenRegistration } from '../schema'
  * pinned source's modal scrim is an Android platform default, not a
  * component token, the same situation Dialog's own registration already
  * resolved.
+ *
+ * T43 added the item's end-side badge and deliberately registers no token for
+ * it. `NavigationDrawerTokens` declares `LargeBadgeLabelColor`
+ * (`OnSurfaceVariant`) and `LargeBadgeLabelFont` (`LabelLarge`), and nothing in
+ * the source's `commonMain` reads either. `NavigationDrawerItem` resolves
+ * `NavigationDrawerItemColors.badgeColor(selected)`, whose defaults are the
+ * item's own `selectedTextColor`/`unselectedTextColor` — `ActiveLabelTextColor`
+ * (`OnSecondaryContainer`) and `InactiveLabelTextColor` (`OnSurfaceVariant`).
+ * The unread role therefore agrees only while the item is unselected, so the
+ * badge reuses `item-active-label-color`/`item-inactive-label-color` rather
+ * than registering a third value under a name the source never reads. This is
+ * the rule T42 established after `Tabs` had encoded an unread role that
+ * contradicted the code.
  */
 export const defaultNavigationDrawerTokens = {
   component: 'navigation-drawer',

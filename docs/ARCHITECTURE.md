@@ -461,6 +461,24 @@ is the first family whose generated token file has no unread remainder. ADR
 0034 records the API mapping, the semantics matrix, the `Dp.Hairline`
 exclusion, and the `Tabs` provenance correction it enabled.
 
+`Badge` and `BadgeAnchor` close the primitive tranche. The variant is selected
+by content rather than a prop, reproducing the source's own `content != null`
+discriminator the same way `Divider` reproduced its two composables with one
+`orientation`. `BadgeAnchor` exists because the source's `BadgedBox` owns
+behavior — offsets that change with the badge's content, relative placement
+that mirrors under RTL, and out-of-flow sizing so an anchor measures only its
+content — which the roadmap's completeness contract makes an API rather than a
+recipe. A `label` prop names the badge for assistive technology, a web addition
+required because `NavigationBar`, `NavigationRail`, and `Tabs` hide their icon
+slots from the accessibility tree.
+
+The badge slot reaches five components through the two shared item shapes, and
+each places it per its own specification: an icon-anchored pill in the bar,
+rail, and tabs, and an end-side label in the drawer, whose source parameter is a
+different affordance carrying the item's own text color. ADR 0035 records the
+variant discriminator, the anchor's promotion to a public component, the
+semantics addition, and the drawer separation with its token correction.
+
 ## Styling
 
 Component CSS is authored beside the component. `src/styles/styles.css`

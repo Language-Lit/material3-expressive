@@ -1,5 +1,6 @@
 import { forwardRef, type CSSProperties, type ForwardedRef, type ReactElement } from 'react'
 import { useControllableState } from '../../internal/useControllableState'
+import { BadgeAnchor } from '../Badge'
 import type { NavigationRailProps } from './NavigationRail.types'
 
 interface NavigationRailComponent {
@@ -38,12 +39,27 @@ function NavigationRailRender(
             'aria-disabled': item.disabled || undefined,
             'data-m3e-selected': selected,
           }
+          const icon = (
+            <span className="m3e-navigation-rail__icon" aria-hidden="true">
+              {selected && item.selectedIcon != null ? item.selectedIcon : item.icon}
+            </span>
+          )
           const content = (
             <>
-              <span className="m3e-navigation-rail__indicator" aria-hidden="true">
-                <span className="m3e-navigation-rail__icon" aria-hidden="true">
-                  {selected && item.selectedIcon != null ? item.selectedIcon : item.icon}
-                </span>
+              {/*
+               * Hidden only while there is no badge: `aria-hidden` on an
+               * ancestor removes a subtree unconditionally, so keeping it here
+               * would silence the badge along with the decorative pill.
+               */}
+              <span
+                className="m3e-navigation-rail__indicator"
+                aria-hidden={item.badge == null ? true : undefined}
+              >
+                {item.badge == null ? (
+                  icon
+                ) : (
+                  <BadgeAnchor badge={item.badge}>{icon}</BadgeAnchor>
+                )}
               </span>
               <span className="m3e-navigation-rail__label">{item.label}</span>
             </>

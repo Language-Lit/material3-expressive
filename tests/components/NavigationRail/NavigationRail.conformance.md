@@ -28,6 +28,11 @@ Supported Material baseline: AndroidX Material 3 branch revision
   vertically. `header` is a consumer-owned region above the items,
   matching the pinned source's own `header` composable slot (typically a
   FAB or menu button).
+- `badge` on an item (added in T43) anchors a `Badge` to the icon, matching the
+  pinned `NavigationRail.kt:541`, which applies `Modifier.badgeBounds()` for
+  exactly this case. The indicator is `aria-hidden` only while the item carries
+  no badge, for the reason recorded in `NavigationBar.conformance.md`. See
+  `Badge.conformance.md`.
 
 ## Variants, shape, color, and size
 

@@ -38,6 +38,13 @@ Supported Material baseline: AndroidX Material 3 branch revision
   item only, associated via `id`/`aria-controls`/`aria-labelledby`. No
   tabpanel region exists at all when no item defines `panel` — a pure
   link-tabs usage where a router owns the destination content.
+- `badge` on an item (added in T43) anchors a `Badge`, matching the pinned
+  `Tab.kt:113`, which applies `Modifier.badgeBounds()` to the tab. Material
+  anchors a badge inside the icon's bounding box, so it attaches to `icon` when
+  there is one; a label-only tab has no such box, so the label takes the anchor
+  rather than the badge losing its placement. The tab's icon slot is
+  `aria-hidden`, but its content wrapper is not, so the badge is announced
+  without any change to the tab's own semantics. See `Badge.conformance.md`.
 
 ## Variants, shape, color, and size
 

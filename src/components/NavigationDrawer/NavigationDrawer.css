@@ -166,12 +166,39 @@
     color: var(--m3e-comp-navigation-drawer-item-active-label-color);
   }
 
+  /*
+   * The source places this badge "from the end side" with a 12dp spacer after a
+   * weighted label. An auto inline-start margin reaches the end edge without
+   * making the label grow, so an item without a badge keeps its exact previous
+   * layout, and the item's own `gap` supplies the 12dp.
+   *
+   * The color comes from the source's own per-selected-state badge color
+   * accessor, which defaults to the item's text colors — not the generated
+   * `LargeBadgeLabelColor`, which nothing in the source reads and which is only
+   * correct in the unselected state. `LargeBadgeLabelFont` is `LabelLarge`,
+   * matching the item label's own typescale.
+   */
+  .m3e-navigation-drawer__badge {
+    color: var(--m3e-comp-navigation-drawer-item-inactive-label-color);
+    font-family: var(--m3e-sys-typescale-baseline-label-large-font-family);
+    font-size: var(--m3e-sys-typescale-baseline-label-large-font-size);
+    font-weight: var(--m3e-sys-typescale-baseline-label-large-font-weight);
+    letter-spacing: var(--m3e-sys-typescale-baseline-label-large-letter-spacing);
+    line-height: var(--m3e-sys-typescale-baseline-label-large-line-height);
+    margin-inline-start: auto;
+  }
+
+  .m3e-navigation-drawer__item[data-m3e-selected="true"] .m3e-navigation-drawer__badge {
+    color: var(--m3e-comp-navigation-drawer-item-active-label-color);
+  }
+
   .m3e-navigation-drawer__item[aria-disabled="true"] {
     cursor: default;
     pointer-events: none;
   }
 
   .m3e-navigation-drawer__item[aria-disabled="true"],
+  .m3e-navigation-drawer__item[aria-disabled="true"] .m3e-navigation-drawer__badge,
   .m3e-navigation-drawer__item[aria-disabled="true"] .m3e-navigation-drawer__label {
     color: color-mix(
       in srgb,

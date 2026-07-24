@@ -69,7 +69,7 @@ must never be projected into stable documentation as support claims.
 | # | Official family | Delivery | Current coverage | Roadmap status | Remaining completion work |
 | ---: | --- | --- | --- | --- | --- |
 | 1 | [App bars](https://m3.material.io/components/app-bars/overview) | Composite | None | Planned | Top app bar family, scrolling behavior, expressive variants, and recipes |
-| 2 | [Badges](https://m3.material.io/components/badges/overview) | Primitive | None | Planned | Public badge primitive and documented icon/navigation compositions |
+| 2 | [Badges](https://m3.material.io/components/badges/overview) | Primitive | `Badge`, `BadgeAnchor` | Conformant | Reconcile new upstream variants at the final catalog audit |
 | 3 | [Bottom sheets](https://m3.material.io/components/bottom-sheets/overview) | Composite | None | Planned | Standard and modal sheets, dismissal/focus lifecycle, and adaptive behavior |
 | 4 | [Button groups](https://m3.material.io/components/button-groups/overview) | Composite | `ButtonGroup` | Conformant | Reconcile new upstream variants at the final catalog audit |
 | 5 | [Buttons](https://m3.material.io/components/buttons/overview) | Primitive | `Button` | Conformant | Reconcile new upstream variants at the final catalog audit |
@@ -105,7 +105,7 @@ must never be projected into stable documentation as support claims.
 | 35 | [Toolbars](https://m3.material.io/components/toolbars/overview) | Mixed | `FloatingToolbar` | Partial | Reconcile the full toolbar family, including docked/floating and expansion/overflow compositions |
 | 36 | [Tooltips](https://m3.material.io/components/tooltips/overview) | Composite | `Tooltip` | Conformant | Reconcile new upstream variants at the final catalog audit |
 
-Snapshot accounting: 26 Conformant + 2 Partial + 8 Planned = 36 families;
+Snapshot accounting: 27 Conformant + 2 Partial + 7 Planned = 36 families;
 0 Excluded. Changing those totals requires changing a row in the same approved
 task.
 
@@ -115,9 +115,10 @@ Roadmap IDs are durable tranche labels, not pre-approved implementation tasks.
 Each implementation still needs the scope/files/checks approval required by
 `ACTIVE_TASK.md`.
 
-1. **P — finish primitives.** Divider landed in T42. Implement Badges, then
-   perform a primitive-family source refresh. Any newly discovered primitive
-   catalog family joins this tranche.
+1. **P — finish primitives.** Divider landed in T42 and Badges in T43, so every
+   primitive family now has coverage. What remains in this tranche is the
+   primitive-family source refresh. Any newly discovered primitive catalog
+   family joins this tranche.
 2. **C — implement composites.** After P is complete, implement App bars,
    Bottom sheets, Carousel, Date pickers, Search, Side sheets, and Time pickers.
    Sequence individual tasks by shared-platform prerequisites, not by table

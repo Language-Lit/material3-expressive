@@ -1347,3 +1347,247 @@ is removed or renamed. Publication is a separate task.
     build passes.
 - Publication remains outside T42. The working package stays `1.1.0`; a version
   and registry action require a separately approved release task.
+
+## T43 — Material 3 Badge family
+
+Status: complete
+Approved: 2026-07-24 (owner request: add the next primitive, complete, including
+every component that depends on a badge)
+
+### Scope
+
+Add the `Badge` family, the last entry in the T41 roadmap's primitive tranche,
+and wire it into every component the pinned source anchors a badge to.
+
+Source-completeness gated against immutable AndroidX revision
+`a90df2fc27e026b9ad2ed569f203a260c1041fab` — the revision T40 and T42 already
+pin, so all three ledgers describe one upstream snapshot. The executable ledger
+covers `Badge.kt`, `BadgeTokens.kt`, `BadgeTest.kt` (11 tests), and
+`BadgeScreenshotTest.kt` (4 tests).
+
+A module-wide sweep for the word `badge` establishes the consumer set and
+proves it complete: `Badge.kt` (70 hits), `NavigationDrawer.kt` (21),
+`NavigationDrawerTokens.kt` (2), `NavigationItem.kt` (2), `Tab.kt` (1),
+`NavigationRail.kt` (1), `NavigationBar.kt` (1). No other file in `commonMain`
+mentions a badge.
+
+That sweep establishes the task's central finding: **the source has two
+unrelated affordances named "badge"**, and they must not be collapsed.
+
+- The **anchored pill** is `Badge` positioned by `BadgedBox` at the anchor's
+  top-trailing corner. `NavigationBar` (535), `NavigationItem` (460, 512),
+  `NavigationRail` (541), and `Tab` (113) apply `Modifier.badgeBounds()`, which
+  publishes `BadgeTopRuler`/`BadgeEndRuler` so a badge cannot escape the item.
+  These are clamp sites, not slots: none of the four exposes a `badge`
+  parameter, because the application passes a `BadgedBox` through the icon slot.
+- The **trailing label** is `NavigationDrawerItem.badge`, "optional badge to
+  show on this item from the end side" — end-aligned text 12dp after the label,
+  colored by `NavigationDrawerItemColors.badgeColor(selected)`. It is neither
+  error-colored nor a `Badge`, and the library has never implemented it.
+
+Three translation decisions carry the design, recorded in ADR 0035:
+
+- Small and large are not a prop. The source selects by `content != null`, so
+  childless `<Badge />` is the 6dp dot and `<Badge>3</Badge>` is the 16dp pill.
+  This is the same "let the content decide" rule that made `Divider` one
+  component with an `orientation` rather than two exports.
+- `BadgedBox` becomes `BadgeAnchor`. The positioning is behavior the source
+  owns — the offset switch (6dp bare, 12/14dp labelled), `placeRelative` RTL
+  mirroring, and the ruler clamp — so per the roadmap's completeness contract it
+  is a public API rather than a documented recipe. The Compose-only "Box" is
+  dropped for the same reason T42 did not reintroduce the deprecated `Divider`
+  name.
+- Badges become announceable. Compose badges carry no semantics; the pinned
+  `badge_notMergingDescendants_withOwnContentDescription` shows the application
+  supplying the description. On the web the icon slots of `NavigationBar`,
+  `NavigationRail`, and `Tabs` are `aria-hidden="true"`, so a badge rendered
+  inside one would be silent. `Badge` therefore takes a `label` whose text is
+  exposed to assistive technology while the glyph is hidden, matching the design
+  guidance that a badge is read after its destination.
+
+`containerColor` and `contentColor` are adapted to component tokens rather than
+props, for the reason T42 recorded: an arbitrary per-instance value would have to
+be emitted as an inline style.
+
+The consumer wiring adds an optional `badge` to the shared `NavigationItem`
+shape — reaching `NavigationBar`, `NavigationRail`, `NavigationDrawer`, and
+`NavigationSuite` through one type — and to `TabItem`. Each component places it
+per its own Material specification, exactly as the source does: an icon-anchored
+pill in the bar, rail, and tabs; an end-side label in the drawer.
+
+The drawer also carries a provenance correction of the T42 kind.
+`NavigationDrawerTokens` declares `LargeBadgeLabelColor` (`OnSurfaceVariant`)
+and `LargeBadgeLabelFont` (`LabelLarge`), and nothing in `commonMain` reads
+either. The implementation resolves `badgeColor(selected)`, which defaults to
+the item's own text colors — `ActiveLabelTextColor` (`OnSecondaryContainer`)
+when selected, `InactiveLabelTextColor` (`OnSurfaceVariant`) when not. The
+unread role therefore agrees only in the unselected state. The registration
+follows the read path. `NavigationDrawer.conformance.md` currently mentions
+`badge` neither as implemented nor as excluded while its inventory entry is
+conformant; that silent gap is closed here.
+
+No runtime dependency, peer dependency, or package export-path change. No token
+or prop is removed or renamed; every added field is optional. Publication is a
+separate task.
+
+### Expected files
+
+- Added: `src/components/Badge/Badge.tsx`,
+  `src/components/Badge/Badge.types.ts`, `src/components/Badge/BadgeAnchor.tsx`,
+  `src/components/Badge/Badge.css`, `src/components/Badge/index.ts`,
+  `src/tokens/defaults/badge.ts`, `docs/components/Badge.md`,
+  `playground/examples/Badge.example.tsx`, the mirrored
+  `tests/components/Badge/*` suite and conformance record, and ADR 0035.
+- Modified: `src/components/index.ts`, `src/styles/styles.css`,
+  `src/tokens/defaults/index.ts`, `src/tokens/defaults/navigation-drawer.ts`,
+  `src/components/NavigationBar/NavigationBar.types.ts`,
+  `src/components/NavigationBar/NavigationBar.tsx`,
+  `src/components/NavigationBar/NavigationBar.css`,
+  `src/components/NavigationRail/NavigationRail.tsx`,
+  `src/components/NavigationRail/NavigationRail.css`,
+  `src/components/NavigationDrawer/NavigationDrawer.tsx`,
+  `src/components/NavigationDrawer/NavigationDrawer.css`,
+  `src/components/NavigationSuite/NavigationSuite.tsx`,
+  `src/components/Tabs/Tabs.types.ts`, `src/components/Tabs/Tabs.tsx`,
+  `src/components/Tabs/Tabs.css`, the four affected conformance records,
+  `docs/component-inventory.json`, `docs/SPEC.md`, `docs/ARCHITECTURE.md`,
+  `docs/TOKEN_PROVENANCE.md`, `docs/MATERIAL_CATALOG_ROADMAP.md`,
+  `docs/ACTIVE_TASK.md`, `tests/tokens/schema.test.ts`, `tests/tokens/css.test.ts`,
+  `scripts/audit-rendering.mjs`, `scripts/check-release.mjs`, `package.json`,
+  `site/content/site.ts`, `playground/src/main.tsx`,
+  `playground/src/playground.css`.
+- Generated: `docs/SUPPORTED_COMPONENTS.md`, `site/demos/registry.tsx`.
+
+### Acceptance checks
+
+- The executable ledger freezes all four pinned blob identities, all 8 generated
+  declarations with their read/unread partition, the current source surface, all
+  11 behavior and 4 screenshot cases, and every discovered implementation
+  anomaly.
+- Both variants render their sourced geometry: a childless badge at the 6px
+  `size` on both axes, a labelled badge at a 16px minimum with 4px inline
+  padding, both fully rounded, error container with an onError label at the
+  label-small typescale.
+- `BadgeAnchor` places the badge at the top-trailing corner with the source's
+  offset switch, mirrors under RTL, and keeps the badge inside the anchor's
+  bounds rather than letting it escape — the web reading of the ruler clamp.
+- The badge is announced: `label` reaches the accessibility tree from inside the
+  `aria-hidden` icon slots of `NavigationBar`, `NavigationRail`, and `Tabs`, and
+  the visible glyph is hidden so a count is never read twice.
+- The drawer renders its badge as an end-side label at the item's own text
+  color, resolving `onSecondaryContainer` when selected and `onSurfaceVariant`
+  when not — not the unread `LargeBadgeLabelColor` and not the error color.
+- TypeScript rejects a `label`-less badge where a name is required, a
+  non-`ReactNode` badge on an item, and a mismatched ref.
+- Light/dark, scoped token overrides, RTL, forced colors, SSR, hydration,
+  public exports, inventory, documentation, example, and packed consumers agree.
+- `npm run verify` passes.
+- Because this task adds component geometry:
+
+  ```bash
+  npm run build && npm run playground:build
+  M3E_CHROMIUM_PATH=<chromium binary> npm run audit:rendering
+  ```
+
+  passes without an unexplained allowlist addition, with new probes proven
+  non-vacuous in both directions.
+
+### Completion evidence
+
+- `Badge` and `BadgeAnchor` are public named exports. The package still has zero
+  runtime dependencies, React/React DOM remain its only peers, and no export
+  path, prop, or token was removed or renamed. Every added field is optional.
+- `Badge.source.test.ts` freezes the four pinned blob identities, all 8
+  generated declarations partitioned 6 read / 2 unread, the 11-entry current
+  surface, the 7 internal geometry constants, the 5 `badgeBounds()` clamp call
+  sites, all 11 behavior and 4 screenshot cases, and 8 implementation
+  anomalies.
+- The behavior-test count is 11, not the 10 this record first claimed. The
+  original count came from a `grep -A1 '@Test'`, which silently skipped
+  `badgeBox_shortContent_position` because it carries a second annotation
+  between `@Test` and its `fun`. Counting `@Test` directly found the eleventh.
+- The two unread generated roles are recorded rather than smoothed over, and
+  neither contradicts the code: `LargeColor` repeats `Color`'s `Error`, and
+  `LargeLabelTextColor` is the `OnError` that `contentColorFor(Error)` already
+  resolves. This is the opposite of the `Tabs` case T42 corrected, where the
+  unread role's value was wrong.
+- Six further anomalies are recorded. `badgeBox_shortContent_position` and
+  `badgeBox_longContent_position` were diffed and are assertion-identical, so
+  the long-content case adds no coverage over the short one despite existing to
+  exercise a wider badge. Both fold `BadgeWithContentHorizontalPadding` into
+  their expected left edge, which the placement code never adds — the
+  expectation holds only because the queried `onSibling()` node is the badge's
+  content rather than its container. `badgeBox_shortContent_position` is
+  suppressed above SDK 34 for b/384973010. `BadgeTokens.kt` is generator version
+  `v0_103`, the oldest generated file any ledger in this library pins.
+- The drawer separation is source-verified rather than asserted. A sweep of the
+  pinned `commonMain` for the word `badge` returns exactly seven files:
+  `Badge.kt` (70 hits), `NavigationDrawer.kt` (21),
+  `NavigationDrawerTokens.kt` (2), `NavigationItem.kt` (2), `Tab.kt` (1),
+  `NavigationRail.kt` (1), and `NavigationBar.kt` (1). The five
+  `Modifier.badgeBounds()` sites expose no badge parameter; only
+  `NavigationDrawerItem` does, and its parameter is end-side text colored by the
+  item's own text colors.
+- The drawer's token correction is measured, not argued. In Chromium the
+  selected drawer badge paints `rgb(74, 68, 88)` — `onSecondaryContainer` — and
+  the unselected one `rgb(73, 69, 79)` — `onSurfaceVariant`. The unread
+  `LargeBadgeLabelColor` is `onSurfaceVariant`, so registering it would have
+  been wrong for every selected item. Both badges sit 24px from the item's end
+  edge, which is the item's own `padding-inline-end`.
+- `NavigationDrawer.conformance.md` now records the `badge` parameter and the
+  two unread roles. It had mentioned neither while the inventory entry was
+  conformant — the same class of silent gap T42 found in `Tabs`.
+- The focused Badge suite passes 49 tests across behavior, accessibility, CSS,
+  theme, SSR/hydration, and the source ledger. `tsc --noEmit` passes, so every
+  `@ts-expect-error` is load-bearing. Two candidate type cases were removed
+  after proving non-load-bearing rather than left in place: `HTMLSpanElement`
+  declares no members beyond `HTMLElement`, so no element ref can be rejected
+  for a span, and `ReactNode` admits `boolean`, so a boolean badge is valid.
+- The token registry adds 9 Badge properties and emits 1,702 overall. Light,
+  dark, nested custom scopes, and token-only output pass their gates.
+- `npm run verify` passes all 13 gates: 37 conformant inventory entries, 37
+  documentation pages, both packed consumer fixtures, and the site check at 36
+  demos.
+- The required real-Chromium audit passes after a production package and
+  playground build, with new Badge probes measuring both variants' geometry,
+  full rounding, painted container, label clipping, and the anchor placement in
+  both writing modes. No allowlist was changed.
+- The probe was proven non-vacuous in both directions. It measures 7 rendered
+  badges: two 6.0x6.0 dots and five 16.0px-tall pills growing 16.0 → 21.3 →
+  28.2 → 34.8px across `3`, `12`, `99+`, and `999+` — the last matching the
+  specification's 34dp maximum-character width — all painting `rgb(179, 38, 30)`
+  on `rgb(255, 255, 255)` at a `9999px` radius, which is `error`/`onError` fully
+  rounded. Every anchored badge measures exactly the source's offsets: 6.0px
+  from the trailing edge and 6.0px below the top for a dot, 12.0px and 14.0px
+  for a pill. Seeding a 4px large-badge offset into the built stylesheet makes
+  the audit fail with "large badge sits 4.0px from the trailing edge, not
+  12px"; seeding a 10px dot fails with three findings including "small badge
+  escapes the icon bounding box it should sit inside". The restored build
+  passes.
+- The audit gained a specimen census, which this task's own mistake motivated.
+  The Badge example first shipped `<Icon name>` instead of `<Icon source>`;
+  `name` is a valid HTML attribute, so TypeScript accepted it, `Icon` rendered
+  an undefined element, React unmounted the whole playground, and the audit
+  reported a clean pass over a blank page. Every probe reports "no defects" when
+  it finds nothing, so the gate now fails when any probed family has zero
+  specimens. Breaking the playground deliberately makes it fail with "The
+  playground rendered no .m3e-chip, .m3e-list-item, .m3e-slider, .m3e-divider,
+  .m3e-badge"; the restored build passes.
+- The declaration-closure ceiling rises from 91,300 to 93,000 bytes with owner
+  approval, recorded in ADR 0035, and `measuredForTask` moves from T39 to T43.
+  The closure measures 92,018 bytes; the previous ceiling was set when the
+  package had 34 components rather than 37, and the overage is TSDoc that
+  TypeScript copies into the declaration file. Comments were trimmed once first,
+  recovering about 600 bytes. No other baseline moved: 374,494-byte JavaScript
+  closure (65,284 gzip), 435,850-byte full CSS (47,357 gzip), 128,612-byte token
+  CSS (11,274 gzip), a 375,928-byte packed package, and the declaration
+  closure's own 21,158 gzip against an unchanged 21,300 limit.
+- `NavigationSuite` needed no change of its own: it forwards `items` wholesale,
+  so the shared `NavigationItem` field reaches it for free. The expected-files
+  list above named it and `src/tokens/defaults/navigation-drawer.ts`; the latter
+  changed only its provenance comment, since the drawer badge correctly
+  registers no token. `scripts/fetch-symbols-font.mjs` output was regenerated
+  rather than hand-edited, adding the `list`, `report`, and `school` glyphs the
+  new example renders.
+- Publication remains outside T43. The working package stays `1.1.0`; a version
+  and registry action require a separately approved release task.

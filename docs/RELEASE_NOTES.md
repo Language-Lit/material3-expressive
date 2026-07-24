@@ -25,6 +25,24 @@ release task.
   component tokens rather than props, so overrides compose with the theme and
   never emit an inline style. This is the first family whose generated token
   file has no unread remainder.
+- **`Badge` and `BadgeAnchor`.** The notification marker that sits on an icon,
+  ported from AndroidX `Badge.kt` at the pinned revision
+  `a90df2fc27e026b9ad2ed569f203a260c1041fab` (ADR 0035; T43). Content selects
+  the variant exactly as the source does: `<Badge />` is the 6px dot and
+  `<Badge>3</Badge>` is the 16px pill that grows with its count.
+  `BadgeAnchor` reproduces the source's placement — offsets that change with
+  the badge's content, relative placement that mirrors under RTL, and
+  out-of-flow sizing so an anchor measures only its content. A `label` prop
+  names the badge for assistive technology, which the Compose source has no
+  equivalent for and which the web needs because the components a badge sits on
+  hide their icon slots from the accessibility tree.
+- **`badge` on navigation and tab items.** `NavigationBar`, `NavigationRail`,
+  `NavigationDrawer`, `NavigationSuite`, and `Tabs` accept an optional `badge`
+  per item — the five components the pinned source makes room for one on. The
+  bar, rail, and tabs anchor it to the icon. The drawer renders it as an
+  end-side label, because `NavigationDrawerItem`'s own `badge` is a different
+  affordance: a trailing count in the item's text color rather than the
+  error-colored pill.
 
 ### Fixed
 

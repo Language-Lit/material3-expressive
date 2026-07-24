@@ -139,6 +139,29 @@ if (!pointer.hover || !pointer.fine) {
   process.exit(1)
 }
 
+// Every probe below reports "no defects found" when it finds nothing to
+// measure, so a playground that failed to render would pass this audit
+// silently. That is not hypothetical: a single bad prop in one example throws
+// during render, React unmounts the whole tree, and the page is left blank. A
+// census of the families with source-geometry probes turns that into a failure.
+const census = await page.evaluate(() =>
+  Object.fromEntries(
+    ['.m3e-chip', '.m3e-list-item', '.m3e-slider', '.m3e-divider', '.m3e-badge'].map(
+      (selector) => [selector, document.querySelectorAll(selector).length],
+    ),
+  ),
+)
+const missing = Object.entries(census).filter(([, count]) => count === 0)
+if (missing.length > 0) {
+  process.stderr.write(
+    `The playground rendered no ${missing.map(([selector]) => selector).join(', ')}; ` +
+      'the probes below would pass vacuously. Check the playground for a render error.\n',
+  )
+  await browser.close()
+  server.close()
+  process.exit(1)
+}
+
 // Expand anything that hides content behind an interaction.
 const trigger = await page.$('.m3e-fab-menu__trigger')
 if (trigger) {
@@ -453,6 +476,83 @@ const dividerGeometry = await page.evaluate(() => {
 })
 
 for (const finding of dividerGeometry) findings.push(`Divider geometry: ${finding}`)
+
+// --- Badge source geometry --------------------------------------------------
+// T43 sizes the small badge 6px on both axes and the large one from a 16px
+// minimum that grows with its count, and anchors both at the top-trailing
+// corner with the source's own offsets. None of that is visible to jsdom: the
+// badge is absolutely positioned, so every assertion here is about a real
+// layout box.
+const badgeGeometry = await page.evaluate(() => {
+  const results = []
+  for (const badge of document.querySelectorAll('.m3e-badge')) {
+    const box = badge.getBoundingClientRect()
+    const styles = getComputedStyle(badge)
+    const large = badge.getAttribute('data-m3e-variant') === 'large'
+
+    if (large) {
+      // `defaultMinSize(minWidth = LargeSize, minHeight = LargeSize)`.
+      if (box.height < 15.4 || box.width < 15.4) {
+        results.push(`large badge ${box.width.toFixed(1)}x${box.height.toFixed(1)} is under 16px`)
+      }
+      // A wider count must grow the pill, never clip or wrap it.
+      if (badge.scrollWidth - Math.ceil(box.width) > 1) {
+        results.push(`large badge clips its label at ${box.width.toFixed(1)}px`)
+      }
+    } else if (Math.abs(box.width - 6) > 0.6 || Math.abs(box.height - 6) > 0.6) {
+      results.push(`small badge ${box.width.toFixed(1)}x${box.height.toFixed(1)} is not 6x6`)
+    }
+
+    if (/^(?:transparent|rgba\(0, 0, 0, 0\))$/.test(styles.backgroundColor)) {
+      results.push('badge paints no container color')
+    }
+    // `CornerFull` on a 6px dot is a circle; on a 16px pill, a stadium.
+    if (Number.parseFloat(styles.borderTopLeftRadius) < box.height / 2 - 0.6) {
+      results.push(`badge radius ${styles.borderTopLeftRadius} is not fully rounded`)
+    }
+  }
+
+  // Placement is a property of the anchor, not the badge alone.
+  for (const slot of document.querySelectorAll('.m3e-badge-anchor__badge')) {
+    const anchor = slot.parentElement
+    const badge = slot.querySelector('.m3e-badge')
+    if (!anchor || !badge) continue
+    const anchorBox = anchor.getBoundingClientRect()
+    const box = badge.getBoundingClientRect()
+    const large = badge.getAttribute('data-m3e-variant') === 'large'
+    const rtl = getComputedStyle(anchor).direction === 'rtl'
+
+    // The source places the leading edge at (anchor width - offset), measured
+    // from whichever edge is trailing, so this holds in both writing modes.
+    const offset = large ? 12 : 6
+    const leadingFromTrailingEdge = rtl ? box.right - anchorBox.left : anchorBox.right - box.left
+    if (Math.abs(leadingFromTrailingEdge - offset) > 1) {
+      results.push(
+        `${large ? 'large' : 'small'} badge sits ${leadingFromTrailingEdge.toFixed(1)}px from the trailing edge, not ${offset}px`,
+      )
+    }
+
+    // y = verticalOffset - badge height, so the bottom lands verticalOffset
+    // below the anchor's top edge.
+    const bottomBelowTop = box.bottom - anchorBox.top
+    const verticalOffset = large ? 14 : 6
+    if (Math.abs(bottomBelowTop - verticalOffset) > 1) {
+      results.push(
+        `${large ? 'large' : 'small'} badge bottom is ${bottomBelowTop.toFixed(1)}px below the anchor top, not ${verticalOffset}px`,
+      )
+    }
+
+    // The anchor measures its content alone: an out-of-flow badge must never
+    // resize it. A small badge is fully inside, so it cannot widen the box
+    // either way; a large one is allowed to overhang.
+    if (!large && (box.right - anchorBox.right > 0.6 || anchorBox.top - box.top > 0.6)) {
+      results.push('small badge escapes the icon bounding box it should sit inside')
+    }
+  }
+  return results
+})
+
+for (const finding of badgeGeometry) findings.push(`Badge geometry: ${finding}`)
 
 // --- Slider source geometry -------------------------------------------------
 // T39 keeps a 16px track and 4x44px handle inside a minimum 48px target,
@@ -818,5 +918,5 @@ if (findings.length > 0) {
 
 process.stdout.write(
   'Rendering audit passed: no clipped elevation shadows, undersized interactive targets outside ' +
-    'the recorded exemptions, or Chip/List Item/Slider/Divider source-geometry defects\n',
+    'the recorded exemptions, or Chip/List Item/Slider/Divider/Badge source-geometry defects\n',
 )

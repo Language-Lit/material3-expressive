@@ -12,6 +12,7 @@ import {
   type ReactElement,
 } from 'react'
 import { useControllableState } from '../../internal/useControllableState'
+import { BadgeAnchor } from '../Badge'
 import type { TabItem, TabsProps } from './Tabs.types'
 
 interface TabsComponent {
@@ -167,6 +168,31 @@ function TabsRender(
           const selected = index === selectedIndex
           const tabId = `${baseId}-tab-${index}`
           const panelId = item.panel != null ? `${baseId}-panel-${index}` : undefined
+          const iconNode =
+            item.icon != null ? (
+              <span className="m3e-tabs__tab-icon" aria-hidden="true">
+                {item.icon}
+              </span>
+            ) : null
+          const labelNode =
+            item.label != null ? (
+              <span className="m3e-tabs__tab-label">{item.label}</span>
+            ) : null
+          // Material anchors a badge inside the icon's bounding box. A
+          // label-only tab has no such box, so the label takes the anchor
+          // instead of the badge losing its position entirely.
+          const badgedIcon =
+            iconNode != null && item.badge != null ? (
+              <BadgeAnchor badge={item.badge}>{iconNode}</BadgeAnchor>
+            ) : (
+              iconNode
+            )
+          const badgedLabel =
+            iconNode == null && labelNode != null && item.badge != null ? (
+              <BadgeAnchor badge={item.badge}>{labelNode}</BadgeAnchor>
+            ) : (
+              labelNode
+            )
           const content = (
             <span
               className="m3e-tabs__tab-content"
@@ -174,12 +200,8 @@ function TabsRender(
                 contentRefs.current[index] = node
               }}
             >
-              {item.icon != null && (
-                <span className="m3e-tabs__tab-icon" aria-hidden="true">
-                  {item.icon}
-                </span>
-              )}
-              {item.label != null && <span className="m3e-tabs__tab-label">{item.label}</span>}
+              {badgedIcon}
+              {badgedLabel}
             </span>
           )
           const sharedProps = {

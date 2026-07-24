@@ -36,6 +36,14 @@ Supported Material baseline: AndroidX Material 3 branch revision
   tabs. A disabled `href` item omits `href` (anchors have no native
   disabled state) but keeps an explicit `role="link"` so assistive
   technology still identifies it as a (disabled) link.
+- `badge` on an item (added in T43) anchors a `Badge` to the icon. The pinned
+  `NavigationBar.kt:535` applies `Modifier.badgeBounds()` for exactly this
+  case: it exposes no badge parameter of its own and instead publishes the
+  rulers that keep a badge, passed by the application through the icon slot,
+  inside the item. The item's active indicator is `aria-hidden` only while it
+  carries no badge, because `aria-hidden` on an ancestor removes a subtree
+  unconditionally and would otherwise silence the badge along with the
+  decorative pill. See `Badge.conformance.md`.
 
 ## Variants, shape, color, and size
 

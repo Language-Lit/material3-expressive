@@ -1,5 +1,6 @@
 import type { FoundationTokenSet } from '../schema'
 import { parseTokenSet } from '../validation'
+import { defaultBadgeTokens } from './badge'
 import { defaultButtonTokens } from './button'
 import { defaultButtonGroupTokens } from './button-group'
 import { defaultCardTokens } from './card'
@@ -114,6 +115,7 @@ const defaultTokenSetInput = {
     defaultWavyProgressTokens,
     defaultLoadingIndicatorTokens,
     defaultDividerTokens,
+    defaultBadgeTokens,
   ],
 } satisfies FoundationTokenSet
 

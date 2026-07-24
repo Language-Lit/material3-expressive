@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "baselineCommit": "a4c1a4b1db8f358aef056366d5f89d9ac2073b16",
-  "measuredForTask": "T39",
+  "measuredForTask": "T43",
   "artifacts": {
     "packedPackage": {
       "baselineBytes": 352618,
@@ -15,7 +15,7 @@
     },
     "dist/index.d.ts": {
       "baselineBytes": 81461,
-      "maxBytes": 91300,
+      "maxBytes": 93000,
       "baselineGzipBytes": 18976,
       "maxGzipBytes": 21300
     },

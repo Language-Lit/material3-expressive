@@ -40,6 +40,24 @@ Supported Material baseline: AndroidX Material 3 branch revision
   `onOpenChange` are accepted but ignored, matching the pinned source's
   own `PermanentNavigationDrawer`, which has no visibility parameter at
   all.
+- `badge` on an item (added in T43). `NavigationDrawerItem` documents it as
+  "optional badge to show on this item from the end side": end-aligned text
+  placed after the label, **not** the anchored error-colored pill that
+  `NavigationBar`, `NavigationRail`, and `Tabs` carry. This record previously
+  mentioned the parameter neither as implemented nor as excluded while the
+  inventory entry was conformant; T43 closed that gap. See
+  `Badge.conformance.md` for the full family ledger and for why the two
+  affordances are not collapsed into one.
+
+  Its color is `NavigationDrawerItemColors.badgeColor(selected)`, whose
+  defaults are the item's own `selectedTextColor`/`unselectedTextColor` —
+  `ActiveLabelTextColor` (`onSecondaryContainer`) and `InactiveLabelTextColor`
+  (`onSurfaceVariant`). `NavigationDrawerTokens` also declares
+  `LargeBadgeLabelColor` (`onSurfaceVariant`) and `LargeBadgeLabelFont`
+  (`labelLarge`), which nothing in the pinned `commonMain` reads; the first
+  agrees with the read path only while the item is unselected. The badge
+  therefore reuses `item-active-label-color`/`item-inactive-label-color` and
+  registers no token of its own, which is the rule T42 established.
 
 ## Variants, shape, color, and size
 

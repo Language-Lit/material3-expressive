@@ -6,6 +6,12 @@ export interface TabItem {
   readonly value: string
   readonly label?: ReactNode
   readonly icon?: ReactNode
+  /**
+   * Notification content, typically a `Badge`. Material anchors it inside the
+   * icon's bounding box, so it attaches to `icon` when there is one and to
+   * `label` otherwise.
+   */
+  readonly badge?: ReactNode
   readonly disabled?: boolean
   /**
    * Renders this tab as a real `<a role="tab" href={href}>` instead of a

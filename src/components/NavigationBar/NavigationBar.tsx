@@ -1,5 +1,6 @@
 import { forwardRef, type CSSProperties, type ForwardedRef, type ReactElement } from 'react'
 import { useControllableState } from '../../internal/useControllableState'
+import { BadgeAnchor } from '../Badge'
 import type { NavigationBarProps } from './NavigationBar.types'
 
 interface NavigationBarComponent {
@@ -36,12 +37,29 @@ function NavigationBarRender(
           'aria-disabled': item.disabled || undefined,
           'data-m3e-selected': selected,
         }
+        const icon = (
+          <span className="m3e-navigation-bar__icon" aria-hidden="true">
+            {selected && item.selectedIcon != null ? item.selectedIcon : item.icon}
+          </span>
+        )
         const content = (
           <>
-            <span className="m3e-navigation-bar__indicator" aria-hidden="true">
-              <span className="m3e-navigation-bar__icon" aria-hidden="true">
-                {selected && item.selectedIcon != null ? item.selectedIcon : item.icon}
-              </span>
+            {/*
+             * The indicator is decoration, but a badge inside it is not, and
+             * `aria-hidden` on an ancestor removes a subtree unconditionally.
+             * Hiding it only while there is no badge keeps the pill silent and
+             * still lets the badge's own name reach the accessibility tree,
+             * where it is announced after this destination's label.
+             */}
+            <span
+              className="m3e-navigation-bar__indicator"
+              aria-hidden={item.badge == null ? true : undefined}
+            >
+              {item.badge == null ? (
+                icon
+              ) : (
+                <BadgeAnchor badge={item.badge}>{icon}</BadgeAnchor>
+              )}
             </span>
             <span className="m3e-navigation-bar__label">{item.label}</span>
           </>

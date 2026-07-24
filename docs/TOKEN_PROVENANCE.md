@@ -728,3 +728,46 @@ padding and state precedence; the density target and forced-color-capable focus
 ring are web/foundation treatment. ADR 0032, `ListItem.source.test.ts`, and the
 conformance record contain the complete surface, source-test, screenshot, and
 anomaly ledger.
+
+`Badge` and `BadgeAnchor` (T43) register AndroidX Material 3 revision
+`a90df2fc27e026b9ad2ed569f203a260c1041fab` — the revision T40 and T42 pin, so
+the list, divider, and badge ledgers describe one upstream snapshot — with
+`Badge.kt` blob `bce545ee63216779e5a3b3b5b655f6475173842e` and generated
+`BadgeTokens.kt` blob `97c4e3d92de650350e58a93e722a0803c07ef4a7` (VERSION
+`v0_103`, the oldest generated file any ledger here pins).
+
+The generated file declares eight roles and `Badge.kt` reads six. `color` is
+`Color` (`error`) through `BadgeDefaults.containerColor`; `size`/`large-size`
+are `Size`/`LargeSize` (6dp/16dp); one `shape` covers `Shape` and `LargeShape`,
+which are both `CornerFull` — the design specification's separate "3dp" and
+"8dp" radii are that same value measured on a 6px dot and a 16px pill.
+`LargeLabelTextFont` (`LabelSmall`) is read from the foundation typescale
+rather than registered again, the established unread-typography-role
+precedent. The two unread roles are recorded and not registered by name:
+`LargeColor` repeats `Color`'s `error`, and `LargeLabelTextColor` (`onError`)
+is what `contentColorFor(error)` already resolves, so `label-color` registers
+`onError` on the strength of the read path with the unread role agreeing.
+
+Four registered roles have no generated backing at all.
+`large-horizontal-padding` (4px), `offset` (6px), `large-horizontal-offset`
+(12px), and `large-vertical-offset` (14px) are internal `Dp` values in
+`Badge.kt` — `BadgeWithContentHorizontalPadding`, `BadgeOffset`,
+`BadgeWithContentHorizontalOffset`, and `BadgeWithContentVerticalOffset`. They
+are registered because `BadgeAnchor` needs them at paint time and because the
+design specification publishes them as measurements ("6x6dp" and "14x12dp"
+from the anchor's top trailing corner, "4dp padding between badge and text
+container"), the same internal-constant-over-absent-token precedent
+`LinearProgress`'s `stop-trailing-space` set.
+
+`NavigationDrawer` registers no badge role, which is the same rule applied
+again. `NavigationDrawerTokens` declares `LargeBadgeLabelColor`
+(`onSurfaceVariant`) and `LargeBadgeLabelFont` (`labelLarge`), and nothing in
+the pinned `commonMain` reads either; `NavigationDrawerItem` resolves its badge
+color from the item's own `selectedTextColor`/`unselectedTextColor`
+(`onSecondaryContainer`/`onSurfaceVariant`), so the unread role is correct only
+while the item is unselected. The drawer badge therefore reuses
+`item-active-label-color`/`item-inactive-label-color`. `LargeBadgeLabelFont`
+and the item's own read `LabelTextFont` are both `labelLarge`, so the
+typescale is not in dispute. ADR 0035, `Badge.source.test.ts`, and the
+conformance record carry the complete surface, generated-role, source-test,
+and anomaly ledger.

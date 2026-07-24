@@ -1,0 +1,98 @@
+@layer m3e.components {
+  /*
+   * The source builds both variants from one `Row` whose size comes from
+   * `defaultMinSize`, so the minimums are floors rather than fixed sizes and
+   * content grows the pill outward. `CornerFull` covers both radii the design
+   * specification lists: a fully rounded 6px dot has a 3px radius, and a fully
+   * rounded 16px pill has an 8px one.
+   */
+  .m3e-badge {
+    align-items: center;
+    background-color: var(--m3e-comp-badge-color);
+    border-radius: var(--m3e-comp-badge-shape);
+    box-sizing: border-box;
+    color: var(--m3e-comp-badge-label-color);
+    display: inline-flex;
+    flex: none;
+    justify-content: center;
+  }
+
+  .m3e-badge[data-m3e-variant="small"] {
+    min-block-size: var(--m3e-comp-badge-size);
+    min-inline-size: var(--m3e-comp-badge-size);
+  }
+
+  /*
+   * `LargeLabelTextFont` is `LabelSmall`, read straight from the foundation
+   * typescale rather than registered again as a component role. The inline
+   * padding is the source's internal `BadgeWithContentHorizontalPadding`, which
+   * only applies when there is content.
+   */
+  .m3e-badge[data-m3e-variant="large"] {
+    font-family: var(--m3e-sys-typescale-baseline-label-small-font-family);
+    font-size: var(--m3e-sys-typescale-baseline-label-small-font-size);
+    font-variation-settings:
+      "GRAD" var(--m3e-sys-typescale-baseline-label-small-axes-grad),
+      "opsz" var(--m3e-sys-typescale-baseline-label-small-axes-opsz),
+      "wdth" var(--m3e-sys-typescale-baseline-label-small-axes-wdth),
+      "wght" var(--m3e-sys-typescale-baseline-label-small-axes-wght);
+    font-weight: var(--m3e-sys-typescale-baseline-label-small-font-weight);
+    letter-spacing: var(--m3e-sys-typescale-baseline-label-small-letter-spacing);
+    line-height: var(--m3e-sys-typescale-baseline-label-small-line-height);
+    min-block-size: var(--m3e-comp-badge-large-size);
+    min-inline-size: var(--m3e-comp-badge-large-size);
+    padding-inline: var(--m3e-comp-badge-large-horizontal-padding);
+    white-space: nowrap;
+  }
+
+  /*
+   * The anchor measures exactly its content: the badge is taken out of flow,
+   * which is how the source's `badgeBox_size` test sees a `BadgedBox` report
+   * its icon's size.
+   */
+  .m3e-badge-anchor {
+    display: inline-flex;
+    position: relative;
+  }
+
+  /*
+   * The source places the badge at x = (anchor width - horizontalOffset) and
+   * y = (verticalOffset - badge height), through `placeRelative`, so the whole
+   * placement mirrors under RTL. `inset-inline-start` is that same relative
+   * placement, and it keeps the leading edge fixed while a growing count
+   * expands the pill outward — the behaviour the design specification calls out
+   * for large badges.
+   *
+   * The small case resolves to the anchor's exact top-trailing corner: a 6px
+   * badge offset 6px from the trailing edge sits flush inside it, which is the
+   * "6x6dp from the top trailing icon corner" measurement.
+   */
+  .m3e-badge-anchor__badge {
+    display: inline-flex;
+    inset-block-start: calc(var(--m3e-comp-badge-offset) - var(--m3e-comp-badge-size));
+    inset-inline-start: calc(100% - var(--m3e-comp-badge-offset));
+    position: absolute;
+  }
+
+  .m3e-badge-anchor__badge:has([data-m3e-variant="large"]) {
+    inset-block-start: calc(
+      var(--m3e-comp-badge-large-vertical-offset) - var(--m3e-comp-badge-large-size)
+    );
+    inset-inline-start: calc(100% - var(--m3e-comp-badge-large-horizontal-offset));
+  }
+
+  /*
+   * Forced-colors mode overrides author backgrounds, so the container would
+   * otherwise be painted away and the badge would read as bare text sitting on
+   * the icon. The ring in `Canvas` restores the separation the fill normally
+   * provides against the content underneath.
+   */
+  @media (forced-colors: active) {
+    .m3e-badge {
+      background-color: CanvasText;
+      color: Canvas;
+      forced-color-adjust: none;
+      outline: 1px solid Canvas;
+    }
+  }
+}

@@ -144,6 +144,30 @@
   min-block-size: 2.5rem;
 }
 
+.badge-example {
+  display: grid;
+  gap: 1rem;
+  margin-block-start: 2rem;
+  padding: 1.5rem;
+}
+
+/*
+ * Generous gaps: an anchored badge overhangs its icon's trailing edge, so a
+ * tight row would let one badge sit over the next icon.
+ */
+.badge-example__row {
+  align-items: center;
+  display: flex;
+  gap: 2rem;
+  min-block-size: 2.5rem;
+}
+
+.badge-example__bar,
+.badge-example__drawer,
+.badge-example__tabs {
+  inline-size: min(100%, 36rem);
+}
+
 .checkbox-example {
   display: grid;
   gap: 1rem;

@@ -16,6 +16,13 @@ export interface NavigationItem {
   readonly disabled?: boolean
   /** Renders this item as a real `<a href>` instead of `<button>`, the same link-safe pattern `Tabs` already uses. */
   readonly href?: string
+  /**
+   * Notification content, placed where each component's Material specification
+   * puts it: a `Badge` anchored to the icon in `NavigationBar` and
+   * `NavigationRail`, and a plain trailing count in `NavigationDrawer`, whose
+   * badge is a different affordance rather than the error-colored pill.
+   */
+  readonly badge?: ReactNode
 }
 
 interface NavigationBarOwnProps {

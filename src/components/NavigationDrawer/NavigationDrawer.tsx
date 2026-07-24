@@ -35,6 +35,15 @@ function renderItem(
         {selected && item.selectedIcon != null ? item.selectedIcon : item.icon}
       </span>
       <span className="m3e-navigation-drawer__label">{item.label}</span>
+      {/*
+       * The drawer's badge is a different affordance from the anchored pill the
+       * bar and rail use: `NavigationDrawerItem` documents it as "optional badge
+       * to show on this item from the end side", and colors it with the item's
+       * own text color rather than the error container.
+       */}
+      {item.badge != null && (
+        <span className="m3e-navigation-drawer__badge">{item.badge}</span>
+      )}
     </>
   )
   return item.href != null ? (
