@@ -143,3 +143,14 @@ requires every literal `--m3e-comp-card-*` reference to resolve.
 - Current first-party Card has no separate Expressive overload. Web Card uses
   the library's Expressive motion scheme for state effects without claiming
   unsupported size, selection, or shape morph behavior.
+
+## Source refresh (T44 — 2026-07-24)
+
+On 2026-07-24 this family's pinned AndroidX source, token, and test files were
+re-fetched and diffed against the reference snapshot
+`a90df2fc27e026b9ad2ed569f203a260c1041fab` (the revision T40, T42, and T43 pin) and against `androidx-main` HEAD.
+Every file is byte-identical at both, so the family is verified current. The
+component-token registration is re-pinned from `0be207d91046b7376beeef5544d331a02d6fa87c` to the reference
+snapshot, giving the primitive tranche one comparable source snapshot; the
+original T10 audit stands unchanged, because the two revisions carry identical
+bytes for every file this record cites.

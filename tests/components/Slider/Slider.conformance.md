@@ -218,3 +218,17 @@ are directly retained and tested.
 - Per-instance `SliderColors` becomes scoped provider tokens.
 - Android bitmap goldens are not redistributed. CSS/token tests and the real
   Chromium rendering audit verify equivalent geometry and states.
+
+## Source refresh (T44 — 2026-07-24)
+
+On 2026-07-24 `Slider.kt` and `SliderTokens.kt` were diffed against the
+reference snapshot `a90df2fc27e026b9ad2ed569f203a260c1041fab` and `androidx-main` HEAD, which are equal. `Slider.kt`
+differs from the pinned `225f50d42bf0adeb2abf4b6109befb5ab6ce4efc` by a
+binary-compatibility refactor: the previous `RangeSlider` is kept as a
+hidden-deprecated `RangeSliderLegacy` and a new `RangeSlider` overload is added,
+and the `startInteractionSource`/`endInteractionSource` parameters are renamed
+`startThumbInteractionSource`/`endThumbInteractionSource`. These are Kotlin
+ABI-preservation shims with no web equivalent; the new `RangeSlider` carries the
+same `value`/`valueRange`/`steps`/`colors` contract this port already ships, and
+`SliderTokens` is byte-identical. No user-facing Material capability was added.
+The pin is retained.

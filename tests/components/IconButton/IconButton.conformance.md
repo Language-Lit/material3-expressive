@@ -148,3 +148,14 @@ require every literal reference to resolve.
   that target on the semantic root and centers the sourced visual container.
 - CSS consumes the deterministic spring projection established by T07 rather
   than running Compose shape physics or a client animation runtime.
+
+## Source refresh (T44 — 2026-07-24)
+
+On 2026-07-24 this family's pinned AndroidX source, token, and test files were
+re-fetched and diffed against the reference snapshot
+`a90df2fc27e026b9ad2ed569f203a260c1041fab` (the revision T40, T42, and T43 pin) and against `androidx-main` HEAD.
+Every file is byte-identical at both, so the family is verified current. The
+component-token registration is re-pinned from `f0793303999c933a40c10d79212e0580d21bdc68` to the reference
+snapshot, giving the primitive tranche one comparable source snapshot; the
+original T08 audit stands unchanged, because the two revisions carry identical
+bytes for every file this record cites.

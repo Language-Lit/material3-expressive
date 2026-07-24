@@ -180,3 +180,17 @@ variables.
   spring inputs with no runtime animation library.
 - Native HTML defines `type`, forms, Enter/Space timing, disabled focus, and
   event objects. Those semantics override Compose callback conventions.
+
+## Source refresh (T44 — 2026-07-24)
+
+On 2026-07-24 `Button.kt` and its size/variant token files were diffed against
+the reference snapshot `a90df2fc27e026b9ad2ed569f203a260c1041fab` and `androidx-main` HEAD. The reference snapshot
+equals HEAD, so the source is current. The only change from the pinned
+`dd849e200f5046c2f2ca904e821fc9d42cbd0256` is the removal of
+`@ExperimentalMaterial3ExpressiveApi` from members this port already ships as
+stable — the Expressive size ladder and the round/square resting and pressed
+shapes — together with internal helper refactors (`contentPaddingFor`,
+`shadowElevation`). No variant, token, state, or behavior this record describes
+changed, and the token files are byte-identical. The pin is retained, because
+re-pinning would rewrite an immutable blob identity for a graduation a web port
+with no experimental-API concept cannot observe.

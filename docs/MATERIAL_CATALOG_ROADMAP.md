@@ -115,10 +115,14 @@ Roadmap IDs are durable tranche labels, not pre-approved implementation tasks.
 Each implementation still needs the scope/files/checks approval required by
 `ACTIVE_TASK.md`.
 
-1. **P — finish primitives.** Divider landed in T42 and Badges in T43, so every
-   primitive family now has coverage. What remains in this tranche is the
-   primitive-family source refresh. Any newly discovered primitive catalog
-   family joins this tranche.
+1. **P — finish primitives (complete).** Divider landed in T42 and Badges in
+   T43, giving every primitive family coverage, and T44 refreshed the primitive
+   sources: all fifteen families were diffed against `androidx-main` HEAD and
+   verified current, the eleven byte-identical components were re-pinned onto the
+   reference snapshot `a90df2fc…`, and the four with a non-substantive upstream
+   delta (Button, FloatingActionButton, Slider, LoadingIndicator) retained their
+   pins with the delta classified (ADR 0036). The tranche is closed; a newly
+   discovered primitive catalog family reopens it.
 2. **C — implement composites.** After P is complete, implement App bars,
    Bottom sheets, Carousel, Date pickers, Search, Side sheets, and Time pickers.
    Sequence individual tasks by shared-platform prerequisites, not by table

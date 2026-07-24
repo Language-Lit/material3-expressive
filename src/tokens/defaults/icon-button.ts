@@ -9,9 +9,9 @@ export const defaultIconButtonTokens = {
   task: 'T08',
   source: {
     id: 'androidx-material3-icon-button',
-    url: 'https://android.googlesource.com/platform/frameworks/support/+/f0793303999c933a40c10d79212e0580d21bdc68/compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/IconButtonDefaults.kt',
-    revision: 'f0793303999c933a40c10d79212e0580d21bdc68',
-    accessed: '2026-07-19',
+    url: 'https://android.googlesource.com/platform/frameworks/support/+/a90df2fc27e026b9ad2ed569f203a260c1041fab/compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/IconButtonDefaults.kt',
+    revision: 'a90df2fc27e026b9ad2ed569f203a260c1041fab',
+    accessed: '2026-07-24',
   },
   tokens: {
     'minimum-interactive-target': {

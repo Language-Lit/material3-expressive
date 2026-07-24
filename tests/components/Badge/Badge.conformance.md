@@ -226,3 +226,9 @@ the guidelines set bounds it.
   than a replacement. See the test ledger above.
 - The drawer's badge is a separate affordance implemented as an end-side label.
   See above and `NavigationDrawer.conformance.md`.
+
+## Source refresh (T44 — 2026-07-24)
+
+This family already pins the reference snapshot `a90df2fc27e026b9ad2ed569f203a260c1041fab`. On 2026-07-24 its
+pinned files were re-diffed against `androidx-main` HEAD and found
+byte-identical, so the pin is verified current with no change.

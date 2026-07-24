@@ -245,3 +245,14 @@ and `TextArea`. Production CSS validation requires every literal
   Expressive `roundedShape`/`tonalColors()` (marked `TODO(b/448727879)` in
   the pinned source itself, with no shipped token yet), prefix/suffix slots,
   and a character counter (the pinned source defines none) are not claimed.
+
+## Source refresh (T44 — 2026-07-24)
+
+On 2026-07-24 this family's pinned AndroidX source, token, and test files were
+re-fetched and diffed against the reference snapshot
+`a90df2fc27e026b9ad2ed569f203a260c1041fab` (the revision T40, T42, and T43 pin) and against `androidx-main` HEAD.
+Every file is byte-identical at both, so the family is verified current. The
+component-token registration is re-pinned from `225f50d42bf0adeb2abf4b6109befb5ab6ce4efc` to the reference
+snapshot, giving the primitive tranche one comparable source snapshot; the
+original T14 audit stands unchanged, because the two revisions carry identical
+bytes for every file this record cites.

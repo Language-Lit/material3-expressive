@@ -14,9 +14,9 @@ export const defaultCheckboxTokens = {
   task: 'T11',
   source: {
     id: 'androidx-material3-checkbox',
-    url: 'https://android.googlesource.com/platform/frameworks/support/+/225f50d42bf0adeb2abf4b6109befb5ab6ce4efc/compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Checkbox.kt',
-    revision: '225f50d42bf0adeb2abf4b6109befb5ab6ce4efc',
-    accessed: '2026-07-19',
+    url: 'https://android.googlesource.com/platform/frameworks/support/+/a90df2fc27e026b9ad2ed569f203a260c1041fab/compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Checkbox.kt',
+    revision: 'a90df2fc27e026b9ad2ed569f203a260c1041fab',
+    accessed: '2026-07-24',
   },
   tokens: {
     'minimum-interactive-target': {

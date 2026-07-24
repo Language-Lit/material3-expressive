@@ -37,7 +37,7 @@ describe('Chip theme integration', () => {
 
     expect(registration?.task).toBe('T38')
     expect(registration?.source.revision).toBe(
-      '225f50d42bf0adeb2abf4b6109befb5ab6ce4efc',
+      'a90df2fc27e026b9ad2ed569f203a260c1041fab',
     )
     expect(tokens?.['container-height'].value).toBe('32px')
     expect(tokens?.['minimum-interactive-target'].value).toEqual({

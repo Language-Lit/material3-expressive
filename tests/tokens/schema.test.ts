@@ -75,8 +75,8 @@ describe('default token schema', () => {
       component: 'icon-button',
       task: 'T08',
       source: expect.objectContaining({
-        revision: 'f0793303999c933a40c10d79212e0580d21bdc68',
-        accessed: '2026-07-19',
+        revision: 'a90df2fc27e026b9ad2ed569f203a260c1041fab',
+        accessed: '2026-07-24',
       }),
     }))
     expect(defaultTokenSet.componentTokens).toContainEqual(expect.objectContaining({
@@ -107,16 +107,16 @@ describe('default token schema', () => {
       component: 'card',
       task: 'T10',
       source: expect.objectContaining({
-        revision: '0be207d91046b7376beeef5544d331a02d6fa87c',
-        accessed: '2026-07-19',
+        revision: 'a90df2fc27e026b9ad2ed569f203a260c1041fab',
+        accessed: '2026-07-24',
       }),
     }))
     expect(defaultTokenSet.componentTokens).toContainEqual(expect.objectContaining({
       component: 'chip',
       task: 'T38',
       source: expect.objectContaining({
-        revision: '225f50d42bf0adeb2abf4b6109befb5ab6ce4efc',
-        accessed: '2026-07-23',
+        revision: 'a90df2fc27e026b9ad2ed569f203a260c1041fab',
+        accessed: '2026-07-24',
       }),
     }))
     expect(defaultTokenSet.componentTokens).toContainEqual(expect.objectContaining({
@@ -139,32 +139,32 @@ describe('default token schema', () => {
       component: 'checkbox',
       task: 'T11',
       source: expect.objectContaining({
-        revision: '225f50d42bf0adeb2abf4b6109befb5ab6ce4efc',
-        accessed: '2026-07-19',
+        revision: 'a90df2fc27e026b9ad2ed569f203a260c1041fab',
+        accessed: '2026-07-24',
       }),
     }))
     expect(defaultTokenSet.componentTokens).toContainEqual(expect.objectContaining({
       component: 'radio',
       task: 'T12',
       source: expect.objectContaining({
-        revision: '225f50d42bf0adeb2abf4b6109befb5ab6ce4efc',
-        accessed: '2026-07-20',
+        revision: 'a90df2fc27e026b9ad2ed569f203a260c1041fab',
+        accessed: '2026-07-24',
       }),
     }))
     expect(defaultTokenSet.componentTokens).toContainEqual(expect.objectContaining({
       component: 'switch',
       task: 'T13',
       source: expect.objectContaining({
-        revision: '225f50d42bf0adeb2abf4b6109befb5ab6ce4efc',
-        accessed: '2026-07-20',
+        revision: 'a90df2fc27e026b9ad2ed569f203a260c1041fab',
+        accessed: '2026-07-24',
       }),
     }))
     expect(defaultTokenSet.componentTokens).toContainEqual(expect.objectContaining({
       component: 'text-field',
       task: 'T14',
       source: expect.objectContaining({
-        revision: '225f50d42bf0adeb2abf4b6109befb5ab6ce4efc',
-        accessed: '2026-07-20',
+        revision: 'a90df2fc27e026b9ad2ed569f203a260c1041fab',
+        accessed: '2026-07-24',
       }),
     }))
     expect(defaultTokenSet.componentTokens).toContainEqual(expect.objectContaining({
@@ -243,24 +243,24 @@ describe('default token schema', () => {
       component: 'linear-progress',
       task: 'T21',
       source: expect.objectContaining({
-        revision: '225f50d42bf0adeb2abf4b6109befb5ab6ce4efc',
-        accessed: '2026-07-20',
+        revision: 'a90df2fc27e026b9ad2ed569f203a260c1041fab',
+        accessed: '2026-07-24',
       }),
     }))
     expect(defaultTokenSet.componentTokens).toContainEqual(expect.objectContaining({
       component: 'circular-progress',
       task: 'T21',
       source: expect.objectContaining({
-        revision: '225f50d42bf0adeb2abf4b6109befb5ab6ce4efc',
-        accessed: '2026-07-20',
+        revision: 'a90df2fc27e026b9ad2ed569f203a260c1041fab',
+        accessed: '2026-07-24',
       }),
     }))
     expect(defaultTokenSet.componentTokens).toContainEqual(expect.objectContaining({
       component: 'wavy-progress',
       task: 'T21',
       source: expect.objectContaining({
-        revision: '225f50d42bf0adeb2abf4b6109befb5ab6ce4efc',
-        accessed: '2026-07-20',
+        revision: 'a90df2fc27e026b9ad2ed569f203a260c1041fab',
+        accessed: '2026-07-24',
       }),
     }))
     expect(defaultTokenSet.componentTokens).toContainEqual(expect.objectContaining({

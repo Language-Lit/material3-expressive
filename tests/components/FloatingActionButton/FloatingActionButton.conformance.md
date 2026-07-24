@@ -143,3 +143,13 @@ CSS checks require every literal custom-property reference to resolve.
   animation internals and invalid combinations out of public API.
 - CSS consumes the existing deterministic spring projection rather than a
   client animation runtime or Compose physics.
+
+## Source refresh (T44 — 2026-07-24)
+
+On 2026-07-24 `FloatingActionButton.kt` and its token files were diffed against
+the reference snapshot `a90df2fc27e026b9ad2ed569f203a260c1041fab` and `androidx-main` HEAD, which are equal. The
+only change from the pinned `b0ef6d36c141931a051272e39ad3f4783dcb28e0` is the
+same experimental→stable graduation (`MediumIconSize`) and an internal
+shadow-inset precision refactor (`16.dp.toPx()` to `.toInt().toFloat()`). No
+variant, token, state, or behavior this record describes changed, and the token
+files are byte-identical. The pin is retained.

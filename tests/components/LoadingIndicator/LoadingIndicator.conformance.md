@@ -115,3 +115,12 @@ Supported Material baseline: AndroidX Material 3 branch revision
   segment's own start shape) rather than whatever frame the animation
   happened to reach, matching every other progress component's
   "static state communicates activity without motion" precedent.
+
+## Source refresh (T44 — 2026-07-24)
+
+On 2026-07-24 `LoadingIndicator.kt` and `LoadingIndicatorTokens.kt` were diffed
+against the reference snapshot `a90df2fc27e026b9ad2ed569f203a260c1041fab` and `androidx-main` HEAD, which are equal.
+`LoadingIndicator.kt` differs from the pinned
+`225f50d42bf0adeb2abf4b6109befb5ab6ce4efc` only by five added
+`@material3expressive` KDoc tags — documentation annotations with no code change
+— and `LoadingIndicatorTokens` is byte-identical. The pin is retained.

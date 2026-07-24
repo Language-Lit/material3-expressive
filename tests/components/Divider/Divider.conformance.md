@@ -150,3 +150,9 @@ as an exclusion with that reason rather than approximated.
   cannot drift; T19 had registered the unread
   `SecondaryNavigationTabTokens.DividerColor` instead, which this task
   corrected. See `Tabs.conformance.md`.
+
+## Source refresh (T44 — 2026-07-24)
+
+This family already pins the reference snapshot `a90df2fc27e026b9ad2ed569f203a260c1041fab`. On 2026-07-24 its
+pinned files were re-diffed against `androidx-main` HEAD and found
+byte-identical, so the pin is verified current with no change.

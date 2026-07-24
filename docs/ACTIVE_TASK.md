@@ -1604,3 +1604,147 @@ separate task.
   new example renders.
 - Publication remains outside T43. The working package stays `1.1.0`; a version
   and registry action require a separately approved release task.
+
+## T44 — Primitive-family source refresh
+
+Status: complete
+Approved: 2026-07-24 (owner request: close the roadmap's primitive tranche before
+moving to composites)
+Completed: 2026-07-24
+
+### Scope
+
+The [Material catalog parity roadmap](MATERIAL_CATALOG_ROADMAP.md) leaves one item
+in tranche P: the primitive-family source refresh. Every primitive family already
+has conformant coverage — Divider (T42) and Badges (T43) closed the last two
+implementation gaps — so this task adds and changes no component. It brings the
+fifteen primitive families onto one verified-current, comparable source snapshot so
+the tranche can be formally closed.
+
+The pins are recent, not stale. Every primitive conformance record was authored in
+a five-day window, 2026-07-19 to 2026-07-24, and Button's T07 ledger already
+records the current Expressive size ladder (32/40/56/96/136px) and round/square
+resting and pressed shapes. The task-number order (T07–T14) reflects build order,
+not source age. The pinned revisions cluster into three:
+
+- four one-off revisions accessed 2026-07-19 for the T07–T10 families —
+  `dd849e20…` (Button), `f0793303…` (IconButton), `b0ef6d36…`
+  (FloatingActionButton), and `0be207d9…` (Card);
+- the dominant `225f50d4…`, accessed 2026-07-19 to 07-23, shared by Checkbox,
+  Radio, Switch, TextField/TextArea, Slider, Chip, the three progress indicators,
+  and LoadingIndicator;
+- the newest `a90df2fc…`, accessed 2026-07-24, shared by Divider, Badge, and
+  ListItem, and adopted here as the reference snapshot.
+
+For each of the fifteen primitive families — Badges, Buttons, Cards, Checkbox,
+Chips, Divider, Extended FABs, Floating action buttons, Icon buttons, Loading
+indicator, Progress indicators, Radio button, Sliders, Switch, and Text fields —
+fetch the pinned-revision source, token, and test files and the same files at the
+reference snapshot and at upstream `androidx-main`, diff them, and record one
+verdict per family:
+
+- **identical** — the pinned files are substantively unchanged at the reference
+  snapshot and at HEAD. Re-pin the family to the reference revision so every
+  primitive ledger describes one snapshot, following the precedent the Divider and
+  ListItem ledgers already set ("must describe one upstream snapshot to stay
+  comparable").
+- **delta** — upstream added or changed a variant, token, state, slot, or test.
+  Record and classify the delta per the roadmap's family-task completeness
+  contract. A substantive new-variant reconciliation is a tranche-A concern, not a
+  refresh: it is recorded and spun into its own approved feature task, so a refresh
+  never smuggles feature work past the one-task discipline. Given the pins are days
+  old, the expected delta is near zero.
+
+The rendered Material catalog index was already refreshed on 2026-07-24 in the
+roadmap, so the snapshot-currency half of the tranche-close discipline is done;
+this task completes the source-currency half.
+
+### Expected files
+
+- The primitive conformance records under `tests/components/*/`: refreshed access
+  date and, where re-pinned, the unified revision and a recorded diff verdict.
+- The pinned-source ledgers that assert a revision —
+  `tests/components/{Badge,Chip,Divider,Slider}/*.source.test.ts` — and the
+  `source.revision` fields in the affected `src/tokens/defaults/*.ts`.
+- `docs/MATERIAL_CATALOG_ROADMAP.md`: mark the tranche-P source-refresh line done.
+- `docs/adr/0036-*.md`: record the revision-unification decision.
+- `docs/SPEC.md`: append the T44 row.
+- No file under `src/` changes its component logic. If a real upstream delta forces
+  a public export, prop, or token change, that change is deferred to its own
+  approved task with its own ADR rather than made here.
+
+### Acceptance checks
+
+- `npm run verify` passes all fourteen gates.
+- Every primitive conformance record cites a revision verified current against
+  upstream at an access date of 2026-07-24 or later.
+- Each of the fifteen families has a recorded diff verdict — identical (re-pinned)
+  or delta (classified), with any substantive delta named and deferred to a
+  follow-up task.
+- `docs/MATERIAL_CATALOG_ROADMAP.md` no longer lists an open source-refresh item in
+  tranche P.
+
+### Completion evidence
+
+- The refresh was executed as a real upstream diff, not an assertion. Both
+  AndroidX mirrors were reachable, so for every primitive family the pinned
+  source, token, and test files were fetched at the family's pinned revision, at
+  the reference snapshot `a90df2fc27e026b9ad2ed569f203a260c1041fab`, and at
+  `androidx-main` HEAD, and compared byte-for-byte. For every primitive file
+  examined the reference snapshot equals HEAD, so the whole tranche is verified
+  current — nothing has drifted upstream since the July pins.
+- The five-day access window (2026-07-19 to 07-24) turned out to be our access
+  window, not the commit-time spread, so the pinned revisions were genuinely
+  compared rather than assumed identical. Eleven components came back
+  byte-identical;
+  four differ only non-substantively; one — Button — looked large (536 diff
+  lines) but resolved to an experimental→stable graduation once inspected.
+- **Eleven byte-identical components re-pinned to the reference snapshot:** Card,
+  IconButton, Checkbox, Radio, Switch, TextField, TextArea, Chip, LinearProgress,
+  CircularProgress, and WavyProgress. Their `src/tokens/defaults/*.ts`
+  registrations (ten — TextArea shares TextField's) and the
+  `tests/tokens/schema.test.ts` ledger move to
+  `a90df2fc…` with access date 2026-07-24, and Chip's source and theme tests
+  (which assert the registration revision) move with them. Because the content is
+  identical, every frozen git blob identity — including Chip's per-file hashes —
+  is unchanged; only the revision label and access date moved. Badge and Divider
+  already pin the reference snapshot and were re-verified against HEAD.
+- **Four non-substantive deltas retained with the delta classified:**
+  - **Button** (`dd849e20…`): `@ExperimentalMaterial3ExpressiveApi` removed from
+    members this port already ships as stable — the Expressive size ladder
+    (32/40/56/96/136px) and round/square resting and pressed shapes — plus
+    internal `contentPaddingFor`/`shadowElevation` refactors. No variant, token,
+    state, or behavior changed.
+  - **FloatingActionButton** (`b0ef6d36…`): the same experimental→stable
+    graduation (`MediumIconSize`) and an internal shadow-inset precision refactor
+    (`16.dp.toPx()` to `.toInt().toFloat()`).
+  - **Slider** (`225f50d4…`): a binary-compatibility refactor — the previous
+    `RangeSlider` preserved as a hidden-deprecated `RangeSliderLegacy` beside a
+    new `RangeSlider` overload with the same `value`/`valueRange`/`steps`/`colors`
+    contract, and `startInteractionSource`/`endInteractionSource` renamed to their
+    `…ThumbInteractionSource` forms. Kotlin ABI shims with no web equivalent;
+    `SliderTokens` is byte-identical.
+  - **LoadingIndicator** (`225f50d4…`): five added `@material3expressive` KDoc
+    tags only, no code change; `LoadingIndicatorTokens` is byte-identical.
+  Each pin is retained because re-pinning would rewrite an immutable blob identity
+  for a change a web port cannot observe. None is a substantive new-variant
+  reconciliation, so none spun off a follow-up task; a substantive delta, had one
+  been found, would have been deferred to its own approved feature task per the
+  scope, and deep new-variant reconciliation remains a tranche-A concern.
+- Unification is partial by design — thirteen primitive components on the
+  reference snapshot, four retained — which ADR 0036 records, along with the
+  reference-snapshot choice and the per-family verdicts. The comparability the
+  Divider/ListItem precedent protects matters only where families share an
+  upstream file, and the four retained families share none of their pinned files
+  with the re-pinned set.
+- Each of the seventeen primitive conformance records gained a dated
+  "Source refresh (T44)" section recording its verdict; the historical audit
+  prose was left intact, since it accurately describes the original access.
+  `docs/MATERIAL_CATALOG_ROADMAP.md` marks tranche P complete,
+  `docs/SPEC.md` gains the T44 row, and no `src/` component logic, public export,
+  prop, token value, or CSS changed — the only `dist` delta is the exported
+  provenance metadata itself, and the revision and date strings are same-length,
+  so every bundle budget is unchanged.
+- `npm run verify` passes all fourteen gates (1,195 tests; 1,702 generated
+  custom properties; 37 conformant components; 375,729-byte packed tarball; site
+  and consumer fixtures build).

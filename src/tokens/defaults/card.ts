@@ -10,9 +10,9 @@ export const defaultCardTokens = {
   task: 'T10',
   source: {
     id: 'androidx-material3-card',
-    url: 'https://android.googlesource.com/platform/frameworks/support/+/0be207d91046b7376beeef5544d331a02d6fa87c/compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Card.kt',
-    revision: '0be207d91046b7376beeef5544d331a02d6fa87c',
-    accessed: '2026-07-19',
+    url: 'https://android.googlesource.com/platform/frameworks/support/+/a90df2fc27e026b9ad2ed569f203a260c1041fab/compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/Card.kt',
+    revision: 'a90df2fc27e026b9ad2ed569f203a260c1041fab',
+    accessed: '2026-07-24',
   },
   tokens: {
     'minimum-interactive-target': {
