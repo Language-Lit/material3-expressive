@@ -26,9 +26,11 @@ import type { ComponentTokenRegistration } from '../schema'
  * `StopIndicatorTrailingSpace` constant, not the *token* file's
  * `StopTrailingSpace` (`0dp`) — the token is defined but never actually
  * read by `drawStopIndicator`, which uses the hardcoded `6.dp` instead; this
- * project surfaces the value that actually renders, the same "prefer the
- * value the code actually uses over an unread token" reasoning `Tabs`' own
- * `divider-color` registration already used. Since this bar's own height
+ * project surfaces the value that actually renders, the "prefer the value the
+ * code actually uses over an unread token" rule. T21 cited `Tabs`'
+ * `divider-color` as precedent here, which was inaccurate — T19 had registered
+ * the *unread* `SecondaryNavigationTabTokens.DividerColor`. T42 corrected that
+ * registration, so the two now genuinely agree. Since this bar's own height
  * (`4px`) already equals the stop dot's size, no trailing-space offset is
  * actually visible here in practice (see `WavyProgress`'s own copy of this
  * token, where the taller wavy container does leave headroom for it).

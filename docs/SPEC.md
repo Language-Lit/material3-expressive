@@ -641,6 +641,7 @@ important design choice must be resolved at its boundary.
 | T39 | Material 3 Expressive Slider family | Native-range-backed `Slider` and `RangeSlider` cover horizontal, vertical, centered, continuous, stepped, overlapping-thumb, token, geometry, state, and observable motion paths in the pinned AndroidX source |
 | T40 | Material 3 Expressive List Item family | `ListItem` and `SegmentedListItem` cover passive, action, native radio/checkbox selection, line geometry, grouping, token, shape, elevation, state, and observable motion paths in the pinned AndroidX source |
 | T41 | Material catalog parity roadmap | Source-dated ledger of every official Material component family, separated into primitive, composite, mixed, and tested-recipe delivery with primitive-first sequencing and an explicit catalog-parity completion gate (ADR 0033) |
+| T42 | Material 3 Divider primitive | One `Divider` covers both source composables through an `orientation` prop, with an HTML-content-model `as` choice, an explicit decorative/semantic split, token-adapted thickness and color, and the first family whose generated token file has no unread remainder; corrects the `Tabs` divider from an unread generated role to the value its source renders (ADR 0034) |
 
 ## 15. Definition of project completion
 

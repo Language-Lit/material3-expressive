@@ -9,6 +9,7 @@ import { defaultCircularProgressTokens } from './circular-progress'
 import { defaultDarkColorScheme, defaultLightColorScheme, defaultPalette } from './color'
 import { defaultDensity } from './density'
 import { defaultDialogTokens } from './dialog'
+import { defaultDividerTokens } from './divider'
 import { defaultElevation } from './elevation'
 import { defaultFabMenuTokens } from './fab-menu'
 import { defaultFloatingActionButtonTokens } from './floating-action-button'
@@ -112,6 +113,7 @@ const defaultTokenSetInput = {
     defaultCircularProgressTokens,
     defaultWavyProgressTokens,
     defaultLoadingIndicatorTokens,
+    defaultDividerTokens,
   ],
 } satisfies FoundationTokenSet
 

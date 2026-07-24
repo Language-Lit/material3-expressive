@@ -16,6 +16,7 @@ import { CheckboxExample } from '@examples/Checkbox.example'
 import { ChipExample } from '@examples/Chip.example'
 import { CircularProgressExample } from '@examples/CircularProgress.example'
 import { DialogExample } from '@examples/Dialog.example'
+import { DividerExample } from '@examples/Divider.example'
 import { FabMenuExample } from '@examples/FabMenu.example'
 import { FloatingActionButtonExample } from '@examples/FloatingActionButton.example'
 import { FloatingToolbarExample } from '@examples/FloatingToolbar.example'
@@ -52,6 +53,7 @@ export const demoRegistry: Record<string, ComponentType> = {
   Chip: ChipExample,
   CircularProgress: CircularProgressExample,
   Dialog: DialogExample,
+  Divider: DividerExample,
   FabMenu: FabMenuExample,
   FloatingActionButton: FloatingActionButtonExample,
   FloatingToolbar: FloatingToolbarExample,

@@ -448,6 +448,19 @@ their complete read/unread partitions and every pinned upstream test. ADR 0032
 records the interaction mapping, precedence, long-press exclusion, and
 source-completeness boundary.
 
+`Divider` completes the primitive tranche of the catalog roadmap. Its two
+source composables collapse into one `orientation` prop, following the same
+one-component-per-axis translation `Slider` applied to `VerticalSlider`. An
+`as` prop selects `hr`, `div`, or `li` because the HTML content models decide
+which element is legal where — `ul` and `ol` accept only `li` and
+script-supporting children — and a `decorative` prop chooses between separator
+semantics and removal from the accessibility tree. The source's per-call
+`thickness`/`color` parameters become scoped component tokens rather than
+props, so an arbitrary value never has to be emitted as an inline style. This
+is the first family whose generated token file has no unread remainder. ADR
+0034 records the API mapping, the semantics matrix, the `Dp.Hairline`
+exclusion, and the `Tabs` provenance correction it enabled.
+
 ## Styling
 
 Component CSS is authored beside the component. `src/styles/styles.css`

@@ -379,6 +379,81 @@ const listItemGeometry = await page.evaluate(() => {
 
 for (const finding of listItemGeometry) findings.push(`List Item geometry: ${finding}`)
 
+// --- Divider source geometry ------------------------------------------------
+// T42 keeps the sourced 1px thickness on the correct axis for each
+// orientation, fills the inline axis when horizontal, and fills the cross axis
+// of a bounded flex parent when vertical. The vertical case is the reason this
+// probe exists: `align-self: stretch` is the translation of the source's
+// `fillMaxHeight()`, and jsdom cannot see whether it actually stretched.
+const dividerGeometry = await page.evaluate(() => {
+  const results = []
+  for (const divider of document.querySelectorAll('.m3e-divider')) {
+    const box = divider.getBoundingClientRect()
+    const styles = getComputedStyle(divider)
+    const vertical = divider.getAttribute('data-m3e-orientation') === 'vertical'
+    const thickness = vertical ? box.width : box.height
+    const length = vertical ? box.height : box.width
+
+    if (Math.abs(thickness - 1) > 0.6) {
+      results.push(
+        `${vertical ? 'vertical' : 'horizontal'} thickness ${thickness.toFixed(2)}px`,
+      )
+    }
+    if (length < 1) {
+      results.push(
+        `${vertical ? 'vertical' : 'horizontal'} divider collapsed to ${length.toFixed(1)}px`,
+      )
+    }
+
+    // A visible line must actually paint. Forced-colors is not active here, so
+    // the background color is the author's and must not be transparent.
+    if (/^(?:transparent|rgba\(0, 0, 0, 0\))$/.test(styles.backgroundColor)) {
+      results.push('divider paints no background color')
+    }
+
+    // The user-agent border and block margins of `hr` must be neutralised, or
+    // the rule renders at the wrong thickness with unrequested spacing.
+    if (Number.parseFloat(styles.borderTopWidth) > 0.01) {
+      results.push(`divider retains a user-agent border ${styles.borderTopWidth}`)
+    }
+    if (
+      Number.parseFloat(styles.marginBlockStart) > 0.01 ||
+      Number.parseFloat(styles.marginBlockEnd) > 0.01
+    ) {
+      results.push('divider retains user-agent block margins')
+    }
+
+    const parent = divider.parentElement
+    if (!parent) continue
+    const parentBox = parent.getBoundingClientRect()
+    const parentStyles = getComputedStyle(parent)
+
+    if (vertical && parentStyles.display === 'flex' && parentStyles.flexDirection === 'row') {
+      const parentContent =
+        parentBox.height -
+        Number.parseFloat(parentStyles.paddingTop) -
+        Number.parseFloat(parentStyles.paddingBottom)
+      if (parentContent - box.height > 0.6) {
+        results.push(
+          `vertical divider ${box.height.toFixed(1)}px does not fill its ${parentContent.toFixed(1)}px flex row`,
+        )
+      }
+    }
+
+    // Compare edges, not widths: an inset divider keeps the parent's width
+    // while escaping its end edge, which a width comparison cannot see.
+    if (
+      !vertical &&
+      (box.right - parentBox.right > 0.6 || parentBox.left - box.left > 0.6)
+    ) {
+      results.push('horizontal divider escapes its container edges')
+    }
+  }
+  return results
+})
+
+for (const finding of dividerGeometry) findings.push(`Divider geometry: ${finding}`)
+
 // --- Slider source geometry -------------------------------------------------
 // T39 keeps a 16px track and 4x44px handle inside a minimum 48px target,
 // transposes axes for vertical orientation, projects discrete points between
@@ -743,5 +818,5 @@ if (findings.length > 0) {
 
 process.stdout.write(
   'Rendering audit passed: no clipped elevation shadows, undersized interactive targets outside ' +
-    'the recorded exemptions, or Chip/List Item/Slider source-geometry defects\n',
+    'the recorded exemptions, or Chip/List Item/Slider/Divider source-geometry defects\n',
 )

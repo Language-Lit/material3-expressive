@@ -111,6 +111,39 @@
   justify-content: center;
 }
 
+.divider-example {
+  display: grid;
+  gap: 1rem;
+  margin-block-start: 2rem;
+  padding: 1.5rem;
+}
+
+.divider-example__stack {
+  display: grid;
+  gap: 1rem;
+  inline-size: min(100%, 36rem);
+}
+
+/* Indentation is composition rather than a prop; see docs/components/Divider.md. */
+.divider-example__inset {
+  margin-inline-start: 1rem;
+}
+
+.divider-example__list {
+  inline-size: min(100%, 36rem);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* A bounded flex row is what lets a vertical divider stretch to full height. */
+.divider-example__row {
+  align-items: center;
+  display: flex;
+  gap: 0.75rem;
+  min-block-size: 2.5rem;
+}
+
 .checkbox-example {
   display: grid;
   gap: 1rem;

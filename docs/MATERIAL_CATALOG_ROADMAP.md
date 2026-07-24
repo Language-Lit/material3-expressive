@@ -79,7 +79,7 @@ must never be projected into stable documentation as support claims.
 | 9 | [Chips](https://m3.material.io/components/chips/overview) | Primitive | `Chip` | Conformant | Reconcile new upstream variants at the final catalog audit |
 | 10 | [Date pickers](https://m3.material.io/components/date-pickers/overview) | Composite | None | Planned | Docked/modal, single/range/input modes, calendar grid, locale boundary, and validation |
 | 11 | [Dialogs](https://m3.material.io/components/dialogs/overview) | Composite | `Dialog` | Conformant | Reconcile new upstream variants at the final catalog audit |
-| 12 | [Divider](https://m3.material.io/components/divider/overview) | Primitive | None | Planned | Public horizontal/vertical divider primitive and inset/grouping recipes |
+| 12 | [Divider](https://m3.material.io/components/divider/overview) | Primitive | `Divider` | Conformant | Reconcile new upstream variants at the final catalog audit |
 | 13 | [Extended FABs](https://m3.material.io/components/extended-fab/overview) | Primitive | `FloatingActionButton` extended mode | Conformant | Reconcile new upstream variants at the final catalog audit |
 | 14 | [FAB menu](https://m3.material.io/components/fab-menu) | Composite | `FabMenu` | Conformant | Reconcile new upstream variants at the final catalog audit |
 | 15 | [Floating action buttons](https://m3.material.io/components/floating-action-button/overview) | Primitive | `FloatingActionButton` | Conformant | Reconcile new upstream variants at the final catalog audit |
@@ -105,7 +105,7 @@ must never be projected into stable documentation as support claims.
 | 35 | [Toolbars](https://m3.material.io/components/toolbars/overview) | Mixed | `FloatingToolbar` | Partial | Reconcile the full toolbar family, including docked/floating and expansion/overflow compositions |
 | 36 | [Tooltips](https://m3.material.io/components/tooltips/overview) | Composite | `Tooltip` | Conformant | Reconcile new upstream variants at the final catalog audit |
 
-Snapshot accounting: 25 Conformant + 2 Partial + 9 Planned = 36 families;
+Snapshot accounting: 26 Conformant + 2 Partial + 8 Planned = 36 families;
 0 Excluded. Changing those totals requires changing a row in the same approved
 task.
 
@@ -115,9 +115,9 @@ Roadmap IDs are durable tranche labels, not pre-approved implementation tasks.
 Each implementation still needs the scope/files/checks approval required by
 `ACTIVE_TASK.md`.
 
-1. **P — finish primitives.** Implement Badges and Divider, then perform a
-   primitive-family source refresh. Any newly discovered primitive catalog
-   family joins this tranche.
+1. **P — finish primitives.** Divider landed in T42. Implement Badges, then
+   perform a primitive-family source refresh. Any newly discovered primitive
+   catalog family joins this tranche.
 2. **C — implement composites.** After P is complete, implement App bars,
    Bottom sheets, Carousel, Date pickers, Search, Side sheets, and Time pickers.
    Sequence individual tasks by shared-platform prerequisites, not by table

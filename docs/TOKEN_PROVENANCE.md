@@ -424,12 +424,19 @@ Active/inactive label and icon color come from each token file's own
 `Active*Color`/`Inactive*Color` pair (`primary`/`onSurfaceVariant` for
 `'primary'`; plain `onSurface`/`onSurfaceVariant` for `'secondary'` —
 deliberately more subdued, not brand-colored). `divider-color`/
-`divider-height` come from `SecondaryNavigationTabTokens.DividerColor`/
-`DividerHeight` (surfaceVariant, 1dp), even though the pinned source's own
-default `divider` composable for *both* `PrimaryTabRow`/`SecondaryTabRow`
-is actually a generic, non-tab-specific `HorizontalDivider()` — this
-project surfaces the actually-defined, traceable token value instead of an
-untraceable system-generic one. `container-height` (48px,
+`divider-height` mirror `DividerTokens.Color`/`Thickness` (outlineVariant,
+1dp), because every `divider` parameter in the pinned `TabRow.kt` —
+`PrimaryTabRow`, `SecondaryTabRow`, both scrollable variants, and the
+deprecated overloads — defaults to `@Composable { HorizontalDivider() }`.
+`SecondaryNavigationTabTokens.DividerColor`/`DividerHeight` (surfaceVariant,
+1dp) are generated but never read; `TabRow.kt` reads only `ContainerColor`
+and `ActiveLabelTextColor` from that object. T19 registered the unread pair
+because no `Divider` component existed to trace the generic composable to.
+T42 added one, so the ordinary "prefer the value the code actually reads"
+rule now applies and the color moved from surfaceVariant to outlineVariant.
+The pair stays under the `tabs` namespace rather than being deleted, so a
+consumer can still restyle one tab row's rule — the web equivalent of the
+source's per-call `divider` slot. `container-height` (48px,
 `ContainerHeight`/`SmallTabHeight`) and `container-height-with-icon-and-
 label` (72px, `LargeTabHeight`, the value `Tab.kt`'s own
 `TabBaselineLayout` actually uses — not the token file's unread 64px
@@ -532,9 +539,12 @@ same duplication-over-premature-extraction precedent `NavigationBar`/
 `NavigationRail`'s own item visual language already used.
 `LinearProgress`'s `stop-trailing-space` (`6px`) is `ProgressIndicator.kt`'s
 own internal `StopIndicatorTrailingSpace` constant, not the *token* file's
-own unread `StopTrailingSpace` (`0dp`) — the same "prefer the value the
-code actually uses over an unread token" reasoning `Tabs`' own
-`divider-color` registration already used. `LinearProgressIndicatorTokens
+own unread `StopTrailingSpace` (`0dp`) — the "prefer the value the code
+actually uses over an unread token" rule. T21 cited `Tabs`' `divider-color`
+as precedent for that rule, which was inaccurate: T19 had registered the
+*unread* `SecondaryNavigationTabTokens.DividerColor` there. T42 corrected
+`Tabs` to the value its source actually renders, so the two registrations
+now genuinely agree. `LinearProgressIndicatorTokens
 .ActiveWaveAmplitude`/`CircularProgressIndicatorTokens.ActiveWaveAmplitude`
 are not registered by these two plain-only components at all — they exist
 only for the wavy treatment, registered by `WavyProgress` instead.

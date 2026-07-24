@@ -15,6 +15,30 @@ release task.
   T40). Controlled and uncontrolled selection, native forms/reset, SSR,
   logical RTL layout, forced colors, reduced motion, and scoped component-token
   overrides are covered.
+- **`Divider`.** The thin line that groups content in lists and layouts, ported
+  from AndroidX `Divider.kt` at the pinned revision
+  `a90df2fc27e026b9ad2ed569f203a260c1041fab` (ADR 0034; T42). One `orientation`
+  prop covers both source composables. An `as` prop selects `hr` (default),
+  `div`, or `li` — `li` is required inside `<ul>`/`<ol>`, whose content model
+  rejects `hr`. A `decorative` prop removes the line from the accessibility
+  tree; the default exposes a native separator. Thickness and color are
+  component tokens rather than props, so overrides compose with the theme and
+  never emit an inline style. This is the first family whose generated token
+  file has no unread remainder.
+
+### Fixed
+
+- **Tab rows draw the divider color their source actually renders.** `Tabs`
+  registered `divider-color` from `SecondaryNavigationTabTokens.DividerColor`
+  (`surfaceVariant`), a generated role the pinned `TabRow.kt` never reads: every
+  `divider` parameter across both variants, both scrollable forms, and the
+  deprecated overloads defaults to `HorizontalDivider()`, which is
+  `outlineVariant`. T19 had no `Divider` component to trace the generic
+  composable to; T42 added one, so the color is corrected (ADR 0034). The rule
+  under a tab row shifts from `surfaceVariant` to `outlineVariant` — both are
+  low-emphasis outline roles, and the change makes it match every other Material
+  divider. `--m3e-comp-tabs-divider-color` and `-height` keep their names and
+  remain overridable, so no theming surface changed.
 
 ## 1.1.0 — 2026-07-23
 

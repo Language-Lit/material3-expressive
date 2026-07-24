@@ -1153,3 +1153,197 @@ inventory status, or publication change is in scope.
   entries, 1,691 generated token properties, both packed consumer builds, and
   the documentation-site check. The successful aggregate run used an isolated
   temporary npm cache because the user-level cache contains root-owned files.
+
+
+---
+
+## T42 — Material 3 Divider primitive
+
+Status: complete
+Approved: 2026-07-24 (owner request: add the next primitive, then update the
+components that rely on a divider to use the real one)
+
+### Scope
+
+Add one public `Divider`, the first of the two families the T41 roadmap leaves
+in its primitive tranche, and repair the one existing consumer the new
+component makes traceable.
+
+The pinned source is small and fully accountable. `Divider.kt` exports
+`HorizontalDivider`, `VerticalDivider`, a deprecated `Divider` alias, and
+`DividerDefaults`; generated `DividerTokens.kt` declares exactly two roles and
+the implementation reads both. This task is source-completeness gated against
+immutable AndroidX revision `a90df2fc27e026b9ad2ed569f203a260c1041fab` — the
+same revision T40 pinned, so the four `ListTokens.Divider*Space` roles frozen
+there describe one upstream snapshot. The executable ledger covers `Divider.kt`,
+`DividerTokens.kt`, `DividerTest.kt` (6 tests), and `DividerScreenshotTest.kt`
+(4 tests).
+
+Three translation decisions carry the design, all recorded in ADR 0034:
+
+- Both current composables collapse into one `orientation` prop, the
+  one-component-per-axis rule ADR 0031 established for `VerticalSlider`.
+- `as` selects `hr`, `div`, or `li`. The set is closed and decided by HTML
+  content models: `ul`/`ol` accept only `li` and script-supporting children, so
+  an `hr` between list items is invalid, and separating list items is one of the
+  divider's two named purposes.
+- Semantics are exposed by default and opted out of with `decorative`. Compose
+  dividers carry no semantics at all; on the web the accessible default is the
+  opposite, and `hr` supplies the role for free.
+
+`thickness` and `color` are adapted to component tokens rather than props, so no
+arbitrary value has to be emitted as an inline style. `Dp.Hairline` is excluded:
+it exists to paint one physical pixel against density scaling, a CSS pixel is
+already density-independent, and the pinned hairline test asserts the modern
+composables lay out at zero height. Indentation stays composition, matching the
+pinned indent test.
+
+The consumer repair: `Tabs` registered `divider-color`/`divider-height` from
+`SecondaryNavigationTabTokens.DividerColor`/`DividerHeight`. `TabRow.kt` reads
+neither — every `divider` parameter across both variants, both scrollable
+forms, and the deprecated overloads defaults to
+`@Composable { HorizontalDivider() }`, which is `outlineVariant` at 1dp. T19
+encoded a generated-but-unread role as runtime behavior because no `Divider`
+existed to trace the generic composable to; T21's `LinearProgress` note then
+cited that registration as precedent for the opposite rule. Both records are
+corrected here. `Tabs` keeps its own namespaced tokens and its
+`border-block-end` painting, because `role="tablist"` owns only `role="tab"`
+children.
+
+No runtime dependency, peer dependency, or package export-path change. No token
+is removed or renamed. Publication is a separate task.
+
+### Expected files
+
+- Added: `src/components/Divider/Divider.tsx`,
+  `src/components/Divider/Divider.types.ts`,
+  `src/components/Divider/Divider.css`, `src/components/Divider/index.ts`,
+  `src/tokens/defaults/divider.ts`, `docs/components/Divider.md`,
+  `playground/examples/Divider.example.tsx`, the mirrored
+  `tests/components/Divider/*` suite and conformance record, and ADR 0034.
+- Modified: `src/components/index.ts`, `src/styles/styles.css`,
+  `src/tokens/defaults/index.ts`, `src/tokens/defaults/tabs.ts`,
+  `src/tokens/defaults/linear-progress.ts`, `docs/component-inventory.json`,
+  `docs/SPEC.md`, `docs/ARCHITECTURE.md`, `docs/TOKEN_PROVENANCE.md`,
+  `docs/MATERIAL_CATALOG_ROADMAP.md`, `docs/ACTIVE_TASK.md`,
+  `tests/components/Tabs/Tabs.conformance.md`, `tests/tokens/schema.test.ts`,
+  `tests/tokens/css.test.ts`, `scripts/check-release.mjs`, `package.json`,
+  `site/content/site.ts`, `playground/src/main.tsx`,
+  `playground/src/playground.css`.
+- Generated: `docs/SUPPORTED_COMPONENTS.md`, `site/demos/registry.tsx`.
+
+### Acceptance checks
+
+- The executable ledger freezes all four pinned blob identities, both generated
+  declarations with their read/unread partition, the 11 current and 4 deprecated
+  source entries, all 6 behavior and 4 screenshot cases, and the 4 discovered
+  implementation anomalies.
+- Both orientations, all three elements, and both semantic modes render their
+  sourced output; TypeScript rejects an open orientation, an unsupported
+  element, children, a mismatched ref, and a non-boolean `decorative`.
+- The role matrix holds: implicit on semantic `hr`, `separator` on `div`/`li`,
+  `none` on decorative `hr`/`li`, absent on decorative `div`;
+  `aria-orientation` only on vertical separators.
+- Light/dark, scoped token overrides, RTL, forced colors, SSR, hydration,
+  public exports, inventory, documentation, example, and packed consumers agree.
+- The `Tabs` divider resolves `outlineVariant`, and the two registrations carry
+  the same sourced values.
+- `npm run verify` passes.
+- Because this task adds component geometry:
+
+  ```bash
+  npm run build && npm run playground:build
+  M3E_CHROMIUM_PATH=<chromium binary> npm run audit:rendering
+  ```
+
+  passes without an unexplained allowlist addition.
+
+### Completion evidence
+
+- `Divider` is a public named export with `orientation`, `as`, and `decorative`
+  props. The package still has zero runtime dependencies, React/React DOM remain
+  its only peers, and no export path, prop, or token was removed or renamed.
+- `Divider.source.test.ts` freezes the four pinned blob identities, both
+  generated declarations partitioned 2 read / 0 unread, the 11 current and 4
+  deprecated source entries, all 6 behavior and 4 screenshot cases, and 4
+  implementation anomalies. This is the first family in the library with no
+  unread generated roles.
+- The four anomalies are recorded rather than smoothed over. The KDoc on both
+  current composables promises `Dp.Hairline` yields "a single pixel divider
+  regardless of screen density", while the pinned `divider_hairlineThickness`
+  asserts `heightPx == 0` — only the deprecated `Divider` implements the
+  promise. The deprecated path fills a `Box` background where the current ones
+  stroke a `Canvas`. `DividerTokens.kt` is generator version `v0_117` (shared
+  with `RadioButtonTokens.kt` and `ScrimTokens.kt`) while the
+  `ListTokens.kt`/`ReorderListTokens.kt` T40 pinned at this same revision are
+  `29.0.0`; the tokens directory spans 19 generator versions in total, so the
+  contrast is with the files this ledger shares a revision with, not with every
+  sibling. Screenshot coverage has no
+  `verticalDivider_darkTheme`.
+- The focused Divider suite passes 50 tests across behavior, accessibility,
+  CSS, theme, SSR/hydration, and the source ledger. Six compile-only type cases
+  reject an open orientation, an unsupported element, children, a mismatched
+  ref, and a non-boolean `decorative`; `tsc --noEmit` passes, so every
+  `@ts-expect-error` is load-bearing.
+- The `Tabs` correction is source-verified rather than asserted.
+  `SecondaryNavigationTabTokens.kt` declares `DividerColor`/`DividerHeight`, and
+  `TabRow.kt` imports that object but reads only `ContainerColor` (line 1005)
+  and `ActiveLabelTextColor` (line 1021). All eight public `divider`
+  parameters — the four current variants (lines 161, 212, 267, 337), the two
+  hidden binary-compatibility overloads (1205, 1236), and the two deprecated
+  composables (1349, 1414) — default to `@Composable { HorizontalDivider() }`,
+  as does the private `ScrollableTabRowWithSubcomposeImpl` (834). The color
+  moved to `outlineVariant`; the 1px height was already correct.
+- Two provenance records that contradicted each other now agree. T21's
+  `LinearProgress` note cited `Tabs`' `divider-color` as precedent for "prefer
+  the value the code actually uses over an unread token" while `Tabs` had done
+  the opposite. Both `docs/TOKEN_PROVENANCE.md` and
+  `src/tokens/defaults/linear-progress.ts` state the correction rather than
+  quietly agreeing after the fact.
+- The token registry adds 2 Divider properties and emits 1,693 overall. Light,
+  dark, nested custom scopes, and token-only output pass their gates; a theme
+  test pins the Tabs and Divider registrations to identical sourced values so
+  they cannot drift apart again.
+- `npm run verify` passes all 13 gates: 189 test files / 1,146 tests, 36
+  conformant inventory entries, 36 documentation pages, 39 stylesheets, both
+  packed consumer fixtures, and the site check at 35 demos.
+- Bundle checks stay inside the existing ADR 0031 ceilings with no baseline
+  loosened: 370,960-byte JavaScript closure (64,699 gzip), 89,819-byte
+  declaration closure (20,532 gzip), 432,926-byte full CSS (46,946 gzip),
+  128,224-byte token CSS (11,212 gzip), and a 369,412-byte packed package.
+- The required real-Chromium audit passes after a production package and
+  playground build. T42 strengthened the gate with Divider probes measuring
+  1px thickness on the correct axis per orientation, collapse detection,
+  painted background, neutralised `hr` border and block margins, flex-row
+  cross-axis fill, and container overflow. No allowlist was changed.
+- The new probe was proven non-vacuous in both directions. It finds 6 rendered
+  dividers — two `hr` and two `li role="separator"` at 576x1px, two vertical
+  `hr` at 1x40px filling their flex row, all painting `rgb(202, 196, 208)`,
+  which is `outlineVariant` in the light scheme. Replacing `align-self: stretch`
+  with `flex-start` and rebuilding made the audit fail with "vertical divider
+  collapsed to 0.0px"; restoring it returned the gate to green.
+- A post-completion source re-verification (2026-07-24) re-fetched all four
+  pinned blobs — the test files live under `androidDeviceTest`, not the older
+  `androidInstrumentedTest` path — and confirmed every hash and every frozen
+  test name. It corrected three defects the first pass recorded or shipped:
+  - The `TabRow.kt` divider-parameter count above originally read "seven"; the
+    pinned file has eight public sites (the deprecated `ScrollableTabRow` at
+    line 1414 was missed) plus the private impl at 834. Every one still
+    defaults to `HorizontalDivider()`, so the conclusion stands.
+  - The generator-version anomaly claimed siblings "are v29.0.0"; the tokens
+    directory actually spans 19 generator versions (`RadioButtonTokens` and
+    `ScrimTokens` share `v0_117`), so the anomaly now contrasts specifically
+    with the `29.0.0` `ListTokens`/`ReorderListTokens` T40 pinned at this
+    revision.
+  - The horizontal rule used `inline-size: 100%`, so a margin inset kept the
+    full width and escaped the parent's end edge — measured at exactly 16px
+    overhang on the playground's 1rem-inset example, unseen by the audit's
+    width-based overflow check. The rule now fills by auto/stretch sizing, so
+    a margin inset shortens the line the way the source's `padding(start)`
+    indent does (the inset example measures 560px inside its 576px parent with
+    0px overhang), and the audit probe compares edges instead of widths.
+    Seeding the percentage rule back into the built stylesheet makes the audit
+    fail with "horizontal divider escapes its container edges"; the restored
+    build passes.
+- Publication remains outside T42. The working package stays `1.1.0`; a version
+  and registry action require a separately approved release task.

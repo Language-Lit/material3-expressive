@@ -1,0 +1,56 @@
+@layer m3e.components {
+  /*
+   * The base rule neutralises the user-agent presentation of every supported
+   * element: `hr` carries a border, block margins and `overflow: hidden`, and
+   * `li` carries `display: list-item` and a marker box. The line itself is a
+   * filled box, which is geometrically identical to the source's centred
+   * `drawLine` stroke of the same width.
+   */
+  .m3e-divider {
+    background-color: var(--m3e-comp-divider-color);
+    border: 0;
+    box-sizing: border-box;
+    display: block;
+    flex: none;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  /*
+   * No inline-size is set: auto/stretch sizing fills a block, flex-column, or
+   * grid parent minus any inline margins, so a margin inset shortens the line
+   * exactly like the source's `padding(start)` indent test does. A percentage
+   * inline size would instead keep the full width and overflow the parent's
+   * end edge by the inset. `align-self`/`justify-self` win over a parent's
+   * non-stretch `align-items`/`justify-items`.
+   */
+  .m3e-divider[data-m3e-orientation="horizontal"] {
+    align-self: stretch;
+    block-size: var(--m3e-comp-divider-thickness);
+    justify-self: stretch;
+  }
+
+  /*
+   * `align-self: stretch` is the web equivalent of the source's
+   * `fillMaxHeight()`: both fill the cross axis of a bounded parent and both
+   * collapse without one. A percentage block-size is deliberately not used —
+   * it resolves to zero against the auto-height flex parents that vertical
+   * dividers are normally placed in, which is exactly the common case.
+   */
+  .m3e-divider[data-m3e-orientation="vertical"] {
+    align-self: stretch;
+    inline-size: var(--m3e-comp-divider-thickness);
+  }
+
+  /*
+   * Forced-colors mode overrides author background colors, so the line would
+   * otherwise be painted away entirely.
+   */
+  @media (forced-colors: active) {
+    .m3e-divider {
+      background-color: CanvasText;
+      forced-color-adjust: none;
+    }
+  }
+}

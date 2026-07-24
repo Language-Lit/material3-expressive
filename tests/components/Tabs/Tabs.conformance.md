@@ -58,8 +58,9 @@ Supported Material baseline: AndroidX Material 3 branch revision
   `IconAndLabelTextContainerHeight`) when any item combines both, stacked
   icon-above-label. `24px` icon size, `16px` label inline padding
   (`HorizontalTextPadding`). A full-width divider under the tablist for
-  both variants (`SecondaryNavigationTabTokens.DividerColor`/
-  `DividerHeight` — see Web-specific deviations).
+  both variants, matching `DividerTokens.Color`/`Thickness` because every
+  `divider` parameter in the source's `TabRow.kt` defaults to
+  `HorizontalDivider()` (see Web-specific deviations).
 - Label typography reuses the theme's own `title-small` typescale role
   directly, matching every prior task's unread-typography-role precedent.
 - Disabled tabs dim to the universal `onSurface`-at-`0.38`-opacity
@@ -108,6 +109,13 @@ Supported Material baseline: AndroidX Material 3 branch revision
   excluded — `Tabs` only supports the stacked icon-above-label combined
   layout, the same "one clean composition over several alternate overload
   variants" precedent prior tasks already applied.
-- Disabled-tab dimming and the divider's traceable-token color (see
-  Anatomy) are both deliberate web additions/choices beyond a literal
-  source reading.
+- Disabled-tab dimming is a deliberate web addition beyond a literal source
+  reading: the source's `enabled` parameter removes interactivity with no
+  distinct disabled color axis.
+- The divider is painted as a `border-block-end` on the tablist rather than
+  as a rendered `Divider` element. The source composes a real divider into
+  the tab row, but `role="tablist"` owns only `role="tab"` children, and a
+  1px rule under a container is a border on the web. Its color and height
+  track `DividerTokens` so the two cannot drift; T19 had registered the
+  unread `SecondaryNavigationTabTokens.DividerColor` (surfaceVariant)
+  instead, which T42 corrected to the rendered `outlineVariant`.

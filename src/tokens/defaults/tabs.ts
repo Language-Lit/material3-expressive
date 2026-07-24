@@ -19,14 +19,18 @@ import type { ComponentTokenRegistration } from '../schema'
  * `'secondary'` renders a full-tab-width underline with no independent
  * width/shape of its own.
  *
- * `divider-color`/`divider-height` come from
- * `SecondaryNavigationTabTokens.DividerColor`/`DividerHeight`, even though
- * the pinned source's own default `divider` composable for *both*
- * `PrimaryTabRow`/`SecondaryTabRow` is actually a generic, non-tab-specific
- * `HorizontalDivider()` — this project surfaces the actually-defined,
- * traceable token value instead of an untraceable system-generic one, the
- * same "prefer the specific sourced value over an unread generic one"
- * reasoning used throughout.
+ * `divider-color`/`divider-height` mirror `DividerTokens.Color`/`Thickness`
+ * (`outlineVariant`, 1dp), because every `divider` parameter in the pinned
+ * `TabRow.kt` — `PrimaryTabRow`, `SecondaryTabRow`, both scrollable variants,
+ * and the deprecated overloads — defaults to `@Composable { HorizontalDivider() }`.
+ * `SecondaryNavigationTabTokens.DividerColor`/`DividerHeight` (`surfaceVariant`,
+ * 1dp) are generated but never read: `TabRow.kt` reads only `ContainerColor` and
+ * `ActiveLabelTextColor` from that object. T19 registered the unread pair when
+ * no `Divider` component existed to trace the generic composable to; T42 added
+ * one, so the divider is now traceable and the ordinary "prefer the value the
+ * code actually reads over an unread generated role" rule applies. The pair is
+ * kept under the `tabs` namespace rather than deleted so a consumer can still
+ * restyle a tab row's own rule, matching the source's per-call `divider` slot.
  *
  * `disabled-label-color`/`disabled-label-opacity`/`disabled-icon-color`/
  * `disabled-icon-opacity` have no source: `Tab`'s `enabled` param removes
@@ -60,7 +64,7 @@ export const defaultTabsTokens = {
     'indicator-height': { kind: 'dimension', value: '3px' },
     'indicator-shape': { kind: 'shape', value: '3px' },
     'indicator-primary-width': { kind: 'dimension', value: '24px' },
-    'divider-color': { kind: 'color', value: { $ref: 'sys.color.surfaceVariant' } },
+    'divider-color': { kind: 'color', value: { $ref: 'sys.color.outlineVariant' } },
     'divider-height': { kind: 'dimension', value: '1px' },
     'primary-active-label-color': { kind: 'color', value: { $ref: 'sys.color.primary' } },
     'primary-active-icon-color': { kind: 'color', value: { $ref: 'sys.color.primary' } },

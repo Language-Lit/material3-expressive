@@ -15,6 +15,7 @@ import { ChipExample } from '../examples/Chip.example'
 import { CheckboxExample } from '../examples/Checkbox.example'
 import { CircularProgressExample } from '../examples/CircularProgress.example'
 import { DialogExample } from '../examples/Dialog.example'
+import { DividerExample } from '../examples/Divider.example'
 import { FabMenuExample } from '../examples/FabMenu.example'
 import { FloatingActionButtonExample } from '../examples/FloatingActionButton.example'
 import { FloatingToolbarExample } from '../examples/FloatingToolbar.example'
@@ -90,6 +91,7 @@ createRoot(root).render(
         <CardExample />
         <ChipExample />
         <ListItemExample />
+        <DividerExample />
         <CheckboxExample />
         <RadioExample />
         <SwitchExample />
