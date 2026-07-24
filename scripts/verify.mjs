@@ -8,6 +8,13 @@ const checks = [
   ['Run tests', 'test'],
   ['Build distributable package', 'build'],
   ['Build production playground', 'playground:build'],
+  // The playground is the only consumer-shaped TSX no other gate typechecks:
+  // Vite transpiles without checking, and the root typecheck covers only
+  // `src/` and the type-assertion tests. T43 shipped `<Icon name>` for a
+  // required `source` this way — a plain TS2322 no gate could see, which
+  // blanked the whole playground at runtime. Runs after the builds because
+  // the examples resolve the package's built declarations.
+  ['Typecheck playground examples', 'typecheck:playground'],
   ['Validate architecture', 'check:architecture'],
   ['Validate documentation', 'check:docs'],
   ['Validate browser support', 'check:browsers'],

@@ -1566,13 +1566,26 @@ separate task.
   passes.
 - The audit gained a specimen census, which this task's own mistake motivated.
   The Badge example first shipped `<Icon name>` instead of `<Icon source>`;
-  `name` is a valid HTML attribute, so TypeScript accepted it, `Icon` rendered
-  an undefined element, React unmounted the whole playground, and the audit
-  reported a clean pass over a blank page. Every probe reports "no defects" when
-  it finds nothing, so the gate now fails when any probed family has zero
-  specimens. Breaking the playground deliberately makes it fail with "The
+  `Icon` rendered an undefined element, React unmounted the whole playground,
+  and the audit reported a clean pass over a blank page. Every probe reports
+  "no defects" when it finds nothing, so the gate now fails when any probed
+  family has zero specimens. Breaking the playground deliberately makes it fail with "The
   playground rendered no .m3e-chip, .m3e-list-item, .m3e-slider, .m3e-divider,
   .m3e-badge"; the restored build passes.
+- A post-completion root-cause review (2026-07-24) corrected the record above
+  and closed the static half of the same hole. The first analysis claimed
+  TypeScript accepted `<Icon name>` because `name` is a valid HTML attribute;
+  that is false — reseeding the typo produces `TS2322: Property 'name' does
+  not exist on IconProps`. It shipped because no gate typechecks the
+  playground: the root `typecheck` includes only `src/` and the
+  `tests/**/*.types.tsx` assertions, `playground/tsconfig.json` was wired to
+  nothing, and Vite transpiles without checking. `npm run verify` now runs
+  `typecheck:playground` (`tsc --noEmit -p playground`) as a fourteenth gate,
+  placed after the builds because the examples resolve the package's built
+  declarations, and proven in both directions: the seeded typo fails it with
+  the TS2322 above, and the restored tree passes all 14 gates. The runtime
+  census remains the second, independent layer — it catches whatever renders
+  wrong without failing to compile.
 - The declaration-closure ceiling rises from 91,300 to 93,000 bytes with owner
   approval, recorded in ADR 0035, and `measuredForTask` moves from T39 to T43.
   The closure measures 92,018 bytes; the previous ceiling was set when the
