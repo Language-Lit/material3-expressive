@@ -154,6 +154,8 @@ const census = await page.evaluate(() =>
       '.m3e-badge',
       '.m3e-bottom-sheet',
       '.m3e-app-bar',
+      '.m3e-search-bar',
+      '.m3e-search-app-bar',
     ].map((selector) => [selector, document.querySelectorAll(selector).length]),
   ),
 )
@@ -695,6 +697,266 @@ const appBarScroll = await page.evaluate(async () => {
 
 for (const finding of appBarScroll) findings.push(`App Bar scroll: ${finding}`)
 
+// --- Search bar geometry, expansion, and the adaptive swap -------------------
+// Everything T47 owns beyond the DOM contract is layout: the 56px full-corner
+// field, the 30px avatar, the docked panel landing on the collapsed bar's own
+// box, the sourced 2px drop-down gap, the scrim, the scrolled color handoff
+// between a search app bar and the field inside it, and the adaptive swap to a
+// full-screen surface below 600px. This probe drives all of it in a real
+// browser, including a viewport resize.
+const searchRest = await page.evaluate(() => {
+  const results = []
+  const bars = [...document.querySelectorAll('.m3e-search-bar__bar')].filter(
+    (bar) => bar.getClientRects().length > 0,
+  )
+  if (bars.length === 0) {
+    results.push('no rendered search bar; the geometry probe is vacuous')
+  }
+  for (const bar of bars) {
+    const box = bar.getBoundingClientRect()
+    if (Math.abs(box.height - 56) > 0.6) {
+      results.push(`field container is ${box.height.toFixed(1)}px tall, not the sourced 56px`)
+    }
+    // A full corner is specified far larger than the box and clamps to half
+    // the container height when used, so the assertion is on the clamp.
+    const radius = parseFloat(getComputedStyle(bar).borderTopLeftRadius)
+    if (!(radius >= box.height / 2)) {
+      results.push(
+        `field corner radius is ${radius.toFixed(1)}px, short of the full-corner ${(box.height / 2).toFixed(1)}px`,
+      )
+    }
+    if (box.width > 720.5) {
+      results.push(`field is ${box.width.toFixed(1)}px wide, past the sourced 720px maximum`)
+    }
+  }
+
+  const avatar = document.querySelector('.m3e-search-bar__avatar')
+  if (!avatar || avatar.getClientRects().length === 0) {
+    results.push('no rendered avatar slot; the avatar probe is vacuous')
+  } else {
+    const box = avatar.getBoundingClientRect()
+    if (Math.abs(box.width - 30) > 0.6 || Math.abs(box.height - 30) > 0.6) {
+      results.push(
+        `avatar is ${box.width.toFixed(1)}x${box.height.toFixed(1)}px, not the specified 30x30`,
+      )
+    }
+    if (!(parseFloat(getComputedStyle(avatar).borderTopLeftRadius) >= box.height / 2)) {
+      results.push('avatar is not clipped to a full corner')
+    }
+  }
+  return results
+})
+
+for (const finding of searchRest) findings.push(`Search geometry: ${finding}`)
+
+// The pinned search app bar recolors itself and the field it carries once its
+// own scroll container overlaps it — the only read path for the sourced
+// scrolled container role.
+const searchAppBarScroll = await page.evaluate(async () => {
+  const results = []
+  const settle = (extraMs = 60) =>
+    new Promise((resolve) =>
+      requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(resolve, extraMs))),
+    )
+
+  const bar = document.querySelector('.m3e-search-app-bar[data-m3e-scroll-behavior="pinned"]')
+  const panel = bar?.parentElement
+  const field = bar?.querySelector('.m3e-search-bar__bar')
+  if (!bar || !panel || !field) {
+    results.push('no pinned search app bar rendered; the scroll probe is vacuous')
+    return results
+  }
+
+  const restBarColor = getComputedStyle(bar).backgroundColor
+  const restFieldColor = getComputedStyle(field).backgroundColor
+
+  panel.scrollTop = 160
+  await settle()
+  if (!bar.hasAttribute('data-m3e-scrolled')) {
+    results.push('search app bar is not marked scrolled after its panel scrolls')
+  }
+  const barBox = bar.getBoundingClientRect()
+  const panelBox = panel.getBoundingClientRect()
+  if (Math.abs(barBox.top - panelBox.top) > 1) {
+    results.push(
+      `search app bar sits ${(barBox.top - panelBox.top).toFixed(1)}px from its scrollport top instead of sticking`,
+    )
+  }
+  if (getComputedStyle(bar).backgroundColor === restBarColor) {
+    results.push('search app bar container color did not swap to the on-scroll role')
+  }
+  if (getComputedStyle(field).backgroundColor === restFieldColor) {
+    results.push('field container color did not swap to the scrolled role')
+  }
+
+  panel.scrollTop = 0
+  // Both swaps are transitioned, so the return leg needs the transition to
+  // finish before the computed colors are final.
+  await settle(700)
+  if (getComputedStyle(bar).backgroundColor !== restBarColor) {
+    results.push('search app bar container color did not return at the top')
+  }
+  if (getComputedStyle(field).backgroundColor !== restFieldColor) {
+    results.push('field container color did not return at the top')
+  }
+  return results
+})
+
+for (const finding of searchAppBarScroll) findings.push(`Search app bar scroll: ${finding}`)
+
+// Docked expansion in a window wide enough for it: the panel must land on the
+// collapsed field's own box, because that is where the source's popup puts it.
+const dividedField = page
+  .locator('.search-bar-example__standalone .m3e-search-bar__input')
+  .first()
+if ((await dividedField.count()) === 0) {
+  findings.push('Search docked: the divided search example is missing; the probe is vacuous')
+} else {
+  await dividedField.click()
+  await page.waitForTimeout(400)
+  const docked = await page.evaluate(() => {
+    const results = []
+    const panel = document.querySelector('.m3e-search-bar__panel')
+    if (!panel) {
+      results.push('no docked panel appeared on expansion')
+      return results
+    }
+    // The in-page bar stays where it was (inert, under the panel), so it is
+    // the anchor to compare against — measured now, after the click's own
+    // scrolling has settled.
+    const anchorEl = document.querySelector(
+      '.search-bar-example__standalone .m3e-search-bar__bar',
+    )
+    const anchor = anchorEl?.getBoundingClientRect()
+    const box = panel.getBoundingClientRect()
+    if (!anchor) {
+      results.push('the in-page field disappeared on expansion; there is nothing to anchor to')
+      return results
+    }
+    if (Math.abs(box.top - anchor.top) > 1.5 || Math.abs(box.left - anchor.left) > 1.5) {
+      results.push(
+        `docked panel opened at ${box.left.toFixed(1)},${box.top.toFixed(1)} instead of over the field at ${anchor.left.toFixed(1)},${anchor.top.toFixed(1)}`,
+      )
+    }
+    if (Math.abs(box.width - anchor.width) > 1.5) {
+      results.push(`docked panel is ${box.width.toFixed(1)}px wide, not the field's own width`)
+    }
+    if (document.querySelector('.m3e-search-bar__full-screen[open]')) {
+      results.push('a full-screen surface opened in a window wide enough to dock')
+    }
+    // The divided treatment: one container, extra-large corners, a divider.
+    const radius = parseFloat(getComputedStyle(panel).borderTopLeftRadius)
+    if (Math.abs(radius - 28) > 1) {
+      results.push(`divided docked container radius is ${radius.toFixed(1)}px, not 28px`)
+    }
+    const divider = panel.querySelector('.m3e-search-bar__divider')
+    const dividerHeight = divider?.getBoundingClientRect().height ?? 0
+    if (dividerHeight < 0.5) {
+      results.push('divided treatment rendered no visible divider')
+    }
+    if (document.querySelector('.m3e-search-bar__scrim')) {
+      results.push('the divided treatment dimmed the page, which only the contained one does')
+    }
+    const results_ = panel.querySelector('.m3e-search-bar__results')
+    if ((results_?.getBoundingClientRect().height ?? 0) < 1) {
+      results.push('docked results container has no height')
+    }
+    return results
+  })
+  for (const finding of docked) findings.push(`Search docked: ${finding}`)
+  await page.keyboard.press('Escape')
+  await page.waitForTimeout(400)
+}
+
+// The contained treatment: a separate drop-down surface below the field, with
+// the sourced gap, and a scrim over the page behind it.
+const containedField = page.locator('.search-bar-example__panel .m3e-search-bar__input').first()
+if ((await containedField.count()) === 0) {
+  findings.push('Search contained: the contained search example is missing; the probe is vacuous')
+} else {
+  await containedField.click()
+  await page.waitForTimeout(400)
+  const contained = await page.evaluate(() => {
+    const results = []
+    const panel = document.querySelector('.m3e-search-bar__panel')
+    if (!panel) {
+      results.push('no docked panel appeared on expansion')
+      return results
+    }
+    const field = panel.querySelector('.m3e-search-bar__bar')
+    const dropdown = panel.querySelector('.m3e-search-bar__results')
+    if (!field || !dropdown) {
+      results.push('the contained panel is missing its field or its drop-down')
+      return results
+    }
+    const gap = dropdown.getBoundingClientRect().top - field.getBoundingClientRect().bottom
+    if (Math.abs(gap - 2) > 1) {
+      results.push(`drop-down gap is ${gap.toFixed(1)}px, not the sourced 2px`)
+    }
+    const radius = parseFloat(getComputedStyle(dropdown).borderTopLeftRadius)
+    if (Math.abs(radius - 12) > 1) {
+      results.push(`drop-down radius is ${radius.toFixed(1)}px, not the sourced 12px`)
+    }
+    const scrim = document.querySelector('.m3e-search-bar__scrim')
+    if (!scrim) {
+      results.push('the contained treatment rendered no scrim')
+    } else {
+      const opacity = parseFloat(getComputedStyle(scrim).opacity)
+      if (!(opacity > 0.2)) {
+        results.push(`scrim opacity is ${opacity}, so the page behind is not dimmed`)
+      }
+      const box = scrim.getBoundingClientRect()
+      if (box.width < window.innerWidth - 1 || box.height < window.innerHeight - 1) {
+        results.push('scrim does not cover the viewport')
+      }
+    }
+    return results
+  })
+  for (const finding of contained) findings.push(`Search contained: ${finding}`)
+  await page.keyboard.press('Escape')
+  await page.waitForTimeout(400)
+}
+
+// The adaptive rule itself: below Material's compact breakpoint the same bar
+// must expand full screen instead of docking.
+await page.setViewportSize({ width: 420, height: 900 })
+await page.waitForTimeout(300)
+const compactField = page.locator('.search-bar-example__standalone .m3e-search-bar__input').first()
+if ((await compactField.count()) > 0) {
+  await compactField.click()
+  await page.waitForTimeout(500)
+  const fullScreen = await page.evaluate(() => {
+    const results = []
+    const dialog = document.querySelector('.m3e-search-bar__full-screen[open]')
+    if (!dialog) {
+      results.push('a compact window did not swap to the full-screen surface')
+      return results
+    }
+    if (document.querySelector('.m3e-search-bar__panel')) {
+      results.push('the docked panel is still mounted in a compact window')
+    }
+    const box = dialog.getBoundingClientRect()
+    if (box.width < window.innerWidth - 1 || box.height < window.innerHeight - 1) {
+      results.push(
+        `full-screen surface is ${box.width.toFixed(1)}x${box.height.toFixed(1)} in a ${window.innerWidth}x${window.innerHeight} viewport`,
+      )
+    }
+    if (parseFloat(getComputedStyle(dialog).borderTopLeftRadius) > 0.5) {
+      results.push('full-screen surface is not squared off')
+    }
+    const field = dialog.querySelector('.m3e-search-bar__bar')
+    if (!field) results.push('the full-screen surface carries no field of its own')
+    return results
+  })
+  for (const finding of fullScreen) findings.push(`Search full screen: ${finding}`)
+  await page.keyboard.press('Escape')
+  await page.waitForTimeout(300)
+} else {
+  findings.push('Search full screen: no search field to expand; the probe is vacuous')
+}
+await page.setViewportSize({ width: 1400, height: 1200 })
+await page.waitForTimeout(300)
+
 // --- Badge source geometry --------------------------------------------------
 // T43 sizes the small badge 6px on both axes and the large one from a 16px
 // minimum that grows with its count, and anchors both at the top-trailing
@@ -1154,5 +1416,5 @@ if (findings.length > 0) {
 
 process.stdout.write(
   'Rendering audit passed: no clipped elevation shadows, undersized interactive targets outside ' +
-    'the recorded exemptions, or Chip/List Item/Slider/Divider/Badge/Bottom Sheet/App Bar source-geometry defects\n',
+    'the recorded exemptions, or Chip/List Item/Slider/Divider/Badge/Bottom Sheet/App Bar/Search source-geometry defects\n',
 )

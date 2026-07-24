@@ -33,6 +33,7 @@ import { NavigationDrawerExample } from '../examples/NavigationDrawer.example'
 import { NavigationRailExample } from '../examples/NavigationRail.example'
 import { NavigationSuiteExample } from '../examples/NavigationSuite.example'
 import { RadioExample } from '../examples/Radio.example'
+import { SearchBarExample } from '../examples/SearchBar.example'
 import { SegmentedButtonGroupExample } from '../examples/SegmentedButtonGroup.example'
 import { SelectExample } from '../examples/Select.example'
 import { SliderExample } from '../examples/Slider.example'
@@ -97,6 +98,7 @@ createRoot(root).render(
         <DividerExample />
         <BottomSheetExample />
         <AppBarExample />
+        <SearchBarExample />
         <BadgeExample />
         <CheckboxExample />
         <RadioExample />

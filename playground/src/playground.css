@@ -673,3 +673,44 @@
   padding-block: 1rem 12rem;
   padding-inline: 1rem;
 }
+
+.search-bar-example {
+  display: grid;
+  gap: 1rem;
+  margin-block-start: 2rem;
+  padding: 1.5rem;
+}
+
+/*
+ * An inner scroll container, so the pinned search app bar has something to
+ * stick to without the page itself having to move.
+ */
+.search-bar-example__panel {
+  block-size: 18rem;
+  border-radius: 1rem;
+  overflow-y: auto;
+  position: relative;
+}
+
+.search-bar-example__content {
+  display: grid;
+  gap: 1rem;
+  padding-block: 1rem 12rem;
+  padding-inline: 1rem;
+}
+
+.search-bar-example__standalone {
+  display: grid;
+  gap: 0.75rem;
+}
+
+/* Stands in for a real profile image, so the sourced 30px full-corner avatar
+   slot is visible without shipping an asset. */
+.search-bar-example__avatar {
+  align-items: center;
+  background-color: var(--m3e-sys-color-tertiary-container);
+  color: var(--m3e-sys-color-on-tertiary-container);
+  display: flex;
+  font-size: 0.75rem;
+  justify-content: center;
+}

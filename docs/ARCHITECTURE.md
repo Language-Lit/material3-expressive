@@ -575,3 +575,30 @@ threshold. The primitive is deliberately app-bar-shaped rather than a generic
 scroll service; a second consumer is the signal to extract a shared core. ADR
 0038 records the variant collapse, the three-way row split, the behavior
 mappings with their exclusions, and the non-controllable fraction.
+
+`SearchBar` and `SearchAppBar` continue the composite tranche and are the first
+family to compose three existing mechanisms rather than introduce one. The
+full-screen surface is the native `<dialog>` lifecycle of ADR 0016; the docked
+surface is the anchored-overlay portal of ADR 0017, with a `computePosition`
+override placing the panel over the collapsed bar instead of below it; and the
+search app bar rides `useAppBarScroll`, which gains a `variablePrefix` option
+so a second host writes its own custom-property names. That option is the
+minimum change that keeps the primitive shared without making a search bar
+write `--m3e-app-bar-offset`; it is not the generic scroll service ADR 0038
+declined to build.
+
+The structural decision worth carrying forward is that an expanded surface owns
+its own copy of the field and the in-page bar is made inert. That mirrors the
+source, where every expanded composable re-renders the caller's input slot in a
+new window, and it is what makes the contained docked scrim possible at all: a
+portalled scrim cannot be reliably escaped by an in-flow element, because any
+ancestor stacking context wins. `inert` is applied imperatively because React
+18 and 19 serialize the attribute differently and both are supported peers.
+
+Two exports rather than one, because the source separates them the same way:
+`AppBarWithSearch` composes `SearchBar` inside its own surface and never
+touches a top app bar. `SearchAppBar` takes the bar as children, and the
+on-scroll color handoff between them is a descendant CSS rule rather than
+threaded props. ADR 0039 records the two-export split, the style/layout axes,
+the adaptive default, the combobox semantics, and the two unread generated
+roles registered against rendered read paths.

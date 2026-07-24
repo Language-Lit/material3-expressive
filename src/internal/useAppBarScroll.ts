@@ -30,6 +30,13 @@ export interface AppBarScrollOptions {
    * measured (a layout-less test environment reports zero heights).
    */
   readonly fallbackCollapseRange: number
+  /**
+   * Custom-property namespace for the values this hook writes, so a host other
+   * than `AppBar` keeps its own variable names. `SearchAppBar` passes
+   * `search-app-bar` and reads `--m3e-search-app-bar-offset`; omitting it
+   * leaves the `--m3e-app-bar-*` names `AppBar` has always used.
+   */
+  readonly variablePrefix?: string
 }
 
 /**
@@ -66,7 +73,9 @@ const ENTER_ALWAYS_SNAP_IDLE_MS = 150
  * sourced behaviors need: a scrolled flag (`data-m3e-scrolled`), a collapse
  * fraction (`--m3e-app-bar-collapsed-fraction`, with the eased
  * `--m3e-app-bar-top-title-alpha` beside it and `data-m3e-collapsed` crossing
- * at 0.5), and an enter-always offset (`--m3e-app-bar-offset`).
+ * at 0.5), and an enter-always offset (`--m3e-app-bar-offset`). `SearchAppBar`
+ * shares the coupling through `variablePrefix`, which renames those three
+ * custom properties into the calling component's own namespace.
  *
  * All writes are imperative: scroll fires per frame, and a React state update
  * per frame would re-render the entire bar to change one custom property.
@@ -101,8 +110,13 @@ export function useAppBarScroll({
   expandedTitleRef,
   scrollContainer,
   fallbackCollapseRange,
+  variablePrefix = 'app-bar',
 }: AppBarScrollOptions): void {
   useEffect(() => {
+    const offsetVariable = `--m3e-${variablePrefix}-offset`
+    const fractionVariable = `--m3e-${variablePrefix}-collapsed-fraction`
+    const titleAlphaVariable = `--m3e-${variablePrefix}-top-title-alpha`
+
     if (behavior === 'none') return undefined
     const bar = barRef.current
     if (!bar) return undefined
@@ -130,15 +144,12 @@ export function useAppBarScroll({
     }
 
     const applyOffset = () => {
-      bar.style.setProperty('--m3e-app-bar-offset', `${offset}px`)
+      bar.style.setProperty(offsetVariable, `${offset}px`)
     }
 
     const applyFraction = (fraction: number) => {
-      bar.style.setProperty('--m3e-app-bar-collapsed-fraction', String(fraction))
-      bar.style.setProperty(
-        '--m3e-app-bar-top-title-alpha',
-        String(topTitleAlphaEasing(fraction)),
-      )
+      bar.style.setProperty(fractionVariable, String(fraction))
+      bar.style.setProperty(titleAlphaVariable, String(topTitleAlphaEasing(fraction)))
       // The source hides the collapsed row's title semantics below 0.5 and
       // the expanded row's above it, so exactly one title is exposed to
       // assistive technology at any fraction.
@@ -210,9 +221,9 @@ export function useAppBarScroll({
       bar.removeAttribute('data-m3e-scrolled')
       bar.removeAttribute('data-m3e-collapsed')
       bar.removeAttribute('data-m3e-settling')
-      bar.style.removeProperty('--m3e-app-bar-offset')
-      bar.style.removeProperty('--m3e-app-bar-collapsed-fraction')
-      bar.style.removeProperty('--m3e-app-bar-top-title-alpha')
+      bar.style.removeProperty(offsetVariable)
+      bar.style.removeProperty(fractionVariable)
+      bar.style.removeProperty(titleAlphaVariable)
     }
   }, [
     behavior,
@@ -222,5 +233,6 @@ export function useAppBarScroll({
     expandedTitleRef,
     scrollContainer,
     fallbackCollapseRange,
+    variablePrefix,
   ])
 }

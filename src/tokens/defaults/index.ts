@@ -28,6 +28,7 @@ import { defaultNavigationBarTokens } from './navigation-bar'
 import { defaultNavigationDrawerTokens } from './navigation-drawer'
 import { defaultNavigationRailTokens } from './navigation-rail'
 import { defaultRadioTokens } from './radio'
+import { defaultSearchBarTokens } from './search-bar'
 import { defaultSegmentedButtonGroupTokens } from './segmented-button-group'
 import { defaultShape } from './shape'
 import { defaultSliderTokens } from './slider'
@@ -120,6 +121,7 @@ const defaultTokenSetInput = {
     defaultBadgeTokens,
     defaultBottomSheetTokens,
     defaultAppBarTokens,
+    defaultSearchBarTokens,
   ],
 } satisfies FoundationTokenSet
 

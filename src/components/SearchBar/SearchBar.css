@@ -1,0 +1,410 @@
+@layer m3e.components {
+  /*
+   * The root is the collapsed bar's place in the page. Both expanded surfaces
+   * carry their own copy of the bar — a `<dialog>` for full screen, a portalled
+   * panel for docked — exactly as all four of the source's expanded
+   * composables take the input field as a slot and re-render it.
+   */
+  .m3e-search-bar {
+    display: block;
+    inline-size: 100%;
+  }
+
+  /* The 56dp full-corner container, in every placement. */
+  .m3e-search-bar__bar {
+    align-items: center;
+    background-color: var(--m3e-comp-search-bar-container-color);
+    block-size: var(--m3e-comp-search-bar-container-height);
+    border-radius: var(--m3e-comp-search-bar-container-shape);
+    box-sizing: border-box;
+    display: flex;
+    /*
+     * The sourced 360dp/720dp width bounds, with the minimum clamped to the
+     * space actually available — a hard 360px floor would overflow every
+     * viewport narrower than that, which the source never faces because its
+     * layout passes constraints down.
+     */
+    inline-size: 100%;
+    max-inline-size: var(--m3e-comp-search-bar-max-width);
+    min-inline-size: min(var(--m3e-comp-search-bar-min-width), 100%);
+    /*
+     * 4px puts a 48px icon target's 24px glyph on the sourced 16dp line; the
+     * input adds the remaining 12px for an unaccompanied query.
+     */
+    padding-inline: var(--m3e-comp-search-bar-icon-horizontal-padding);
+    transition: background-color
+      var(--m3e-sys-motion-expressive-fast-effects-duration)
+      var(--m3e-sys-motion-expressive-fast-effects-easing);
+  }
+
+  .m3e-search-bar__input {
+    appearance: none;
+    background: none;
+    border: 0;
+    color: var(--m3e-comp-search-bar-input-text-color);
+    flex: 1 1 auto;
+    font-family: var(--m3e-sys-typescale-baseline-body-large-font-family);
+    font-size: var(--m3e-sys-typescale-baseline-body-large-font-size);
+    font-variation-settings:
+      "GRAD" var(--m3e-sys-typescale-baseline-body-large-axes-grad),
+      "opsz" var(--m3e-sys-typescale-baseline-body-large-axes-opsz),
+      "wdth" var(--m3e-sys-typescale-baseline-body-large-axes-wdth),
+      "wght" var(--m3e-sys-typescale-baseline-body-large-axes-wght);
+    font-weight: var(--m3e-sys-typescale-baseline-body-large-font-weight);
+    letter-spacing: var(--m3e-sys-typescale-baseline-body-large-letter-spacing);
+    line-height: var(--m3e-sys-typescale-baseline-body-large-line-height);
+    min-inline-size: 0;
+    outline: none;
+    padding-block: 0;
+    padding-inline: var(--m3e-comp-search-bar-input-horizontal-padding);
+  }
+
+  /*
+   * `type="search"` is the semantic match for the source's search IME action
+   * — it is what makes a touch keyboard offer a Search key — but WebKit
+   * decorates it with a cancel control this component does not own. The
+   * specification puts a clear affordance in the trailing slot instead, where
+   * the consumer labels it.
+   */
+  .m3e-search-bar__input::-webkit-search-cancel-button,
+  .m3e-search-bar__input::-webkit-search-decoration {
+    appearance: none;
+    display: none;
+  }
+
+  /* Hinted search text: `SupportingTextColor`, shown at rest, unlike a text
+     field's placeholder which waits for the label to float clear. */
+  .m3e-search-bar__input::placeholder {
+    color: var(--m3e-comp-search-bar-supporting-text-color);
+    opacity: 1;
+  }
+
+  /*
+   * The source draws its focus indication as an inset ring on the container
+   * rather than around the text, so the ring belongs to the bar and is keyed
+   * off the input's own focus state.
+   */
+  .m3e-search-bar__bar:has(.m3e-search-bar__input:focus-visible) {
+    outline: var(--m3e-comp-search-bar-focus-ring-width) solid
+      var(--m3e-comp-search-bar-focus-ring-color);
+    outline-offset: var(--m3e-comp-search-bar-focus-ring-offset);
+  }
+
+  .m3e-search-bar__leading {
+    align-items: center;
+    color: var(--m3e-comp-search-bar-leading-icon-color);
+    display: flex;
+    flex: none;
+  }
+
+  .m3e-search-bar__trailing {
+    align-items: center;
+    color: var(--m3e-comp-search-bar-trailing-icon-color);
+    display: flex;
+    flex: none;
+  }
+
+  /* The specification's 30dp full-corner avatar; the generated roles for it
+     exist upstream but no pinned composable reads them (ADR 0039). */
+  .m3e-search-bar__avatar {
+    block-size: var(--m3e-comp-search-bar-avatar-size);
+    border-radius: var(--m3e-comp-search-bar-avatar-shape);
+    box-sizing: border-box;
+    flex: none;
+    inline-size: var(--m3e-comp-search-bar-avatar-size);
+    margin-inline: var(--m3e-comp-search-bar-icon-horizontal-padding);
+    overflow: hidden;
+  }
+
+  .m3e-search-bar__avatar > * {
+    block-size: 100%;
+    display: block;
+    inline-size: 100%;
+    object-fit: cover;
+  }
+
+  /*
+   * Disabled colors are the text field's, not the search bar's: the source's
+   * `inputFieldColors` resolves every disabled role from `FilledTextFieldTokens`
+   * rather than from `SearchBarTokens`, so these consume the component tokens
+   * T-era text-field work already registered instead of duplicating them.
+   */
+  .m3e-search-bar__input:disabled,
+  .m3e-search-bar__input:disabled::placeholder {
+    color: color-mix(
+      in srgb,
+      var(--m3e-comp-text-field-disabled-input-color)
+        calc(var(--m3e-comp-text-field-disabled-input-opacity) * 100%),
+      transparent
+    );
+  }
+
+  .m3e-search-bar__bar:has(.m3e-search-bar__input:disabled)
+    .m3e-search-bar__leading {
+    color: color-mix(
+      in srgb,
+      var(--m3e-comp-text-field-disabled-leading-icon-color)
+        calc(var(--m3e-comp-text-field-disabled-leading-icon-opacity) * 100%),
+      transparent
+    );
+  }
+
+  .m3e-search-bar__bar:has(.m3e-search-bar__input:disabled)
+    .m3e-search-bar__trailing {
+    color: color-mix(
+      in srgb,
+      var(--m3e-comp-text-field-disabled-trailing-icon-color)
+        calc(var(--m3e-comp-text-field-disabled-trailing-icon-opacity) * 100%),
+      transparent
+    );
+  }
+
+  /* Divider between the bar and the results, in the divided treatment only.
+     The contained treatment separates them with its own filled container. */
+  .m3e-search-bar__divider {
+    background-color: var(--m3e-comp-search-bar-view-divider-color);
+    block-size: 1px;
+    flex: none;
+    inline-size: 100%;
+  }
+
+  .m3e-search-bar__results {
+    flex: 1 1 auto;
+    min-block-size: 0;
+    overflow-y: auto;
+  }
+
+  /*
+   * Full-screen surface. `FullScreenContainerShape` is `CornerNone` and the
+   * measurement table gives it full width and height, so the dialog is the
+   * viewport; `showModal()` supplies the top layer and the inert background.
+   */
+  .m3e-search-bar__full-screen {
+    background-color: var(--m3e-comp-search-bar-container-color);
+    block-size: 100%;
+    border: 0;
+    border-radius: var(--m3e-comp-search-bar-view-full-screen-container-shape);
+    box-sizing: border-box;
+    inline-size: 100%;
+    inset: 0;
+    max-block-size: 100%;
+    max-inline-size: 100%;
+    padding: 0;
+  }
+
+  .m3e-search-bar__full-screen:not([open]) {
+    display: none;
+  }
+
+  .m3e-search-bar__full-screen[open] {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /*
+   * Divided full screen: the bar's own container goes transparent and the
+   * surface behind it carries the color, with `SearchBarVerticalPadding` above
+   * and below. 8 + 56 + 8 is the 72dp `FullScreenHeaderContainerHeight` the
+   * generated token declares and no pinned composable reads.
+   */
+  .m3e-search-bar[data-m3e-appearance="divided"] .m3e-search-bar__full-screen
+    .m3e-search-bar__bar {
+    background-color: transparent;
+    border-radius: 0;
+    margin-block: var(--m3e-comp-search-bar-vertical-padding);
+    max-inline-size: none;
+  }
+
+  /*
+   * Contained full screen: the bar keeps its filled pill against the
+   * `SurfaceContainerLow` backdrop `fullScreenContainedSearchBarColor` names,
+   * inset by `FullScreenExpandedHorizontalPadding` and the app-bar vertical
+   * padding above it.
+   */
+  .m3e-search-bar[data-m3e-appearance="contained"] .m3e-search-bar__full-screen {
+    background-color: var(--m3e-comp-search-bar-view-full-screen-contained-container-color);
+  }
+
+  .m3e-search-bar[data-m3e-appearance="contained"] .m3e-search-bar__full-screen
+    .m3e-search-bar__bar {
+    margin-block: var(--m3e-comp-search-bar-app-bar-vertical-padding)
+      var(--m3e-comp-search-bar-vertical-padding);
+    margin-inline: var(--m3e-comp-search-bar-app-bar-search-padding);
+  }
+
+  /* Portalled docked surface: a scrim behind, the panel over the collapsed
+     bar's own box. */
+  .m3e-search-bar__scrim {
+    background-color: var(--m3e-comp-search-bar-view-scrim-color);
+    inset: 0;
+    opacity: 0;
+    position: fixed;
+    transition: opacity var(--m3e-sys-motion-expressive-fast-effects-duration)
+      var(--m3e-sys-motion-expressive-fast-effects-easing);
+    z-index: 1;
+  }
+
+  .m3e-search-bar__scrim[data-m3e-open="true"] {
+    opacity: var(--m3e-comp-search-bar-view-scrim-opacity);
+  }
+
+  .m3e-search-bar__panel {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    transition: opacity var(--m3e-sys-motion-expressive-fast-effects-duration)
+      var(--m3e-sys-motion-expressive-fast-effects-easing);
+    z-index: 2;
+  }
+
+  .m3e-search-bar__panel[data-m3e-open="true"] {
+    opacity: 1;
+  }
+
+  /*
+   * Divided docked: one container holds the bar and the results, shaped
+   * `DockedContainerShape`, and the results reach two thirds of the window
+   * before scrolling — `DockedExpandedTableMaxHeightScreenRatio`.
+   */
+  .m3e-search-bar__portal[data-m3e-appearance="divided"] .m3e-search-bar__panel {
+    background-color: var(--m3e-comp-search-bar-container-color);
+    border-radius: var(--m3e-comp-search-bar-view-docked-container-shape);
+    overflow: hidden;
+  }
+
+  .m3e-search-bar__portal[data-m3e-appearance="divided"] .m3e-search-bar__bar {
+    background-color: transparent;
+    max-inline-size: none;
+  }
+
+  .m3e-search-bar__portal[data-m3e-appearance="divided"]
+    .m3e-search-bar__results {
+    max-block-size: calc(100dvh * 2 / 3);
+    min-block-size: min(var(--m3e-comp-search-bar-view-docked-min-height), 66dvh);
+  }
+
+  /*
+   * Contained docked: the bar keeps its pill and the results are a separate
+   * drop-down two pixels below it, at half the window's height —
+   * `DockedExpandedWithGapTableMaxHeightScreenRatio`.
+   */
+  .m3e-search-bar__portal[data-m3e-appearance="contained"]
+    .m3e-search-bar__results {
+    background-color: var(--m3e-comp-search-bar-container-color);
+    border-radius: var(--m3e-comp-search-bar-view-docked-dropdown-shape);
+    margin-block-start: var(--m3e-comp-search-bar-view-docked-dropdown-gap);
+    max-block-size: calc(100dvh / 2);
+    min-block-size: min(var(--m3e-comp-search-bar-view-docked-min-height), 50dvh);
+  }
+
+  .m3e-search-bar__portal[data-m3e-appearance="contained"] .m3e-search-bar__bar {
+    max-inline-size: none;
+  }
+
+  /*
+   * The search app bar. Its colors are `AppBarTokens`, exactly as the source
+   * reads them, so it consumes the app-bar component tokens rather than
+   * registering a second copy under its own name.
+   */
+  .m3e-search-app-bar {
+    /* Live scroll measurement, written by the shared app-bar scroll primitive
+       under this component's own namespace and removed on teardown. */
+    --m3e-search-app-bar-offset: 0px;
+
+    align-items: center;
+    background-color: var(--m3e-comp-app-bar-container-color);
+    box-sizing: border-box;
+    display: flex;
+    inline-size: 100%;
+    padding-block: var(--m3e-comp-search-bar-app-bar-vertical-padding);
+    padding-inline: var(--m3e-comp-search-bar-app-bar-horizontal-padding);
+    transition: background-color
+      var(--m3e-sys-motion-expressive-default-effects-duration)
+      var(--m3e-sys-motion-expressive-default-effects-easing);
+  }
+
+  .m3e-search-app-bar[data-m3e-scroll-behavior="pinned"],
+  .m3e-search-app-bar[data-m3e-scroll-behavior="enterAlways"] {
+    inset-block-start: 0;
+    position: sticky;
+    z-index: 1;
+  }
+
+  /* `overlappedFraction > 0.01` in the source is any overlap at all, so the
+     web reading is any scroll position past the top. Both the bar and the
+     search container it holds take their scrolled color. */
+  .m3e-search-app-bar[data-m3e-scrolled] {
+    background-color: var(--m3e-comp-app-bar-on-scroll-container-color);
+  }
+
+  .m3e-search-app-bar[data-m3e-scrolled] .m3e-search-bar__bar {
+    background-color: var(--m3e-comp-search-bar-scrolled-container-color);
+  }
+
+  .m3e-search-app-bar[data-m3e-scroll-behavior="enterAlways"] {
+    transform: translateY(calc(-1 * var(--m3e-search-app-bar-offset, 0px)));
+  }
+
+  .m3e-search-app-bar[data-m3e-settling] {
+    transition:
+      background-color var(--m3e-sys-motion-expressive-default-effects-duration)
+        var(--m3e-sys-motion-expressive-default-effects-easing),
+      transform var(--m3e-sys-motion-expressive-default-spatial-duration)
+        var(--m3e-sys-motion-expressive-default-spatial-easing);
+  }
+
+  .m3e-search-app-bar__navigation {
+    align-items: center;
+    color: var(--m3e-comp-app-bar-leading-icon-color);
+    display: flex;
+    flex: none;
+  }
+
+  .m3e-search-app-bar__actions {
+    align-items: center;
+    color: var(--m3e-comp-app-bar-trailing-icon-color);
+    display: flex;
+    flex: none;
+  }
+
+  /* `SearchBarAsTopBarPadding` on each side of a centered search bar. */
+  .m3e-search-app-bar__search {
+    display: flex;
+    flex: 1 1 auto;
+    justify-content: center;
+    min-inline-size: 0;
+    padding-inline: var(--m3e-comp-search-bar-app-bar-search-padding);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .m3e-search-bar__bar,
+    .m3e-search-bar__panel,
+    .m3e-search-bar__scrim,
+    .m3e-search-app-bar,
+    .m3e-search-app-bar[data-m3e-settling] {
+      transition: none;
+    }
+  }
+
+  /*
+   * Forced-colors mode drops author backgrounds, so the bar, the expanded
+   * surfaces, and the divider would all dissolve into the page.
+   */
+  @media (forced-colors: active) {
+    .m3e-search-bar__bar,
+    .m3e-search-bar__panel,
+    .m3e-search-bar__full-screen[open] {
+      border: 1px solid CanvasText;
+    }
+
+    .m3e-search-bar__divider {
+      background-color: CanvasText;
+      forced-color-adjust: none;
+    }
+
+    .m3e-search-app-bar {
+      border-block-end: 1px solid CanvasText;
+    }
+  }
+}

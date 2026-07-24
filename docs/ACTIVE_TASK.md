@@ -2195,3 +2195,220 @@ is removed or renamed. Publication is a separate task.
   to 28 Conformant + 3 Partial + 5 Planned.
 - Publication remains outside T46. The working package stays `1.1.0`; a version
   and registry action require a separately approved release task.
+
+
+---
+
+## T47 — Material 3 Search family
+
+Status: complete
+Approved: 2026-07-24 (owner request: continue the composite tranche with
+Search; scope reviewed and approved in discussion)
+Completed: 2026-07-24
+
+### Scope
+
+Catalog row 25, Search, currently Planned with no coverage. This task ports the
+family in full and the row lands **Conformant**.
+
+The pinned source is `a90df2fc27e026b9ad2ed569f203a260c1041fab`, the reference
+snapshot T44 adopted and T45/T46 extended. Verified, not assumed: all five
+search files — `SearchBar.kt`, `SearchBarTokens.kt`, `SearchViewTokens.kt`,
+`SearchBarTest.kt`, `SearchBarScreenshotTest.kt` — were fetched at that revision
+and at `androidx-main` HEAD (`409acc1915f01da1855d63bb721e4635ec736f84`,
+committed 2026-07-24). The implementation and both token files are
+byte-identical. The two test files differ by exactly one line each —
+`createComposeRule(StandardTestDispatcher())` became `createComposeRule()` —
+which adds, removes, and renames no case, so the pin holds and the delta is
+classified rather than re-pinned (the T44 rule). The ledger covers 64 pinned
+cases, each counted by extracting `@Test` methods from the fetched files.
+
+Two exports carry the family, split the way the source splits it:
+
+- **`SearchBar`** — the bar and both expanded surfaces. The source's four
+  `Expanded*SearchBar` composables are the cross product of the two axes the
+  design site's own configuration table names — Style (contained, divided) and
+  Layout (docked, full-screen) — so they become `appearance` and `layout` props
+  rather than four exports. `contained` is the default because the design site
+  recommends it and calls the alternative "not recommended"; `layout` defaults
+  to `adaptive`, which is the guidance itself ("full-screen in compact windows
+  to docked in larger window sizes"), resolved live at the 600px compact
+  breakpoint `NavigationSuite` already uses.
+- **`SearchAppBar`** — the search app bar specimen T46 dispositioned here from
+  row 1. It wraps a `SearchBar` in app-bar chrome with `navigationIcon`,
+  `actions`, and scroll coupling, exactly as the source's `AppBarWithSearch`
+  composes `SearchBar` inside its own surface without touching a top app bar.
+
+The genuinely new work is structural rather than a new primitive: this is the
+first family to compose three existing mechanisms. The full-screen surface is
+the native `<dialog>` lifecycle of ADR 0016; the docked surface is the anchored
+overlay of ADR 0017 with a `computePosition` override placing the panel over
+the collapsed bar's own box, which is where the source's popup goes
+(`collapsedBounds.topLeft`); and the search app bar rides T46's
+`useAppBarScroll`, which gains a `variablePrefix` option so a second host writes
+its own custom-property names. Both expanded surfaces carry their own copy of
+the field — as all four expanded composables re-render the caller's input slot
+— and the in-page bar is made `inert` while one is open, so exactly one
+combobox is ever focusable or exposed. That is also what makes the contained
+docked scrim possible: a portalled scrim cannot be reliably escaped by an
+in-flow element, because any ancestor stacking context wins.
+
+Accessibility decisions, recorded in ADR 0039: the field is a `combobox` with
+`aria-expanded`, `aria-controls`, and `aria-autocomplete="list"`, which is the
+web's own form of the source's "Suggestions available" state description; the
+hinted search text is the accessible name, as the accessibility page requires;
+the results container gets no imposed role, because the specification says to
+fill it with the list component; and the source's non-touch expansion rules
+apply in every input mode, since the web has no touch-mode signal and a field
+that took over the screen on plain Tab focus would be hostile.
+
+Excluded with reasons: predictive back (an Android system gesture; the browser
+owns its back affordance), window insets, the velocity fling settle (the shared
+idle snap, as T46), the Compose animation specs (semantic motion roles),
+soft-keyboard interception, reverse-layout scrolling (a lazy-list concern), and
+the deprecated surface — the renamed `TopSearchBar`, the two
+`expanded`/`onExpandedChange` composables with their hidden twins, three
+`InputField` overloads, three hidden color factories, and the two-argument
+`SearchBarColors` constructor.
+
+No runtime dependency, peer dependency, or package export-path change. No token
+is removed or renamed. Publication is a separate task.
+
+### Expected files
+
+- Added: `src/components/SearchBar/SearchBar.tsx`,
+  `src/components/SearchBar/SearchAppBar.tsx`,
+  `src/components/SearchBar/SearchBar.types.ts`,
+  `src/components/SearchBar/SearchBar.css`,
+  `src/components/SearchBar/index.ts`, `src/tokens/defaults/search-bar.ts`,
+  `docs/components/SearchBar.md`, `playground/examples/SearchBar.example.tsx`,
+  the mirrored `tests/components/SearchBar/*` suite and conformance record, and
+  ADR 0039.
+- Modified: `src/components/index.ts`, `src/styles/styles.css`,
+  `src/tokens/defaults/index.ts`, `src/internal/useAppBarScroll.ts` (the
+  `variablePrefix` option), `docs/component-inventory.json`, `docs/SPEC.md`,
+  `docs/ARCHITECTURE.md`, `docs/TOKEN_PROVENANCE.md`,
+  `docs/MATERIAL_CATALOG_ROADMAP.md` (row 25 to Conformant; row 1's search
+  specimen resolved), `docs/ACTIVE_TASK.md`, `tests/tokens/schema.test.ts`,
+  `tests/tokens/css.test.ts`, `scripts/check-release.mjs`,
+  `scripts/audit-rendering.mjs` (four Search probes),
+  `playground/src/main.tsx`, `playground/src/playground.css`.
+- Generated: `docs/SUPPORTED_COMPONENTS.md`, `site/demos/registry.tsx`,
+  the vendored icon subset (`account_circle`).
+
+`site/content/site.ts` was expected to change and did not: it enumerates routes
+from the inventory, so a new conformant component reaches the site without
+touching it.
+
+### Acceptance checks
+
+- The executable ledger freezes all five pinned blob identities and the two
+  HEAD test blobs; partitions all 28 generated declarations across
+  `SearchBarTokens` (7 read / 8 unread) and `SearchViewTokens` (3 read / 10
+  unread); accounts for 197 current entries at parameter granularity and 14
+  deprecated ones; freezes all 64 pinned test cases; and records every
+  exclusion, adaptation, and anomaly with its reason.
+- Both styles and both layouts render their sourced output: the 56px
+  full-corner field, the divided treatment's transparent expanded field with a
+  divider, the contained treatment's filled field against its own backdrop, the
+  docked drop-down's 2px gap and 12px corner, the 240px minimum and the
+  two-thirds/one-half screen ratios, and the squared-off full-screen surface.
+- Expansion follows the sourced triggers (pointer activation, a query that
+  grew, the down key) and never plain focus; the down key while expanded moves
+  focus into the results; Enter reports the search and leaves the results
+  showing; Escape collapses and returns focus.
+- TypeScript rejects an open appearance, an open layout, a non-string query,
+  `value`/`defaultValue`/`onChange`/`type` on the field, a header ref, and
+  `exitUntilCollapsed` on a search app bar.
+- Light/dark, scoped token overrides, the portal theme scope, RTL, forced
+  colors, reduced motion, SSR, hydration, public exports, inventory,
+  documentation, example, and packed consumers agree.
+- `npm run verify` passes.
+- Because this task adds component geometry and interaction-driven layout:
+
+  ```bash
+  npm run build && npm run playground:build
+  M3E_CHROMIUM_PATH=<chromium binary> npm run audit:rendering
+  ```
+
+  passes with probes that expand a real search bar in both layouts and resize
+  the viewport across the adaptive breakpoint, and the probes are proven
+  non-vacuous.
+
+### Completion evidence
+
+- `SearchBar` and `SearchAppBar` are public named exports with `query`,
+  `expanded`, `onSearch`, `placeholder`, `leadingIcon`, `trailingIcon`,
+  `avatar`, `appearance`, `layout`, and — on the app bar — `navigationIcon`,
+  `actions`, `scrollBehavior`, and `scrollContainer`. The package still has zero
+  runtime dependencies, React/React DOM remain its only peers, and no export
+  path, prop, or token was removed or renamed.
+- The pin was verified rather than assumed: `SearchBar.kt` and both token files
+  hash identically at `a90df2fc…` and at `androidx-main` HEAD
+  (`409acc1915f01da1855d63bb721e4635ec736f84`, 2026-07-24), extending the
+  unified snapshot for a fourth consecutive task. The two test files' one-line
+  dispatcher change is frozen in the ledger by its own HEAD blob hashes, so the
+  classification cannot silently become a real delta.
+- `SearchBar.source.test.ts` freezes the five pinned blob identities; partitions
+  all 28 generated declarations 10 read / 18 unread across the two files;
+  accounts for 197 current entries and 14 deprecated ones; freezes the 64 test
+  cases; and records seven exclusions, eight native-web adaptations, and seven
+  anomalies — including that `ContainerElevation` is Level3 while both
+  `SearchBarDefaults` elevations are Level0, so a search bar ships flat, and
+  that the unread 72dp `FullScreenHeaderContainerHeight` is nonetheless composed
+  exactly by 8 + 56 + 8.
+- The eight-file suite passes 100 focused tests across behavior, expansion,
+  the app bar and its scroll coupling, accessibility, CSS, theme, SSR/hydration,
+  and the ledger. The expansion suite drives both surfaces: `showModal()` in a
+  compact window, the portalled panel above it, the live swap between them when
+  the window crosses the breakpoint, focus and caret transfer into the expanded
+  field, the in-page bar's inertness, the down key into the results, the native
+  `close` event as the single path back, outside-press dismissal, and focus
+  return. Thirteen compile-only type cases reject open unions, the field's own
+  `value`/`defaultValue`/`onChange`/`type`, a header ref, and a two-row scroll
+  behavior on a search app bar.
+- Two defects were found and fixed during execution rather than shipped:
+  - **Crossing the adaptive breakpoint while expanded collapsed the bar.** The
+    layout swap closes the full-screen dialog, and the native `close` listener
+    read that as a dismissal. It now ignores the one close that is a change of
+    surface rather than a dismissal — caught by the test that resizes the
+    window mid-expansion, which is exactly the case a jsdom-only suite would
+    have missed.
+  - **The docked-position probe compared a stale rectangle.** It measured the
+    anchor before the click that scrolls it into view, so the first run reported
+    a panel opening 10,000px from its field. The probe now measures the in-page
+    bar after expansion, in the same evaluation as the panel.
+- The rendering audit gained four Search probes: resting geometry (the 56px
+  field, its full-corner clamp, the 720px maximum, the 30px avatar), the pinned
+  search app bar's scroll coupling including the field's own scrolled-color
+  handoff and both return legs, docked expansion (the panel landing on the
+  field's own box at its width, the divided container's 28px corners and
+  divider, no scrim), contained expansion (the 2px gap, the 12px drop-down
+  corner, a viewport-covering scrim at real opacity), and the adaptive swap
+  itself — the viewport is resized to 420px and the same field must expand
+  full-screen instead of docking. Every probe reports its own vacuity if what it
+  measures is absent. Proven non-vacuous in both directions: seeding a zeroed
+  drop-down gap and a suppressed scrolled-field color into the built stylesheet
+  produced exactly the two expected findings, and restoring returned green.
+- The token registry adds 30 Search properties and emits 1,762 overall. Ten are
+  the generated roles the source reads; two more — the avatar pair and the
+  focus-ring color — are unread upstream and registered anyway against rendered
+  read paths, the bounded exception ADR 0039 records. The remaining sixteen
+  unread roles are recorded in the ledger and the provenance document, not
+  registered.
+- `npm run verify` passes all 14 gates: 217 test files / 1,461 tests, 40
+  conformant inventory entries, 40 documentation pages, 43 stylesheets, both
+  packed consumer fixtures, and the site check at 39 demos (the icon subset
+  regenerated for the example's `account_circle`).
+- No bundle ceiling was breached, so none was raised: JS closure
+  413,524/444,300 and its gzip 72,334/77,500, declarations 103,510/109,000 and
+  24,394/24,800 gzip, full CSS 461,001/464,700 and 50,200/50,500 gzip, token
+  CSS 132,306/139,300, packed package 419,164/449,700. The stylesheet ceilings
+  are now within 1% of their limits, so the next family task should expect to
+  rebase them.
+- Catalog row 25 moves from Planned to **Conformant**, and row 1's "Search app
+  bar" specimen now has an implementation — that row stays Partial for its own
+  reason, the behavior-owning overflow-action system. Snapshot accounting moves
+  to 29 Conformant + 3 Partial + 4 Planned.
+- Publication remains outside T47. The working package stays `1.1.0`; a version
+  and registry action require a separately approved release task.

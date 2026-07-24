@@ -836,3 +836,43 @@ large). `TopTitleAlphaEasing` — cubic-bezier(.8, 0, .8, .15) — is not a toke
 it is evaluated in `useAppBarScroll`, since CSS cannot apply an easing curve to
 a custom property, and the eased value reaches the stylesheet as
 `--m3e-app-bar-top-title-alpha`.
+
+## Search (T47)
+
+Two generated files describe the family, exactly the split the design site's
+token table names: `SearchBarTokens` (fifteen roles) covers the unfocused bar
+and `SearchViewTokens` (thirteen) covers everything reached by interacting with
+search. The pinned implementation resolves ten of the twenty-eight — seven bar
+roles and three view roles — and all ten are registered.
+
+Eighteen are unread, and three groups of them are worth stating. The whole
+`SearchViewTokens.Header*` family plus both header heights are unread because
+the expanded view reuses the collapsed field instead of composing a header of
+its own; the composed geometry still lands on them, since a divided full-screen
+header is 8 + 56 + 8, exactly the declared 72dp. `SearchBarTokens.
+ContainerElevation` is Level3 while both `SearchBarDefaults` elevations are
+Level0, so a search bar ships flat and no elevation token is registered. And
+the two font roles are unread because the field takes its type from the ambient
+text style, which resolves to the same body-large role the tokens name.
+
+Two unread roles are registered anyway, the bounded exception ADR 0039 records:
+`AvatarShape`/`AvatarSize` back the `avatar` slot the specification measures at
+30dp, and `FocusIndicatorColor` backs the inset focus ring the source does draw
+but colors from the ripple theme instead of from the role that names it.
+
+Registered beside the generated roles are the `SearchBarDefaults` members and
+private constants the code reads directly: the 360/720dp width bounds,
+`SearchBarVerticalPadding`, the docked drop-down's 12dp corner, 2dp gap and
+240dp minimum height, the `ScrimTokens` pair behind `dockedDropdownScrimColor`,
+the two colors the source marks "TODO: replace with token"
+(`fullScreenContainedSearchBarColor` and `scrolledSearchBarContainerColor`), and
+the three app-bar paddings. The two horizontal paddings are the source's own
+decomposition of its 16dp text inset — 12dp of text-field padding plus a 4dp
+`SearchBarIconOffsetX` — which also puts a 48px icon target's glyph on the same
+16dp line.
+
+This family reads two other families' registrations rather than duplicating
+them, in both cases because the source reads exactly those upstream families:
+`--m3e-comp-app-bar-*` for the search app bar's container, on-scroll,
+navigation, and action colors, and `--m3e-comp-text-field-disabled-*` for every
+disabled color, which `inputFieldColors` resolves from `FilledTextFieldTokens`.

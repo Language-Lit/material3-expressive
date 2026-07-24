@@ -68,7 +68,7 @@ must never be projected into stable documentation as support claims.
 
 | # | Official family | Delivery | Current coverage | Roadmap status | Remaining completion work |
 | ---: | --- | --- | --- | --- | --- |
-| 1 | [App bars](https://m3.material.io/components/app-bars/overview) | Composite | `AppBar` | Partial | Reconcile the overflow-action system (`AppBarRow`/`AppBarColumn`, behavior-owning per the completeness contract) in its own approved task; the search app bar specimen is row 25's source (`AppBarWithSearch` in `SearchBar.kt`) |
+| 1 | [App bars](https://m3.material.io/components/app-bars/overview) | Composite | `AppBar` | Partial | Reconcile the overflow-action system (`AppBarRow`/`AppBarColumn`, behavior-owning per the completeness contract) in its own approved task; the search app bar specimen shipped with row 25 as `SearchAppBar` (T47) |
 | 2 | [Badges](https://m3.material.io/components/badges/overview) | Primitive | `Badge`, `BadgeAnchor` | Conformant | Reconcile new upstream variants at the final catalog audit |
 | 3 | [Bottom sheets](https://m3.material.io/components/bottom-sheets/overview) | Composite | `BottomSheet` | Conformant | Reconcile new upstream variants at the final catalog audit; publish the `BottomSheetScaffold` app-shell recipe |
 | 4 | [Button groups](https://m3.material.io/components/button-groups/overview) | Composite | `ButtonGroup` | Conformant | Reconcile new upstream variants at the final catalog audit |
@@ -92,7 +92,7 @@ must never be projected into stable documentation as support claims.
 | 22 | [Navigation rail](https://m3.material.io/components/navigation-rail/overview) | Composite | `NavigationRail` | Conformant | Reconcile new upstream variants at the final catalog audit |
 | 23 | [Progress indicators](https://m3.material.io/components/progress-indicators/overview) | Primitive | `LinearProgress`, `CircularProgress`, `WavyProgress` | Conformant | Reconcile new upstream variants at the final catalog audit |
 | 24 | [Radio button](https://m3.material.io/components/radio-button/overview) | Primitive | `Radio` | Conformant | Reconcile new upstream variants at the final catalog audit |
-| 25 | [Search](https://m3.material.io/components/search/overview) | Composite | None | Planned | Bar/view variants, expansion, suggestions/results composition, focus, keyboard, and responsive behavior |
+| 25 | [Search](https://m3.material.io/components/search/overview) | Composite | `SearchBar`, `SearchAppBar` | Conformant | Reconcile new upstream variants at the final catalog audit |
 | 26 | [Segmented buttons](https://m3.material.io/components/segmented-buttons/overview) | Composite | `SegmentedButtonGroup` | Conformant | Reconcile new upstream variants at the final catalog audit |
 | 27 | [Side sheets](https://m3.material.io/components/side-sheets/overview) | Composite | None | Planned | Standard/modal behavior, logical-side placement, dismissal/focus, and adaptive recipes |
 | 28 | [Sliders](https://m3.material.io/components/sliders/overview) | Primitive | `Slider`, `RangeSlider` | Conformant | Reconcile new upstream variants at the final catalog audit |
@@ -105,7 +105,7 @@ must never be projected into stable documentation as support claims.
 | 35 | [Toolbars](https://m3.material.io/components/toolbars/overview) | Mixed | `FloatingToolbar` | Partial | Reconcile the full toolbar family, including docked/floating and expansion/overflow compositions, plus the bottom app bar the current design index files here (`BottomAppBar`/`FlexibleBottomAppBar`, pinned in row 1's `AppBar.kt`; the flexible variant already reads `DockedToolbarTokens` — T46 recorded the disposition) |
 | 36 | [Tooltips](https://m3.material.io/components/tooltips/overview) | Composite | `Tooltip` | Conformant | Reconcile new upstream variants at the final catalog audit |
 
-Snapshot accounting: 28 Conformant + 3 Partial + 5 Planned = 36 families;
+Snapshot accounting: 29 Conformant + 3 Partial + 4 Planned = 36 families;
 0 Excluded. Changing those totals requires changing a row in the same approved
 task.
 
@@ -128,7 +128,10 @@ Each implementation still needs the scope/files/checks approval required by
    Time pickers. Sequence individual tasks by shared-platform prerequisites, not
    by table order. Bottom sheets landed first in T45, reusing the native
    `<dialog>` lifecycle ADR 0016 established; its `BottomSheetScaffold`
-   app-shell recipe is owed to tranche R. Side sheets is sequenced last of the
+   app-shell recipe is owed to tranche R. App bars followed in T46, and Search
+   in T47 — sequenced after it because the search app bar reuses T46's scroll
+   primitive, and after Menu/Select because its docked surface reuses their
+   anchored-overlay portal. Side sheets is sequenced last of the
    overlay group for a source reason rather than a preference: AndroidX ships no
    side-sheet implementation at any revision, so that family has no pinned
    first-party source to satisfy the completeness contract, and its task must
