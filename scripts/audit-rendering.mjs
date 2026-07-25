@@ -1734,9 +1734,13 @@ const carouselMultiAspect = await page.evaluate(async () => {
 
 for (const finding of carouselMultiAspect) findings.push(`Carousel multi-aspect: ${finding}`)
 
-// The adaptive-content rule is CSS, so it has to be measured: a medium item hides
-// its title and a small item hides both.
-const carouselAdaptiveContent = await page.evaluate(() => {
+// The adaptive-content rule is CSS, so it has to be measured. It is also a *fade*,
+// so "hidden" is an opacity near zero rather than an absent box — an earlier version
+// of this probe asked `getClientRects()`, which a faded element still has, and so it
+// could only ever have passed against a `display: none` switch. The substance of the
+// rule is what is checked: a focal item shows everything, a medium item has lost its
+// title, a small item has lost both, and the title always leads the short label.
+const carouselAdaptiveContent = await page.evaluate(async () => {
   const results = []
   const carousel = document.querySelector('.m3e-carousel[data-example-layout="multiBrowse"]')
   if (!carousel) {
@@ -1751,6 +1755,17 @@ const carouselAdaptiveContent = await page.evaluate(() => {
       return results
     }
   }
+  const VISIBLE = 0.5
+  const GONE = 0.1
+  // Effective visibility, so that a `display: none` implementation is scored as
+  // hidden by the rule checks rather than as fully opaque. That keeps the rule
+  // checks about the specification's outcome and leaves the fade *mechanism* to the
+  // sweep at the end, so the two can fail independently.
+  const alphaOf = (element) => {
+    const styles = getComputedStyle(element)
+    if (styles.display === 'none' || styles.visibility === 'hidden') return 0
+    return Number(styles.opacity)
+  }
   let checked = 0
   for (const item of items) {
     const bucket = item.dataset.m3eSize
@@ -1758,23 +1773,64 @@ const carouselAdaptiveContent = await page.evaluate(() => {
     const year = item.querySelector('[data-m3e-carousel-hide="small"]')
     if (!title || !year || !bucket) continue
     checked += 1
-    const titleShown = title.getClientRects().length > 0
-    const yearShown = year.getClientRects().length > 0
-    if (bucket === 'large' && !(titleShown && yearShown)) {
-      results.push('a large item hides content the specification keeps')
+    const titleAlpha = alphaOf(title)
+    const yearAlpha = alphaOf(year)
+    // Whatever the widths, the title may never outlast the short label.
+    if (titleAlpha > yearAlpha + 0.01) {
+      results.push(
+        `a ${bucket} item shows its title more strongly than its label (${titleAlpha.toFixed(2)} vs ${yearAlpha.toFixed(2)})`,
+      )
       break
     }
-    if (bucket === 'medium' && titleShown) {
-      results.push('a medium item still shows the title the specification hides')
+    if (bucket === 'large' && !(titleAlpha >= VISIBLE && yearAlpha >= VISIBLE)) {
+      results.push(
+        `a large item hides content the specification keeps (title ${titleAlpha.toFixed(2)}, label ${yearAlpha.toFixed(2)})`,
+      )
       break
     }
-    if (bucket === 'small' && (titleShown || yearShown)) {
-      results.push('a small item still shows content the specification withdraws')
+    if (bucket === 'medium' && titleAlpha > GONE) {
+      results.push(
+        `a medium item still shows the title the specification hides (opacity ${titleAlpha.toFixed(2)})`,
+      )
+      break
+    }
+    if (bucket === 'small' && (titleAlpha > GONE || yearAlpha > GONE)) {
+      results.push(
+        `a small item still shows content the specification withdraws (title ${titleAlpha.toFixed(2)}, label ${yearAlpha.toFixed(2)})`,
+      )
       break
     }
   }
   if (checked === 0) {
     results.push('no item carried adaptive content; the adaptive-content probe is vacuous')
+  }
+  // Every rule above would also pass against a `display: none` switch, so assert the
+  // mechanism separately. At rest each item sits exactly on a keyline and none is
+  // mid-transition, which is why this has to sweep rather than sample.
+  if (results.length === 0) {
+    const restore = carousel.scrollLeft
+    const snap = carousel.style.scrollSnapType
+    carousel.style.scrollSnapType = 'none'
+    let intermediate = 0
+    for (let x = restore; x <= restore + 240; x += 4) {
+      carousel.scrollLeft = x
+      await new Promise((resolve) => requestAnimationFrame(() => resolve()))
+      for (const item of carousel.querySelectorAll('.m3e-carousel__item')) {
+        const title = item.querySelector('[data-m3e-carousel-hide="medium"]')
+        if (!title) continue
+        const alpha = alphaOf(title)
+        if (alpha > GONE && alpha < VISIBLE) intermediate += 1
+      }
+    }
+    carousel.scrollLeft = restore
+    if (snap) carousel.style.scrollSnapType = snap
+    else carousel.style.removeProperty('scroll-snap-type')
+    await new Promise((resolve) => requestAnimationFrame(() => resolve()))
+    if (intermediate === 0) {
+      results.push(
+        'no marked content took an intermediate opacity anywhere in a 240px sweep, so it is switching rather than fading',
+      )
+    }
   }
   return results
 })

@@ -188,9 +188,42 @@ describe('Carousel stylesheet contract', () => {
     expect(forced).toContain('GrayText')
   })
 
-  it('exposes the size buckets the adaptive-content rule needs', () => {
-    expect(css).toContain('[data-m3e-size="medium"]')
-    expect(css).toContain('[data-m3e-size="small"]')
+  it('fades adaptive content rather than switching it off', () => {
+    const rule = css.slice(css.indexOf('[data-m3e-carousel-hide] {'))
+    const declarations = rule.slice(0, rule.indexOf('}'))
+
+    // The reference behavior is a fade over the masked width, not a switch: a
+    // switch cannot be driven by the mask, and it pops.
+    expect(declarations).toContain('opacity: clamp(')
+    expect(declarations).not.toContain('display: none')
+
+    // Driven by where the item sits in the range a visible item moves through.
+    expect(declarations).toContain('--m3e-carousel-item-visible-size')
+    expect(declarations).toContain('--m3e-carousel-item-bucket-min')
+    expect(declarations).toContain('--m3e-carousel-item-bucket-range')
+
+    // Never divide by an empty range: the resting values are zeroes, and reduced
+    // motion withdraws the paint pass entirely.
+    expect(declarations).toContain('max(1, var(--m3e-carousel-item-bucket-range)')
+
+    // Each marker names the width its content must be gone by, and the short label
+    // outlasts the title. Equal edges would let the title survive as long.
+    expect(declarations).toContain('--m3e-carousel-hide-edge: 0.5')
+    const small = css.slice(css.indexOf('[data-m3e-carousel-hide="small"] {'))
+    expect(small.slice(0, small.indexOf('}'))).toContain('--m3e-carousel-hide-edge: 0')
+  })
+
+  it('rests at fully opaque, so content survives with no script and reduced motion', () => {
+    const item = css.slice(css.indexOf('.m3e-carousel__item {'))
+    const declarations = item.slice(0, item.indexOf('}'))
+
+    // The fade reads three custom properties the paint pass owns. Their resting
+    // values have to mean "show everything": a visible size wider than any content,
+    // and an empty range. Reduced motion removes the written values and falls back
+    // to exactly these.
+    expect(declarations).toContain('--m3e-carousel-item-visible-size: 100000')
+    expect(declarations).toContain('--m3e-carousel-item-bucket-min: 0')
+    expect(declarations).toContain('--m3e-carousel-item-bucket-range: 0')
   })
 
   it('stops item content from enlarging the item past the arrangement size', () => {

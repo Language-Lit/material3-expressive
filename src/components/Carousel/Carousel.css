@@ -88,6 +88,16 @@
     --m3e-carousel-item-snap: 0px;
     --m3e-carousel-item-z: 0;
     --m3e-carousel-item-aspect: 1;
+    /*
+     * Resting state is an unmasked item, so the adaptive-content fade has to resolve
+     * to fully opaque: a visible size wider than any content can be, and an empty
+     * range, which the `max()` in that rule turns into a division by one rather than
+     * by zero. The paint pass overwrites all three. Reduced motion withdraws them
+     * again, which is why the resting values have to mean "show everything".
+     */
+    --m3e-carousel-item-visible-size: 100000;
+    --m3e-carousel-item-bucket-min: 0;
+    --m3e-carousel-item-bucket-range: 0;
     box-sizing: border-box;
     flex: 0 0 var(--m3e-carousel-item-size);
     /*
@@ -285,14 +295,65 @@
   }
 
   /*
-   * The specification's adaptive-content rule, available to item content without
-   * a React render per frame: a large item shows everything, a medium item hides
-   * what it cannot fit, and a small item abbreviates.
+   * The specification's adaptive-content rule, available to item content without a
+   * React render per frame: a large item shows everything, a medium item hides what
+   * it cannot fit, and a small item abbreviates.
+   *
+   * The reference behavior is a **fade**, not a switch. The pinned source's
+   * `FadingHorizontalMultiBrowseCarouselSample` drives content alpha from a
+   * `lerp` over the item's masked size, and Material's own carousel documentation
+   * describes a title as pinned to the masking edge and faded out as the item
+   * becomes too small for it. So the input is the content's own width: content
+   * fades as the visible width stops being able to hold it, which is why a long
+   * title goes before a short label without either being given a threshold.
+   *
+   * `--m3e-carousel-hide-extent` is that width, measured in the layout phase.
+   * Both fallbacks resolve to fully opaque, so content is visible before it has
+   * been measured, with no script, and under reduced motion — where the paint
+   * phase writes nothing at all.
+   *
+   * Each marker names the width by which its content should be gone, and fades over
+   * the half of the range above it: content marked for the medium width is opaque on
+   * a focal item and clear by the middle of the range, and content marked for the
+   * small width is opaque by that middle and clear at the narrowest visible item.
+   * So the specification's ordering holds — the title goes before the short label —
+   * and each transition is a fade rather than a switch.
+   *
+   * The discrete reading of the rule cannot survive a fade, and that is not a
+   * compromise so much as arithmetic: `large` and `medium` are adjacent bands, so
+   * "opaque throughout large, clear throughout medium" leaves no width at all to
+   * fade across. Anchoring the fade inside the bands instead keeps what the rule is
+   * for — full content on a focal item, the title gone by a medium one, nothing on a
+   * small one — which is what the rendering audit checks.
+   *
+   * No first-party source specifies a span, so the halving is this library's
+   * interpretation, in the same category as the size-bucket boundaries; see ADR 0040
+   * decision 6.
    */
-  .m3e-carousel__item[data-m3e-size="medium"] [data-m3e-carousel-hide="medium"],
-  .m3e-carousel__item[data-m3e-size="small"] [data-m3e-carousel-hide="medium"],
-  .m3e-carousel__item[data-m3e-size="small"] [data-m3e-carousel-hide="small"] {
-    display: none;
+  .m3e-carousel__item [data-m3e-carousel-hide] {
+    --m3e-carousel-hide-edge: 0.5;
+
+    opacity: clamp(
+      0,
+      calc(
+        (
+            var(--m3e-carousel-item-visible-size) - (
+                var(--m3e-carousel-item-bucket-min) + var(--m3e-carousel-item-bucket-range) *
+                  var(--m3e-carousel-hide-edge)
+              )
+          ) / max(1, var(--m3e-carousel-item-bucket-range) * 0.5)
+      ),
+      1
+    );
+  }
+
+  /*
+   * The specification asks the small item for an abbreviated label rather than a
+   * blank one, so content marked for the small width is held to the bottom of the
+   * range and survives everything the title does not.
+   */
+  .m3e-carousel__item [data-m3e-carousel-hide="small"] {
+    --m3e-carousel-hide-edge: 0;
   }
 
   /*

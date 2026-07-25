@@ -1,7 +1,7 @@
 # ADR 0040: Carousel as one export, two ported layout engines, and a specification-sourced token registry
 
-Status: accepted; decision 6's mask-shape claim corrected by T50, and its size
-bucket corrected by T54 (2026-07-25)
+Status: accepted; decision 6 corrected three times — the mask shape by T50, the
+size bucket by T54, and the adaptive-content switch by T55 (2026-07-26)
 Date: 2026-07-25
 Task: T48
 
@@ -186,6 +186,29 @@ clips the item, and the item's own border radius shapes it.
 > arrangement, also an addition with no counterpart in the source — and the focal
 > size. The two published custom properties are unchanged, because they are the
 > port and the port is right; only this decision's own derived value moved.
+>
+> **Corrected again by T55.** This decision expressed the adaptive rule as
+> `display: none` at a bucket boundary, which pops. The reference fades:
+> `FadingHorizontalMultiBrowseCarouselSample` in the pinned source drives content
+> alpha from a `lerp` over the item's masked size, and Material's carousel
+> documentation describes a title as pinned to the masking edge and faded out as the
+> item becomes too small for it. `data-m3e-carousel-hide` now fades, computed in CSS
+> from three unitless properties the paint pass writes —
+> `--m3e-carousel-item-visible-size`, `--m3e-carousel-item-bucket-min`, and
+> `--m3e-carousel-item-bucket-range`, unitless because `calc()` cannot divide by a
+> length. Each marker names the width its content must be gone by and fades over the
+> half of the range above it. Only that halving remains an interpretation, like the
+> bucket boundaries above.
+>
+> The discrete reading of the rule had to go, and it is arithmetic rather than a
+> judgement call: `large` and `medium` are adjacent bands, so "opaque throughout
+> large, clear throughout medium" leaves no width at all to fade across. What the
+> rule is *for* is preserved — full content on a focal item, the title gone by a
+> medium one, nothing on a small one — and the rendering audit now checks that
+> outcome by effective visibility while separately sweeping the scroll range to
+> assert something is mid-fade, since the outcome checks alone pass against a switch
+> too. An earlier attempt drove the fade from each element's measured width instead;
+> it produced the wrong ordering at the widths that matter and is recorded in T55.
 >
 > The same task pinned the item box with `min-inline-size: 0`/`min-block-size: 0`.
 > A flex item's automatic minimum size is its content's, so `flex: 0 0 <size>` did

@@ -535,6 +535,18 @@ function applyItemPaint(item: HTMLElement, vertical: boolean, paint: ItemPaint):
   const { style } = item
   style.setProperty('--m3e-carousel-item-inset-start', `${paint.insetStart}px`)
   style.setProperty('--m3e-carousel-item-inset-end', `${paint.insetEnd}px`)
+  /*
+   * The three numbers the adaptive-content fade needs, all **unitless**: the fade
+   * has to divide by a width, and CSS `calc()` cannot divide by a length. Between
+   * them they describe where this item sits in the range a visible item moves
+   * through, which is the same range `sizeBucketOf` classifies against.
+   */
+  style.setProperty('--m3e-carousel-item-visible-size', String(paint.size))
+  style.setProperty('--m3e-carousel-item-bucket-min', String(paint.bucketMinSize))
+  style.setProperty(
+    '--m3e-carousel-item-bucket-range',
+    String(Math.max(0, paint.bucketMaxSize - paint.bucketMinSize)),
+  )
   style.setProperty('--m3e-carousel-item-translate', `${paint.translate}px`)
   style.setProperty('--m3e-carousel-item-parallax', `${paint.parallax}px`)
   style.setProperty('--m3e-carousel-item-z', String(paint.zIndex))
@@ -551,6 +563,9 @@ function clearItemPaint(item: HTMLElement): void {
   const { style } = item
   style.removeProperty('--m3e-carousel-item-inset-start')
   style.removeProperty('--m3e-carousel-item-inset-end')
+  style.removeProperty('--m3e-carousel-item-visible-size')
+  style.removeProperty('--m3e-carousel-item-bucket-min')
+  style.removeProperty('--m3e-carousel-item-bucket-range')
   style.removeProperty('--m3e-carousel-item-translate')
   style.removeProperty('--m3e-carousel-item-parallax')
   style.removeProperty('--m3e-carousel-item-z')

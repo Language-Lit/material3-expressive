@@ -3243,3 +3243,95 @@ that does not fit.
 - `--m3e-carousel-item-min-size` still publishes the anchor-inclusive value. That
   is deliberate fidelity, and `docs/components/Carousel.md` now warns consumers not
   to derive their own buckets from it.
+
+## T55 — Adaptive content popped; the reference fades
+
+Status: complete
+Approved: 2026-07-26 (owner: "You sure the texts are right? On the m3 website I see
+the texts kinda fading, not popping." Standing criterion from T53: maximum fidelity.)
+Completed: 2026-07-26
+
+### Scope
+
+The owner was right, and the source says so. ADR 0040 decision 6 expressed the
+adaptive-content rule as `display: none` at a size-bucket boundary — an instant
+switch with three states. Two independent sources describe a fade:
+
+- The pinned revision's `FadingHorizontalMultiBrowseCarouselSample` drives content
+  alpha from a `lerp` over the item's masked size, and pins the content with
+  `translationX = maskRect.left + 8.dp`.
+- Material's own carousel documentation describes a title as translated to sit
+  pinned to the masking edge, and faded out as the item becomes too small for it.
+
+So both the fade **and** the pin were missing; T54's caption padding was an
+approximation of the pin, and the wrong mechanism for it.
+
+### The arithmetic that shaped the design
+
+The discrete reading of the rule cannot survive a fade. `large` and `medium` are
+adjacent bands, so "opaque throughout large, clear throughout medium" leaves *zero*
+width to fade across. The fade is therefore anchored inside the bands: each marker
+names the width its content must be gone by and fades over the half of the range
+above it. What the rule is for is preserved — full content on a focal item, the
+title gone by a medium one, nothing on a small one.
+
+A first attempt drove the fade from each element's own measured width, which is
+literally what the source's sample divides by. It is recorded because the failure is
+instructive: the source's formula makes **narrow** content vanish first, since it
+fades over a span equal to its own width. That inverts the specification's ordering,
+where the long title goes before the short label. Worse, adding a multiplier to
+restore the ordering pushed short content's fade window to 27–18px, below the 37px
+the smallest visible item ever reaches — so the year never faded at all. The
+measured-width mechanism and its layout-phase `offsetWidth` read were removed.
+
+### Expected files
+
+- Modified: `src/components/Carousel/Carousel.css` — the `display: none` rules
+  replaced by an `opacity` fade; resting values for the three properties it reads.
+- Modified: `src/components/Carousel/useCarouselMask.ts` — publishes
+  `--m3e-carousel-item-visible-size`, `--m3e-carousel-item-bucket-min`, and
+  `--m3e-carousel-item-bucket-range`, all unitless because `calc()` cannot divide by
+  a length.
+- Modified: `scripts/audit-rendering.mjs` — the adaptive-content probe rewritten.
+- Modified: `playground/src/playground.css` — the caption pinned by translation
+  rather than padding, and `justify-items: start` so each line sizes to its own text.
+- Modified: tests, `Carousel.conformance.md`, ADR 0040, `docs/components/Carousel.md`.
+
+### Acceptance checks
+
+- Content fades continuously rather than switching.
+- The specification's outcome still holds per bucket, and the title still leads the
+  label.
+- Content is fully opaque with no script, before first paint, and under reduced
+  motion.
+
+### Completion evidence
+
+- Fade measured across 497 samples: the title is fully opaque at 183px and clear by
+  112px, the year opaque at 112px and clear by 40px — 70px and 72px of item width
+  respectively, **largest single step 0.025**, 49 and 41 distinct opacity values.
+  Before this change each was one step of 1.0.
+- No cropping of plainly legible text in any bucket. The worst crop anywhere is 6px
+  at 6% opacity, mid-fade.
+- The old probe could only ever have passed against a switch: it asked
+  `getClientRects()`, which a faded element still has. It now scores **effective**
+  visibility, so a `display: none` implementation is judged on outcome, and sweeps
+  240px separately to assert something is mid-fade.
+- Both audit assertions proven independently by seeding the old switch back into
+  `playground/dist/assets/*.css`: the outcome checks pass (a switch does satisfy the
+  specification's outcome) and the sweep fails with "no marked content took an
+  intermediate opacity anywhere in a 240px sweep". Restored afterwards.
+- The first version of the probe's mechanism check was itself wrong — it looked for
+  a mid-fade item *at rest*, where every item sits exactly on a keyline and none can
+  be mid-transition. Sweeping is the fix.
+- `npm run verify`: 14/14 gates, 225 files / 1,623 tests. `dist/index.js` 475,238
+  bytes, inside budget. `npm run audit:rendering` and `npm run site:build` pass.
+
+### Not done
+
+- The halving that sets the fade span is unsourced, like the 10%/90% bucket
+  boundaries. Recorded in ADR 0040 decision 6 as interpretation, not specification.
+- The pin is demo-side. The library exposes
+  `--m3e-carousel-item-inset-start`/`-end` and documents the translation, but does
+  not apply it to marked content itself: where a caption sits inside an item is the
+  author's layout, not the component's.

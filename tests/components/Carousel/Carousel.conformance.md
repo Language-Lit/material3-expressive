@@ -144,9 +144,39 @@ truth per value.
 The three widths the anatomy names reach content as `data-m3e-size` of `large`,
 `medium`, or `small`, beside `--m3e-carousel-item-current-size`,
 `--m3e-carousel-item-min-size`, and `--m3e-carousel-item-max-size`. Content marked
-`data-m3e-carousel-hide="medium"` or `"small"` withdraws at those widths, which is
-the specification's own rule: the large item shows the full title, the medium item
-hides it, the small item abbreviates the label.
+`data-m3e-carousel-hide` **fades** as the item narrows, which is the specification's
+own rule: the large item shows the full title, the medium item hides it, the small
+item abbreviates the label.
+
+The fade, not a switch, is the reference behavior. The pinned source's
+`FadingHorizontalMultiBrowseCarouselSample` drives content alpha from a `lerp` over
+the item's masked size, and Material's carousel documentation describes a title as
+pinned to the masking edge and faded out as the item becomes too small for it.
+
+The fade is computed in CSS from three unitless custom properties the paint pass
+writes — `--m3e-carousel-item-visible-size`, `--m3e-carousel-item-bucket-min`, and
+`--m3e-carousel-item-bucket-range`. Unitless because `calc()` cannot divide by a
+length. Each marker names the width its content must be gone by and fades over the
+half of the range above it: content marked for the medium width is opaque on a focal
+item and clear by the middle of the range, and content marked for the small width is
+opaque by that middle and clear at the narrowest visible item. Measured on the demo,
+the title is fully opaque at 183px and gone by 112px, and the year is opaque at 112px
+and gone by 40px — so the specification's ordering holds, with the largest step in
+either fade at 0.025.
+
+The discrete reading of the rule cannot survive a fade, and that is arithmetic
+rather than a compromise: `large` and `medium` are adjacent bands, so "opaque
+throughout large, clear throughout medium" leaves no width to fade across. The fade
+is therefore anchored inside the bands, preserving what the rule is for — full
+content on a focal item, the title gone by a medium one, nothing on a small one.
+The rendering audit checks exactly that, and separately sweeps the scroll range to
+assert some content is mid-fade, because the outcome checks alone would also pass
+against a switch.
+
+Resting values matter here: the three properties default to a visible size wider
+than any content and an empty range, so content is fully opaque before the first
+paint, with no script, and under reduced motion — where the paint pass withdraws
+them entirely.
 
 The bucket is normalised between the **small keyline's** size and the focal size,
 not between `--m3e-carousel-item-min-size` and `--m3e-carousel-item-max-size`.

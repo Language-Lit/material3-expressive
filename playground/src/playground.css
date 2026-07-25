@@ -781,22 +781,31 @@
 }
 
 /*
- * The mask crops the content box symmetrically about its centre, and the caption
- * is laid out in the full-width box, so a caption padded by a constant is cropped
- * mid-glyph as the item narrows — "2020" painting as "020". Adding the item's own
- * mask inset to the padding keeps the text inside the part that is actually
- * painted, which is what these two custom properties are exposed for.
+ * The mask crops the content box symmetrically about its centre while the caption
+ * is laid out in the full-width box, so a caption left where it is gets cropped
+ * mid-glyph as the item narrows — "2020" painting as "020".
+ *
+ * Translating it by the mask's own inset is what the source does with the title it
+ * pins: `translationX = maskRect.left + 8.dp`. A translation rather than padding,
+ * because padding would change the caption's own width, and the width is both what
+ * the fade is measured against and what could push the item wider than its
+ * arrangement size.
  */
 .carousel-example__caption {
   color: #fff;
   display: grid;
   font: var(--m3e-sys-typescale-label-large);
   gap: 0.125rem;
-  padding-block: 0.75rem;
-  padding-inline: calc(0.75rem + var(--m3e-carousel-item-inset-start, 0px))
-    calc(0.75rem + var(--m3e-carousel-item-inset-end, 0px));
+  /*
+   * Each line must size to its own text. Stretched grid items would all measure the
+   * width of the longest one, and the fade is measured per element — the year would
+   * then fade on the title's schedule instead of its own.
+   */
+  justify-items: start;
+  padding: 0.75rem;
   position: relative;
   text-shadow: 0 1px 2px rgb(0 0 0 / 45%);
+  translate: var(--m3e-carousel-item-inset-start, 0px);
   white-space: nowrap;
   z-index: 2;
 }

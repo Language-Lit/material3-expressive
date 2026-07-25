@@ -93,7 +93,8 @@ scroll container.
 
 Items report their current width, so content can adapt without re-rendering.
 `data-m3e-size` is `large`, `medium`, or `small` on each item, and content marked
-`data-m3e-carousel-hide="medium"` or `"small"` withdraws at those widths:
+`data-m3e-carousel-hide` **fades out** as the item narrows past the width that
+content needs:
 
 ```tsx
 <Carousel
@@ -116,7 +117,22 @@ Items report their current width, so content can adapt without re-rendering.
 ```
 
 That is Material's own rule: the large item shows the full title, the medium item
-hides it, the small item abbreviates the label. The exact pixel widths are
+hides it, the small item abbreviates the label. It is a fade rather than a switch,
+because that is what the reference does — a title is pinned to the masking edge and
+faded out as the item becomes too small for it.
+
+The attribute's value picks how long content survives, not a hard cutoff:
+`"medium"` content is opaque on a focal item and gone by the middle of the range,
+`"small"` content is opaque by that middle and gone at the narrowest visible item.
+So a title leads its label out, and each transition is a fade you can watch rather
+than a switch.
+
+If you want text to stay put rather than be cropped as it fades, translate it by
+`--m3e-carousel-item-inset-start`, as the reference pins its title. Prefer a
+translation to padding: padding changes the content's own width, and content wide
+enough to exceed the arrangement's item size is content the engine cannot place.
+
+The exact pixel widths are
 available too, as `--m3e-carousel-item-current-size`,
 `--m3e-carousel-item-min-size`, and `--m3e-carousel-item-max-size`.
 
