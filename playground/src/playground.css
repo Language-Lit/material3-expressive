@@ -780,12 +780,21 @@
   z-index: 1;
 }
 
+/*
+ * The mask crops the content box symmetrically about its centre, and the caption
+ * is laid out in the full-width box, so a caption padded by a constant is cropped
+ * mid-glyph as the item narrows — "2020" painting as "020". Adding the item's own
+ * mask inset to the padding keeps the text inside the part that is actually
+ * painted, which is what these two custom properties are exposed for.
+ */
 .carousel-example__caption {
   color: #fff;
   display: grid;
   font: var(--m3e-sys-typescale-label-large);
   gap: 0.125rem;
-  padding: 0.75rem;
+  padding-block: 0.75rem;
+  padding-inline: calc(0.75rem + var(--m3e-carousel-item-inset-start, 0px))
+    calc(0.75rem + var(--m3e-carousel-item-inset-end, 0px));
   position: relative;
   text-shadow: 0 1px 2px rgb(0 0 0 / 45%);
   white-space: nowrap;

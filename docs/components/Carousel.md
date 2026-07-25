@@ -120,6 +120,18 @@ hides it, the small item abbreviates the label. The exact pixel widths are
 available too, as `--m3e-carousel-item-current-size`,
 `--m3e-carousel-item-min-size`, and `--m3e-carousel-item-max-size`.
 
+One caution if you use those numbers directly: `--m3e-carousel-item-min-size`
+mirrors the Compose value, which counts the **anchor** keylines — the slivers
+parked off screen at around 10px. It is not the narrowest item you can see, so
+normalising a size against it will class almost everything as medium. `data-m3e-size`
+already does the classification against the small keyline; prefer it.
+
+Content is clipped to the item, never accommodated by it: an item is exactly the
+arrangement's width, because the snap offsets are derived from that width. So text
+that must stay readable as an item narrows should be padded by the mask insets,
+`--m3e-carousel-item-inset-start` and `--m3e-carousel-item-inset-end`, which is
+what they are exposed for — otherwise it is cropped mid-glyph rather than moved.
+
 ## Show all — the accessibility requirement
 
 On a vertically scrolling page, a horizontal carousel needs a route to every item

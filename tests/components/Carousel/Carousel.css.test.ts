@@ -192,4 +192,15 @@ describe('Carousel stylesheet contract', () => {
     expect(css).toContain('[data-m3e-size="medium"]')
     expect(css).toContain('[data-m3e-size="small"]')
   })
+
+  it('stops item content from enlarging the item past the arrangement size', () => {
+    // A flex item's automatic minimum size is its content's, so `flex: 0 0 <size>`
+    // alone lets nowrap content widen the box — and every snap offset the engine
+    // writes is derived from that size. Caught in the browser audit as a carousel
+    // resting 28.4px off its keyline, which no jsdom test can see.
+    const item = css.slice(css.indexOf('.m3e-carousel__item {'))
+    const declarations = item.slice(0, item.indexOf('}'))
+    expect(declarations).toContain('min-inline-size: 0')
+    expect(declarations).toContain('min-block-size: 0')
+  })
 })

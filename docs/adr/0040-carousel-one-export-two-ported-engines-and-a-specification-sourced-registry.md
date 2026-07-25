@@ -1,6 +1,7 @@
 # ADR 0040: Carousel as one export, two ported layout engines, and a specification-sourced token registry
 
-Status: accepted; decision 6's mask-shape claim corrected by T50 (2026-07-25)
+Status: accepted; decision 6's mask-shape claim corrected by T50, and its size
+bucket corrected by T54 (2026-07-25)
 Date: 2026-07-25
 Task: T48
 
@@ -170,6 +171,28 @@ clips the item, and the item's own border radius shapes it.
 > shape at the mask rect's size and translates it to the mask's origin, which is
 > exactly `inset(... round var(--m3e-comp-carousel-item-shape))`. The mask shape is
 > therefore ported; only the two caller-facing modifiers remain excluded.
+
+> **Corrected by T54.** `data-m3e-size` is this decision's own invention — the
+> source publishes `size`/`minSize`/`maxSize` and leaves the classification to the
+> caller — and it was normalised between the two published values. That is wrong,
+> because `minItemSize` is the port of a computation that counts the **anchor**
+> keylines, which are off screen at around 10px. An item therefore only classified
+> as `small` below `anchor + 0.1 × (focal − anchor)`, which for the specification's
+> small item of 40–56px needs a focal item of 310px or more — so the `small` bucket
+> held nothing but anchors, the visible small item classified as `medium`, and
+> content written for medium items rendered into a 37px box and painted as cropped
+> glyph fragments. The bucket is now normalised between
+> `Strategy.smallestVisibleItemSize` — the small keyline of the resting
+> arrangement, also an addition with no counterpart in the source — and the focal
+> size. The two published custom properties are unchanged, because they are the
+> port and the port is right; only this decision's own derived value moved.
+>
+> The same task pinned the item box with `min-inline-size: 0`/`min-block-size: 0`.
+> A flex item's automatic minimum size is its content's, so `flex: 0 0 <size>` did
+> not actually guarantee the arrangement's size: `white-space: nowrap` content
+> widened the item and invalidated every snap offset derived from it. The source
+> measures items with the strategy's size as a fixed constraint, so this restores a
+> guarantee the port had silently dropped rather than adding a new constraint.
 
 ### 7. An explicit item window replaces `beyondViewportPageCount`
 

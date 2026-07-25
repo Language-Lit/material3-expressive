@@ -56,6 +56,14 @@ interface ItemPaint {
   readonly size: number
   readonly minSize: number
   readonly maxSize: number
+  /**
+   * The range the size bucket is normalised between. Deliberately not `minSize`
+   * and `maxSize`: those two are the port of the source's `minItemSize`/
+   * `maxItemSize` and are published as-is, and `minItemSize` counts the off-screen
+   * anchor keylines. See `Strategy.smallestVisibleItemSize`.
+   */
+  readonly bucketMinSize: number
+  readonly bucketMaxSize: number
   readonly zIndex: number
 }
 
@@ -328,6 +336,8 @@ export function useCarouselMask(options: CarouselMaskOptions): CarouselMaskHandl
         size: interpolated.size,
         minSize: strategy.minItemSize,
         maxSize: strategy.maxItemSize,
+        bucketMinSize: strategy.smallestVisibleItemSize,
+        bucketMaxSize: strategy.itemMainAxisSize,
         zIndex: Math.round(FOCAL_Z_INDEX / (1 + Math.abs(index - nearestIndex))),
       })
     })
@@ -376,6 +386,10 @@ export function useCarouselMask(options: CarouselMaskOptions): CarouselMaskHandl
           size: maskEnd - maskStart,
           minSize: getMultiAspectMinSize(itemState),
           maxSize: mainAxisSize,
+          // This engine has no keylines and therefore no anchors, so the published
+          // range is already the range a visible item moves through.
+          bucketMinSize: getMultiAspectMinSize(itemState),
+          bucketMaxSize: mainAxisSize,
           zIndex: FOCAL_Z_INDEX - index,
         })
       })
@@ -529,7 +543,7 @@ function applyItemPaint(item: HTMLElement, vertical: boolean, paint: ItemPaint):
   style.setProperty('--m3e-carousel-item-current-size', `${paint.size}px`)
   style.setProperty('--m3e-carousel-item-min-size', `${paint.minSize}px`)
   style.setProperty('--m3e-carousel-item-max-size', `${paint.maxSize}px`)
-  item.dataset.m3eSize = sizeBucketOf(paint.size, paint.minSize, paint.maxSize)
+  item.dataset.m3eSize = sizeBucketOf(paint.size, paint.bucketMinSize, paint.bucketMaxSize)
   item.dataset.m3eAxis = vertical ? 'block' : 'inline'
 }
 
@@ -549,8 +563,13 @@ function clearItemPaint(item: HTMLElement): void {
 
 /**
  * The three widths the specification's anatomy names. An item at or near the
- * unmasked size is large, one at or near the smallest mask is small, and the
- * range between them is medium.
+ * focal size is large, one at or near the small keyline is small, and the range
+ * between them is medium.
+ *
+ * `minSize` must be the smallest size a *visible* item takes — the small
+ * keyline's size, not the anchors'. A keyline list that has shifted can hand an
+ * item a size below that resting minimum, and a fraction below zero classifies as
+ * small, which is what it looks like.
  */
 export function sizeBucketOf(size: number, minSize: number, maxSize: number): 'large' | 'medium' | 'small' {
   if (maxSize <= minSize) return 'large'

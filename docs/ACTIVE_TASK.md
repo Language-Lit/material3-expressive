@@ -3150,3 +3150,96 @@ keep the sourced value, and document the lever and its consequence.
   to take knowingly, not a fix.
 - The medium item's cropped caption (T52's second "Not done") is unchanged and
   still awaits a separately approved demo change.
+
+## T54 — The size bucket was normalised against the anchor, so item text cropped
+
+Status: complete
+Approved: 2026-07-25 (owner asked to confirm the titles follow the specification,
+then, on being shown the defect: "I want you to make it as faithful as possible, I
+already told you that.")
+Completed: 2026-07-26
+
+### Scope
+
+`data-m3e-size` drives the adaptive-content rule. Measured over 1,636 item/frame
+samples, the rule itself fires correctly — `large` shows title and year, `medium`
+the year only, `small` nothing — but it fired against the wrong items.
+
+`sizeBucketOf` normalised the item's size between `--m3e-carousel-item-min-size`
+and `--m3e-carousel-item-max-size`, splitting at 10%/90%. Read live from the demo:
+min 7.33px, max 183.2px. The 7.33px floor is an **anchor** keyline, off screen.
+The resulting bands were `large` 166–183px, `medium` 25–165px, `small` 7–24px, so
+the `small` bucket held nothing but anchors and the arrangement's real small
+keyline — the visible peeking item, 37px — classified as `medium` and rendered the
+year into a 37px box. Worst case measured: **67px clipped off "2023"**, the
+`2020`→`020` symptom logged under T52's "Not done" and misfiled there as demo
+polish.
+
+This generalises rather than depending on the width. The threshold is
+`anchor + 0.1 × (focal − anchor)`, and the specification fixes the small item at
+40–56px; solving for when a 40px item would qualify as small needs a focal item of
+**310px or more**. The `small` bucket was unreachable for the specification's small
+item at every realistic width.
+
+`data-m3e-size` is this library's own addition — ADR 0040 decision 6 — because the
+source publishes `size`/`minSize`/`maxSize` and leaves classification to the
+caller. The published values are **not** at fault: `Strategy.minItemSize` was
+verified line-for-line against the pinned `Strategy.kt`, anchors included, so it
+stays exactly as it is. Only the derived bucket moved.
+
+A second defect surfaced while fixing the first, and only the browser audit caught
+it. Padding the demo caption by the mask insets made a `white-space: nowrap`
+caption wider than the item, and a flex item's automatic minimum size is its
+content's — so `flex: 0 0 var(--m3e-carousel-item-size)` never actually guaranteed
+the arrangement's size. The audit reported a carousel resting **28.4px** off its
+keyline and a focal item masked to 157.5px. The source cannot be reached this way:
+it measures items with the strategy's size as a fixed constraint and clips content
+that does not fit.
+
+### Expected files
+
+- Modified: `src/components/Carousel/strategy.ts` — `smallestVisibleItemSize`, the
+  smallest non-anchor keyline of the **resting** arrangement, so the boundary
+  cannot flicker as the list shifts.
+- Modified: `src/components/Carousel/useCarouselMask.ts` — `ItemPaint` carries a
+  separate `bucketMinSize`/`bucketMaxSize`; the published custom properties are
+  untouched.
+- Modified: `src/components/Carousel/Carousel.css` — `min-inline-size: 0`,
+  `min-block-size: 0` on the item.
+- Modified: `playground/src/playground.css` — caption padded by
+  `--m3e-carousel-item-inset-start`/`-end`.
+- Modified: tests, `Carousel.conformance.md`, ADR 0040, `docs/components/Carousel.md`.
+
+### Acceptance checks
+
+- The arrangement's small keyline classifies as `small`, per index rather than
+  "somewhere in the list".
+- No caption is cropped by the mask in any bucket.
+- An item's box stays at the arrangement's size whatever its content.
+
+### Completion evidence
+
+- Browser probe, 1,782 item/frame samples: `large` shows both spans, `medium` the
+  year only, `small` none — and **no crop in any bucket** (was 67px).
+- New bucket bands, read live: `large` 169–183px, `medium` 55–169px, `small`
+  7–53px. The 37px small keyline is now `small`.
+- The two new unit tests were proven non-vacuous by seeding the old floor back:
+  both fail with `expected 'medium' to be 'small'`. The previous test passed only
+  because it asserted `toContain('small')` and the off-screen anchor supplied it —
+  it is now per-index.
+- `min-inline-size` was proven necessary by accident, which is the strongest form:
+  the rendering audit went red the moment the caption padding landed and green when
+  the constraint did.
+- `npm run verify`: 14/14 gates, 225 files / 1,623 tests. `dist/index.js` 474,766
+  bytes (+629), inside budget. `npm run audit:rendering` passes.
+  `npm run site:build` passes.
+
+### Not done
+
+- The 10%/90% split itself is unchanged and still unsourced. It is now applied to a
+  defensible range, but no first-party source specifies bucket boundaries, so the
+  numbers remain this library's interpretation — recorded in ADR 0040 decision 6
+  rather than presented as specification.
+- `--m3e-carousel-item-min-size` still publishes the anchor-inclusive value. That
+  is deliberate fidelity, and `docs/components/Carousel.md` now warns consumers not
+  to derive their own buckets from it.

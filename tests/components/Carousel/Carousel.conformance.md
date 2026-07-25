@@ -148,6 +148,24 @@ The three widths the anatomy names reach content as `data-m3e-size` of `large`,
 the specification's own rule: the large item shows the full title, the medium item
 hides it, the small item abbreviates the label.
 
+The bucket is normalised between the **small keyline's** size and the focal size,
+not between `--m3e-carousel-item-min-size` and `--m3e-carousel-item-max-size`.
+Those two are the port of the source's `minItemSize`/`maxItemSize` and are
+published unchanged, and `minItemSize` counts the **anchor** keylines, which sit
+off screen at around 10px. Normalising against the anchor makes the `small` bucket
+unreachable for the specification's small item, fixed at 40–56px: it would require
+a focal item of 310px or more. `Strategy.smallestVisibleItemSize` is the floor the
+bucket uses, taken from the resting arrangement so the boundary does not move as
+the keyline list shifts. It has no counterpart in the source, because the source
+publishes the three sizes and leaves the classification to the caller.
+
+An item's box is also pinned to the arrangement's size in both axes
+(`min-inline-size: 0`, `min-block-size: 0`). A flex item's automatic minimum size
+is its content's, so without that a caption with `white-space: nowrap` widens the
+item past the size every snap offset was derived from. The source is not reachable
+this way: it measures items with the strategy's size as a fixed constraint and
+clips content that does not fit.
+
 States are enabled, hovered, focused, pressed, and disabled, exactly the specs
 page's list. Hover, focus, and pressed paint the shared `--m3e-sys-state-*`
 opacities over the item; disabled dims the content and the container by the

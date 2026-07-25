@@ -733,3 +733,36 @@ describe('keyline list identity helpers', () => {
     expect(keylineListKey(list)).toBe(keylineListKey(createStartAlignedKeylineList()))
   })
 })
+
+/*
+ * Not a pinned upstream case. `smallestVisibleItemSize` has no counterpart in the
+ * source: it exists because this port publishes a `large`/`medium`/`small` bucket
+ * that Compose leaves to the caller, and that bucket needs a floor an item can
+ * actually be seen at.
+ */
+describe('smallestVisibleItemSize — the size bucket floor', () => {
+  it('is the small keyline, not the anchor the ported minItemSize counts', () => {
+    // `[xs | l m s | xs]`, so xSmall 5 is off screen and small 20 is the narrowest
+    // item a user ever sees.
+    const strategy = strategyOf(createStartAlignedKeylineList(), large + medium + small)
+
+    expect(strategy.minItemSize).toBeLessThanOrEqual(xSmall)
+    expect(strategy.smallestVisibleItemSize).toBe(small)
+    expect(strategy.itemMainAxisSize).toBe(large)
+  })
+
+  it('is taken from the resting arrangement, so the boundary cannot flicker', () => {
+    const strategy = strategyOf(createStartAlignedKeylineList(), large + medium + small)
+    const maxScrollOffset = 10 * large - (large + medium + small)
+
+    // Shifted lists can mask an item below the resting minimum; the floor must not
+    // follow them, or content would change state as the list shifts rather than as
+    // the item resizes.
+    const shifted = strategy.getKeylineListForScrollOffset(maxScrollOffset, maxScrollOffset)
+    const smallestShifted = Math.min(
+      ...shifted.keylines.filter((k) => !k.isAnchor).map((k) => k.size),
+    )
+    expect(smallestShifted).toBeLessThanOrEqual(strategy.smallestVisibleItemSize)
+    expect(strategy.smallestVisibleItemSize).toBe(small)
+  })
+})

@@ -287,15 +287,32 @@ describe('Carousel paint pass', () => {
 
   it('buckets item sizes into the three widths the anatomy names', () => {
     render(pinned())
-    const buckets = carouselItems()
-      .slice(0, 4)
-      .map((item) => item.dataset.m3eSize)
+    const items = carouselItems()
 
     // The pinned arrangement is [anchor, 186, 122, 56, anchor]: one large item,
-    // one medium, one small.
-    expect(buckets[0]).toBe('large')
-    expect(buckets).toContain('medium')
-    expect(buckets).toContain('small')
+    // one medium, one small. Each index must land in its own keyline's bucket.
+    // Asserting only that `small` appeared somewhere is what let the small keyline
+    // be misclassified as medium — the off-screen anchor supplied the `small`.
+    expect(items[0]!.dataset.m3eSize).toBe('large')
+    expect(items[1]!.dataset.m3eSize).toBe('medium')
+    expect(items[2]!.dataset.m3eSize).toBe('small')
+  })
+
+  it('normalises the bucket against the small keyline, not the anchors', () => {
+    render(pinned())
+    const item = carouselItems()[2]!
+
+    // The published range stays the port's: the source's `minItemSize` counts the
+    // anchor keylines, so it sits far below any item you can see.
+    const publishedMin = readPixels(item, '--m3e-carousel-item-min-size')!
+    const size = readPixels(item, '--m3e-carousel-item-current-size')!
+    expect(publishedMin).toBeLessThan(20)
+    expect(size).toBeGreaterThan(40)
+
+    // The bucket must still call this item small. Normalised against the anchor it
+    // would need a focal item of 310px or more to qualify, so it read as medium and
+    // content meant for medium items rendered into a 56px box.
+    expect(item.dataset.m3eSize).toBe('small')
   })
 
   it('stacks the focal item above its neighbours', () => {

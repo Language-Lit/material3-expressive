@@ -90,6 +90,19 @@
     --m3e-carousel-item-aspect: 1;
     box-sizing: border-box;
     flex: 0 0 var(--m3e-carousel-item-size);
+    /*
+     * A flex item's automatic minimum size is its content's, so a definite
+     * `flex-basis` is not on its own a guarantee: content that cannot be made
+     * narrower — a long unbroken word, anything with `white-space: nowrap` —
+     * enlarges the box past the arrangement's item size. Every offset the engine
+     * computes is derived from that size, so an item wider than it invalidates the
+     * snap offsets and the whole keyline mapping at once. The source cannot be hit
+     * this way: it measures items with the strategy's size as a fixed constraint,
+     * and content that does not fit is clipped rather than accommodated. These two
+     * lines are that constraint.
+     */
+    min-block-size: 0;
+    min-inline-size: 0;
     position: relative;
     scroll-snap-align: start;
     scroll-margin-inline-start: var(--m3e-carousel-item-snap);

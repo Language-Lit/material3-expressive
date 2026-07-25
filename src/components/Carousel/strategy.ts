@@ -67,6 +67,18 @@ export interface Strategy {
   readonly maxItemSize: number
   /** The size of an item when focal and fully unmasked. */
   readonly itemMainAxisSize: number
+  /**
+   * Web-only, and deliberately not a ported value: the smallest size a *visible*
+   * item reaches in the resting arrangement — the small keyline's size.
+   *
+   * `minItemSize` cannot serve this purpose. It is the port of the source's own
+   * computation, so it includes the **anchor** keylines, which sit off screen at
+   * around 10px. Normalising the size bucket against it puts the specification's
+   * small item, fixed at 40–56px, in the medium band at every realistic width: an
+   * item only classifies as small below `anchor + 0.1 × (focal − anchor)`, which
+   * for a 40px small item needs a focal item of 310px or more.
+   */
+  readonly smallestVisibleItemSize: number
   readonly isValid: boolean
   readonly startShiftDistance: number
   readonly endShiftDistance: number
@@ -412,6 +424,15 @@ export function createStrategy({
   const itemMainAxisSize = empty ? 0 : firstFocalKeyline(defaultKeylines).size
   const isValid = !empty && availableSpace !== 0 && itemMainAxisSize !== 0
 
+  // Taken from the resting arrangement only, so the bucket boundary does not move
+  // as the keyline list shifts and make content flicker between two states.
+  let smallestVisibleItemSize = itemMainAxisSize
+  for (const keyline of defaultKeylines.keylines) {
+    if (!keyline.isAnchor && keyline.size < smallestVisibleItemSize) {
+      smallestVisibleItemSize = keyline.size
+    }
+  }
+
   const startShiftDistance = getStartShiftDistance(startKeylineSteps, beforeContentPadding)
   const endShiftDistance = getEndShiftDistance(endKeylineSteps, afterContentPadding)
   const startShiftPoints = getStepInterpolationPoints(startShiftDistance, startKeylineSteps, true)
@@ -503,6 +524,7 @@ export function createStrategy({
     minItemSize,
     maxItemSize,
     itemMainAxisSize,
+    smallestVisibleItemSize,
     isValid,
     startShiftDistance,
     endShiftDistance,
