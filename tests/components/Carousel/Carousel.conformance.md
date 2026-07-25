@@ -237,9 +237,14 @@ grows — is a consequence of the engine rather than a breakpoint table.
 - **`userScrollEnabled` is excluded.** A scroll container cannot refuse user
   scrolling without breaking wheel, drag, and keyboard behavior the platform
   guarantees.
-- **The `CarouselItemScope` modifier trio is excluded.** `maskClip`,
-  `maskBorder`, and `rememberMaskShape` hand a Compose `Shape` back to the caller;
-  the component clips the item and the item's own border radius shapes it.
+- **The `CarouselItemScope` modifiers are excluded, but the mask shape they compute
+  is ported.** `maskClip` and `maskBorder` hand a Compose `Shape` back to the caller
+  to clip its own subtree, which item content does not need here. The shape
+  `rememberMaskShape` builds — the item shape created at the *mask rect's* size and
+  translated to its origin — is ported as `inset(... round
+  var(--m3e-comp-carousel-item-shape))`, so a masked item keeps its full corner
+  radius on all four corners. Relying on `border-radius` alone was a T50 defect: a
+  bare `inset()` cuts a sharp-cornered rectangle through it.
 - **`CarouselItemDrawInfo` becomes CSS custom properties** plus a size bucket, so
   the adaptive-content rule needs no per-frame React render.
 - **An explicit item window replaces `beyondViewportPageCount`.** Compose composes

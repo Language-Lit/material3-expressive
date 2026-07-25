@@ -111,6 +111,20 @@ describe('Carousel stylesheet contract', () => {
     expect(css).toContain('translate: var(--m3e-carousel-item-translate)')
   })
 
+  it('rounds the mask, so an item keeps its shape at every masked size', () => {
+    // `rememberMaskShape` creates the item shape at the mask rect's size and
+    // translates it to the mask's origin, so the corner radius belongs to the
+    // clipped rectangle. A bare `inset()` cuts a sharp-cornered rectangle
+    // through `border-radius` and every masked item renders square.
+    // Matched to the declaration's `;` rather than the first `)`, which belongs
+    // to the nested `var()`, not to `inset()`.
+    const masks = css.match(/clip-path: inset\([\s\S]*?\);/g) ?? []
+    expect(masks).toHaveLength(3) // inline, inline-rtl, block
+    masks.forEach((mask) => {
+      expect(mask, mask).toContain('round var(--m3e-comp-carousel-item-shape)')
+    })
+  })
+
   it('keeps the mask off the item box, so the snap area is not transformed', () => {
     // A transform is part of an element's scroll-snap area. Masking the item box
     // would move the position the browser snaps to, and mandatory snapping would

@@ -4,7 +4,7 @@
   "measuredForTask": "T48",
   "artifacts": {
     "packedPackage": {
-      "baselineBytes": 472108,
+      "baselineBytes": 472351,
       "maxBytes": 527800
     },
     "dist/index.js": {
@@ -20,9 +20,9 @@
       "maxGzipBytes": 29200
     },
     "dist/styles.css": {
-      "baselineBytes": 468064,
+      "baselineBytes": 468190,
       "maxBytes": 523900,
-      "baselineGzipBytes": 51185,
+      "baselineGzipBytes": 51190,
       "maxGzipBytes": 57400
     },
     "dist/tokens.css": {

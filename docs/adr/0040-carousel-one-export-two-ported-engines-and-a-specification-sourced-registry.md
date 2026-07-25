@@ -1,6 +1,6 @@
 # ADR 0040: Carousel as one export, two ported layout engines, and a specification-sourced token registry
 
-Status: accepted
+Status: accepted; decision 6's mask-shape claim corrected by T50 (2026-07-25)
 Date: 2026-07-25
 Task: T48
 
@@ -163,6 +163,14 @@ The `maskClip`/`maskBorder`/`rememberMaskShape` trio is excluded: all three hand
 Compose `Shape` back to the caller so it can clip its own subtree. The component
 clips the item, and the item's own border radius shapes it.
 
+> **Corrected by T50.** The last sentence was wrong, and it shipped a visible
+> defect: `clip-path: inset()` without a `round` component clips a sharp-cornered
+> rectangle straight through `border-radius`, so every *masked* item painted
+> hard-square while focal items looked correct. `rememberMaskShape` builds the item
+> shape at the mask rect's size and translates it to the mask's origin, which is
+> exactly `inset(... round var(--m3e-comp-carousel-item-shape))`. The mask shape is
+> therefore ported; only the two caller-facing modifiers remain excluded.
+
 ### 7. An explicit item window replaces `beyondViewportPageCount`
 
 The source composes `maxNonFocalVisibleItemCount` items past the viewport and no
@@ -250,7 +258,8 @@ split.
 - **`CarouselState.Saver`** — Android instance-state restoration; the web restores
   scroll position itself.
 - **`CarouselItemScope.maskClip`/`maskBorder`/`rememberMaskShape`** — see
-  decision 6.
+  decision 6. *Corrected by T50: the mask shape `rememberMaskShape` computes is
+  ported; the two caller-facing modifiers remain excluded.*
 - **`Modifier.drawDebugLines`** — a development aid that draws keylines over a
   carousel.
 - **`MultiAspectCarouselItemDrawInfo(LazyGridState)`** — a Compose grid layout;

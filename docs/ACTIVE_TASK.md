@@ -2785,3 +2785,368 @@ contrast; an arbitrary photo does not guarantee that on its own.
   `buildCommand`/`outputDirectory` at `site:build`/`site/out` correctly (T35
   fixed the last deployment break), and this task found nothing else blocking
   a deploy.
+
+---
+
+## T50 — The carousel mask discards the item shape
+
+Status: complete
+Approved: 2026-07-25 (owner report, with a screenshot and a reference to
+m3.material.io/components/carousel/overview: "our carousel has squared shapes,
+not sure if the tokens are being properly followed")
+Completed: 2026-07-25
+
+### Scope
+
+A visible T48 conformance defect, reported against the real M3 reference: focal
+items rendered with their 28dp corners, but **every masked item painted
+hard-square**. The owner's hypothesis was a token fault. It was not — the
+tokens are correct and the mask was throwing their value away.
+
+`.m3e-carousel__item-content` carries `border-radius:
+var(--m3e-comp-carousel-item-shape)` *and* `clip-path: inset(...)`. `inset()`
+takes an optional `round <border-radius>`; without it the clip is a
+sharp-cornered rectangle, and it cuts straight through the `border-radius`.
+Wherever the mask cut the box the corners were square, so a heavily masked item
+was square on all four.
+
+The source is unambiguous about the intent.
+`CarouselItemScope.rememberMaskShape` (pinned revision) builds:
+
+```kotlin
+val rect = carouselItemDrawInfo.maskRect.intersect(size.toRect())
+addOutline(shape.createOutline(rect.size, direction, density))
+translate(Offset(rect.left, rect.top))
+```
+
+The item shape is created **at the mask rect's size** and translated to the
+mask's origin — so a masked item is a rounded rectangle *of the clipped size*,
+carrying its full corner radius on all four corners. The corners travel with
+the mask instead of being sliced off by it. `inset(<insets> round <radius>)` is
+exactly that, and `Modifier.clip(Outline.Rectangle(maskRect))` in `Carousel.kt`
+is only the outer layer clip; the rounding belongs to the content's mask shape,
+which is the part this stylesheet had not expressed.
+
+Tokens verified rather than assumed: `item-shape` is registered as a `$ref` to
+`sys.shape.corners.cornerExtraLarge`, and the emitted CSS resolves
+`--m3e-comp-carousel-item-shape` → `--m3e-sys-shape-corner-extra-large` →
+`28px`, matching the specification's 28dp item corner. No token changed.
+
+### Expected files
+
+- Modified: `src/components/Carousel/Carousel.css` (add `round` to all three
+  mask declarations — inline, inline-RTL, and block — plus the comment
+  recording why the mask is rounded),
+  `tests/components/Carousel/Carousel.css.test.ts` (new contract test),
+  `scripts/audit-rendering.mjs` (new real-browser mask-shape probe),
+  `docs/bundle-budgets.json` (baselines only).
+- No token, TypeScript, or public-surface change: the shape was always
+  registered and always correct.
+
+### Acceptance checks
+
+- All three mask declarations carry `round var(--m3e-comp-carousel-item-shape)`,
+  asserted per declaration rather than once for the file.
+- The rendering audit fails when the `round` component is withdrawn from the
+  built stylesheet, and passes when it is restored.
+- `npm run verify` passes all 14 gates.
+
+### Completion evidence
+
+- `npm run verify`: 14/14 gates, **225 test files / 1,619 tests** (one added).
+- The CSS contract test matches to each declaration's `;` rather than the first
+  `)` — the first `)` closes the nested `var()`, and an earlier draft of the
+  test passed vacuously against a truncated match until that was corrected.
+- The audit probe reads the **computed** `clip-path`, so a theme whose shape
+  role fails to resolve fails the probe too, not only a missing keyword. Proven
+  non-vacuous by withdrawing `round` from all three declarations in
+  `playground/dist/assets/*.css` and re-running: it reported `Carousel mask
+  shape: a masked item clips with no round component: inset(0px 1.33333px)`,
+  and restoring returned the audit to green.
+- `npm run audit:rendering` passes clean against the fixed build.
+- Bundle: `dist/styles.css` 468,064 → **468,190** bytes (51,185 → 51,190
+  gzipped) and the packed tarball 472,108 → **472,351**, all far inside
+  unchanged ceilings. Baselines updated; no ceiling moved.
+- Screenshotted narrow + dark, framed as the owner's report was: every masked
+  item now carries its full corner radius.
+
+### Not done
+
+- **The motion physics gap is untouched and still open.** Investigated in the
+  same session and measured, so it is not re-litigated later: `scroll-snap-stop:
+  always` — the only native CSS counterpart to
+  `singleAdvanceFlingBehavior`'s `PagerSnapDistance.atMost(1)` — does **not**
+  work. Measured in real Chromium: discrete wheel 3.01 items with and without
+  it (no effect), CDP mouse gesture likewise, CDP touch fling only 5.19 → 4.00
+  (not 1). A JS spring prototype (K=400, critically damped, own float state
+  because `scrollLeft` is integer-quantized and stalls an integrator that reads
+  it back) reproduced it exactly: 1.000 items per fling, 0.0000px settle error,
+  zero overshoot, zero reversals. Adopting it is an ADR-level decision — it
+  trades native compositor scrolling and adds wheel interception — and awaits
+  owner direction.
+- Separately measured and **cleared**: the mask itself is fluid. One native snap
+  animation ran 41 frames/339ms with 0 frames over 20ms, the mask updating on
+  35 of them, and fully-onscreen painted-width changing a median 2.04px/frame;
+  `--m3e-carousel-item-size` and every `offsetWidth` stayed constant, so
+  `layoutPass()` is correctly not running per frame. The residual "snapping"
+  feel is the UA smooth-scroll ease-out front-loading movement (40px in the
+  first frame, tapering to sub-pixel), not a paint or geometry defect.
+
+---
+
+## T51 — Porting the settle: attempted, reverted
+
+Status: reverted
+Approved: 2026-07-25 (owner, after three rounds on the motion: "More than the one
+at a time thing, what worries me is that the animation is snapping, not fluid…
+Maybe the original implementation has answers." Scope proposed as wheel-only on
+the inline snapping layouts and approved: "Yes, let's go.")
+Reverted: 2026-07-25 (owner, on trying it: "Feels terrible. The previous version
+felt much better. It was just stuttering.")
+
+### What was built
+
+`multiBrowse`, `hero`, and `centeredHero` with `scroll="snap"` intercepted `wheel`
+and animated the scroll offset with the source's own settle spec — a closed-form
+mass-1 critically damped spring at `Spring.StiffnessMediumLow`. It met every
+acceptance check it was given: measured in Chromium, one flick advanced **1.00**
+keylines against ~4.2 with native snapping, landing within 1px, with zero
+overshoot and zero direction reversals over 26 frames / ~276ms. The audit probe was
+proven non-vacuous in both directions.
+
+### Why it was reverted anyway
+
+The metric was right and the premise was wrong. `singleAdvanceFlingBehavior`
+governs the **ballistic phase** of a touch gesture — what happens after the finger
+leaves. The direct-manipulation phase before it still tracks the finger 1:1.
+Intercepting `wheel` replaced *both* phases with a discrete one-item advance, and a
+Mac trackpad's two-finger swipe is a continuous gesture, not a fling: calling
+`preventDefault()` on it meant the content no longer followed the fingers at all.
+Momentum events after the swipe then fell inside the 140ms flick latch and did
+nothing. The result was a carousel that could not be scrubbed — accurate
+single-advance, and worse to use than the browser's overshoot.
+
+No amount of tuning the quiet-gap window fixes that, because the defect is
+categorical: the gesture being intercepted is not the gesture the source's fling
+behavior describes.
+
+### What was kept
+
+Nothing from the settle. The T50 mask-shape fix is independent and stays.
+
+The measurements are kept in ADR 0040's decision-4 record and in
+`Carousel.conformance.md` rather than being discarded, because they are what makes
+the deviation defensible rather than assumed:
+
+- `scroll-snap-stop: always` — the only native CSS property expressing "do not pass
+  a snap point" — **does not work**: discrete wheel 3.01 items with and without it,
+  synthesised mouse gesture the same, synthesised touch fling only 5.19 → 4.00
+  rather than 1.
+- No CSS controls the snap settle's curve or duration; `scroll-behavior` governs
+  only programmatic and keyboard scrolls.
+- The snap *decision* is already conformant: a no-fling drag released at 35% of an
+  item yanks back to 0 and at 65% forward to the next keyline, and that 50%
+  threshold is the source's own `snapPositionalThreshold = 0.5f` default.
+- The mask is not the problem: a 1px-resolution sweep with snapping disabled found
+  **zero visible discontinuities** across the three layouts, per-pixel painted-width
+  change median 0.17–0.94 and max 2.2, with `--m3e-carousel-item-size` and every
+  `offsetWidth` constant throughout.
+
+### What is still open
+
+The owner's remaining complaint — "it was just stuttering" — is untouched by any of
+this and is the actual defect worth chasing. It is a frame-cost question, not a
+physics one, and it is unproven which of these is responsible:
+
+- Per-frame `clip-path` animation is a main-thread repaint, not a compositor
+  operation, and T49 replaced cheap CSS gradients with 1280×1280 WebP photos that
+  are displayed at roughly 186–820px wide. That is a large over-decode being
+  repainted every frame.
+- The mask trails the scroll offset by one frame, because `paint()` is scheduled
+  from the scroll event rather than computed with the offset that produced it.
+
+Neither has been measured under a CPU throttle, which is what would tell them
+apart. A profile comes before a fix this time.
+
+---
+
+## T52 — The demo stage was twice Material's carousel width
+
+Status: complete, then **withdrawn by T53** — the cap it added has been removed.
+Its measurements stand; its premise that Material's arrangements are phone-width
+patterns does not. Read T53 before acting on anything below.
+Approved: 2026-07-25 (owner, after localising the motion defect themselves:
+"After half, there's a different animation where the frame closes. This seems to
+be autonomous from the first sliding animation. So 2 different animations don't
+feel smooth, like, cohese." Then: "Let's try the fix.")
+Completed: 2026-07-25
+
+### Scope
+
+The motion complaint that survived T50 and outlasted the reverted T51 was not in
+the engine at all. It was the width the demo gave the component.
+
+The source computes an item's mask from `interpolatedKeyline.size` and its
+translation from `interpolatedKeyline.offset - unadjustedCenter`, `lerp`-ing
+between **adjacent** keylines. So whenever two neighbouring keylines share a
+size, the mask rate is exactly zero across that whole stretch: the item slides
+without resizing, and the frame closes only once the next pair differs. That is
+the "two autonomous animations" the owner described, and it is a property of the
+arrangement, not of the port.
+
+Which arrangement you get depends entirely on the width. Measured from the ported
+strategy, multi-browse with a 186px preferred item and 8px spacing:
+
+| container | keyline sizes | consecutive same-size keylines |
+| --- | --- | --- |
+| 360px | `10, 186, 118, 40, 10` | 1 |
+| 380px (the pinned `MultiBrowseTest` fixture) | `10, 186, 122, 56, 10` | 1 |
+| 400px | `10, 187, 141, 56, 10` | 1 |
+| 416px | `10, 180, 180, 40, 10` | **2** |
+| 912px (what the demo stage was) | `10, 183, 183, 183, 183, 99, 40, 10` | **4** |
+
+At 912px four keylines shared the focal size, so an item crossed all four without
+resizing at all. Material's arrangements are phone-width patterns; the stage was
+more than twice that. 400px is the widest arrangement that still resizes
+continuously — at 416px a second large item fits and the flat stretch returns.
+
+### Expected files
+
+- Modified: `playground/src/playground.css` — one `max-inline-size` on
+  `.carousel-example .m3e-carousel`, with the measurement recorded as the reason.
+- No library, token, test, or documentation change: nothing about the component
+  was wrong.
+
+### Acceptance checks
+
+- No stretch of scroll over which a visible item holds a constant size.
+- The multi-browse row shows the specification's arrangement — one large item,
+  then progressively smaller previews — rather than four equal large items.
+- `npm run verify` passes; the package bundle is untouched, because the
+  playground's stylesheet is not part of `dist`.
+
+### Completion evidence
+
+- Measured against `--m3e-carousel-item-current-size`, which is the hook's own
+  write of `interpolatedKeyline.size`, so the probe reads the source's quantity
+  rather than inferring it from painted geometry. Longest run of scroll over which
+  a visible item does not resize: **572px → 1px**, i.e. **58% of the scroll range
+  → 0%**.
+- `npm run verify`: 14/14 gates, 225 files / 1,619 tests. Bundle budgets
+  unchanged and `dist/index.js` byte-identical at 474,137 — the stylesheet lives
+  in the playground, which `files` does not ship.
+- `npm run audit:rendering` passes; `npm run site:build` generates all 58 routes.
+  `site/ui/DemoFrame.tsx` imports this stylesheet directly, so the site gets the
+  same stage.
+- Screenshotted: the multi-browse row now reads as one large item, a medium, and a
+  small peeking, which is the reference arrangement.
+
+### Not done
+
+- **The library is unchanged, deliberately.** Four large items at 912px is a legal
+  output of the multi-browse algorithm, and clamping the component's width would
+  be this library inventing a constraint the specification does not state. The cap
+  belongs to the demo, which is what claims to show Material's carousel.
+- A medium item's caption is cropped by the mask (`2020` renders as `020`) because
+  the caption is laid out in the full-width content box while the mask crops
+  symmetrically about the centre. Pre-existing, and worse before this change than
+  after. The fix is a demo one — pad the caption by
+  `var(--m3e-carousel-item-inset-start)`, which is exactly what that custom
+  property is exposed for — and it is left for a separately approved change rather
+  than folded in here.
+
+## T53 — Withdrawing the demo width cap: multi-browse is not a phone-only pattern
+
+Status: complete
+Approved: 2026-07-25 (owner, challenging T52's premise with the responsive
+passage from `m3.material.io/components/carousel/guidelines`, then setting the
+criterion: "We just need to make sure we're doing the most faithful we can.")
+Completed: 2026-07-25
+
+### Scope
+
+T52 removed a felt motion defect by capping the demo stage at 400px. The
+measurement behind it was sound; the reason attached to it was not. T52's comment
+claimed "Material's arrangements are phone-width patterns", and the specification
+says the opposite: the guidelines place the compact class at window widths under
+600dp, expect up to three items there, and state that as the window grows more
+items are added. A fixed 400px cap forces the compact arrangement at every window
+size, so it contradicts a sourced behavior in order to hide one that is specified.
+
+The flat stretch T52 measured is therefore not a defect at any width. Sweeping the
+ported arrangement across breakpoints × preferred widths shows the same-size run
+grows with the container for **every** preferred width — 2 identical larges at
+840px even with a 400px preferred item, 3 at 1200px. There is no configuration
+that removes it. A stable browse region with the resizing at the trailing edge is
+what multi-browse is.
+
+What was genuinely wrong in the demo was subtler and is a real specification gap:
+`preferredItemWidth` is the layout's only responsive lever, the demo pins it at
+`186` — Compose's phone sample value — at every width, and the guidelines ask a
+growing window to both add items *and* scale them up. Only the first falls out of
+the algorithm. Measured at 912px: `186` yields 6 items with 4 identical larges,
+while a breakpoint-appropriate 320px yields 4 items with 2. So the harshness the
+owner felt was real and demo-caused, via under-scaled items rather than width.
+
+No ramp is invented here. The first-party Compose documentation hard-codes
+`preferredItemWidth = 186.dp` with no adaptive scaling and offers no guidance for
+choosing values, so any per-breakpoint table would be this repository's taste
+presented as specification. The faithful move is to remove the unfaithful cap,
+keep the sourced value, and document the lever and its consequence.
+
+### Expected files
+
+- Modified: `playground/src/playground.css` — the `max-inline-size` removed, and
+  the comment rewritten to record why a cap is wrong rather than why 400px was
+  right.
+- Modified: `docs/components/Carousel.md` — `preferredItemWidth` documented as the
+  responsive lever, including that the algorithm adds items but does not scale
+  them, and that more than one large item means an item crosses keylines without
+  resizing by design.
+- No library, token, or test change: the engine was never implicated.
+
+### Acceptance checks
+
+- Compact windows (under 600dp) show at most three items.
+- The item count grows with the window rather than saturating at a cap.
+- `npm run verify`, `npm run audit:rendering`, and `npm run site:build` pass.
+
+### Completion evidence
+
+- Real-browser probe at eight viewport widths against the built demo, reading
+  `--m3e-carousel-item-current-size` and clipping each item against the
+  scrollport:
+
+  | viewport | stage | items visible | keyline sizes |
+  | --- | --- | --- | --- |
+  | 380px | 252px | 2 | `180, 48` |
+  | 500px | 372px | 3 | `181, 116, 44` |
+  | 599px | 471px | 3 | `194, 194, 51` |
+  | 720px | 592px | 4 | `183, 183, 133, 52` |
+  | 840px | 712px | 5 | `178, 178, 178, 95, 37` |
+  | 1000px | 872px | 6 | `172, 172, 172, 172, 93, 37` |
+  | 1280px | 912px | 6 | `181, 181, 181, 181, 97, 37` |
+  | 1600px | 912px | 6 | `181, 181, 181, 181, 97, 37` |
+
+  Compact windows show 2, 3, 3 — within the specified three. The count grows 2 → 6.
+  The stage saturates at 912px because the page column does, not the component.
+- The probe's first run reported a false failure — 4 items at a 592px stage — by
+  classifying the size class from the stage width. The class is a property of the
+  **window**; a 592px stage inside a 720px window is medium, not compact. Fixed in
+  the probe, not in the demo.
+- `npm run verify`: 14/14 gates. `npm run audit:rendering` passes.
+  `npm run site:build` generates every route.
+- Screenshotted at 1280px: four large items, one medium, one small peeking, with
+  the medium item correctly dropping its caption via the adaptive-content rule.
+
+### Not done
+
+- **No per-breakpoint `preferredItemWidth` ramp**, in the demo or the library. It
+  would be unsourced invention, and the library requiring the prop matches Compose
+  requiring it. The documentation now tells an application how to drive it.
+- The stable browse region remains at expanded widths and will still read as two
+  phases of motion. That is now a documented specified behavior rather than an
+  open defect. If it is to be avoided in the demo, that is a presentation decision
+  to take knowingly, not a fix.
+- The medium item's cropped caption (T52's second "Not done") is unchanged and
+  still awaits a separately approved demo change.

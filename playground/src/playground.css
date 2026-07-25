@@ -730,6 +730,17 @@
 /*
  * A carousel takes its cross-axis size from its container, and the multi-aspect
  * layout derives each item's width from that size and the item's ratio.
+ *
+ * Deliberately no inline cap. An earlier revision capped this stage at 400px,
+ * the widest multi-browse arrangement in which every adjacent keyline differs in
+ * size — wider than that an item crosses two or more keylines at *identical*
+ * size, so it slides without resizing before its frame closes. That reads as two
+ * animations rather than one, but it is the specified behavior, not a defect: the
+ * guidelines put compact at window widths under 600dp and say that as the window
+ * grows, more items are added. A fixed cap forces the compact arrangement at
+ * every window size, which contradicts both. The stage is left fluid so it
+ * follows `--site-max` down to compact and up to expanded, and the arrangement
+ * changes with it the way the specification describes.
  */
 .carousel-example .m3e-carousel {
   block-size: 13rem;

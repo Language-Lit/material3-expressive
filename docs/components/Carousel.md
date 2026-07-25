@@ -58,6 +58,24 @@ items first, then medium ones, and only then the large width, so a whole number 
 items fits the container. `minSmallItemWidth` and `maxSmallItemWidth` bound the
 small item and default to the specified 40–56px range.
 
+It is also the layout's only responsive lever, and it is yours to move. The
+arrangement adds items as the container grows — at a fixed `186` it fits three
+items at compact widths and eight at 1440px — but it does not grow the items
+themselves. Material's guidelines put compact at window widths under 600dp, expect
+up to three items there, and expect a growing window to both add items *and* scale
+them up. Only the first of those falls out of the algorithm, so raise
+`preferredItemWidth` at wider breakpoints if you want the second. The prop is a
+plain number, so a window-size-class hook or a `ResizeObserver` is enough to drive
+it. There is no specified ramp to copy: the first-party Compose sample hard-codes
+186dp at every window size, which is why the examples here do the same.
+
+One consequence is worth expecting rather than debugging. Whenever the arrangement
+fits more than one large item, those keylines share a size, so an item crosses them
+without resizing and only closes into its frame at the trailing edge. That is the
+arrangement working as specified — the browse region is stable and the resizing
+happens at the edges — and it is why a wide multi-browse carousel does not animate
+like a narrow one.
+
 `scroll` chooses between the specification's two named behaviors and defaults to
 the one it recommends for the layout: `"snap"` everywhere except the two
 uncontained layouts, which default to `"free"`. The full-screen layout requires

@@ -130,6 +130,14 @@
    * translation that pins masked edges together. `clip-path` is applied in this
    * element's own coordinate space before its transform, so the two compose the
    * way the source's layer clip and translation do.
+   *
+   * The mask is rounded, not a bare rectangle. `CarouselItemScope`'s
+   * `rememberMaskShape` builds the item shape at the *mask rect's* size and
+   * translates it to the mask's origin, so a masked item is a rounded rectangle
+   * of the clipped size with its full corner radius on all four corners — the
+   * corners travel with the mask rather than being sliced off by it. `inset()`
+   * without `round` clips a sharp-cornered rectangle straight through
+   * `border-radius`, which left every masked item hard-square.
    */
   .m3e-carousel__item-content {
     background: none;
@@ -154,6 +162,7 @@
   .m3e-carousel__item[data-m3e-axis="inline"] > .m3e-carousel__item-content {
     clip-path: inset(
       0 var(--m3e-carousel-item-inset-end) 0 var(--m3e-carousel-item-inset-start)
+        round var(--m3e-comp-carousel-item-shape)
     );
     translate: var(--m3e-carousel-item-translate);
   }
@@ -162,6 +171,7 @@
   .m3e-carousel__item[data-m3e-axis="inline"]:dir(rtl) > .m3e-carousel__item-content {
     clip-path: inset(
       0 var(--m3e-carousel-item-inset-start) 0 var(--m3e-carousel-item-inset-end)
+        round var(--m3e-comp-carousel-item-shape)
     );
     translate: calc(-1 * var(--m3e-carousel-item-translate));
   }
@@ -169,6 +179,7 @@
   .m3e-carousel__item[data-m3e-axis="block"] > .m3e-carousel__item-content {
     clip-path: inset(
       var(--m3e-carousel-item-inset-start) 0 var(--m3e-carousel-item-inset-end) 0
+        round var(--m3e-comp-carousel-item-shape)
     );
     translate: 0 var(--m3e-carousel-item-translate);
   }

@@ -1781,6 +1781,49 @@ const carouselAdaptiveContent = await page.evaluate(() => {
 
 for (const finding of carouselAdaptiveContent) findings.push(`Carousel adaptive content: ${finding}`)
 
+// `rememberMaskShape` builds the item shape at the mask rect's size, so a masked
+// item is a rounded rectangle of the clipped size — its corners travel with the
+// mask instead of being sliced off by it. A bare `inset()` cuts a sharp-cornered
+// rectangle through `border-radius` and every masked item paints hard-square,
+// which no jsdom test can see: this reads the *computed* clip, so a theme whose
+// shape role fails to resolve fails here too, not only a missing `round` keyword.
+const carouselMaskShape = await page.evaluate(() => {
+  const results = []
+  const carousel = document.querySelector('.m3e-carousel[data-example-layout="multiBrowse"]')
+  if (!carousel) {
+    results.push('no multi-browse carousel rendered; the mask-shape probe is vacuous')
+    return results
+  }
+  let masked = 0
+  for (const item of carousel.querySelectorAll('.m3e-carousel__item')) {
+    const content = item.querySelector('.m3e-carousel__item-content')
+    if (!content) continue
+    const clip = getComputedStyle(content).clipPath
+    if (!clip || clip === 'none' || !clip.startsWith('inset(')) continue
+    // Only items the mask actually cuts prove anything about the mask's corners.
+    const insets = [...clip.matchAll(/(-?[\d.]+)px/g)].map((m) => Number.parseFloat(m[1]))
+    const round = clip.includes('round') ? clip.slice(clip.indexOf('round')) : null
+    const cut = insets.slice(0, 4).some((value) => value > 0.5)
+    if (!cut) continue
+    masked += 1
+    if (round === null) {
+      results.push(`a masked item clips with no round component: ${clip}`)
+      break
+    }
+    const radii = [...round.matchAll(/([\d.]+)px/g)].map((m) => Number.parseFloat(m[1]))
+    if (radii.length === 0 || radii.every((r) => r <= 0.5)) {
+      results.push(`a masked item's mask has no corner radius: ${clip}`)
+      break
+    }
+  }
+  if (masked === 0) {
+    results.push('no item was masked; the mask-shape probe is vacuous')
+  }
+  return results
+})
+
+for (const finding of carouselMaskShape) findings.push(`Carousel mask shape: ${finding}`)
+
 
 await browser.close()
 server.close()
