@@ -1,9 +1,12 @@
 # Release notes
 
-## Unreleased
+## 1.2.0 — 2026-07-26
 
-Status: additive post-`1.1.0` work; publication requires a separately approved
-release task.
+Status: prepared minor release. Additive only — seven new conformant families
+lifting the matrix from the published `1.1.0` count of 34 to 41, plus one
+provenance correction to an existing component's token value. No existing
+export, prop, token name, dependency, or export-map path is removed or
+renamed. A consumer on `1.1.0` upgrades without edits.
 
 ### Added
 
@@ -43,6 +46,66 @@ release task.
   end-side label, because `NavigationDrawerItem`'s own `badge` is a different
   affordance: a trailing count in the item's text color rather than the
   error-colored pill.
+- **`BottomSheet`.** The first composite of tranche C, ported from AndroidX
+  `BottomSheet.kt`, `ModalBottomSheet.kt`, and `SheetDefaults.kt` at the pinned
+  revision `a90df2fc27e026b9ad2ed569f203a260c1041fab` (ADR 0037; T45). Upstream
+  splits the family across three public composables that do not partition by
+  "sheet" versus "not sheet", so a `variant` prop selects the inline surface or
+  the modal one — scrim, focus containment, outside-click and back-press
+  dismissal follow the variant rather than a second component. Dragging is
+  handle-only, matching the source's own gesture ownership. `BottomSheetScaffold`
+  is documented as a recipe over `AppBar` and this component instead of shipping
+  as an app-shell export. New exports: `BottomSheet`, `BottomSheetProps`,
+  `BottomSheetState`, `BottomSheetVariant`.
+- **`AppBar`.** One export across the source's six top-bar composables, ported
+  from `AppBar.kt` at the same pinned revision (ADR 0038; T46). `size` selects
+  the small/medium/large ladder and its two-row forms; `titleAlignment` covers
+  the centered specimen. Compose's `NestedScrollConnection` scroll behaviors have
+  no web equivalent, so `scrollBehavior` is rebuilt on web-native primitives —
+  `position: sticky` for the pinned case, scroll position of a named container
+  for the collapsing ones — preserving the sourced color and height matrix
+  without a nested-scroll protocol. The catalog row splits three ways: bottom
+  bars are excluded (the design catalog moved them to Toolbars, and
+  `FlexibleBottomAppBar` already reads `DockedToolbarTokens`), and the search
+  app bar ships with the Search family, whose source it actually comes from. New
+  exports: `AppBar`, `AppBarProps`, `AppBarScrollBehavior`, `AppBarSize`,
+  `AppBarTitleAlignment`.
+- **`SearchBar` and `SearchAppBar`.** Two exports for the design's two axes,
+  ported from `SearchBar.kt` at the same pinned revision (ADR 0039; T47). The
+  source's six current composables collapse onto `appearance` (contained or
+  divided) and `layout` (docked or full-screen); upstream renders the expanded
+  search in a `Dialog` or `Popup`, which is not portable, but its structure is —
+  the expanded surface owns its own field and the collapsed bar sits behind it.
+  `layout` defaults to adaptive so the docked and full-screen forms are chosen by
+  viewport rather than hardcoded. `SearchAppBar` is the app-bar-chrome form that
+  borrows `AppBarTokens` colors while composing no top app bar. New exports:
+  `SearchBar`, `SearchBarAppearance`, `SearchBarLayout`, `SearchBarProps`,
+  `SearchAppBar`, `SearchAppBarProps`, `SearchAppBarScrollBehavior`.
+- **`Carousel`.** One export over the source's three public composables, ported
+  from the nineteen pinned carousel files at the same revision (ADR 0040; T48,
+  with decision 6 corrected by T50, T54, and T55). All three upstream
+  composables delegate to one internal `Carousel`, differing only by keyline
+  list and visible-item count, so `layout` selects among them; the separate
+  aspect-ratio engine is ported alongside the keyline engine, which is why
+  `MultiAspectCarouselItem` exists as a distinct item type. The token registry is
+  sourced from the specification where the generated token file has no
+  equivalent. Mask shape, item size buckets, and adaptive content fading were
+  each corrected against real-Chromium behavior after the initial port. New
+  exports: `Carousel`, `CarouselItem`, `CarouselLayout`, `CarouselProps`,
+  `CarouselScroll`, `MultiAspectCarouselItem`.
+
+### Changed
+
+- **The primitive tranche shares one upstream snapshot.** The fifteen primitive
+  families were pinned across three scattered revision groups. Each family's
+  pinned source, token, and test files were re-fetched at the family's own
+  revision, at the reference snapshot
+  `a90df2fc27e026b9ad2ed569f203a260c1041fab`, and at `androidx-main` HEAD, then
+  compared (ADR 0036; T44). For every primitive file examined the reference
+  snapshot equals HEAD, so the tranche is verified current and now describes one
+  comparable snapshot. This adds no component and changes no rendered output;
+  it is a provenance change to the source ledgers. The four composites above
+  extend the same snapshot, so tranche C is pinned consistently with tranche P.
 
 ### Fixed
 

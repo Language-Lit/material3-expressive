@@ -1,32 +1,66 @@
 # Release-readiness audit
 
-## Unreleased T40 working tree — 2026-07-24
+## 1.2.0 — 2026-07-26
 
-Audit date: 2026-07-24
+Audit date: 2026-07-26  
+Release: `@language-lit/material3-expressive@1.2.0`  
+Rollback: `@language-lit/material3-expressive@0.3.0` (tag `v0.3.0`)  
+Registry publication: not performed at the time of this audit; publication, the
+`v1.2.0` tag, and any dist-tag change remain a separate owner-approved step
+outside it.
 
-Working package version: `@language-lit/material3-expressive@1.1.0`
+This audit supersedes the T40 working-tree snapshot it replaces, which described
+a 35-component tree that tranches P and C have since moved past.
 
-Registry publication: not performed; publication requires a separate task.
+### Recommendation
 
-`ListItem` and `SegmentedListItem` add one inventory family and two named
-component exports. The matrix rises from the published `1.1.0` count of 34 to
-35. The package export paths, runtime dependencies, and peer dependencies do
-not change.
+**GO for a separately owner-approved `1.2.0` release.** This is a *minor*, not a
+patch: it adds public API rather than repairing an identical surface. Seven
+conformant families join the package since `1.1.0` — `ListItem`/
+`SegmentedListItem` (T40), `Divider` (T42), `Badge`/`BadgeAnchor` (T43),
+`BottomSheet` (T45), `AppBar` (T46), `SearchBar`/`SearchAppBar` (T47), and
+`Carousel` (T48) — lifting the matrix from the published `1.1.0` count of 34 to
+41. The four composites close tranche C's first four catalog rows on the same
+pinned upstream snapshot the T44 primitive refresh unified
+(`a90df2fc27e026b9ad2ed569f203a260c1041fab`).
 
-### Verification
+Every addition is backward compatible. The package export paths, runtime
+dependency count (zero), and peer dependencies do not change; no existing
+export, prop, or token name is removed or renamed, so a consumer on `1.1.0`
+upgrades without edits. One rendered value changes: `Tabs` draws its divider
+from `outlineVariant` rather than `surfaceVariant`, correcting a generated role
+the pinned `TabRow.kt` never reads (ADR 0034). Both are low-emphasis outline
+roles and the custom-property names are unchanged, so no theming surface moved.
 
-| Gate | Result |
-| --- | --- |
-| Unit, interaction, accessibility, SSR, hydration, CSS, theme, source ledger | Pass: 183 files, 1,096 tests |
-| Architecture and documentation | Pass: 35 conformant inventory entries/pages |
-| Tokens and CSS | Pass: 1,691 resolved custom properties; 38 stylesheets |
-| Release artifact and rollback | Pass: 35 components; `1.1.0` working identity and `v0.3.0` rollback |
-| Bundle budgets | Pass: 366,647-byte packed package within the existing 395,000-byte ceiling; every artifact green |
-| Documentation site | Pass: 35 conformant components and 34 demos |
-| Real-Chromium rendering audit | Pass: List Item line heights, spacing, input coverage, segmented gaps/corners, plus existing clip/target/Chip/Slider probes |
+### Automated verification
 
-`npm run verify` passes all 13 gates, including the Vite and Next.js packed
-consumer builds. No registry or remote-release claim is made.
+Run against the `1.2.0` working tree on 2026-07-26.
+
+| Gate | Command | Result |
+| --- | --- | --- |
+| Aggregate verification | `npm run verify` | Pass: 14 gates |
+| Typecheck source and playground examples | aggregate gates | Pass |
+| Unit, interaction, accessibility, SSR, hydration, CSS, theme, source ledger | `npm run test` (inside aggregate) | Pass: 225 files, 1,624 tests |
+| Architecture | `npm run check:architecture` (inside aggregate) | Pass: 41 inventory entries; 41 conformant |
+| Documentation | `npm run check:docs` (inside aggregate) | Pass: 41 conformant component pages; package `1.2.0` |
+| CSS boundary | `npm run check:styles` (inside aggregate) | Pass: 44 stylesheets |
+| Token contract | `npm run check:tokens` (inside aggregate) | Pass: 1,783 generated custom properties |
+| Release artifact and rollback | `npm run check:release` (inside aggregate) | Pass: 41 components; `1.2.0` identity and `v0.3.0` rollback verified |
+| Bundle budgets | `npm run check:bundle-size` (inside aggregate) | Pass: 475,038-byte packed package within the T48-measured 527,800-byte ceiling; every artifact green |
+| Packed consumers | `npm run check:consumer-fixtures` (inside aggregate) | Pass: Vite and Next SSR/static against the 475,038-byte packed tarball |
+| Documentation site structure | `npm run check:site` (inside aggregate) | Pass: 41 conformant components, 40 demos, export map respected |
+| Real-Chromium rendering audit | `npm run audit:rendering` (outside aggregate) | Pass: no clipped elevation shadows or undersized interactive targets outside the recorded exemptions, and no source-geometry defects across the Chip, List Item, Slider, Divider, Badge, Bottom Sheet, App Bar, Search, and Carousel probes |
+
+### Remaining boundaries
+
+- The rendering audit (`npm run audit:rendering`) needs a real Chromium and is
+  not part of `npm run verify`. It was run for this audit against Chrome for
+  Testing 1228 via `M3E_CHROMIUM_PATH`. Note that the script exits 0 with a
+  skip notice when that variable is unset, so an exit code alone does not
+  establish that the probes ran; the pass line naming the probed families does.
+- Publication is not performed by this audit. The `v1.2.0` tag, the registry
+  push, and any dist-tag change remain owner-approved steps outside it, so no
+  registry or remote-release claim is made here.
 
 ## 1.1.0 — 2026-07-23
 
