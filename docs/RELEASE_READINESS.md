@@ -5,9 +5,19 @@
 Audit date: 2026-07-26  
 Release: `@language-lit/material3-expressive@1.2.0`  
 Rollback: `@language-lit/material3-expressive@0.3.0` (tag `v0.3.0`)  
-Registry publication: not performed at the time of this audit; publication, the
-`v1.2.0` tag, and any dist-tag change remain a separate owner-approved step
-outside it.
+Registry publication: not performed at the time of this audit; published
+2026-07-26 (`2026-07-25T16:58:46Z`) from commit `476259c` and confirmed as
+`latest`. The registry now holds `1.0.0-next.0`, `1.0.0`, `1.0.2`, `1.0.3`,
+`1.1.0`, and `1.2.0`. The published tarball's shasum is
+`bf3ef69d2e238c8412e16474a737d50f8b1af15b` across 21 files, matching a local
+`npm pack` of the audited tree byte for byte, so the artifact the registry
+serves is the one the gates below verified.
+
+The `v1.2.0` tag points at `5f08395`, one commit past the `gitHead` npm
+recorded. That commit bumps `package-lock.json` from `1.1.0` to `1.2.0`, which
+`476259c` missed; the lockfile is outside the packed `files` list, which the
+matching shasum confirms. The tag was left where it is rather than moved,
+because it is already pushed and the published bytes are unaffected.
 
 This audit supersedes the T40 working-tree snapshot it replaces, which described
 a 35-component tree that tranches P and C have since moved past.
@@ -58,9 +68,9 @@ Run against the `1.2.0` working tree on 2026-07-26.
   Testing 1228 via `M3E_CHROMIUM_PATH`. Note that the script exits 0 with a
   skip notice when that variable is unset, so an exit code alone does not
   establish that the probes ran; the pass line naming the probed families does.
-- Publication is not performed by this audit. The `v1.2.0` tag, the registry
-  push, and any dist-tag change remain owner-approved steps outside it, so no
-  registry or remote-release claim is made here.
+- Publication was performed outside this audit, after the gates above ran. The
+  registry claim recorded at the top of this section rests on the shasum
+  comparison, not on the publish command's own output.
 
 ## 1.1.0 — 2026-07-23
 
