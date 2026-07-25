@@ -2689,3 +2689,99 @@ is removed or renamed. Publication is a separate task.
   now has Date pickers, Side sheets, and Time pickers left.
 - Publication remains outside T48. The working package stays `1.1.0`; a version
   and registry action require a separately approved release task.
+
+---
+
+## T49 — Real stock photography for the Carousel demo
+
+Status: complete
+Approved: 2026-07-25 (owner request: prepare the documentation site for
+deploy, using stock images for the carousel demo instead of the placeholders)
+Completed: 2026-07-25
+
+### Scope
+
+`playground/examples/Carousel.example.tsx` is the single example both the
+playground and the documentation site render (`site/ui/DemoFrame.tsx` imports
+`playground/src/playground.css` directly, and `site/demos/registry.tsx`
+imports the example itself, so the two never diverge). Its item content was a
+deterministic CSS gradient per "album", chosen so the rendering audit needed
+no network asset. A gradient reads as a placeholder on a public site; the
+carousel is the one component whose whole point is showing photographic
+content, so this task replaces the ten gradients with ten real photographs.
+
+The network-asset constraint stays intact rather than being dropped: the
+photos are downloaded once (Unsplash-licensed, via Picsum, free for commercial
+use, no attribution required, redistribution permitted) and committed as local
+`.webp` files, not hotlinked. The example still renders with no runtime
+network request, so `npm run audit:rendering` measures the same pixels on
+every run exactly as before.
+
+Both build tools need the same files at the same URL, so the images are
+duplicated under `playground/public/images/carousel/` (served by Vite at
+`/images/carousel/*`) and `site/public/images/carousel/` (served by Next's
+static export at the same path) rather than imported as bundler-specific
+asset modules — a plain `<img src="/images/carousel/<name>.webp">` resolves
+identically in both, with no asset-import type declarations or bundler-loader
+differences to keep in sync.
+
+Each photo was hand-picked from Picsum's catalog to loosely match its existing
+fictional "album" title (`Coastal Static` → a misty rocky coastline, `Winter
+Sessions` → a snowed-in rooftop skyline, `Last Train` → a tunnel underpass,
+and so on) so the demo still reads as a coherent set, not ten unrelated stock
+photos. Images are 1280×1280 WebP at quality 78 (~1.3MB for all ten), small
+enough that a demo page stays light while still sharp at the full-screen
+layout's edge-to-edge width.
+
+A caption-legibility scrim (`linear-gradient` under the caption only, via
+`:has()`, so the caption-less multi-aspect row stays undarkened) was added
+because the original white-text-on-gradient combination assumed enough
+contrast; an arbitrary photo does not guarantee that on its own.
+
+### Expected files
+
+- Modified: `playground/examples/Carousel.example.tsx` (gradient covers →
+  `<img>` covers), `playground/src/playground.css` (`.carousel-example__cover`
+  layering, new `.carousel-example__photo`, scoped scrim).
+- New: 10 `.webp` files each under `playground/public/images/carousel/` and
+  `site/public/images/carousel/` (both new directories).
+- No library source, token, or test changes: this is example content only,
+  and no test asserts on the gradient.
+
+### Acceptance checks
+
+- `npm run verify` passes all 14 gates with unchanged bundle-size budgets
+  (playground/site assets are not part of the published package).
+- `npm run audit:rendering` still passes clean against a real Chromium.
+- `npm run site:build` produces a clean static export; `npm run check:site`
+  passes; the exported `site/out/components/Carousel/index.html` references
+  all ten images, and the files exist under `site/out/images/carousel/`.
+- Visual check in a real browser (playground preview and the exported site
+  output, screenshotted directly) confirms every row — multi-browse, hero,
+  centered-hero, uncontained, multi-aspect, full-screen, show-all — renders
+  its photo with a legible caption and correct corner/clip geometry.
+
+### Completion evidence
+
+- `npx vitest run tests/components/Carousel`: 157/157 passed, unaffected.
+- `npm run verify`: 14/14 gates passed. Bundle budgets unchanged from T48
+  (474,137/530,600 JS, 84,387/94,500 gzip, 468,064/523,900 CSS, packed package
+  472,108/527,800) — confirming example/demo assets carry no package weight.
+- `npm run audit:rendering`: passed clean, same message as T48.
+- `npm run site:build`: Next 16.2.10 production build succeeded, all 58 routes
+  generated including `/components/Carousel`; `npm run check:site` passed (41
+  conformant components, 40 demos, export map respected).
+- Screenshotted both the Vite playground preview and the actual
+  `site/out` static export in a real browser: all ten photos render at the
+  correct crop and corner radius per layout, captions stay legible, and the
+  multi-aspect row's uncaptioned clips are correctly left undarkened.
+
+### Not done
+
+- No attribution file was added; the Unsplash license this task relied on
+  does not require one. The sourcing rationale lives as a comment in
+  `Carousel.example.tsx` for a future maintainer, not a separate NOTICES file.
+- General deploy-readiness beyond this: `vercel.json` already points
+  `buildCommand`/`outputDirectory` at `site:build`/`site/out` correctly (T35
+  fixed the last deployment break), and this task found nothing else blocking
+  a deploy.

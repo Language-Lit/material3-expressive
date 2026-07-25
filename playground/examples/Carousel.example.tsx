@@ -10,36 +10,39 @@ import {
 } from '@language-lit/material3-expressive'
 
 /**
- * Deterministic gradient covers, so the example needs no network asset and the
- * rendering audit measures the same pixels on every run.
+ * Local, package-bundled stock photos (Unsplash, via Picsum) rather than a
+ * hotlinked service: the example still needs no network request at render
+ * time, so the rendering audit measures the same pixels on every run.
  */
 const albums = [
-  { title: 'Coastal Static', year: '2019', hue: 210 },
-  { title: 'Long Exposure', year: '2020', hue: 268 },
-  { title: 'Harbour Lights', year: '2020', hue: 330 },
-  { title: 'Night Ferry', year: '2021', hue: 18 },
-  { title: 'Second Summer', year: '2021', hue: 46 },
-  { title: 'Low Tide', year: '2022', hue: 150 },
-  { title: 'Signal Hill', year: '2022', hue: 188 },
-  { title: 'Winter Sessions', year: '2023', hue: 240 },
-  { title: 'Open Water', year: '2023', hue: 300 },
-  { title: 'Last Train', year: '2024', hue: 8 },
+  { title: 'Coastal Static', year: '2019', photo: 'coastal-static' },
+  { title: 'Long Exposure', year: '2020', photo: 'long-exposure' },
+  { title: 'Harbour Lights', year: '2020', photo: 'harbour-lights' },
+  { title: 'Night Ferry', year: '2021', photo: 'night-ferry' },
+  { title: 'Second Summer', year: '2021', photo: 'second-summer' },
+  { title: 'Low Tide', year: '2022', photo: 'low-tide' },
+  { title: 'Signal Hill', year: '2022', photo: 'signal-hill' },
+  { title: 'Winter Sessions', year: '2023', photo: 'winter-sessions' },
+  { title: 'Open Water', year: '2023', photo: 'open-water' },
+  { title: 'Last Train', year: '2024', photo: 'last-train' },
 ] as const
 
 const ratios = [16 / 9, 1, 9 / 16, 4 / 3, 3 / 4, 16 / 9, 1, 9 / 16] as const
 
-function cover(hue: number) {
-  return `linear-gradient(140deg, hsl(${hue} 62% 46%), hsl(${(hue + 42) % 360} 58% 30%))`
+function photoSrc(photo: string) {
+  return `/images/carousel/${photo}.webp`
 }
 
 /**
  * The specification's adaptive-content rule: the large item shows its title, the
  * medium item hides it, and the small item abbreviates the label. Both spans are
- * marked so the stylesheet withdraws them at the right widths.
+ * marked so the stylesheet withdraws them at the right widths. The photo is
+ * decorative: its subject conveys nothing the caption text does not already say.
  */
-function AlbumContent({ title, year, hue }: { title: string; year: string; hue: number }) {
+function AlbumContent({ title, year, photo }: { title: string; year: string; photo: string }) {
   return (
-    <div className="carousel-example__cover" style={{ backgroundImage: cover(hue) }}>
+    <div className="carousel-example__cover">
+      <img className="carousel-example__photo" src={photoSrc(photo)} alt="" loading="lazy" />
       <div className="carousel-example__caption">
         <span data-m3e-carousel-hide="medium">{title}</span>
         <span data-m3e-carousel-hide="small">{year}</span>
@@ -61,10 +64,14 @@ const aspectItems: MultiAspectCarouselItem[] = ratios.map((ratio, index) => ({
   label: `Clip ${index + 1}`,
   aspectRatio: ratio,
   content: (
-    <div
-      className="carousel-example__cover"
-      style={{ backgroundImage: cover(albums[index % albums.length]!.hue) }}
-    />
+    <div className="carousel-example__cover">
+      <img
+        className="carousel-example__photo"
+        src={photoSrc(albums[index % albums.length]!.photo)}
+        alt=""
+        loading="lazy"
+      />
+    </div>
   ),
 }))
 

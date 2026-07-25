@@ -745,6 +745,28 @@
   block-size: 100%;
   display: flex;
   inline-size: 100%;
+  position: relative;
+}
+
+.carousel-example__photo {
+  block-size: 100%;
+  inline-size: 100%;
+  inset: 0;
+  object-fit: cover;
+  position: absolute;
+  z-index: 0;
+}
+
+/* A scrim under the caption, not tied to its width, so any photo keeps the
+   caption text legible regardless of where its own bright areas fall. Scoped
+   to covers that actually have a caption: the multi-aspect row's clips carry
+   no text, so their photos stay undarkened. */
+.carousel-example__cover:has(.carousel-example__caption)::after {
+  background: linear-gradient(to top, rgb(0 0 0 / 65%), transparent 65%);
+  content: '';
+  inset: 0;
+  position: absolute;
+  z-index: 1;
 }
 
 .carousel-example__caption {
@@ -753,6 +775,8 @@
   font: var(--m3e-sys-typescale-label-large);
   gap: 0.125rem;
   padding: 0.75rem;
+  position: relative;
   text-shadow: 0 1px 2px rgb(0 0 0 / 45%);
   white-space: nowrap;
+  z-index: 2;
 }
