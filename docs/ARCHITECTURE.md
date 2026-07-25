@@ -602,3 +602,45 @@ on-scroll color handoff between them is a descendant CSS rule rather than
 threaded props. ADR 0039 records the two-export split, the style/layout axes,
 the adaptive default, the combobox semantics, and the two unread generated
 roles registered against rendered read paths.
+
+`Carousel` continues the composite tranche and is the first component in this
+library that ports an upstream *algorithm* rather than a set of measurements. The
+whole Material carousel is a layout engine: `Arrangement` searches permutations of
+large/medium/small item counts and scores them, `KeylineList` places the winner
+around a pivot, `Strategy` derives the shifted lists that let the first and last
+items reach a focal position, and `KeylineSnapPosition` turns those into per-item
+snap offsets. All four are ported to TypeScript in private modules under the
+component directory, beside the separate aspect-ratio engine the uncontained
+multi-aspect layout needs. Nothing in that engine is exported: the barrel ships
+`Carousel` and its five types, and an architecture test asserts the engine
+modules are not re-exported.
+
+Porting it faithfully was the point. 62 of the family's 88 pinned test cases are
+JVM host tests over exactly this code with concrete expected values, so the port
+has an executable definition of correctness that an approximation would have
+thrown away — and those 62 cases are now this library's tests, which is what will
+catch a future upstream change to the arrangement rules.
+
+Three platform substitutions carry the rest. Pager becomes a real scroll
+container, so gesture, wheel, momentum, keyboard scrolling, RTL, and scrollbar
+accessibility are the browser's; items lay out end-to-end at the focal size,
+which is exactly the size Pager gives every page. `getSnapPositionOffset` maps
+onto per-item `scroll-margin-*` under `scroll-snap-align: start`, so keyline
+snapping — including both shift ranges, where offsets differ per item — is native
+CSS scroll snap rather than a simulated fling. And masking is computed per scroll
+frame and written as custom properties that CSS turns into `clip-path: inset()`
+plus `translate`, because `animation-timeline: view()` would express it
+declaratively but is outside the pinned browser baseline. The frame loop is
+imperative for the reason `useAppBarScroll` established, and it is the one part of
+the design with a known expiry: nothing in the public contract depends on where
+those numbers are computed.
+
+The item-scope substitution is worth carrying forward. Compose hands item content
+a `CarouselItemDrawInfo` and warns that reading it in composition recomposes on
+every change; on the web the same information is CSS — three size custom
+properties and a `large`/`medium`/`small` bucket attribute — so the
+specification's adaptive-content rule needs no render per frame and the warning
+has nothing to apply to. ADR 0040 records the single-export collapse, both ported
+engines, the scroll and snap substitutions, the APG carousel semantics, the item
+window that replaces `beyondViewportPageCount`, and the specification-sourced
+token registry the missing `CarouselTokens.kt` forced.

@@ -14,6 +14,7 @@ import { BottomSheetExample } from '../examples/BottomSheet.example'
 import { ButtonExample } from '../examples/Button.example'
 import { ButtonGroupExample } from '../examples/ButtonGroup.example'
 import { CardExample } from '../examples/Card.example'
+import { CarouselExample } from '../examples/Carousel.example'
 import { ChipExample } from '../examples/Chip.example'
 import { CheckboxExample } from '../examples/Checkbox.example'
 import { CircularProgressExample } from '../examples/CircularProgress.example'
@@ -93,6 +94,7 @@ createRoot(root).render(
         <ButtonGroupExample />
         <SplitButtonExample />
         <CardExample />
+        <CarouselExample />
         <ChipExample />
         <ListItemExample />
         <DividerExample />

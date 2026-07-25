@@ -57,7 +57,7 @@ if (!equal(Object.keys(packageJson.peerDependencies ?? {}).sort(), ['react', 're
 }
 
 const conformant = inventory.components.filter((component) => component.status === 'conformant')
-if (conformant.length !== 40) fail(`expected 40 conformant components, received ${conformant.length}`)
+if (conformant.length !== 41) fail(`expected 41 conformant components, received ${conformant.length}`)
 
 for (const component of conformant) {
   const provider = component.name === 'Material3Provider'

@@ -714,3 +714,45 @@
   font-size: 0.75rem;
   justify-content: center;
 }
+
+.carousel-example {
+  display: grid;
+  gap: 1.5rem;
+  margin-block-start: 2rem;
+  padding: 1.5rem;
+}
+
+.carousel-example__row {
+  display: grid;
+  gap: 0.5rem;
+}
+
+/*
+ * A carousel takes its cross-axis size from its container, and the multi-aspect
+ * layout derives each item's width from that size and the item's ratio.
+ */
+.carousel-example .m3e-carousel {
+  block-size: 13rem;
+}
+
+/* Must outrank the shared row height above, not merely follow it. */
+.carousel-example .m3e-carousel.carousel-example__full-screen {
+  block-size: 20rem;
+}
+
+.carousel-example__cover {
+  align-items: end;
+  block-size: 100%;
+  display: flex;
+  inline-size: 100%;
+}
+
+.carousel-example__caption {
+  color: #fff;
+  display: grid;
+  font: var(--m3e-sys-typescale-label-large);
+  gap: 0.125rem;
+  padding: 0.75rem;
+  text-shadow: 0 1px 2px rgb(0 0 0 / 45%);
+  white-space: nowrap;
+}

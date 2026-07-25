@@ -2412,3 +2412,280 @@ touching it.
   to 29 Conformant + 3 Partial + 4 Planned.
 - Publication remains outside T47. The working package stays `1.1.0`; a version
   and registry action require a separately approved release task.
+
+## T48 — Material 3 Carousel family
+
+Status: complete
+Approved: 2026-07-25 (owner request: continue the composite tranche with
+Carousel; scope reviewed and approved in discussion, including all six official
+layouts and the data-driven `items` API)
+Completed: 2026-07-25
+
+### Scope
+
+Catalog row 7, Carousel, currently Planned with no coverage. This task ports the
+family in full and the row lands **Conformant**.
+
+The pinned source is `a90df2fc27e026b9ad2ed569f203a260c1041fab`, the reference
+snapshot T44 adopted and T45/T46/T47 extended. Verified, not assumed: all
+nineteen carousel files — nine implementation files (`Arrangement.kt`,
+`Carousel.kt`, `CarouselItemScope.kt`, `CarouselState.kt`, `KeylineList.kt`,
+`KeylineSnapPosition.kt`, `Keylines.kt`, `MultiAspectCarousel.kt`,
+`Strategy.kt`) and ten test files — were fetched at that revision and at
+`androidx-main` HEAD (`25daaa71c1e9309a7f0d7df1bde73c6d2d5ef6d7`, committed
+2026-07-24). Twelve are byte-identical. Seven differ non-substantively: four
+implementation files gained Kotlin explicit-API `public` modifiers plus two
+explicit return types on `CarouselDefaults.MinSmallItemSize`/`MaxSmallItemSize`,
+and three test files carry the same one-line
+`createComposeRule(StandardTestDispatcher())` → `createComposeRule()` change
+T47 already classified. No API is added, removed, or renamed, so the pin holds
+and the delta is classified rather than re-pinned (the T44 rule). The ledger
+covers 88 pinned test cases, each counted by extracting `@Test` methods from the
+fetched files.
+
+Verified by listing `commonMain/.../material3/tokens/` at the pinned revision:
+**no `CarouselTokens.kt` exists.** Carousel is the first family in this library
+with no generated token file at all. Its registry therefore derives from two
+sources that are both first-party: `CarouselDefaults` for the numbers the
+implementation reads (`MinSmallItemSize` 40dp, `MaxSmallItemSize` 56dp,
+`AnchorSize` 10dp, `MediumLargeItemDiffThreshold` 0.85) and the design
+specification's own measurement tables for the ones only the design owns (the
+28dp item corner, the 16/8/8dp multi-browse and hero paddings, the uncontained
+leading-only padding, the full-screen 0dp/16dp pair, and the Surface container).
+ADR 0040 records that provenance exception.
+
+One export carries the family. The source's three `Horizontal*Carousel`
+composables are thin wrappers over one internal `Carousel` that differ in
+exactly one argument — the keyline function — so they become a `layout` prop
+rather than three exports, the same reduction ADR 0037 made for bottom sheets
+and ADR 0039 for search. `layout` spans all six layouts the design site's own
+specs page enumerates: `multiBrowse` (default), `uncontained`, `multiAspect`,
+`hero`, `centeredHero`, and `fullScreen`.
+
+The genuinely new work is a real port of the layout engine rather than a new
+primitive. Five layouts run the pinned keyline engine — `Arrangement`,
+`KeylineList`, `Keylines`, `Strategy`, `KeylineSnapPosition` — ported to
+TypeScript, and `multiAspect` runs the second, aspect-ratio-driven engine from
+`MultiAspectCarousel.kt`. The web substitutions:
+
+- **A native scroll container replaces Pager.** Items lay out end-to-end at the
+  focal size, exactly the size Pager gives every page, so touch, trackpad,
+  momentum, keyboard scrolling, RTL, and scrollbar accessibility are the
+  browser's rather than reimplemented.
+- **CSS scroll-snap replaces the three `flingBehavior` factories.**
+  `getSnapPositionOffset` maps exactly onto per-item `scroll-margin-inline-start`
+  with `scroll-snap-align: start`, so keyline snapping — including the start and
+  end shift steps — is native. `PagerSnapDistance.atMost(1)` has no web
+  equivalent because the browser owns fling distance; `scroll` exposes the design
+  site's own two named behaviors (`snap`, default for every layout but
+  `uncontained`, and `free`, which the site recommends there).
+- **Masking is computed in JS, not CSS.** `animation-timeline: view()` would
+  remove the scroll handler, but it is outside the pinned Chrome 120 / Firefox
+  121 / Safari 17.2 baseline, so the interpolated keyline is resolved per frame
+  and applied as `clip-path: inset()` plus `translate`, which is what
+  `placeWithLayer(clip = …, translationX = …)` does. Writes are imperative for
+  the reason `useAppBarScroll` already establishes: a React state update per
+  frame would re-render every item to change one custom property.
+- **`carouselItemDrawInfo` becomes CSS custom properties** plus a
+  `data-m3e-size` bucket of `large`/`medium`/`small` on each item, so the
+  specification's own adaptive-content rule — large shows the title, medium hides
+  it, small abbreviates the label — is expressible in CSS without a per-frame
+  React render. The `maskClip`/`maskBorder`/`rememberMaskShape` modifier trio is
+  excluded: the component clips, and a consumer modifier API has no web analogue.
+
+Accessibility decisions, recorded in ADR 0040: there is no ARIA `carousel` role,
+so `Role.Carousel` and the design site's "container role" both resolve to the
+APG carousel pattern — the container is a `role="group"` with
+`aria-roledescription="carousel"` and each item a `role="group"` with
+`aria-roledescription="slide"` labelled "N of M", which is literally the site's
+"the label reads out the total amount of items and the current item in focus".
+Actionable items are real `button`/`a` elements, so Space/Enter activation and
+the browser's own scroll-into-view on focus are native, satisfying "Tab moves to
+the next carousel item". Left/Right (logical), Home, and End move by item; Up
+and Down are deliberately not intercepted, because the site's "use up and down
+to leave the carousel" is a TalkBack idiom and on the web leaving is Tab. The
+container takes a tab stop only when no item is actionable, because at this
+browser baseline a scroll container is not keyboard-reachable otherwise. Under
+`prefers-reduced-motion: reduce` masking is switched off entirely — every item
+at focal size, no clip, no parallax, snapping kept — which is what the
+accessibility page describes.
+
+The accessibility page's own requirement on vertically-scrolling pages, a
+**"Show all" button** below the carousel (or a header arrow), is delivered as a
+tested recipe composing public `Button`/`IconButton`, matching the pinned
+`CarouselWithShowAllButtonSample`. It adds no export.
+
+Excluded with reasons: predictive back and window insets (Android system
+concerns), the Compose animation specs and `rememberSplineBasedDecay` (semantic
+motion roles; the browser owns fling), `CarouselState.Saver` (Android instance
+state), `Modifier.carouselItem`'s debug keyline overlay (a development aid), and
+the `CarouselItemScope` modifier trio above.
+
+No runtime dependency, peer dependency, or package export-path change. No token
+is removed or renamed. Publication is a separate task.
+
+### Expected files
+
+- Added: `src/components/Carousel/Carousel.tsx`,
+  `src/components/Carousel/Carousel.types.ts`,
+  `src/components/Carousel/Carousel.css`,
+  `src/components/Carousel/index.ts`,
+  `src/components/Carousel/arrangement.ts`,
+  `src/components/Carousel/keylines.ts`,
+  `src/components/Carousel/strategy.ts`,
+  `src/components/Carousel/multiAspect.ts`,
+  `src/components/Carousel/useCarouselMask.ts`,
+  `src/tokens/defaults/carousel.ts`, `docs/components/Carousel.md`,
+  `playground/examples/Carousel.example.tsx`, the mirrored
+  `tests/components/Carousel/*` suite and conformance record, and ADR 0040.
+- Modified: `src/components/index.ts`, `src/styles/styles.css`,
+  `src/tokens/defaults/index.ts`, `docs/component-inventory.json`,
+  `docs/SPEC.md`, `docs/ARCHITECTURE.md`, `docs/TOKEN_PROVENANCE.md`,
+  `docs/WEB_DEVIATIONS.md`, `docs/MATERIAL_CATALOG_ROADMAP.md` (row 7 to
+  Conformant), `docs/ACTIVE_TASK.md`, `docs/bundle-budgets.json` (T47 recorded
+  both stylesheet ceilings within 1% of their limits), `tests/tokens/schema.test.ts`,
+  `tests/tokens/css.test.ts`, `scripts/check-release.mjs`,
+  `scripts/audit-rendering.mjs`, `playground/src/main.tsx`,
+  `playground/src/playground.css`.
+- Generated: `docs/SUPPORTED_COMPONENTS.md`, `site/demos/registry.tsx`, and the
+  vendored icon subset if the example needs a new symbol.
+
+### Acceptance checks
+
+- The executable ledger freezes all nineteen pinned blob identities and the
+  seven HEAD blobs that differ; records that no generated token file exists;
+  accounts for every current and deprecated first-party declaration at
+  parameter granularity; freezes all 88 pinned test cases; and records every
+  exclusion, adaptation, and anomaly with its reason.
+- The ported engine reproduces the pinned host tests: all 62 cases from
+  `ArrangementTest`, `KeylineTest`, `StrategyTest`, `MultiBrowseTest`,
+  `UncontainedTest`, `CenteredHeroTest`, and `KeylineSnapPositionTest` pass
+  against the TypeScript port with the upstream expected values, including the
+  exact offset arrays.
+- All six layouts render their sourced output: the multi-browse
+  large/medium/small arrangement, uncontained's cut-off trailing item and
+  half-medium leading anchor, hero's one-large-one-small, centered hero's
+  two small items around a centred large one, full-screen's single
+  edge-to-edge vertically scrolling item, and multi-aspect's per-item aspect
+  ratios with the sourced mask intensity.
+- Snapping, keyboard movement, activation, the size buckets, reduced motion,
+  and RTL behave as recorded.
+- TypeScript rejects an open layout, an open scroll mode, a non-array `items`,
+  `aspectRatio` outside `multiAspect`, and `preferredItemWidth` on a layout that
+  does not take one.
+- Light/dark, scoped token overrides, RTL, forced colors, reduced motion, SSR,
+  hydration, public exports, inventory, documentation, example, and packed
+  consumers agree.
+- `npm run verify` passes.
+- Because this task adds component geometry and scroll-driven layout:
+
+  ```bash
+  npm run build && npm run playground:build
+  M3E_CHROMIUM_PATH=<chromium binary> npm run audit:rendering
+  ```
+
+  passes with probes that scroll a real carousel in each layout and measure the
+  resulting masks, and the probes are proven non-vacuous.
+
+### Completion evidence
+
+- `Carousel` is a public named export with `items`, `layout`, `scroll`,
+  `itemSpacing`, `currentItem`/`defaultCurrentItem`/`onCurrentItemChange`, and the
+  per-layout `preferredItemWidth`, `itemWidth`, `maxItemWidth`,
+  `minSmallItemWidth`, and `maxSmallItemWidth`. Items carry `key`, `content`,
+  `label`, `onActivate`, `href`, `disabled`, and — in the multi-aspect layout —
+  `aspectRatio`. The package still has zero runtime dependencies, React and React
+  DOM remain its only peers, and no export path, prop, or token was removed or
+  renamed.
+- The pin was verified rather than assumed: all nineteen carousel files were
+  fetched at `a90df2fc…` and at `androidx-main` HEAD
+  (`25daaa71c1e9309a7f0d7df1bde73c6d2d5ef6d7`, 2026-07-24), extending the unified
+  snapshot for a fifth consecutive task. Twelve are byte-identical; the seven that
+  differ do so by Kotlin explicit-API `public` modifiers, four explicit return
+  types, and the `createComposeRule()` change T47 classified. All seven HEAD blob
+  hashes are frozen in the ledger, so the classification cannot silently become a
+  real delta.
+- Verified by listing the generated tokens directory at both revisions: **no
+  `CarouselTokens.kt` exists**. The registry is sourced instead from
+  `CarouselDefaults` (the four numbers the implementation reads) and the design
+  specification's measurement tables (the eight values only the design owns), the
+  provenance exception ADR 0040 records and `TOKEN_PROVENANCE.md` states.
+- **All 62 pinned host cases pass against the ported engine at their upstream
+  expected values**, including the exact offset arrays
+  (`[-101, 93, 287, 481, 675]`, `[-13, 61, 223, 417, 579, 676, 740, 781]`, the
+  snap-position arrays). They passed on the first run of the finished port, which
+  is the evidence that the arrangement math is the source's rather than a
+  reconstruction. One case needed a documented divergence:
+  `roundToNearestStep`'s tie sits exactly on a float boundary and lands at
+  0.50000006 in the source's `Float` against 0.4999999999999999 in a double, so
+  the port compares with a tolerance to keep the sourced tie-breaking rather than
+  letting it depend on precision.
+- The nine-file suite passes 156 focused tests across the two engine suites,
+  behavior, accessibility, CSS, theme, SSR/hydration, and the ledger. Twenty-two
+  compile-only type cases reject an open layout, an open scroll mode, a missing
+  or misplaced width prop, `aspectRatio` outside the multi-aspect layout, a
+  non-array `items`, a keyed `currentItem`, an overridden `role`, and children.
+- Two defects were found by the browser audit and fixed rather than shipped, both
+  invisible to jsdom:
+  - **The mask translation was moving each item's scroll-snap area.** A transform
+    is part of an element's snap area, so mandatory snapping chased a target the
+    mask kept moving: a carousel that had never been touched rested at 15px
+    instead of 0, and its first item painted at the container edge instead of the
+    specified 16px leading padding. The item box is now purely layout and snap
+    area, and the mask, translation, and paint moved to a surface box inside it,
+    with a third media box for the multi-aspect parallax to move within the mask.
+  - **The multi-aspect layout had no leading padding.** It runs no keyline
+    strategy, so there was nothing for the specified 16dp to be folded into; it is
+    now real `padding-inline-start` plus the matching `scroll-padding`, the one
+    layout where that is correct. A second, related fix: the multi-aspect engine
+    reads each item's `offsetLeft` as its position in the scroll content, which is
+    only true when the scroller is the offset parent, so the container now
+    establishes one.
+- The rendering audit gained five Carousel probes: the arrangement (items laid
+  out at the focal size, the first item inset by the specified leading padding,
+  centred masks that never grow towards the container edge, an untransformed snap
+  area, no overrun of a contained layout), snapping (a declared snap type, an
+  untouched carousel resting exactly on its first snap position, a released scroll
+  settling on a keyline, masks following it, and the uncontained layout not
+  snapping), the full-screen layout (block-axis snapping, an edge-to-edge item, a
+  block scroll that moves and an inline one that does not), the multi-aspect
+  layout (rendered ratios matching declared ones, widths that actually differ, the
+  real leading padding, a non-zero parallax on the media box under a mask), and
+  the adaptive-content rule (all three buckets present, and a medium item hiding
+  its title while a small item hides both). Every probe reports its own vacuity.
+  Proven non-vacuous in both directions: seeding a suppressed mask, the original
+  snap-area translation, and a defeated adaptive-content rule into the built
+  stylesheet produced exactly the expected findings each time — including the
+  10px snap drift the real defect caused — and restoring returned green.
+- The token registry adds 21 Carousel properties and emits 1,783 overall. Four
+  are read by the layout engine in JavaScript and deliberately absent from the
+  stylesheet, which `Carousel.css.test.ts` enforces so no value has two sources
+  of truth.
+- `npm run verify` passes all 14 gates: 225 test files / 1,618 tests, 41
+  conformant inventory entries, 41 documentation pages, 44 stylesheets, both
+  packed consumer fixtures, and the site check at 40 demos.
+- **Bundle ceilings were rebased**, which T47 predicted would be needed. Carousel
+  is the largest single component in the library because it ports a layout
+  engine: JS closure 474,137 bytes and 84,387 gzipped, up about 60kB and 12kB
+  from T47. Five ceilings were breached and each was raised by the headroom it
+  already had (about 12%); `dist/tokens.css` was not breached, so its ceiling did
+  not move. Final measurements against the new budgets: JS 474,137/530,600 and
+  84,387/94,500 gzip, declarations 109,667/125,400 and 25,881/29,200 gzip, full
+  CSS 468,064/523,900 and 51,185/57,400 gzip, token CSS 133,408/139,300, packed
+  package 472,108/527,800.
+- A post-completion feel audit against the pinned source (requested after the
+  first close-out) confirmed rest geometry, settle trajectories, and per-frame
+  gap pinning in a real browser, and fixed two latent defects before anything
+  was committed: the `itemSpacing` prop now reaches the flex `gap` the items are
+  actually laid out with, not only the engine's arrangement math; and the
+  full-screen layout's main-axis padding is no longer real DOM padding, because
+  the strategy already folds `full-screen-padding` into its keylines and snap
+  offsets (dormant while that token is `0px`, wrong under any theme that raises
+  it).
+- Catalog row 7 moves from Planned to **Conformant** across all six official
+  layouts, so the family needs no follow-up task; its `Show all` accessibility
+  recipe is owed to tranche R alongside the bottom-sheet scaffold. Snapshot
+  accounting moves to 30 Conformant + 3 Partial + 3 Planned. The composite tranche
+  now has Date pickers, Side sheets, and Time pickers left.
+- Publication remains outside T48. The working package stays `1.1.0`; a version
+  and registry action require a separately approved release task.

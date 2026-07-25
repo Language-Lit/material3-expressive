@@ -1,0 +1,311 @@
+@layer m3e.components {
+  /*
+   * The carousel container is the scroll container. The pinned source explicitly
+   * keeps main-axis content padding out of the Pager — "main axis padding will be
+   * handled by the strategy" — so the leading and trailing padding this layout
+   * shows are produced by the shifted keyline lists, not by padding here. Only
+   * the block padding the measurement tables give is real padding.
+   */
+  .m3e-carousel {
+    /*
+     * Resting values for everything the layout and paint passes write. Before a
+     * container has been measured these are the whole state: a full-width item,
+     * no mask, no translation, no parallax. The passes overwrite them per item
+     * and withdraw them on unmount, so the resting state is authored here rather
+     * than implied by a missing variable.
+     */
+    --m3e-carousel-item-size: 100%;
+    background-color: var(--m3e-comp-carousel-container-color);
+    box-sizing: border-box;
+    color: var(--m3e-comp-carousel-item-content-color);
+    display: flex;
+    gap: var(--m3e-comp-carousel-item-spacing);
+    overflow: auto hidden;
+    overscroll-behavior-inline: contain;
+    padding-block: var(--m3e-comp-carousel-block-padding);
+    /*
+     * The multi-aspect engine reads each item's `offsetLeft`/`offsetTop` as its
+     * position in the scroll content, which is only true when the scroller is the
+     * item's offset parent.
+     */
+    position: relative;
+    scrollbar-width: none;
+  }
+
+  /* The scroll offset is the layout's own coordinate, so no scrollbar chrome
+     may occupy it. Every layout is scrollable by gesture, wheel, and keyboard. */
+  .m3e-carousel::-webkit-scrollbar {
+    display: none;
+  }
+
+  /*
+   * The block axis is this layout's main axis, so its padding follows the same
+   * rule as every horizontal keyline layout: the strategy folds it into the
+   * shifted keyline lists and the snap offsets, and real padding here would
+   * double it. Only the cross-axis padding is real, exactly as the source
+   * passes only cross-axis content padding to the Pager.
+   */
+  .m3e-carousel[data-m3e-axis="block"] {
+    flex-direction: column;
+    gap: var(--m3e-comp-carousel-full-screen-item-spacing);
+    overflow: hidden auto;
+    overscroll-behavior-block: contain;
+    padding-block: 0;
+    padding-inline: var(--m3e-comp-carousel-full-screen-padding);
+  }
+
+  .m3e-carousel[data-m3e-scroll="snap"] {
+    scroll-snap-type: x mandatory;
+  }
+
+  .m3e-carousel[data-m3e-axis="block"][data-m3e-scroll="snap"] {
+    scroll-snap-type: y mandatory;
+  }
+
+  .m3e-carousel:focus-visible {
+    outline: var(--m3e-comp-carousel-focus-ring-width) solid
+      var(--m3e-comp-carousel-focus-ring-color);
+    outline-offset: var(--m3e-comp-carousel-focus-ring-offset);
+  }
+
+  /*
+   * Every item is laid out at the focal size, exactly as Pager gives every page
+   * the strategy's `itemMainAxisSize`. Until an arrangement exists that size is
+   * the whole container, which is what Pager defaults a page to when no strategy
+   * is valid yet.
+   *
+   * This box carries the layout and the snap area and nothing else. The mask and
+   * its translation live on the painted box inside it, because a transform is
+   * part of an element's scroll-snap area: masking the item box itself would move
+   * the position the browser snaps to, and mandatory snapping would then chase a
+   * target the mask keeps moving.
+   */
+  .m3e-carousel__item {
+    --m3e-carousel-item-inset-start: 0px;
+    --m3e-carousel-item-inset-end: 0px;
+    --m3e-carousel-item-translate: 0px;
+    --m3e-carousel-item-parallax: 0px;
+    --m3e-carousel-item-snap: 0px;
+    --m3e-carousel-item-z: 0;
+    --m3e-carousel-item-aspect: 1;
+    box-sizing: border-box;
+    flex: 0 0 var(--m3e-carousel-item-size);
+    position: relative;
+    scroll-snap-align: start;
+    scroll-margin-inline-start: var(--m3e-carousel-item-snap);
+    z-index: var(--m3e-carousel-item-z);
+  }
+
+  .m3e-carousel[data-m3e-axis="block"] .m3e-carousel__item {
+    scroll-margin-block-start: var(--m3e-carousel-item-snap);
+    scroll-margin-inline-start: 0;
+  }
+
+  /*
+   * The multi-aspect layout runs no keyline strategy, so it has nothing to fold
+   * its leading padding into. The measurement table's 16dp is therefore real
+   * padding here — the one layout where it is.
+   */
+  .m3e-carousel[data-m3e-layout="multiAspect"] {
+    padding-inline-start: var(--m3e-comp-carousel-leading-padding);
+    scroll-padding-inline-start: var(--m3e-comp-carousel-leading-padding);
+  }
+
+  /*
+   * Multi-aspect items take their width from their own ratio rather than from the
+   * arrangement, which is the whole point of that layout.
+   */
+  .m3e-carousel[data-m3e-layout="multiAspect"] .m3e-carousel__item {
+    aspect-ratio: var(--m3e-carousel-item-aspect);
+    block-size: 100%;
+    flex: 0 0 auto;
+  }
+
+  .m3e-carousel[data-m3e-layout="fullScreen"] .m3e-carousel__item {
+    flex: 0 0 100%;
+  }
+
+  /*
+   * The painted box: the item's own container colour and shape, the mask, and the
+   * translation that pins masked edges together. `clip-path` is applied in this
+   * element's own coordinate space before its transform, so the two compose the
+   * way the source's layer clip and translation do.
+   */
+  .m3e-carousel__item-content {
+    background: none;
+    background-color: var(--m3e-comp-carousel-item-container-color);
+    block-size: 100%;
+    border: none;
+    border-radius: var(--m3e-comp-carousel-item-shape);
+    box-sizing: border-box;
+    color: inherit;
+    display: block;
+    font: inherit;
+    inline-size: 100%;
+    margin: 0;
+    outline: none;
+    overflow: hidden;
+    padding: 0;
+    position: relative;
+    text-align: inherit;
+    text-decoration: none;
+  }
+
+  .m3e-carousel__item[data-m3e-axis="inline"] > .m3e-carousel__item-content {
+    clip-path: inset(
+      0 var(--m3e-carousel-item-inset-end) 0 var(--m3e-carousel-item-inset-start)
+    );
+    translate: var(--m3e-carousel-item-translate);
+  }
+
+  /* Both insets and the translation are logical, and `inset()` is physical. */
+  .m3e-carousel__item[data-m3e-axis="inline"]:dir(rtl) > .m3e-carousel__item-content {
+    clip-path: inset(
+      0 var(--m3e-carousel-item-inset-start) 0 var(--m3e-carousel-item-inset-end)
+    );
+    translate: calc(-1 * var(--m3e-carousel-item-translate));
+  }
+
+  .m3e-carousel__item[data-m3e-axis="block"] > .m3e-carousel__item-content {
+    clip-path: inset(
+      var(--m3e-carousel-item-inset-start) 0 var(--m3e-carousel-item-inset-end) 0
+    );
+    translate: 0 var(--m3e-carousel-item-translate);
+  }
+
+  /*
+   * The media box exists so the multi-aspect parallax has something to move
+   * inside the mask. Without it the content would travel with its own clip and
+   * there would be no parallax at all.
+   */
+  .m3e-carousel__item-media {
+    block-size: 100%;
+    display: block;
+    inline-size: 100%;
+  }
+
+  .m3e-carousel[data-m3e-layout="multiAspect"] .m3e-carousel__item-media {
+    translate: var(--m3e-carousel-item-parallax);
+  }
+
+  .m3e-carousel[data-m3e-layout="multiAspect"][data-m3e-axis="block"] .m3e-carousel__item-media {
+    translate: 0 var(--m3e-carousel-item-parallax);
+  }
+
+  .m3e-carousel__item-media > :is(img, video, picture, svg, canvas) {
+    block-size: 100%;
+    display: block;
+    inline-size: 100%;
+    object-fit: cover;
+  }
+
+  a.m3e-carousel__item-content,
+  button.m3e-carousel__item-content {
+    cursor: pointer;
+  }
+
+  button.m3e-carousel__item-content:disabled {
+    cursor: default;
+  }
+
+  /* State layer. The specs page lists hover, focus, and pressed for a carousel
+     item without values of its own, so the shared system opacities apply. */
+  a.m3e-carousel__item-content::after,
+  button.m3e-carousel__item-content::after {
+    background: var(--m3e-comp-carousel-state-layer-color);
+    border-radius: inherit;
+    content: "";
+    inset: 0;
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    transition: opacity var(--m3e-sys-motion-expressive-fast-effects-duration)
+      var(--m3e-sys-motion-expressive-fast-effects-easing);
+  }
+
+  @media (hover: hover) {
+    a.m3e-carousel__item-content:hover::after,
+    button.m3e-carousel__item-content:not(:disabled):hover::after {
+      opacity: var(--m3e-sys-state-hover);
+    }
+  }
+
+  a.m3e-carousel__item-content:focus-visible::after,
+  button.m3e-carousel__item-content:focus-visible::after {
+    opacity: var(--m3e-sys-state-focus);
+  }
+
+  a.m3e-carousel__item-content:active::after,
+  button.m3e-carousel__item-content:not(:disabled):active::after {
+    opacity: var(--m3e-sys-state-pressed);
+  }
+
+  a.m3e-carousel__item-content:focus-visible,
+  button.m3e-carousel__item-content:focus-visible {
+    outline: var(--m3e-comp-carousel-focus-ring-width) solid
+      var(--m3e-comp-carousel-focus-ring-color);
+    outline-offset: calc(-1 * var(--m3e-comp-carousel-focus-ring-width));
+  }
+
+  .m3e-carousel__item[data-m3e-disabled="true"] .m3e-carousel__item-content {
+    background-color: color-mix(
+      in srgb,
+      var(--m3e-comp-carousel-item-container-color)
+        calc(var(--m3e-comp-carousel-disabled-container-opacity) * 100%),
+      transparent
+    );
+  }
+
+  .m3e-carousel__item[data-m3e-disabled="true"] .m3e-carousel__item-media {
+    opacity: var(--m3e-comp-carousel-disabled-content-opacity);
+  }
+
+  /*
+   * The specification's adaptive-content rule, available to item content without
+   * a React render per frame: a large item shows everything, a medium item hides
+   * what it cannot fit, and a small item abbreviates.
+   */
+  .m3e-carousel__item[data-m3e-size="medium"] [data-m3e-carousel-hide="medium"],
+  .m3e-carousel__item[data-m3e-size="small"] [data-m3e-carousel-hide="medium"],
+  .m3e-carousel__item[data-m3e-size="small"] [data-m3e-carousel-hide="small"] {
+    display: none;
+  }
+
+  /*
+   * Reduced motion. The accessibility page requires the parallax to be removed
+   * and items to stop expanding, so every item stays at its focal size and
+   * reaches the container edges. The mask hook writes nothing in this state; the
+   * declarations below make that true even for a stale inline value.
+   */
+  @media (prefers-reduced-motion: reduce) {
+    .m3e-carousel__item-content,
+    .m3e-carousel__item[data-m3e-axis="inline"] > .m3e-carousel__item-content,
+    .m3e-carousel__item[data-m3e-axis="inline"]:dir(rtl) > .m3e-carousel__item-content,
+    .m3e-carousel__item[data-m3e-axis="block"] > .m3e-carousel__item-content,
+    .m3e-carousel[data-m3e-layout="multiAspect"] .m3e-carousel__item-media {
+      clip-path: none;
+      translate: none;
+    }
+
+    a.m3e-carousel__item-content::after,
+    button.m3e-carousel__item-content::after {
+      transition: none;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .m3e-carousel__item-content {
+      border: 1px solid CanvasText;
+    }
+
+    a.m3e-carousel__item-content:focus-visible,
+    button.m3e-carousel__item-content:focus-visible {
+      outline-color: Highlight;
+    }
+
+    .m3e-carousel__item[data-m3e-disabled="true"] .m3e-carousel__item-media {
+      opacity: 1;
+      color: GrayText;
+    }
+  }
+}

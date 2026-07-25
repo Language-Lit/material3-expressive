@@ -156,6 +156,7 @@ const census = await page.evaluate(() =>
       '.m3e-app-bar',
       '.m3e-search-bar',
       '.m3e-search-app-bar',
+      '.m3e-carousel',
     ].map((selector) => [selector, document.querySelectorAll(selector).length]),
   ),
 )
@@ -1404,6 +1405,383 @@ if ((await narrowSlider.count()) > 0) {
   }
 }
 
+// --- Carousel arrangement, masking, snapping, and the vertical layout -------
+// Everything T48 owns beyond the DOM contract is layout that jsdom cannot see.
+// The engine's own numbers are already proven by the 62 ported host cases, so
+// these probes check that the engine's output reaches the screen: that items are
+// laid out at the arrangement's focal size, that the first item is inset by the
+// specified leading padding, that masks are centred and shrink away from the
+// focal range, that the snap offsets are real scroll margins a released scroll
+// settles to, and that the block-axis and aspect-ratio layouts behave. Each
+// reports its own vacuity if what it measures is absent.
+//
+// A painted edge is the item's *surface* box — which carries the mask and its
+// translation — inset by the mask, because the item box itself is deliberately
+// untransformed so it can serve as the scroll-snap area.
+const carouselHelpers = () => {
+  const paintedEdges = (item, container) => {
+    const surface = item.querySelector('.m3e-carousel__item-content')
+    if (!surface) return undefined
+    const box = surface.getBoundingClientRect()
+    const styles = getComputedStyle(item)
+    const insetStart = parseFloat(styles.getPropertyValue('--m3e-carousel-item-inset-start'))
+    const insetEnd = parseFloat(styles.getPropertyValue('--m3e-carousel-item-inset-end'))
+    const mask = parseFloat(styles.getPropertyValue('--m3e-carousel-item-current-size'))
+    if (![insetStart, insetEnd].every(Number.isFinite)) return undefined
+    const origin = container.getBoundingClientRect()
+    return {
+      start: box.left + insetStart - origin.left,
+      end: box.right - insetEnd - origin.left,
+      mask,
+      layoutSize: box.width,
+    }
+  }
+  return { paintedEdges }
+}
+
+const carouselRest = await page.evaluate((helpersSource) => {
+  const { paintedEdges } = eval(`(${helpersSource})`)()
+  const results = []
+  const carousel = document.querySelector('.m3e-carousel[data-example-layout="multiBrowse"]')
+  if (!carousel) {
+    results.push('no multi-browse carousel rendered; the arrangement probe is vacuous')
+    return results
+  }
+
+  const focalSize = parseFloat(
+    getComputedStyle(carousel).getPropertyValue('--m3e-carousel-item-size'),
+  )
+  if (!Number.isFinite(focalSize) || focalSize <= 0) {
+    results.push('the layout pass wrote no focal item size')
+    return results
+  }
+
+  const items = [...carousel.querySelectorAll('.m3e-carousel__item')]
+  const edges = items.map((item) => paintedEdges(item, carousel))
+  const painted = edges.filter(Boolean)
+  if (painted.length < 4) {
+    results.push(`only ${painted.length} items are painted; the mask probe needs at least four`)
+    return results
+  }
+
+  // Every item is laid out at the focal size, exactly as Pager gives every page
+  // the strategy's itemMainAxisSize.
+  for (const edge of painted.slice(0, 4)) {
+    if (Math.abs(edge.layoutSize - focalSize) > 0.6) {
+      results.push(
+        `an item is laid out ${edge.layoutSize.toFixed(1)}px wide, not the arrangement's ${focalSize.toFixed(1)}px`,
+      )
+      break
+    }
+  }
+
+  // "Multi-browse carousels have padding on both sides of the container": at rest
+  // the first item's painted edge sits at the specified leading padding, which the
+  // shifted keyline lists produce rather than real padding.
+  const leading = parseFloat(
+    getComputedStyle(carousel).getPropertyValue('--m3e-comp-carousel-leading-padding'),
+  )
+  if (Math.abs(painted[0].start - leading) > 1) {
+    results.push(
+      `the first item paints ${painted[0].start.toFixed(1)}px from the container, not the specified ${leading}px`,
+    )
+  }
+
+  // Masks are centred in the item's own box and never grow away from the focal
+  // range.
+  const visible = painted.filter((edge) => edge.end > 1 && edge.start < carousel.clientWidth - 1)
+  for (let index = 1; index < visible.length; index += 1) {
+    if (visible[index].mask > visible[index - 1].mask + 0.6) {
+      results.push('a masked item is wider than the one nearer the focal range')
+      break
+    }
+  }
+  if (!(visible[visible.length - 1].mask < focalSize - 1)) {
+    results.push('no visible item is masked, so the keyline range is not being applied')
+  }
+
+  const third = items[2]
+  const styles = getComputedStyle(third)
+  const insetStart = parseFloat(styles.getPropertyValue('--m3e-carousel-item-inset-start'))
+  const insetEnd = parseFloat(styles.getPropertyValue('--m3e-carousel-item-inset-end'))
+  if (Math.abs(insetStart - insetEnd) > 0.1) {
+    results.push(
+      `a keyline mask is off-centre: ${insetStart.toFixed(1)}px start against ${insetEnd.toFixed(1)}px end`,
+    )
+  }
+  const surfaceStyles = getComputedStyle(third.querySelector('.m3e-carousel__item-content'))
+  if (surfaceStyles.clipPath === 'none') {
+    results.push('a masked item has no clip path applied')
+  }
+  // The item box must stay untransformed: it is the scroll-snap area.
+  if (getComputedStyle(third).translate !== 'none') {
+    results.push('the item box is translated, so its scroll-snap area moves with the mask')
+  }
+
+  // A contained layout ends inside the container; only the uncontained layouts
+  // are specified to bleed past it.
+  const last = visible[visible.length - 1]
+  if (last.end > carousel.clientWidth + 2) {
+    results.push('the trailing visible item paints past the container')
+  }
+
+  return results
+}, carouselHelpers.toString())
+
+for (const finding of carouselRest) findings.push(`Carousel arrangement: ${finding}`)
+
+// Snapping is native: the keyline snap offset is a real scroll margin, and the
+// container must rest on a keyline position rather than wherever the mask left it.
+const carouselSnap = await page.evaluate(async () => {
+  const results = []
+  const settle = (extraMs = 260) =>
+    new Promise((resolve) =>
+      requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(resolve, extraMs))),
+    )
+
+  const carousel = document.querySelector('.m3e-carousel[data-example-layout="multiBrowse"]')
+  if (!carousel) {
+    results.push('no multi-browse carousel rendered; the snap probe is vacuous')
+    return results
+  }
+  if (getComputedStyle(carousel).scrollSnapType === 'none') {
+    results.push('a snap-scrolling carousel declares no scroll-snap type')
+  }
+  const item = carousel.querySelector('.m3e-carousel__item')
+  if (!item || getComputedStyle(item).scrollSnapAlign === 'none') {
+    results.push('carousel items declare no snap alignment')
+    return results
+  }
+
+  // Mandatory snapping resolves at rest. A carousel that has never been scrolled
+  // must sit exactly at its first item's snap position, which is zero for a
+  // start-aligned arrangement — if the mask moved the snap area, the browser
+  // would have drifted away from it.
+  await settle()
+  if (Math.abs(carousel.scrollLeft) > 0.5) {
+    results.push(
+      `an untouched snap carousel rests at ${carousel.scrollLeft.toFixed(1)}px instead of its first snap position`,
+    )
+  }
+
+  const focalSize = parseFloat(
+    getComputedStyle(carousel).getPropertyValue('--m3e-carousel-item-size'),
+  )
+  const spacing = parseFloat(getComputedStyle(carousel).columnGap) || 0
+  const stride = focalSize + spacing
+
+  carousel.scrollLeft = stride * 3
+  await settle()
+  const rested = carousel.scrollLeft
+  const nearestIndex = Math.round(rested / stride)
+  if (Math.abs(rested - nearestIndex * stride) > 2) {
+    results.push(
+      `a snap carousel rested ${Math.abs(rested - nearestIndex * stride).toFixed(1)}px off the nearest keyline`,
+    )
+  }
+  // Masks must have followed the scroll.
+  const focal = [...carousel.querySelectorAll('.m3e-carousel__item')][nearestIndex]
+  if (focal) {
+    const mask = parseFloat(
+      getComputedStyle(focal).getPropertyValue('--m3e-carousel-item-current-size'),
+    )
+    if (!(mask > focalSize - 20)) {
+      results.push(`after scrolling, the focal item is masked to ${mask.toFixed(1)}px`)
+    }
+  }
+  carousel.scrollLeft = 0
+  await settle()
+
+  const free = document.querySelector('.m3e-carousel[data-example-layout="uncontained"]')
+  if (!free) {
+    results.push('no uncontained carousel rendered; the free-scroll probe is vacuous')
+  } else if (getComputedStyle(free).scrollSnapType !== 'none') {
+    results.push('the uncontained layout snaps, but the specification recommends standard scrolling')
+  }
+
+  return results
+})
+
+for (const finding of carouselSnap) findings.push(`Carousel snapping: ${finding}`)
+
+// The full-screen layout is the same engine on the block axis: one edge-to-edge
+// item, and scrolling moves vertically rather than horizontally.
+const carouselFullScreen = await page.evaluate(async () => {
+  const results = []
+  const settle = (extraMs = 260) =>
+    new Promise((resolve) =>
+      requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(resolve, extraMs))),
+    )
+
+  const carousel = document.querySelector('.m3e-carousel[data-example-layout="fullScreen"]')
+  if (!carousel) {
+    results.push('no full-screen carousel rendered; the vertical probe is vacuous')
+    return results
+  }
+  if (getComputedStyle(carousel).scrollSnapType.split(' ')[0] !== 'y') {
+    results.push('the full-screen layout does not snap its block axis, which the specification requires')
+  }
+  const surface = carousel.querySelector('.m3e-carousel__item .m3e-carousel__item-content')
+  if (!surface) {
+    results.push('the full-screen carousel rendered no item surface')
+    return results
+  }
+  const containerBox = carousel.getBoundingClientRect()
+  const box = surface.getBoundingClientRect()
+  if (Math.abs(box.width - containerBox.width) > 1) {
+    results.push(
+      `the full-screen item is ${box.width.toFixed(1)}px wide against a ${containerBox.width.toFixed(1)}px container, not edge to edge`,
+    )
+  }
+  if (Math.abs(box.height - containerBox.height) > 1) {
+    results.push('the full-screen item does not fill the container height')
+  }
+  if (carousel.scrollHeight <= carousel.clientHeight + 1) {
+    results.push('the full-screen carousel does not scroll its block axis')
+  }
+  const before = carousel.scrollTop
+  carousel.scrollTop = containerBox.height
+  await settle()
+  if (carousel.scrollTop <= before) {
+    results.push('the full-screen carousel did not move on the block axis')
+  }
+  if (Math.abs(carousel.scrollLeft) > 0.5) {
+    results.push('the full-screen carousel scrolls its inline axis as well as its block axis')
+  }
+  carousel.scrollTop = 0
+  await settle()
+  return results
+})
+
+for (const finding of carouselFullScreen) findings.push(`Carousel full-screen: ${finding}`)
+
+// The multi-aspect layout sizes each item from its own ratio and parallaxes the
+// media inside the mask rather than moving the item's box.
+const carouselMultiAspect = await page.evaluate(async () => {
+  const results = []
+  const settle = (extraMs = 260) =>
+    new Promise((resolve) =>
+      requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(resolve, extraMs))),
+    )
+
+  const carousel = document.querySelector('.m3e-carousel[data-example-layout="multiAspect"]')
+  if (!carousel) {
+    results.push('no multi-aspect carousel rendered; the ratio probe is vacuous')
+    return results
+  }
+  const items = [...carousel.querySelectorAll('.m3e-carousel__item')]
+  if (items.length < 3) {
+    results.push('the multi-aspect carousel rendered too few items to compare ratios')
+    return results
+  }
+  for (const item of items.slice(0, 3)) {
+    const box = item.getBoundingClientRect()
+    const declared = parseFloat(
+      getComputedStyle(item).getPropertyValue('--m3e-carousel-item-aspect'),
+    )
+    if (!Number.isFinite(declared)) {
+      results.push('a multi-aspect item declares no ratio')
+      break
+    }
+    if (Math.abs(box.width / box.height - declared) > 0.05) {
+      results.push(
+        `a multi-aspect item renders at ${(box.width / box.height).toFixed(2)} against its declared ${declared.toFixed(2)}`,
+      )
+      break
+    }
+  }
+  const widths = new Set(
+    items.slice(0, 3).map((item) => Math.round(item.getBoundingClientRect().width)),
+  )
+  if (widths.size < 2) {
+    results.push('every multi-aspect item rendered the same width, so no ratio is being applied')
+  }
+
+  // This is the one layout with no strategy to fold its padding into, so the
+  // measurement table's leading padding is real padding here.
+  const leading = parseFloat(
+    getComputedStyle(carousel).getPropertyValue('--m3e-comp-carousel-leading-padding'),
+  )
+  const firstStart =
+    items[0].getBoundingClientRect().left - carousel.getBoundingClientRect().left
+  if (Math.abs(firstStart - leading) > 1) {
+    results.push(
+      `the first multi-aspect item starts ${firstStart.toFixed(1)}px in, not the specified ${leading}px`,
+    )
+  }
+
+  carousel.scrollLeft = items[1].getBoundingClientRect().width
+  await settle()
+  const first = items[0]
+  const media = first.querySelector('.m3e-carousel__item-media')
+  const surface = first.querySelector('.m3e-carousel__item-content')
+  const parallax = parseFloat(
+    getComputedStyle(first).getPropertyValue('--m3e-carousel-item-parallax'),
+  )
+  if (!Number.isFinite(parallax) || parallax === 0) {
+    results.push('a scrolled multi-aspect item has no parallax')
+  }
+  if (media && getComputedStyle(media).translate === 'none') {
+    results.push('the multi-aspect parallax is not applied to the item media')
+  }
+  if (surface && getComputedStyle(surface).clipPath === 'none') {
+    results.push('a scrolled multi-aspect item has no mask')
+  }
+  carousel.scrollLeft = 0
+  await settle()
+  return results
+})
+
+for (const finding of carouselMultiAspect) findings.push(`Carousel multi-aspect: ${finding}`)
+
+// The adaptive-content rule is CSS, so it has to be measured: a medium item hides
+// its title and a small item hides both.
+const carouselAdaptiveContent = await page.evaluate(() => {
+  const results = []
+  const carousel = document.querySelector('.m3e-carousel[data-example-layout="multiBrowse"]')
+  if (!carousel) {
+    results.push('no multi-browse carousel rendered; the adaptive-content probe is vacuous')
+    return results
+  }
+  const items = [...carousel.querySelectorAll('.m3e-carousel__item')]
+  const buckets = items.map((item) => item.dataset.m3eSize).filter(Boolean)
+  for (const required of ['large', 'medium', 'small']) {
+    if (!buckets.includes(required)) {
+      results.push(`no item was bucketed ${required}; buckets were ${buckets.join(', ')}`)
+      return results
+    }
+  }
+  let checked = 0
+  for (const item of items) {
+    const bucket = item.dataset.m3eSize
+    const title = item.querySelector('[data-m3e-carousel-hide="medium"]')
+    const year = item.querySelector('[data-m3e-carousel-hide="small"]')
+    if (!title || !year || !bucket) continue
+    checked += 1
+    const titleShown = title.getClientRects().length > 0
+    const yearShown = year.getClientRects().length > 0
+    if (bucket === 'large' && !(titleShown && yearShown)) {
+      results.push('a large item hides content the specification keeps')
+      break
+    }
+    if (bucket === 'medium' && titleShown) {
+      results.push('a medium item still shows the title the specification hides')
+      break
+    }
+    if (bucket === 'small' && (titleShown || yearShown)) {
+      results.push('a small item still shows content the specification withdraws')
+      break
+    }
+  }
+  if (checked === 0) {
+    results.push('no item carried adaptive content; the adaptive-content probe is vacuous')
+  }
+  return results
+})
+
+for (const finding of carouselAdaptiveContent) findings.push(`Carousel adaptive content: ${finding}`)
+
+
 await browser.close()
 server.close()
 
@@ -1416,5 +1794,6 @@ if (findings.length > 0) {
 
 process.stdout.write(
   'Rendering audit passed: no clipped elevation shadows, undersized interactive targets outside ' +
-    'the recorded exemptions, or Chip/List Item/Slider/Divider/Badge/Bottom Sheet/App Bar/Search source-geometry defects\n',
+    'the recorded exemptions, or Chip/List Item/Slider/Divider/Badge/Bottom Sheet/App Bar/Search/Carousel '  +
+    'source-geometry defects\n',
 )

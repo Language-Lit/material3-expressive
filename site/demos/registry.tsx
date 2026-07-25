@@ -15,6 +15,7 @@ import { BottomSheetExample } from '@examples/BottomSheet.example'
 import { ButtonExample } from '@examples/Button.example'
 import { ButtonGroupExample } from '@examples/ButtonGroup.example'
 import { CardExample } from '@examples/Card.example'
+import { CarouselExample } from '@examples/Carousel.example'
 import { CheckboxExample } from '@examples/Checkbox.example'
 import { ChipExample } from '@examples/Chip.example'
 import { CircularProgressExample } from '@examples/CircularProgress.example'
@@ -56,6 +57,7 @@ export const demoRegistry: Record<string, ComponentType> = {
   Button: ButtonExample,
   ButtonGroup: ButtonGroupExample,
   Card: CardExample,
+  Carousel: CarouselExample,
   Checkbox: CheckboxExample,
   Chip: ChipExample,
   CircularProgress: CircularProgressExample,

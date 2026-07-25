@@ -74,7 +74,7 @@ must never be projected into stable documentation as support claims.
 | 4 | [Button groups](https://m3.material.io/components/button-groups/overview) | Composite | `ButtonGroup` | Conformant | Reconcile new upstream variants at the final catalog audit |
 | 5 | [Buttons](https://m3.material.io/components/buttons/overview) | Primitive | `Button` | Conformant | Reconcile new upstream variants at the final catalog audit |
 | 6 | [Cards](https://m3.material.io/components/cards/overview) | Primitive | `Card` | Conformant | Reconcile new upstream variants at the final catalog audit |
-| 7 | [Carousel](https://m3.material.io/components/carousel/overview) | Composite | None | Planned | Layout strategies, scrolling/snapping, focus, semantics, and responsive recipes |
+| 7 | [Carousel](https://m3.material.io/components/carousel/overview) | Composite | `Carousel` | Conformant | Reconcile new upstream variants at the final catalog audit; publish the `Show all` accessibility recipe |
 | 8 | [Checkbox](https://m3.material.io/components/checkbox/overview) | Primitive | `Checkbox` | Conformant | Reconcile new upstream variants at the final catalog audit |
 | 9 | [Chips](https://m3.material.io/components/chips/overview) | Primitive | `Chip` | Conformant | Reconcile new upstream variants at the final catalog audit |
 | 10 | [Date pickers](https://m3.material.io/components/date-pickers/overview) | Composite | None | Planned | Docked/modal, single/range/input modes, calendar grid, locale boundary, and validation |
@@ -105,7 +105,7 @@ must never be projected into stable documentation as support claims.
 | 35 | [Toolbars](https://m3.material.io/components/toolbars/overview) | Mixed | `FloatingToolbar` | Partial | Reconcile the full toolbar family, including docked/floating and expansion/overflow compositions, plus the bottom app bar the current design index files here (`BottomAppBar`/`FlexibleBottomAppBar`, pinned in row 1's `AppBar.kt`; the flexible variant already reads `DockedToolbarTokens` — T46 recorded the disposition) |
 | 36 | [Tooltips](https://m3.material.io/components/tooltips/overview) | Composite | `Tooltip` | Conformant | Reconcile new upstream variants at the final catalog audit |
 
-Snapshot accounting: 29 Conformant + 3 Partial + 4 Planned = 36 families;
+Snapshot accounting: 30 Conformant + 3 Partial + 3 Planned = 36 families;
 0 Excluded. Changing those totals requires changing a row in the same approved
 task.
 
@@ -131,12 +131,15 @@ Each implementation still needs the scope/files/checks approval required by
    app-shell recipe is owed to tranche R. App bars followed in T46, and Search
    in T47 — sequenced after it because the search app bar reuses T46's scroll
    primitive, and after Menu/Select because its docked surface reuses their
-   anchored-overlay portal. Side sheets is sequenced last of the
-   overlay group for a source reason rather than a preference: AndroidX ships no
-   side-sheet implementation at any revision, so that family has no pinned
-   first-party source to satisfy the completeness contract, and its task must
-   either wait for one or carry an ADR justifying a design-specification-only
-   port.
+   anchored-overlay portal. Carousel landed in T48, sharing no primitive with
+   the overlay group: it is the tranche's one scroll-geometry family, and the
+   first port in this library of an upstream *algorithm* rather than a set of
+   measurements. Its `Show all` accessibility recipe is owed to tranche R.
+   Side sheets is sequenced last of the overlay group for a source reason
+   rather than a preference: AndroidX ships no side-sheet implementation at any
+   revision, so that family has no pinned first-party source to satisfy the
+   completeness contract, and its task must either wait for one or carry an ADR
+   justifying a design-specification-only port.
 3. **R — close partial families and recipes.** Complete Lists and Toolbars,
    including official variants such as expanding lists, and publish tested
    recipes where a new public abstraction would duplicate composition.

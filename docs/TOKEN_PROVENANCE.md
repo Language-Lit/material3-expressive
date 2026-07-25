@@ -876,3 +876,52 @@ them, in both cases because the source reads exactly those upstream families:
 `--m3e-comp-app-bar-*` for the search app bar's container, on-scroll,
 navigation, and action colors, and `--m3e-comp-text-field-disabled-*` for every
 disabled color, which `inputFieldColors` resolves from `FilledTextFieldTokens`.
+
+## Carousel (T48)
+
+Carousel is the first family in this library with **no generated token file at
+all**. Listing
+`compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/`
+at the pinned revision `a90df2fc27e026b9ad2ed569f203a260c1041fab` and at
+`androidx-main` HEAD returns no `CarouselTokens.kt`. Every other family entry
+above is an account of which generated roles the implementation reads; this one
+has no roles to account for.
+
+Its registry therefore draws on the two first-party sources that do describe the
+family, and ADR 0040 records the exception so it is not read as licence to skip a
+token file that does exist.
+
+**From `CarouselDefaults` and the private constants beside it** — the four
+numbers the pinned implementation reads: `MinSmallItemSize` (40dp),
+`MaxSmallItemSize` (56dp), `AnchorSize` (10dp), and
+`MediumLargeItemDiffThreshold` (0.85). These are the whole numeric contract of
+the layout engine, so registering them is what makes the arrangement themable
+rather than only its paint. `AnchorSize` is `internal` upstream and registered
+anyway: it decides how far items travel past both container edges, which is a
+layout number a theme should be able to change.
+
+**From the design specification's own measurement tables**
+(<https://m3.material.io/components/carousel/specs>, rendered and accessed
+2026-07-25) — the values only the design owns: the 28dp item corner every layout
+shares, the 16dp leading/trailing and 8dp block padding of multi-browse and both
+hero layouts, the 8dp gap between items, the full-screen layout's 0dp padding
+with a 16dp gap, and the `surface` container colour its colour table names.
+
+Two registration choices follow from that split. `item-shape` is a reference to
+`sys.shape.corners.cornerExtraLarge` rather than a literal 28px, because that
+system role already carries exactly this value and a theme that reshapes its
+corners should reshape carousel items too. And `uncontained-trailing-padding` is
+registered as 0px rather than omitted — the measurement tables give the
+uncontained layouts a *leading* padding only, since their items are meant to
+bleed past the trailing edge, and one variable answering the question for every
+layout is clearer than the absence of a variable meaning something.
+
+The four arrangement numbers are read in JavaScript, from the resolved custom
+properties, and the stylesheet deliberately never references them. A value with
+two readers would have two sources of truth, so `Carousel.css.test.ts` asserts
+that the stylesheet does not mention them.
+
+No state-layer opacity is registered: the specs page lists enabled, hover, focus,
+pressed, and disabled for a carousel item without giving any of them a value, so
+the item paints the shared `--m3e-sys-state-*` opacities and only the layer's
+colour is a carousel role.

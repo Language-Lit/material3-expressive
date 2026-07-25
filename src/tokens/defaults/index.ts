@@ -6,6 +6,7 @@ import { defaultBottomSheetTokens } from './bottom-sheet'
 import { defaultButtonTokens } from './button'
 import { defaultButtonGroupTokens } from './button-group'
 import { defaultCardTokens } from './card'
+import { defaultCarouselTokens } from './carousel'
 import { defaultChipTokens } from './chip'
 import { defaultCheckboxTokens } from './checkbox'
 import { defaultCircularProgressTokens } from './circular-progress'
@@ -122,6 +123,7 @@ const defaultTokenSetInput = {
     defaultBottomSheetTokens,
     defaultAppBarTokens,
     defaultSearchBarTokens,
+    defaultCarouselTokens,
   ],
 } satisfies FoundationTokenSet
 
