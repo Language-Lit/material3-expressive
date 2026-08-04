@@ -5,7 +5,13 @@
 Audit date: 2026-08-04  
 Release: `@language-lit/material3-expressive@1.2.1`  
 Rollback: `@language-lit/material3-expressive@0.3.0` (tag `v0.3.0`)  
-Registry publication: not performed at the time of this audit.
+Registry publication: not performed at the time of this audit; published
+2026-08-04 from commit `52ad093` and confirmed as `latest`. The registry now
+holds `1.0.0-next.0`, `1.0.0`, `1.0.2`, `1.0.3`, `1.1.0`, `1.2.0`, and
+`1.2.1`. The published tarball was re-downloaded and its `dist/index.js`/
+`dist/styles.css` checked directly to carry the T56/T57 repairs, not merely
+the version bump. **The `v1.2.1` tag is not yet created** — still owed
+against `52ad093`, the commit this was published from.
 
 ### Recommendation
 

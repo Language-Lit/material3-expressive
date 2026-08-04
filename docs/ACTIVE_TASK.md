@@ -3532,9 +3532,10 @@ overlay that is supposed to beat page chrome.
 
 ## T58 — 1.2.1 patch release
 
-Status: active
+Status: complete
 Approved: 2026-08-04 (owner request: publish the T56/T57 repairs to npm and
 update the documentation site)
+Completed: 2026-08-04
 
 ### Scope
 
@@ -3577,8 +3578,41 @@ No export, prop, token, or dependency changes.
   own next deploy. Confirming that deploy is the owner's Vercel dashboard, not
   a repository gate.
 
-### Not done (pending owner action)
+### Completion evidence
 
-- Registry publication and the `v1.2.1` tag.
-- Confirmation that the Vercel production deployment picked up the fix —
-  outside this repository's own gates, same boundary T35 recorded.
+- Published by the owner 2026-08-04. The first publish attempt returned
+  `E404` on the registry `PUT`; the cause was an expired local npm session
+  (`npm whoami` also 401'd), not a permissions or token-scope problem —
+  `npm login` cleared it and the retry succeeded.
+- `npm view @language-lit/material3-expressive versions` confirms the
+  registry holds `1.0.0-next.0`, `1.0.0`, `1.0.2`, `1.0.3`, `1.1.0`, `1.2.0`,
+  and `1.2.1`, with `dist-tags.latest` at `1.2.1`.
+- The published artifact was verified rather than assumed: `npm pack` at
+  `1.2.1` re-downloaded a 476,163-byte tarball — matching the size measured
+  during `npm run verify` before publish — and its extracted `dist/index.js`
+  and `dist/styles.css` were inspected directly rather than trusting the size
+  match alone:
+  - `dist/index.js` contains
+    `left: targetRect.left - listRect.left + list.scrollLeft` (T56's
+    content-space indicator fix) and the `list.scrollBy({ left: delta,
+    behavior: … })` centering call that replaced `Tabs`' `scrollIntoView`.
+  - `dist/styles.css` contains `.m3e-tabs__indicator{…left:0…}` (T56's
+    physical RTL-safe anchor) and `.m3e-carousel{…isolation:isolate…}` (T57's
+    stacking fix).
+  - The bundle's two remaining `scrollIntoView` calls belong to `Carousel`'s
+    item-scroll and `Select`'s active-option handling, not `Tabs` — the
+    correct set, since only `Tabs`' usage was ever the defect.
+  - A release that shipped only the version bump would have failed every one
+    of these checks.
+
+### Not done
+
+- **The `v1.2.1` tag was not created.** `git tag -l` and `git ls-remote
+  --tags origin` both show `v1.2.0` as the latest tag; the publish step ran
+  without the accompanying `git tag v1.2.1 && git push --tags` this
+  repository's own process expects (T30/T34/T37 precedent — `1.0.1` was once
+  tagged and never published, the same drift in the opposite direction).
+  Tagging `52ad093`, the commit this was published from, is still owed.
+- Confirmation that the Vercel production deployment picked up the fix is
+  outside this repository's own gates, the same boundary T35 recorded — the
+  owner's Vercel dashboard is the source of truth for that, not checked here.
