@@ -52,12 +52,24 @@ describe('Tabs stylesheet contract', () => {
 
   it('uses logical layout and retains a visible boundary in forced colors', () => {
     expect(css).toContain('inline-size')
-    expect(css).toContain('inset-inline-start')
     expect(css).toContain('padding-inline')
     expect(css).toContain('@media (forced-colors: active)')
     expect(css).toContain('CanvasText')
+    // `left` is deliberately absent from this ban — the indicator's anchor
+    // is the one sanctioned physical property; the next test pins it.
     expect(css).not.toMatch(
-      /^\s*(?:left|right|width|height|margin-left|margin-right|padding-left|padding-right)\s*:/m,
+      /^\s*(?:right|width|height|margin-left|margin-right|padding-left|padding-right)\s*:/m,
     )
+  })
+
+  it('anchors the indicator at the physical left edge, matching its physical measurement', () => {
+    // The translateX driving the indicator is computed from physical rects
+    // plus scrollLeft — physical-left quantities. A logical
+    // inset-inline-start anchor resolves to right: 0 under RTL, which
+    // pushes the translated indicator off the row (T56). The anchor is the
+    // single physical property this stylesheet is allowed.
+    expect(css).toMatch(/\.m3e-tabs__indicator\s*{[^}]*\bleft: 0/)
+    expect(css).not.toContain('inset-inline-start')
+    expect(css.match(/^\s*left\s*:/gm)).toHaveLength(1)
   })
 })

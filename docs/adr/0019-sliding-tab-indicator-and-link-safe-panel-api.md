@@ -1,6 +1,6 @@
 # ADR 0019: First sliding-indicator infrastructure, and a link-safe, optionally-paneled Tabs API
 
-Status: accepted
+Status: accepted (amended by T56 — see Corrections)
 Date: 2026-07-20
 Task: T19
 
@@ -174,3 +174,50 @@ family.
   baseline; a task with comparably large JavaScript or CSS may need another
   recorded budget decision within a few tasks, consistent with the cadence
   T10 through T17 already showed.
+
+## Corrections (T56, 2026-08-04)
+
+Three defects in decision 2's measurement design, all invisible to jsdom and
+all reported from a scrolled row on a mobile viewport, were repaired under
+T56:
+
+1. **The measurement mixed coordinate spaces.** Decision 2 measured the
+   target "relative to the tablist container" by rect subtraction — a
+   viewport-space quantity. But the indicator is absolutely positioned
+   *inside* the tablist, which is simultaneously the scroll container when
+   `scrollable`, so the indicator's own coordinate space is the scrolled
+   content, not the visible box. The two spaces coincide only at
+   `scrollLeft === 0` — which is why T19's browser-era checks passed — and
+   diverge by exactly `scrollLeft` on any re-measure while scrolled
+   (selecting a tab in a scrolled row, `ResizeObserver` firing on rotation
+   or keyboard appearance, a window resize). The repair adds the row's raw
+   `scrollLeft` to the measured offset, converting it to content space,
+   which is scroll-invariant — deliberately no scroll listener. The
+   rendering audit measured the unrepaired indicator exactly 79.9px off
+   after an 80px scroll.
+2. **The indicator's anchor was logical while its offset is physical.**
+   `inset-inline-start: 0` resolves to `right: 0` under RTL, but the
+   `translateX` driving the indicator is measured from physical rects, so
+   under RTL the indicator left the row entirely (measured 430px off in the
+   audit). §10's no-JS-direction-branching ruling covered arrow-key
+   direction only; indicator positioning under RTL was never considered.
+   The anchor is now physical `left: 0` — the stylesheet's one sanctioned
+   physical property, pinned by its own CSS-contract test — and the raw
+   0-or-negative RTL `scrollLeft` keeps the single content-space formula
+   correct in both directions.
+3. **`scrollIntoView` was the wrong scroll primitive.** It walks every
+   scrollable ancestor, so selecting a tab could scroll the page. The
+   pinned source's `ScrollableTabRow` centers the selected tab through the
+   row's *own* scroll state (`ScrollableTabData.calculateTabOffset`,
+   clamped to the scrollable range, animated). The repair translates that:
+   a centering `scrollBy` on the tablist itself, browser-clamped at the
+   range edges, `smooth` except on the mount-time centering and under
+   reduced motion. This also replaces T19's "nearest-edge" visibility with
+   the source's centering, so the web component now matches the original's
+   observable scroll behavior rather than approximating it.
+
+The jsdom halves of these are pinned by geometry tests that supply the rects
+and scroll positions layout would have produced; the browser halves by a
+rendering-audit probe that scrolls the playground's scrollable row, selects
+a tab in LTR and RTL, and compares indicator and content rects — proven
+non-vacuous by running it against the unrepaired build.

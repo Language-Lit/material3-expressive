@@ -32,7 +32,11 @@ import '@language-lit/material3-expressive/styles.css'
   full-width underline, tinted plain `onSurface` — deliberately more
   subdued, not brand-colored.
 - `scrollable` (default `false`) switches from an evenly distributed fixed
-  row to a horizontally scrolling one that keeps the selected tab in view.
+  row to a horizontally scrolling one that keeps the selected tab centered
+  where the scroll range allows, the same behavior the source's
+  `ScrollableTabRow` drives through its own scroll state. Only the row
+  itself ever scrolls — selecting a tab never moves an ancestor scroll
+  container.
 
 ## Link-safe navigation tabs
 

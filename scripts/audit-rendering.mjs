@@ -1880,6 +1880,138 @@ const carouselMaskShape = await page.evaluate(() => {
 
 for (const finding of carouselMaskShape) findings.push(`Carousel mask shape: ${finding}`)
 
+// --- Tabs: the indicator in a scrolled row, and the scoped selection scroll --
+// The indicator is absolutely positioned inside the scrollable tablist, so it
+// lives in the scrolled content's coordinate space, not the visible box's.
+// T56 repaired the measurement to add the row's scrollLeft (raw, so RTL's
+// negative values work unchanged) and anchored the indicator at the physical
+// left edge; jsdom cannot see either, so this probe re-measures in a really
+// scrolled row, in both directions. It also proves selecting a tab scrolls
+// only the row itself: the previous scrollIntoView walked every scrollable
+// ancestor, so selecting a tab could yank the page. The unrepaired component
+// misplaced the indicator by exactly the row's scroll distance, so the 1.5px
+// tolerance is far below the defect it guards against.
+const tabsScrolledIndicator = await page.evaluate(async () => {
+  const results = []
+  const frame = () => new Promise((resolve) => requestAnimationFrame(resolve))
+  // The indicator transitions on a projected spring and the centering scroll
+  // is smooth, so wait for its viewport rect to stop moving rather than
+  // guessing a duration.
+  const settled = async (element) => {
+    let previous = null
+    for (let ticks = 0; ticks < 240; ticks += 1) {
+      await frame()
+      const box = element.getBoundingClientRect()
+      const key = `${box.left.toFixed(2)},${box.width.toFixed(2)}`
+      if (previous === key) {
+        await frame()
+        const again = element.getBoundingClientRect()
+        if (`${again.left.toFixed(2)},${again.width.toFixed(2)}` === key) return
+      }
+      previous = key
+    }
+  }
+
+  const list = document.querySelector('.m3e-tabs__list[data-m3e-scrollable="true"]')
+  const indicator = list?.querySelector('.m3e-tabs__indicator')
+  if (!list || !indicator) {
+    results.push('no scrollable tab row rendered; the probe is vacuous')
+    return results
+  }
+  if (list.scrollWidth - list.clientWidth < 60) {
+    results.push('the scrollable tab row does not overflow; the probe is vacuous')
+    return results
+  }
+
+  const ancestors = []
+  for (let node = list.parentElement; node; node = node.parentElement) ancestors.push(node)
+  const ancestorScroll = () =>
+    ancestors.map((node) => `${node.scrollLeft},${node.scrollTop}`).join(' ')
+
+  const misalignment = () => {
+    const selected = list.querySelector('.m3e-tabs__tab[data-m3e-selected="true"]')
+    const target = selected?.querySelector('.m3e-tabs__tab-content')
+    if (!target) return null
+    const indicatorBox = indicator.getBoundingClientRect()
+    const targetBox = target.getBoundingClientRect()
+    return { left: indicatorBox.left - targetBox.left, width: indicatorBox.width - targetBox.width }
+  }
+  // Only button tabs are probe-safe: the example's href tab would move the
+  // URL hash. A selection while the row is scrolled is exactly the state the
+  // defect corrupted, since the re-measure then runs at a nonzero scrollLeft.
+  const unselectedButton = () =>
+    [...list.querySelectorAll('button.m3e-tabs__tab:not([disabled])')].find(
+      (tab) => tab.getAttribute('data-m3e-selected') !== 'true',
+    )
+
+  const initiallySelected = list.querySelector('.m3e-tabs__tab[data-m3e-selected="true"]')
+  const pageBefore = ancestorScroll()
+  list.scrollLeft = 80
+  await frame()
+  const next = unselectedButton()
+  if (!next) {
+    results.push('no unselected button tab to select; the probe is vacuous')
+    return results
+  }
+  next.click()
+  await settled(indicator)
+  const ltr = misalignment()
+  if (!ltr) {
+    results.push('no selected tab content to compare against after an LTR selection')
+  } else {
+    if (Math.abs(ltr.left) > 1.5) {
+      results.push(`scrolled-row indicator sits ${ltr.left.toFixed(1)}px from its tab's content`)
+    }
+    if (Math.abs(ltr.width) > 1.5) {
+      results.push(`scrolled-row indicator is ${ltr.width.toFixed(1)}px off its content's width`)
+    }
+  }
+  if (ancestorScroll() !== pageBefore) {
+    results.push('selecting a tab scrolled an ancestor of the row')
+  }
+
+  // RTL: the same geometry with the row's scroll running 0-to-negative. The
+  // physical-left anchor plus the raw signed scrollLeft must keep the
+  // indicator under its tab; the pre-T56 logical anchor pushed it off the
+  // row's right edge instead.
+  const section = list.closest('section') ?? document.documentElement
+  const previousDir = section.getAttribute('dir')
+  section.setAttribute('dir', 'rtl')
+  await frame()
+  list.scrollLeft = -80
+  await frame()
+  if (list.scrollLeft >= 0) {
+    results.push('the RTL row did not take a negative scrollLeft; the RTL leg is vacuous')
+  } else {
+    const rtlNext = unselectedButton()
+    if (!rtlNext) {
+      results.push('no unselected button tab for the RTL leg; it is vacuous')
+    } else {
+      rtlNext.click()
+      await settled(indicator)
+      const rtl = misalignment()
+      if (!rtl) {
+        results.push('no selected tab content to compare against after an RTL selection')
+      } else {
+        if (Math.abs(rtl.left) > 1.5) {
+          results.push(`RTL indicator sits ${rtl.left.toFixed(1)}px from its tab's content`)
+        }
+        if (Math.abs(rtl.width) > 1.5) {
+          results.push(`RTL indicator is ${rtl.width.toFixed(1)}px off its content's width`)
+        }
+      }
+    }
+  }
+
+  if (previousDir === null) section.removeAttribute('dir')
+  else section.setAttribute('dir', previousDir)
+  if (initiallySelected instanceof HTMLButtonElement) initiallySelected.click()
+  list.scrollLeft = 0
+  await settled(indicator)
+  return results
+})
+
+for (const finding of tabsScrolledIndicator) findings.push(`Tabs indicator: ${finding}`)
 
 await browser.close()
 server.close()
@@ -1893,6 +2025,6 @@ if (findings.length > 0) {
 
 process.stdout.write(
   'Rendering audit passed: no clipped elevation shadows, undersized interactive targets outside ' +
-    'the recorded exemptions, or Chip/List Item/Slider/Divider/Badge/Bottom Sheet/App Bar/Search/Carousel '  +
+    'the recorded exemptions, or Chip/List Item/Slider/Divider/Badge/Bottom Sheet/App Bar/Search/Carousel/Tabs '  +
     'source-geometry defects\n',
 )

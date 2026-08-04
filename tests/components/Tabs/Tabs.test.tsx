@@ -12,7 +12,28 @@ beforeAll(installTabsNativePolyfills)
 afterEach(() => {
   cleanup()
   vi.restoreAllMocks()
+  vi.unstubAllGlobals()
 })
+
+/**
+ * jsdom performs no layout, so these geometry tests supply the rects and
+ * scroll positions a real scrolled row would report. The arithmetic under
+ * test is the component's, not the mock's: the unrepaired component fails
+ * each positive case here by exactly the mocked scroll distance.
+ */
+function domRect(left: number, width: number): DOMRect {
+  return {
+    left,
+    width,
+    right: left + width,
+    top: 0,
+    bottom: 0,
+    height: 0,
+    x: left,
+    y: 0,
+    toJSON: () => ({}),
+  } as DOMRect
+}
 
 const basicItems: TabItem[] = [
   { value: 'photos', label: 'Photos' },
@@ -170,5 +191,88 @@ describe('Tabs', () => {
     render(<Tabs aria-label="Library" items={basicItems} />)
     const indicator = document.querySelector('.m3e-tabs__indicator')
     expect(indicator?.getAttribute('data-m3e-ready')).toBe('true')
+  })
+
+  it('measures the indicator in the scrolled content coordinate space, not the visible box', async () => {
+    const user = userEvent.setup()
+    render(<Tabs aria-label="Library" items={basicItems} scrollable />)
+    const list = screen.getByRole('tablist')
+    // The row is scrolled 120px, and the target tab's content sits 40px
+    // from the row's visible left edge. The indicator is absolutely
+    // positioned inside the scroller, so it needs the content-space offset:
+    // 40 + 120. The unrepaired component reported the viewport-space 40 —
+    // exactly scrollLeft short.
+    list.scrollLeft = 120
+    vi.spyOn(list, 'getBoundingClientRect').mockReturnValue(domRect(0, 400))
+    const files = screen.getByRole('tab', { name: 'Files' })
+    const content = files.querySelector('.m3e-tabs__tab-content') as HTMLElement
+    vi.spyOn(content, 'getBoundingClientRect').mockReturnValue(domRect(40, 64))
+    await user.click(files)
+    const indicator = document.querySelector('.m3e-tabs__indicator') as HTMLElement
+    expect(indicator.style.transform).toBe('translateX(160px)')
+    expect(indicator.style.inlineSize).toBe('64px')
+  })
+
+  it('adds the raw, sign-carrying scrollLeft, so an RTL row (negative scroll) measures correctly', async () => {
+    const user = userEvent.setup()
+    render(<Tabs aria-label="Library" items={basicItems} scrollable />)
+    const list = screen.getByRole('tablist')
+    // Every target browser reports scrollLeft as 0-or-negative in RTL. The
+    // content-space conversion is the same signed addition — an absolute
+    // value here would re-break RTL while fixing LTR.
+    list.scrollLeft = -80
+    vi.spyOn(list, 'getBoundingClientRect').mockReturnValue(domRect(0, 400))
+    const files = screen.getByRole('tab', { name: 'Files' })
+    const content = files.querySelector('.m3e-tabs__tab-content') as HTMLElement
+    vi.spyOn(content, 'getBoundingClientRect').mockReturnValue(domRect(40, 64))
+    await user.click(files)
+    const indicator = document.querySelector('.m3e-tabs__indicator') as HTMLElement
+    expect(indicator.style.transform).toBe('translateX(-40px)')
+  })
+
+  it('centers the selected tab by scrolling only the row itself, never an ancestor', async () => {
+    const user = userEvent.setup()
+    render(<Tabs aria-label="Library" items={basicItems} scrollable />)
+    const list = screen.getByRole('tablist')
+    vi.spyOn(list, 'getBoundingClientRect').mockReturnValue(domRect(0, 400))
+    const files = screen.getByRole('tab', { name: 'Files' })
+    vi.spyOn(files, 'getBoundingClientRect').mockReturnValue(domRect(340, 120))
+    const scrollBy = vi.spyOn(list, 'scrollBy').mockImplementation(() => {})
+    const scrollIntoView = vi.fn()
+    files.scrollIntoView = scrollIntoView
+    await user.click(files)
+    // The tab's center (400) sits 200px past the row's own center (200):
+    // the source's ScrollableTabData.calculateTabOffset centers the
+    // selected tab, translated here to a scrollBy the browser clamps to
+    // the row's scrollable range. scrollIntoView is never used — it walks
+    // every scrollable ancestor, so selecting a tab could scroll the page.
+    expect(scrollBy).toHaveBeenCalledWith({ left: 200, behavior: 'smooth' })
+    expect(scrollIntoView).not.toHaveBeenCalled()
+  })
+
+  it('centers instantly on mount, and never scrolls a fixed row', () => {
+    const scrollBy = vi.spyOn(Element.prototype, 'scrollBy').mockImplementation(() => {})
+    render(<Tabs aria-label="Library" items={basicItems} scrollable defaultValue="files" />)
+    // The first centering runs over a page that just appeared, so it must
+    // not animate; only selection changes after mount do.
+    expect(scrollBy).toHaveBeenCalledTimes(1)
+    expect(scrollBy).toHaveBeenCalledWith(expect.objectContaining({ behavior: 'auto' }))
+
+    scrollBy.mockClear()
+    render(<Tabs aria-label="Fixed" items={basicItems} defaultValue="files" />)
+    expect(scrollBy).not.toHaveBeenCalled()
+  })
+
+  it('does not animate the centering scroll under reduced motion', async () => {
+    vi.stubGlobal(
+      'matchMedia',
+      vi.fn().mockReturnValue({ matches: true, addEventListener() {}, removeEventListener() {} }),
+    )
+    const user = userEvent.setup()
+    render(<Tabs aria-label="Library" items={basicItems} scrollable />)
+    const list = screen.getByRole('tablist')
+    const scrollBy = vi.spyOn(list, 'scrollBy').mockImplementation(() => {})
+    await user.click(screen.getByRole('tab', { name: 'Files' }))
+    expect(scrollBy).toHaveBeenCalledWith(expect.objectContaining({ behavior: 'auto' }))
   })
 })

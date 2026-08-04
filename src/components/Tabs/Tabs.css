@@ -156,7 +156,12 @@
     block-size: var(--m3e-comp-tabs-indicator-height);
     inline-size: var(--m3e-comp-tabs-indicator-primary-width);
     inset-block-end: 0;
-    inset-inline-start: 0;
+    /* Physical, deliberately: the translateX that positions the indicator
+       is measured from physical rects plus scrollLeft, so the anchor must
+       stay the physical left edge under RTL too — a logical inline-start
+       anchor resolves to the right edge there and pushes the translated
+       indicator off the row. */
+    left: 0;
     opacity: 0;
     position: absolute;
     transform: translateX(0);

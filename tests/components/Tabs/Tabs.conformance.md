@@ -1,8 +1,8 @@
 # Tabs conformance
 
-Task: T19
+Task: T19 (indicator/scroll repairs: T56)
 Status: conformant
-Reviewed: 2026-07-20
+Reviewed: 2026-08-04
 
 ## Primary references
 
@@ -86,8 +86,14 @@ Supported Material baseline: AndroidX Material 3 branch revision
   `FastSpatial` like every prior overlay-entrance task; the source itself
   specifically animates this with `MotionSchemeKeyTokens.DefaultSpatial`,
   since it is a content-shift transition, not an overlay entrance.
-- `scrollable` keeps the newly selected tab in view via `scrollIntoView`,
-  the same technique `Select` already uses for its active option.
+- `scrollable` keeps the newly selected tab centered where the scroll range
+  allows, translating `ScrollableTabData.calculateTabOffset` — the source
+  centers the selected tab through the row's own scroll state. The web
+  translation is a `scrollBy` on the tablist itself, which the browser
+  clamps to the scrollable range in both directions; T19 had used
+  `scrollIntoView`, which walks every scrollable ancestor, so selecting a
+  tab could scroll the page (repaired in T56). The scroll animates
+  (`smooth`) except on the mount-time centering and under reduced motion.
 
 ## Accessibility
 
@@ -111,7 +117,18 @@ Supported Material baseline: AndroidX Material 3 branch revision
   bounding rect (or, for `'primary'`, its inner content-wrapper rect, to
   reproduce `matchContentSize`) relative to the tablist, applied as the
   indicator's `transform`/`inline-size`; a `ResizeObserver` and a window
-  `resize` listener keep it correct across container reflow.
+  `resize` listener keep it correct across container reflow. The measured
+  offset is converted to the scrolled content's coordinate space by adding
+  the row's raw `scrollLeft` (T56): the indicator is absolutely positioned
+  *inside* the scroll container, so rect subtraction alone landed it
+  exactly `scrollLeft` px toward the start whenever a scrollable row was
+  re-measured while scrolled. The content-space offset is scroll-invariant,
+  so no scroll listener is needed. Its anchor is the physical `left` edge —
+  the one physical property in the stylesheet — because the measurement is
+  physical too; the logical `inset-inline-start` anchor T19 shipped
+  resolved to the right edge under RTL and pushed the translated indicator
+  off the row. The raw (0-or-negative in RTL) `scrollLeft` is added
+  unnormalized, which keeps one formula correct in both directions.
 - The source's separate side-by-side `LeadingIconTab` composable is
   excluded — `Tabs` only supports the stacked icon-above-label combined
   layout, the same "one clean composition over several alternate overload

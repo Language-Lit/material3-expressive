@@ -3335,3 +3335,113 @@ measured-width mechanism and its layout-phase `offsetWidth` read were removed.
   `--m3e-carousel-item-inset-start`/`-end` and documents the translation, but does
   not apply it to marked content itself: where a caption sits inside an item is the
   author's layout, not the component's.
+
+
+---
+
+## T56 — The tab indicator measured the wrong coordinate space
+
+Status: complete
+Approved: 2026-08-04 (owner report: the tab indicator lands in the wrong
+position on mobile screens; "double check the original android implementation,
+and see if our translation is properly done")
+Completed: 2026-08-04
+
+### Scope
+
+Three defects in `Tabs`, all invisible to jsdom, all live in any scrollable
+row — which is exactly the mobile configuration the owner reported:
+
+1. **The indicator misplaces by exactly `scrollLeft`.** `measure()` computed
+   `targetRect.left - listRect.left`, a viewport-space offset — but the
+   indicator is absolutely positioned *inside* `.m3e-tabs__list`, which is
+   simultaneously the scroll container when `scrollable`, so the indicator
+   lives in the scrolled content's coordinate space. The spaces coincide only
+   at `scrollLeft === 0`, which is why desktop rows and fresh mounts looked
+   right; any re-measure while scrolled (selecting a tab after scrolling the
+   row, `ResizeObserver` on rotation or keyboard appearance, window resize)
+   landed the indicator exactly `scrollLeft` px toward the start. The repair
+   adds the row's raw `scrollLeft`, converting the offset to content space,
+   which is scroll-invariant — deliberately no scroll listener. The audit
+   measured the unrepaired build 79.9px off after an 80px scroll, confirming
+   the failure model to the pixel.
+2. **RTL pushed the indicator off the row.** The anchor was logical
+   (`inset-inline-start: 0` → `right: 0` under RTL) while the `translateX`
+   offset is measured from physical rects. ADR 0019 §10 ruled only on
+   arrow-key direction; indicator positioning under RTL was never considered.
+   The anchor is now physical `left: 0` — the stylesheet's one sanctioned
+   physical property, pinned by its own CSS-contract test — and the raw
+   0-or-negative RTL `scrollLeft` keeps one formula correct in both
+   directions. The audit measured the unrepaired RTL indicator 430px off.
+3. **Selecting a tab could scroll the page.** `scrollIntoView` walks every
+   scrollable ancestor. The pinned source's `ScrollableTabRow` centers the
+   selected tab through the row's own scroll state
+   (`ScrollableTabData.calculateTabOffset`, clamped, animated) and never
+   moves anything outside the row. The repair translates that: a centering
+   `scrollBy` on the tablist itself, browser-clamped at the range edges,
+   `smooth` except on the mount-time centering and under reduced motion.
+   This is also a fidelity correction — T19's "nearest-edge" visibility now
+   becomes the source's centering.
+
+The diagnosis arrived with the report (a downstream session had read the
+library source); this task verified it against the code and the pinned
+source, then measured it in a real browser rather than taking it on trust.
+
+### Expected files
+
+- Modified: `src/components/Tabs/Tabs.tsx`, `src/components/Tabs/Tabs.css`,
+  `tests/components/Tabs/Tabs.test.tsx`,
+  `tests/components/Tabs/Tabs.css.test.ts`,
+  `tests/components/Tabs/tabs-native-polyfill.ts` (jsdom lacks
+  `Element.scrollBy`; the `scrollIntoView` polyfill leaves with its caller),
+  `tests/components/Tabs/Tabs.conformance.md`, `docs/components/Tabs.md`,
+  `docs/adr/0019-sliding-tab-indicator-and-link-safe-panel-api.md` (amended),
+  `scripts/audit-rendering.mjs`, `playground/src/playground.css`.
+- The playground change caps the scrollable demo at a phone-like 26rem: a
+  scrollable row that never overflows demonstrates nothing, and the audit's
+  new probe correctly reported itself vacuous against it at the audit's
+  1400px viewport.
+- No export, prop type, or token value changes —
+  `docs/component-inventory.json` is unchanged. No SPEC ledger row, matching
+  the T50–T55 repair precedent.
+
+### Acceptance checks
+
+- With the row scrolled and a tab selected, the indicator sits under the
+  selected tab's content, in LTR and RTL, in a real browser.
+- Selecting a tab scrolls only the row itself, never an ancestor.
+- The new jsdom geometry tests and the new audit probe both fail against the
+  unrepaired component, proving neither is vacuous.
+- `npm run verify` passes, and the full rendering audit passes.
+
+### Completion evidence
+
+- The six new jsdom tests were run against the unrepaired component: all six
+  fail there (the content-space measurement, the signed-`scrollLeft` RTL
+  arithmetic, the scoped centering scroll, the mount/instant and
+  fixed-row negative guards, the reduced-motion behavior, and the physical
+  `left` CSS contract), and all pass after the repair. 41 Tabs tests pass
+  across the component's five files.
+- The rendering-audit probe was run against the unrepaired build the same
+  way: it reports `scrolled-row indicator sits -79.9px from its tab's
+  content` (the mocked scroll was 80px — the defect's predicted
+  `scrollLeft`-sized error to within a tenth of a pixel), `selecting a tab
+  scrolled an ancestor of the row`, and `RTL indicator sits 430.3px from its
+  tab's content`. Against the repaired build the audit passes in full.
+- The probe waits for the indicator's rect to stop moving rather than
+  guessing at the projected spring's duration, compares indicator and
+  content rects in the viewport (valid in any scroll state), only ever
+  clicks button tabs (the example's `href` tab would move the URL hash), and
+  restores direction, scroll, and selection afterwards.
+- `npm run verify` passes in full: 14 gates, 225 files / 1,630 tests, packed
+  tarball 475,939 bytes, `check:site` at 41 conformant components and 40
+  demos with the export map respected.
+
+### Not done
+
+- No release. The registry holds `1.2.0`; publishing this repair is a
+  separate task, the same separation every repair since T33 has used.
+- `Select`'s active-option `scrollIntoView` was left alone. Its listbox is a
+  portaled popup whose ancestors don't scroll while it is open, so it does
+  not have the page-yank path `Tabs` had; changing it belongs to its own
+  task if evidence arrives.

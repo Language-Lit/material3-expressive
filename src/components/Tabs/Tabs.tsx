@@ -76,7 +76,16 @@ function TabsRender(
     if (!target) return
     const listRect = list.getBoundingClientRect()
     const targetRect = target.getBoundingClientRect()
-    setIndicator({ left: targetRect.left - listRect.left, width: targetRect.width })
+    // The indicator is absolutely positioned inside the scrollable list, so
+    // it lives in the scrolled content's coordinate space, not the visible
+    // box's — rect subtraction alone lands it scrollLeft px toward the
+    // start once the row is scrolled. Adding the raw scrollLeft (negative
+    // in RTL, matching the physical left: 0 anchor) converts to content
+    // space, which is scroll-invariant, so no scroll listener is needed.
+    setIndicator({
+      left: targetRect.left - listRect.left + list.scrollLeft,
+      width: targetRect.width,
+    })
   }, [selectedIndex, variant])
 
   // A plain effect, not useLayoutEffect: Tabs renders its full DOM tree
@@ -99,9 +108,32 @@ function TabsRender(
     }
   }, [measure])
 
+  // The pinned source's ScrollableTabRow keeps the selected tab centered
+  // through its own scroll state (ScrollableTabData.calculateTabOffset),
+  // never by moving anything outside the row. scrollBy on the list is the
+  // web translation: the browser clamps the result to the scrollable range
+  // in both LTR and RTL, and no scrollable ancestor moves — scrollIntoView
+  // walked every one of them, so selecting a tab could scroll the page.
+  const centeredOnceRef = useRef(false)
   useEffect(() => {
     if (!scrollable || selectedIndex === -1) return
-    tabRefs.current[selectedIndex]?.scrollIntoView({ block: 'nearest', inline: 'nearest' })
+    const list = listRef.current
+    const tab = tabRefs.current[selectedIndex]
+    if (!list || !tab) return
+    const listRect = list.getBoundingClientRect()
+    const tabRect = tab.getBoundingClientRect()
+    const delta = tabRect.left + tabRect.width / 2 - (listRect.left + listRect.width / 2)
+    const reduceMotion =
+      typeof window.matchMedia === 'function' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    // The source animates this scroll (animateScrollTo, DefaultSpatial);
+    // the first centering runs on mount over a page that just appeared, so
+    // only selection changes after that animate.
+    list.scrollBy({
+      left: delta,
+      behavior: centeredOnceRef.current && !reduceMotion ? 'smooth' : 'auto',
+    })
+    centeredOnceRef.current = true
   }, [scrollable, selectedIndex])
 
   const selectAt = (index: number) => {

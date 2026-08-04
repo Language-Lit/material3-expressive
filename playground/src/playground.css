@@ -424,6 +424,14 @@
   padding: 1.5rem;
 }
 
+/* A scrollable row that never overflows demonstrates nothing: cap the
+   scrollable demo at a phone-like width so its tabs genuinely scroll at any
+   playground viewport, which the rendering audit's scrolled-indicator probe
+   also depends on to stay non-vacuous. */
+.tabs-example [data-m3e-scrollable="true"] {
+  max-inline-size: 26rem;
+}
+
 .navigation-bar-example {
   display: grid;
   gap: 1rem;
