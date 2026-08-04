@@ -1,8 +1,8 @@
 # Carousel conformance
 
-Task: T48
+Task: T48 (stacking-leak repair: T57)
 Status: conformant
-Reviewed: 2026-07-25
+Reviewed: 2026-08-04
 
 ## Primary references
 
@@ -219,6 +219,17 @@ scroll-snap: `getSnapPositionOffset` maps exactly onto `scroll-margin-*` under
 `scroll-snap-align: start`, so keyline snapping — including both shift ranges — is
 native rather than simulated. Masking is `clip-path: inset()` plus `translate`,
 which is what `placeWithLayer(clip = …, translationX = …)` composes.
+
+The paint pass stacks items against each other with `z-index` values up to
+1000, translating the source's fractional focal `Modifier.zIndex` onto CSS
+integers. In Compose that ordering only ever compares siblings inside the
+carousel's own layout node, so the container carries `isolation: isolate` to
+give the web the same boundary (T57): without it the item levels join the
+page's stacking context and the carousel paints over any consumer chrome
+below `z-index: 1000` — the documentation site's own sticky bar, at
+`z-index: 20`, was the reported instance. The rendering audit lays a
+`z-index: 20` chrome stand-in over the carousel and requires it to win every
+`elementFromPoint` sample.
 
 Masking runs in JavaScript because `animation-timeline: view()` is outside the
 pinned browser baseline. Writes are imperative for the reason

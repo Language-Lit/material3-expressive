@@ -20,6 +20,16 @@
     color: var(--m3e-comp-carousel-item-content-color);
     display: flex;
     gap: var(--m3e-comp-carousel-item-spacing);
+    /*
+     * The parallax paint pass stacks items against each other with z-index
+     * values up to 1000. In the source that ordering is the zIndex
+     * modifier, which only ever compares siblings inside the carousel's
+     * own layout node — so the web translation must contain it too.
+     * Without this stacking context the item levels join the page's own
+     * and the carousel paints over any consumer chrome below z-index 1000,
+     * such as a sticky header it scrolls under.
+     */
+    isolation: isolate;
     overflow: auto hidden;
     overscroll-behavior-inline: contain;
     padding-block: var(--m3e-comp-carousel-block-padding);

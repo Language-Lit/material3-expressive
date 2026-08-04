@@ -34,6 +34,16 @@ describe('Carousel stylesheet contract', () => {
     expect(css).toContain('var(--m3e-sys-state-pressed)')
   })
 
+  it('contains the parallax stacking inside the carousel’s own stacking context', () => {
+    // The paint pass stacks items with z-index values up to 1000 — the
+    // source's Modifier.zIndex, which only ever compares siblings inside
+    // the carousel's own layout node. Without isolation those levels join
+    // the page's stacking context and the carousel paints over any
+    // consumer chrome below z-index 1000, e.g. a sticky header it scrolls
+    // under (T57: the documentation site's own bar, at z-index 20).
+    expect(css).toMatch(/\.m3e-carousel\s*{[^}]*isolation: isolate/)
+  })
+
   it('leaves the arrangement numbers to the layout engine, not the stylesheet', () => {
     // These four choose an arrangement rather than paint one, so they are read in
     // JavaScript. A stylesheet reference would be a second source of truth.

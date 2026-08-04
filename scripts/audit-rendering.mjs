@@ -2013,6 +2013,66 @@ const tabsScrolledIndicator = await page.evaluate(async () => {
 
 for (const finding of tabsScrolledIndicator) findings.push(`Tabs indicator: ${finding}`)
 
+// --- Carousel: internal stacking must not leak into the page ----------------
+// The parallax paint pass stacks items with z-index values up to 1000. In the
+// source that is Modifier.zIndex, which only compares siblings inside the
+// carousel's own layout node; on the web the ordering must be contained by a
+// stacking context on the carousel, or it joins the page's own and the
+// carousel paints over any consumer chrome below z-index 1000 (T57: the
+// documentation site's sticky header, at z-index 20, scrolled behind a
+// carousel). The playground has no sticky chrome, so the probe supplies a
+// stand-in: a fixed overlay at the chrome-typical z-index 20 laid over the
+// carousel's box, which must win every elementFromPoint sample against the
+// unrepaired build's z-1000 items.
+const carouselStacking = await page.evaluate(async () => {
+  const results = []
+  const carousel = document.querySelector('.m3e-carousel')
+  if (!carousel || carousel.getClientRects().length === 0) {
+    results.push('no carousel rendered; the stacking probe is vacuous')
+    return results
+  }
+  // elementFromPoint only answers inside the viewport, and the carousel
+  // examples sit below the fold at the audit viewport.
+  const pageScrollBefore = window.scrollY
+  carousel.scrollIntoView({ block: 'center', behavior: 'instant' })
+  await new Promise((resolve) =>
+    requestAnimationFrame(() => requestAnimationFrame(resolve)),
+  )
+  const box = carousel.getBoundingClientRect()
+  const overlay = document.createElement('div')
+  overlay.style.cssText =
+    `position: fixed; left: ${box.left}px; top: ${box.top}px; ` +
+    `width: ${box.width}px; height: ${Math.min(48, box.height)}px; z-index: 20;`
+  document.body.append(overlay)
+  try {
+    const y = box.top + Math.min(48, box.height) / 2
+    let itemHits = 0
+    let overlayHits = 0
+    for (let i = 0; i < 16; i += 1) {
+      const x = box.left + ((i + 0.5) / 16) * box.width
+      const hit = document.elementFromPoint(x, y)
+      if (hit === overlay) overlayHits += 1
+      else if (carousel.contains(hit)) itemHits += 1
+    }
+    if (itemHits > 0) {
+      results.push(
+        `${itemHits}/16 samples hit carousel content through z-index 20 chrome — item stacking leaks into the page`,
+      )
+    } else if (overlayHits === 0) {
+      // Neither the stand-in nor carousel content was ever topmost: the
+      // samples missed both (e.g. landed outside the viewport), so the
+      // probe proved nothing either way.
+      results.push('the chrome stand-in was never the topmost hit; the stacking probe is vacuous')
+    }
+  } finally {
+    overlay.remove()
+    window.scrollTo(0, pageScrollBefore)
+  }
+  return results
+})
+
+for (const finding of carouselStacking) findings.push(`Carousel stacking: ${finding}`)
+
 await browser.close()
 server.close()
 

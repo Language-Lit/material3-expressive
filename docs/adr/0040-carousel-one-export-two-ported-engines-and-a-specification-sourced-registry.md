@@ -1,7 +1,8 @@
 # ADR 0040: Carousel as one export, two ported layout engines, and a specification-sourced token registry
 
 Status: accepted; decision 6 corrected three times — the mask shape by T50, the
-size bucket by T54, and the adaptive-content switch by T55 (2026-07-26)
+size bucket by T54, and the adaptive-content switch by T55 (2026-07-26) — and
+the paint pass's stacking contained by T57 (2026-08-04, see Corrections)
 Date: 2026-07-25
 Task: T48
 
@@ -335,3 +336,28 @@ precedent for skipping a token file that does exist.
 The masking frame loop is the one part of this design with a known expiry. It
 exists because `animation-timeline: view()` is outside the pinned baseline, and
 nothing in the public contract would change if it were replaced.
+
+## Corrections (T57, 2026-08-04)
+
+The paint pass translates the source's fractional focal `Modifier.zIndex` onto
+integer CSS `z-index` values up to 1000 — but ported only the values, not
+their scope. In Compose, `Modifier.zIndex` compares siblings inside the same
+layout node and nothing else; CSS `z-index` participates in the nearest
+*stacking context*, and `.m3e-carousel` (positioned, `z-index: auto`) created
+none, so the item levels joined the page's root stacking context. Any
+consumer chrome below `z-index: 1000` lost to a carousel scrolled beneath
+it — the documentation site's sticky bar, at `z-index: 20`, was the reported
+instance: 16 of 16 `elementFromPoint` samples inside the bar's box returned
+carousel content on the unrepaired build.
+
+The repair is one declaration, `isolation: isolate` on `.m3e-carousel`,
+which creates the stacking context the source's sibling-scoped ordering
+implied all along; the internal parallax overlap is unchanged and the
+carousel joins the page's paint order as ordinary content. A z-index survey
+of the rest of the library found no second instance of the class: every
+other in-flow component's internal layering stays at `z-index` 1–3, below
+any plausible chrome level, and `Menu`'s 1000 is a portaled overlay that is
+*supposed* to beat page chrome. Pinned by a stylesheet-contract test and a rendering-audit probe
+that lays a `z-index: 20` chrome stand-in over the carousel and requires it
+to win every sample — proven against the unrepaired build (16/16 leak hits)
+and the repaired one (0/16).

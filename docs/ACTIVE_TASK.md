@@ -3445,3 +3445,84 @@ source, then measured it in a real browser rather than taking it on trust.
   portaled popup whose ancestors don't scroll while it is open, so it does
   not have the page-yank path `Tabs` had; changing it belongs to its own
   task if evidence arrives.
+
+
+---
+
+## T57 — The carousel's internal stacking leaked into the page
+
+Status: complete
+Approved: 2026-08-04 (owner report: on the documentation site, carousels
+scrolled up paint over the header)
+Completed: 2026-08-04
+
+### Scope
+
+A library defect reported as a site symptom. The carousel's paint pass
+translates the source's fractional focal `Modifier.zIndex` onto integer CSS
+`z-index` values up to 1000 (`FOCAL_Z_INDEX`) — but ported only the values,
+not their scope. In Compose that ordering compares siblings inside the
+carousel's own layout node and nothing else; CSS `z-index` participates in
+the nearest stacking context, and `.m3e-carousel` (positioned,
+`z-index: auto`) created none. The item levels therefore joined the page's
+root stacking context and beat any consumer chrome below `z-index: 1000` —
+the site's sticky bar sits at `z-index: 20`, so a carousel scrolled beneath
+it painted over it. Reproduced on the built site before the fix: 16 of 16
+`elementFromPoint` samples inside the bar's box over the carousel returned
+carousel content.
+
+The repair is one declaration: `isolation: isolate` on `.m3e-carousel`,
+creating the stacking context the source's sibling-scoped ordering implied.
+Internal parallax overlap is unchanged; the carousel joins the page's paint
+order as ordinary content. The site is repaired by the library fix with no
+site-side change, the T33/T36 precedent.
+
+A z-index survey of the rest of the library found no second instance of the
+class: every other in-flow component's internal layering stays at `z-index`
+1–3, below any plausible chrome level, and `Menu`'s 1000 is a portaled
+overlay that is supposed to beat page chrome.
+
+### Expected files
+
+- Modified: `src/components/Carousel/Carousel.css`,
+  `tests/components/Carousel/Carousel.css.test.ts`,
+  `tests/components/Carousel/Carousel.conformance.md`,
+  `docs/adr/0040-carousel-one-export-two-ported-engines-and-a-specification-sourced-registry.md`
+  (amended), `scripts/audit-rendering.mjs`.
+- No export, prop type, or token value changes —
+  `docs/component-inventory.json` is unchanged. No SPEC ledger row, matching
+  the T50–T56 repair precedent.
+
+### Acceptance checks
+
+- On the rebuilt site, every sample inside the bar's box over a scrolled
+  carousel hits the bar, not carousel content.
+- The stylesheet-contract test and the new audit probe both fail against the
+  unrepaired build, proving neither is vacuous.
+- `npm run verify` passes, and the full rendering audit passes.
+
+### Completion evidence
+
+- Reproduced, then flipped, on the actual reported surface: the built site's
+  `/components/Carousel/` page, scrolled so the carousel sits under the
+  sticky bar, sampled 16 points inside the bar's box — unrepaired
+  16/16 carousel (computed `isolation: auto`, item `z-index` 1000, bar 20),
+  repaired 16/16 bar (computed `isolation: isolate`).
+- The new stylesheet-contract test fails against the unrepaired
+  `Carousel.css` and passes after (18→19 tests in that file).
+- The rendering-audit probe lays a `z-index: 20` chrome stand-in over the
+  playground carousel: against the unrepaired build it reports
+  `16/16 samples hit carousel content through z-index 20 chrome`; against
+  the repaired build the audit passes in full. The probe's first version
+  sampled below the fold and its vacuousness guard caught it —
+  `elementFromPoint` only answers inside the viewport, so the probe now
+  scrolls the carousel into view first and restores the scroll after.
+- `npm run verify` passes in full: 14 gates, 225 files / 1,631 tests.
+
+### Not done
+
+- No release; the registry still holds `1.2.0`. This repair and T56 ship
+  together in the next cut version.
+- The theoretical z-index 1–3 leaks recorded in the survey were left as-is:
+  they sit below any plausible chrome level, and isolating every component
+  root is a broader posture decision than a repair should smuggle in.
