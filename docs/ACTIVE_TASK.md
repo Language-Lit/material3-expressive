@@ -3526,3 +3526,59 @@ overlay that is supposed to beat page chrome.
 - The theoretical z-index 1–3 leaks recorded in the survey were left as-is:
   they sit below any plausible chrome level, and isolating every component
   root is a broader posture decision than a repair should smuggle in.
+
+
+---
+
+## T58 — 1.2.1 patch release
+
+Status: active
+Approved: 2026-08-04 (owner request: publish the T56/T57 repairs to npm and
+update the documentation site)
+
+### Scope
+
+Prepare the T56 `Tabs` and T57 `Carousel` repairs for the registry.
+
+The registry holds `1.0.0-next.0`, `1.0.0`, `1.0.2`, `1.0.3`, `1.1.0`, and
+`1.2.0`, with `latest` at `1.2.0`. `1.2.1` is an ordinary next patch — no gap
+to explain, the same as T37's `1.0.3`.
+
+Every published version to date carries both defects: the `Tabs` indicator
+has always measured the wrong coordinate space on a scrolled row, and the
+`Carousel` has always left its parallax stacking uncontained. `1.2.1` is the
+first release in which either is correct.
+
+No export, prop, token, or dependency changes.
+
+### Expected files
+
+- Modified: `package.json`, `package-lock.json`, `scripts/check-release.mjs`
+  (its `releaseVersion` constant gates the version and must move in step),
+  `docs/RELEASE_NOTES.md`, `docs/RELEASE_READINESS.md`, `docs/SPEC.md`,
+  `docs/ACTIVE_TASK.md`.
+- No file under `src/`, `tests/`, `playground/`, or `site/` changes beyond
+  what T56/T57 already made. This task alters no behavior of its own.
+
+### Acceptance checks
+
+- `npm run verify` passes at `1.2.1`, including `check:release`.
+- The readiness report carries the three strings the release gate matches for
+  `1.2.1`.
+- The rendering audit (`npm run audit:rendering`), unusually for a patch,
+  passes: both underlying repairs are geometry/stacking fixes.
+- Publication and the `v1.2.1` tag are performed by the owner, not from here
+  — the established security boundary since the T34/T37 token-disclosure
+  incidents: a publishing token must never be transmitted in or run from this
+  session.
+- The documentation site needs no separate action beyond the T56/T57 commits
+  already being on `main`: it consumes the package via `file:..` and Vercel's
+  git integration deploys `main` on push, so it picks up both repairs on its
+  own next deploy. Confirming that deploy is the owner's Vercel dashboard, not
+  a repository gate.
+
+### Not done (pending owner action)
+
+- Registry publication and the `v1.2.1` tag.
+- Confirmation that the Vercel production deployment picked up the fix —
+  outside this repository's own gates, same boundary T35 recorded.

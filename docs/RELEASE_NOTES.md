@@ -1,5 +1,51 @@
 # Release notes
 
+## 1.2.1 — 2026-08-04
+
+Status: prepared patch release. No export, prop, token, or dependency change;
+the public surface is identical to `1.2.0`.
+
+### Fixed
+
+- **`Tabs`: the sliding indicator misplaced itself on any scrolled row** —
+  reported as a mobile-only defect. The indicator is absolutely positioned
+  *inside* the scrollable tablist, so it lives in the scrolled content's
+  coordinate space, but its position was measured in viewport space. The two
+  spaces coincide only at `scrollLeft === 0`, so a fresh, unscrolled mount
+  looked correct and any re-measure while scrolled — selecting a tab after
+  scrolling the row, a `ResizeObserver` firing on rotation or keyboard
+  appearance, a window resize — landed the indicator exactly `scrollLeft`
+  pixels toward the start. Fixed by converting the measurement to content
+  space (T56).
+
+  Two related defects were repaired in the same pass: the indicator's anchor
+  was a logical `inset-inline-start`, which resolves to the *opposite* edge
+  under RTL from the physical measurement driving its transform, pushing it
+  off the row entirely; it is now the physical `left` edge, matched to the
+  physical measurement. And selecting a tab called `scrollIntoView`, which
+  walks every scrollable ancestor and could scroll the whole page — it now
+  scrolls only the tab row itself, centering the selection the way the
+  pinned AndroidX `ScrollableTabRow` does.
+
+  See ADR 0019's Corrections section for the full analysis.
+
+- **`Carousel`: scrolling a carousel under a page's own fixed or sticky
+  chrome painted the carousel on top of it.** The parallax paint pass gives
+  focal items `z-index` values up to 1000 to translate the source's
+  fractional focal `Modifier.zIndex`, but the carousel created no stacking
+  context of its own, so those levels joined the *page's* stacking context
+  instead of staying scoped to the carousel's own layout, as the source's
+  ordering is. Any page chrome under `z-index: 1000` — a sticky header being
+  the reported case — lost to a carousel scrolled beneath it. Fixed with one
+  `isolation: isolate` declaration, containing the parallax stacking the way
+  the source's sibling-scoped `zIndex` modifier always was (T57). See
+  ADR 0040's Corrections section.
+
+### Verification target
+
+Same as `1.2.0`: `npm run check:docs` and `npm run verify`. See
+[RELEASE_READINESS.md](RELEASE_READINESS.md) for the `1.2.1` audit.
+
 ## 1.2.0 — 2026-07-26
 
 Status: prepared minor release. Additive only — seven new conformant families

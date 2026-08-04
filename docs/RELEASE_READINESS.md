@@ -1,5 +1,58 @@
 # Release-readiness audit
 
+## 1.2.1 — 2026-08-04
+
+Audit date: 2026-08-04  
+Release: `@language-lit/material3-expressive@1.2.1`  
+Rollback: `@language-lit/material3-expressive@0.3.0` (tag `v0.3.0`)  
+Registry publication: not performed at the time of this audit.
+
+### Recommendation
+
+**GO for a separately owner-approved `1.2.1` release.** This is a patch, not
+a cutover: the public surface is byte-for-byte identical to `1.2.0` — same 41
+conformant components, same exports, same tokens, same dependency-free
+package.
+
+### What changed since 1.2.0
+
+- **`Tabs`** (T56): the sliding indicator's position was measured in
+  viewport space while it is rendered inside a scrollable, absolutely
+  positioned container — its own coordinate space is the scrolled content.
+  Any measurement taken while the row was scrolled landed the indicator
+  exactly `scrollLeft` pixels off; a fresh unscrolled mount was unaffected,
+  which is why this shipped in `1.0.0` through `1.2.0` unnoticed and surfaced
+  as a mobile-only report. Repaired alongside it: a logical indicator anchor
+  that broke under RTL, and a `scrollIntoView` call that could scroll page
+  ancestors instead of just the tab row (ADR 0019, amended).
+- **`Carousel`** (T57): the parallax paint pass's item `z-index` (up to
+  1000) had no stacking context scoping it to the carousel, so it joined the
+  page's own stacking order and could paint over page chrome under
+  `z-index: 1000`, such as a sticky header. Repaired with one `isolation:
+  isolate` declaration (ADR 0040, amended).
+- No export, prop type, token value, or dependency changed.
+
+### Automated verification
+
+| Gate | Command | Result |
+| --- | --- | --- |
+| Aggregate verification | `npm run verify` | Pass: 14 gates |
+| Unit, interaction, accessibility, SSR, hydration, CSS, and theme tests | `npm run test` (inside aggregate) | Pass: 225 files, 1,631 tests |
+| Architecture, browser, CSS, and token checks | aggregate gates | Pass: 41 inventory entries |
+| Release artifact and rollback | `npm run check:release` (inside aggregate) | Pass: 41 components; `1.2.1` and `v0.3.0` rollback verified |
+| Bundle budgets | `npm run check:bundle-size` (inside aggregate) | Pass: every budget green, unchanged from `1.2.0` |
+| Packed consumers | `npm run check:consumer-fixtures` (inside aggregate) | Pass: Vite and Next SSR/static against the packed 476,163-byte tarball |
+| Documentation site structure | `npm run check:site` (inside aggregate) | Pass: 41 conformant components, 40 demos, export map respected |
+| Real-Chromium rendering audit | `npm run audit:rendering` (separate; not part of the aggregate) | Pass, including the two new probes T56/T57 added — both proven to fail against their unrepaired builds first |
+
+### Remaining boundaries
+
+Unchanged from `1.2.0`.
+
+- No new geometry, elevation, or state-layer surface was added, but both
+  repairs *are* geometry/stacking fixes, so — unlike most patch releases —
+  the rendering audit was re-run rather than skipped, and passed.
+
 ## 1.2.0 — 2026-07-26
 
 Audit date: 2026-07-26  
