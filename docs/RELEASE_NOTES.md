@@ -1,5 +1,41 @@
 # Release notes
 
+## 1.2.2 — 2026-08-13
+
+Status: prepared patch release. No export, prop, token, or dependency change;
+the public surface is identical to `1.2.1`.
+
+### Fixed
+
+- **`Switch`: the visible ends of the track did not respond to a tap** —
+  reported against a bare, unlabelled `Switch`. The root sized its box at the
+  48px minimum interactive target on both axes while the track paints 52px
+  wide, and the native `<input>` is `position: absolute; inset: 0`, so the hit
+  surface was the 48px box and no larger. That left 2px of painted track dead
+  at each end, with nothing to forward the click: the track is `aria-hidden`,
+  carries no handler, and the root is a `<span>` rather than a `<label>`.
+
+  This was a conformance defect, not only an ergonomic one. The pinned
+  AndroidX source composes the target through
+  `minimumInteractiveComponentSize()`, which measures
+  `maxOf(placeable.width, sizePx)` per axis — a floor that grows the target to
+  hold a larger child, never a ceiling that clips it. Upstream the Switch
+  target is therefore 52×48 and the whole track is tappable. A CSS
+  `inline-size` is a clamp, so the web control shipped 48×48 under a 52×32
+  visual. The target is now
+  `max(minimum-interactive-target, track-width)` by
+  `max(minimum-interactive-target, track-height)` — the max is written on both
+  axes because the source takes it on both and both inputs are
+  consumer-overridable tokens (T59).
+
+  Every `SwitchTokens.kt` dimension already matched the registration; the
+  defect was in how the root consumed `minimum-interactive-target`, so no
+  token value changed. The defect predates `1.0.0` — it is present in the
+  commit that first added the component.
+
+  A consumer who wraps `Switch` in a `<label>`, as the playground examples do,
+  was never affected: the label forwards a click from anywhere in its own box.
+
 ## 1.2.1 — 2026-08-04
 
 Status: prepared patch release. No export, prop, token, or dependency change;

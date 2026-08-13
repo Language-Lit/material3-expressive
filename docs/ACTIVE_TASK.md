@@ -3756,3 +3756,59 @@ with painted pixels that nothing could activate.
   path exercised there is the forwarded one. The audit gate closes the coverage
   gap geometrically instead, which is why it was written to be independent of
   label forwarding rather than to tap.
+
+
+---
+
+## T60 — 1.2.2 patch release
+
+Status: prepared; publication pending
+Approved: 2026-08-13 (owner request: ship the T59 repair to npm)
+
+### Scope
+
+Prepare the T59 `Switch` hit-surface repair for the registry.
+
+The registry holds `1.0.0-next.0`, `1.0.0`, `1.0.2`, `1.0.3`, `1.1.0`, `1.2.0`,
+and `1.2.1`, with `latest` at `1.2.1`. `1.2.2` is an ordinary next patch — no
+gap to explain, unlike T34's skip over the never-published `1.0.1`.
+
+The `v1.2.1` tag T58 recorded as owed now exists locally and on `origin`,
+pointing at `52ad093`, the commit `1.2.1` was published from. That drift is
+closed, so this release starts from a repository whose tags and registry agree.
+
+Every published version to date carries the T59 defect, so this is the first
+release in which a bare, unlabelled `Switch` responds to a tap on the visible
+ends of its track.
+
+No export, prop, token value, or dependency changes. One rendered dimension
+moves — a `Switch` occupies 52px of inline space rather than 48px, which is the
+source's own geometry — so the release notes call it out for consumers laying
+switches out in a fixed-width column.
+
+### Expected files
+
+- Modified: `package.json`, `package-lock.json`, `scripts/check-release.mjs`
+  (its `releaseVersion` constant gates the version and must move in step),
+  `docs/RELEASE_NOTES.md`, `docs/RELEASE_READINESS.md`, `docs/SPEC.md`,
+  `docs/ACTIVE_TASK.md`.
+- No file under `src/`, `tests/`, `playground/`, or `site/` changes. This task
+  alters no behavior; T59 already landed the repair.
+
+### Acceptance checks
+
+- `npm run verify` passes at `1.2.2`, including `check:release`.
+- The readiness report carries the three strings the release gate matches for
+  `1.2.2`.
+- Publication and the `v1.2.2` tag are performed by the owner, not from here.
+
+### Completion evidence
+
+- To be completed after publication.
+
+### Not done
+
+- **Publication.** Not performed from this session, and deliberately so: this
+  repository has two recorded incidents of a publishing token transmitted in an
+  assistant session (T34's follow-up, T37's refusal). The boundary since T37 is
+  that the owner runs `npm publish` and creates the tag from their own terminal.

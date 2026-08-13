@@ -1,5 +1,63 @@
 # Release-readiness audit
 
+## 1.2.2 — 2026-08-13
+
+Audit date: 2026-08-13  
+Release: `@language-lit/material3-expressive@1.2.2`  
+Rollback: `@language-lit/material3-expressive@0.3.0` (tag `v0.3.0`)  
+Registry publication: not performed at the time of this audit.
+
+The `v1.2.1` tag owed by the previous entry now exists and is pushed, pointing
+at `52ad093`, the commit `1.2.1` was published from. That gap is closed.
+
+### Recommendation
+
+**GO for a separately owner-approved `1.2.2` release.** This is a patch, not a
+cutover: the public surface is byte-for-byte identical to `1.2.1` — same 41
+conformant components, same exports, same token values, same dependency-free
+package. One rendered geometry changes, and it is the repair itself.
+
+### What changed since 1.2.1
+
+- **`Switch`** (T59): the root sized its interaction box at the 48px minimum
+  interactive target while the track paints 52px, and the native `<input>` is
+  `inset: 0` inside that box, so 2px of visible track at each end was painted
+  but not tappable. `minimumInteractiveComponentSize()` upstream is a per-axis
+  `maxOf(placeable, 48dp)` — a floor that grows the target — where CSS
+  `inline-size` is a clamp. The target is now `max()` on both axes and
+  measures the source's 52×48.
+- No export, prop type, token value, or dependency changed. The defect was in
+  how the root consumed an existing token, not in any sourced value; all
+  twelve `SwitchTokens.kt` dimensions already matched the registration.
+- One rendered dimension moves: a `Switch` now occupies 52px of inline space
+  instead of 48px. A consumer laying switches out in a fixed-width column may
+  see 4px of reflow. This is the source's own geometry.
+
+### Automated verification
+
+| Gate | Command | Result |
+| --- | --- | --- |
+| Aggregate verification | `npm run verify` | Pass: 14 gates |
+| Unit, interaction, accessibility, SSR, hydration, CSS, and theme tests | `npm run test` (inside aggregate) | Pass: 225 files, 1,632 tests |
+| Architecture, browser, CSS, and token checks | aggregate gates | Pass: 41 inventory entries |
+| Release artifact and rollback | `npm run check:release` (inside aggregate) | Pass: 41 components; `1.2.2` and `v0.3.0` rollback verified |
+| Bundle budgets | `npm run check:bundle-size` (inside aggregate) | Pass: every budget green, unchanged from `1.2.1` |
+| Packed consumers | `npm run check:consumer-fixtures` (inside aggregate) | Pass: Vite and Next SSR/static against the packed tarball |
+| Documentation site structure | `npm run check:site` (inside aggregate) | Pass: 41 conformant components, 40 demos, export map respected |
+| Real-Chromium rendering audit | `npm run audit:rendering` (separate; not part of the aggregate) | Pass, including the new hit-containment probe — proven to fail against the unrepaired build first |
+
+### Remaining boundaries
+
+Unchanged from `1.2.1`.
+
+- This patch changes interactive geometry, so — unlike most patch releases —
+  the rendering audit was re-run rather than skipped, and passed.
+- The playground wraps every `Switch` in a `<label>`, which forwards a click
+  from anywhere in its row, so the tap path exercised there is the forwarded
+  one. The new audit gate measures hit containment geometrically instead,
+  which is independent of label forwarding; that is the coverage the examples
+  cannot provide.
+
 ## 1.2.1 — 2026-08-04
 
 Audit date: 2026-08-04  
