@@ -3616,3 +3616,143 @@ No export, prop, token, or dependency changes.
 - Confirmation that the Vercel production deployment picked up the fix is
   outside this repository's own gates, the same boundary T35 recorded — the
   owner's Vercel dashboard is the source of truth for that, not checked here.
+
+
+---
+
+## T59 — Switch painted a track wider than its own hit surface
+
+Status: complete
+Approved: 2026-08-13 (owner report, relayed from a downstream session: the
+Switch's visible ends do not respond to a tap)
+Completed: 2026-08-13
+
+### Scope
+
+`.m3e-switch` sized its box at `--m3e-comp-switch-minimum-interactive-target`
+(48px) on both axes. The track paints `--m3e-comp-switch-track-width` (52px).
+`.m3e-switch__input` is `position: absolute; inset: 0`, so the hit surface is
+the wrapper's box and no larger — leaving 2px of painted track beyond it at
+each end, with nothing to forward a click: the track is `aria-hidden`, carries
+no handler, and the wrapper is a `<span>`, not a `<label>`.
+
+This is a conformance defect, not only an ergonomic one. The pinned source
+composes the target as
+
+```kotlin
+modifier
+  .then(Modifier.minimumInteractiveComponentSize().toggleable(...))
+  .wrapContentSize(Alignment.Center)
+  .requiredSize(SwitchWidth, SwitchHeight)
+```
+
+and `minimumInteractiveComponentSize()` measures
+`maxOf(placeable.width, sizePx)` / `maxOf(placeable.height, sizePx)` per axis —
+a floor that grows the target to hold a larger child, never a ceiling that
+clips it. Its KDoc says so directly: "Reserves at least 48.dp in size … if the
+element would measure smaller." Upstream the target is therefore 52×48 and the
+whole track is tappable. A CSS `inline-size: 48px` is a clamp, so the web
+control shipped 48×48 under a 52×32 visual.
+
+Every Switch dimension token was re-checked against `SwitchTokens.kt` at the
+pinned revision and all twelve match, so the defect is in how the wrapper
+consumes `minimum-interactive-target`, not in any sourced value.
+
+The repair sizes both axes as `max()`, which is the same computation the source
+performs. `block-size` is written the same way even though 32px is under the
+48px minimum today: the source takes the max on both axes, and the two values
+are consumer-overridable tokens, so expressing it as a clamp on one axis would
+be correct only by coincidence.
+
+The playground could never have caught this. Every example there wraps its
+`Switch` in a `<label>`, which forwards a click from anywhere in the row, so
+the dead pixels are reachable in exactly the markup the audit renders. The
+defect is visible only to a bare `<Switch aria-label="…" />`.
+
+Neither could the existing rendering audit. Its target-size probe asks whether
+a control measures at least 44px on each axis; the Switch input measured 48×48
+and passed the entire time. "Large enough" and "in the right place" are
+different questions, and only the first was being asked.
+
+### Sweep
+
+The same class of defect was swept for across the library rather than assumed
+unique. Only two shapes of control can exhibit it, and only the second can
+actually produce a dead pixel:
+
+1. A control that paints itself (`button.m3e-button`) contains its own visual,
+   and a child that escapes its box is still in its subtree, so a click there
+   bubbles to the control.
+2. An invisible overlay `<input>` layered over a painted sibling has no such
+   path.
+
+All 56 overlay inputs the playground renders were measured for shape 2. Results:
+`m3e-list-item` covers its visual exactly; `m3e-slider`, `m3e-checkbox`, and
+`m3e-radio` cover theirs with margin to spare (checkbox paints 18px and radio
+20px inside a 48px target). `m3e-segmented-button` shows a 1px geometric
+overhang on all four sides — its input fills the padding box while the 1px
+border paints outside it — but its root *is* a `<label>` wrapping the input, so
+that ring forwards and is fully clickable. `m3e-switch` was the only control
+with painted pixels that nothing could activate.
+
+### Expected files
+
+- Modified: `src/components/Switch/Switch.css`,
+  `tests/components/Switch/Switch.css.test.ts`,
+  `tests/components/Switch/Switch.conformance.md`,
+  `scripts/audit-rendering.mjs`, `docs/SPEC.md`, `docs/ACTIVE_TASK.md`.
+- No component, token, type, example, or site file changes: the token values
+  are already correct and the repair is one sizing rule.
+- No export, prop type, or token value changes, so
+  `docs/component-inventory.json` is unchanged.
+
+### Acceptance checks
+
+- A bare, unlabelled `Switch` flips when tapped at both visible ends of its
+  track in a real browser, not only at its centre.
+- The measured target is 52×48, matching the source.
+- The new audit gate fails against the unrepaired stylesheet, proving it is not
+  vacuous.
+- The gate does not fire on `SegmentedButton`, whose overhang is label-forwarded
+  rather than dead.
+- `npm run verify` passes, plus the rendering audit.
+
+### Completion evidence
+
+- The defect was reproduced before the repair, on the built stylesheet with the
+  exact DOM `Switch.tsx` renders, by clicking three points on a bare Switch:
+  `far left: MISS / centre: FLIP / far right: MISS`, wrapper 48×48 under a 52×32
+  track, 2.0px overhanging each side. After the repair the same three clicks read
+  `FLIP / FLIP / FLIP`, the wrapper measures 52×48, and the overhang is 0.0px on
+  both sides.
+- The audit's new hit-containment gate was run against the unrepaired stylesheet
+  and failed with six findings (one per Switch on the page, reported deduplicated
+  by geometry), then passed after the repair. The findings named the measured
+  geometry — `48x48 under a 52x32 visual, overhanging by 2px` — rather than
+  restating the rule.
+- The gate carries a census guard: it exits non-zero if fewer than 20 overlay
+  inputs were measurable, so a playground that failed to render cannot let it
+  pass silently. The playground renders 56.
+- All twelve `SwitchTokens.kt` dimension constants at the pinned revision
+  (`TrackWidth` 52, `TrackHeight` 32, `TrackOutlineWidth` 2, unselected/selected/
+  pressed handle 16/24/28, both icon sizes 16, `StateLayerSize` 40, and the
+  24dp icon-handle pair) match the registration. No token value changed.
+- 32 Switch tests pass across its five files. `npm run verify` passes all 13
+  gates, and the rendering audit passes in real Chromium after a production
+  package and playground build.
+- The defect predates `1.0.0`. `b9e59a3` ("feat: add v1 expressive switch", the
+  T13 commit) already carries the clamp, at the pre-cutover path
+  `src/v1/components/Switch/Switch.css`. `git log -S` against the current path
+  reports `c5eb363` instead, which is the 1.0 cutover that moved the file, not
+  the introduction. Every published version to date has a Switch whose visible
+  ends do not respond to a bare tap.
+
+### Not done
+
+- No release. The registry holds `1.2.1`; publishing this repair is a separate
+  task, the same separation T33/T36/T57 used.
+- The playground examples still wrap every `Switch` in a `<label>`. That is
+  legitimate consumer markup and correct to demonstrate, but it means the tap
+  path exercised there is the forwarded one. The audit gate closes the coverage
+  gap geometrically instead, which is why it was written to be independent of
+  label forwarding rather than to tap.

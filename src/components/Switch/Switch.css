@@ -6,10 +6,24 @@
     --m3e-switch-icon-color: var(--m3e-comp-switch-unselected-icon-color);
     --m3e-switch-state-layer-color: var(--m3e-comp-switch-unselected-state-layer-color);
 
+    /* The source's `minimumInteractiveComponentSize()` computes
+       `maxOf(placeable, 48dp)` per axis, so the target grows to hold a visual
+       larger than the minimum rather than clipping it. A bare `inline-size`
+       would be a clamp instead of a max: the 52px track is wider than the 48px
+       minimum, and because `__input` is `inset: 0` inside this box, the 2px of
+       track overhanging each end would be painted but not tappable. Nothing
+       forwards those pixels — the track is `aria-hidden` and this wrapper is a
+       `<span>`, not a `<label>` — so they would simply be dead. */
     align-items: center;
-    block-size: var(--m3e-comp-switch-minimum-interactive-target);
+    block-size: max(
+      var(--m3e-comp-switch-minimum-interactive-target),
+      var(--m3e-comp-switch-track-height)
+    );
     display: inline-flex;
-    inline-size: var(--m3e-comp-switch-minimum-interactive-target);
+    inline-size: max(
+      var(--m3e-comp-switch-minimum-interactive-target),
+      var(--m3e-comp-switch-track-width)
+    );
     justify-content: center;
     position: relative;
     vertical-align: middle;

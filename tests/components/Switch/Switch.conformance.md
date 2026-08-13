@@ -33,8 +33,12 @@ input exposed with `role="switch"`.
 
 ## Anatomy and content
 
-- One switch root owns the 48px interaction target, the resolved state
-  attributes, the consumer class and style, and the layout box.
+- One switch root owns the 52×48px interaction target, the resolved state
+  attributes, the consumer class and style, and the layout box. The target is
+  `max(minimum-interactive-target, track-width)` by `max(minimum-interactive-target,
+  track-height)`, reproducing `minimumInteractiveComponentSize()`'s per-axis
+  `maxOf(placeable, 48dp)`: the track is wider than the 48px minimum, so the
+  target grows to hold it rather than clipping it. See T59.
 - One native `input type="checkbox" role="switch"` owns semantics, focus,
   activation, forms, disabled state, and the forwarded ref. It covers the
   whole target and is visually transparent.

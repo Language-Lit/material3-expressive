@@ -259,6 +259,135 @@ for (const hit of small) {
   findings.push(`Interactive target under 44px: ${hit.element} is ${hit.size}`)
 }
 
+// --- Overlay-input hit containment ------------------------------------------
+// The check above asks whether a target is big enough. It cannot see a target
+// that is big enough and still in the wrong place, which is how T59 shipped: a
+// 48x48 Switch input under a 52x32 track left 2px of painted track dead at each
+// end, and the measured box cleared 44px on both axes the whole time.
+//
+// Only the overlay pattern can produce this. A control that paints itself
+// (`button.m3e-button`) contains its own visual, and a child that escapes its
+// box is still in its subtree, so a click there bubbles to the control. An
+// invisible `<input>` layered over a painted *sibling* has no such path: the
+// sibling is `aria-hidden` and carries no handler. Every painted pixel outside
+// the input's box is dead unless a `<label>` forwards it.
+//
+// Upstream the invariant holds by construction — `minimumInteractiveComponentSize()`
+// is `maxOf(placeable, 48dp)` per axis, which can only grow the target. CSS
+// `inline-size: 48px` is a clamp instead, so a wider visual overhangs it.
+const uncovered = await page.evaluate(() => {
+  const paints = (element) => {
+    const s = getComputedStyle(element)
+    if (s.visibility === 'hidden' || s.display === 'none' || parseFloat(s.opacity) === 0) return false
+    if (s.backgroundColor && s.backgroundColor !== 'transparent' && !/,\s*0\)$/.test(s.backgroundColor)) return true
+    if (
+      parseFloat(s.borderTopWidth) > 0 &&
+      s.borderTopStyle !== 'none' &&
+      !/,\s*0\)$/.test(s.borderTopColor)
+    ) {
+      return true
+    }
+    if (s.boxShadow && s.boxShadow !== 'none') return true
+    if (s.backgroundImage && s.backgroundImage !== 'none') return true
+    return false
+  }
+
+  const results = []
+  const census = { overlays: 0, measured: 0 }
+
+  for (const control of document.querySelectorAll('input')) {
+    const styles = getComputedStyle(control)
+    if (parseFloat(styles.opacity) !== 0 || styles.position !== 'absolute') continue
+    let root = control.parentElement
+    while (root && !/(^|\s)m3e-[a-z-]+(\s|$)/.test(root.className || '')) root = root.parentElement
+    if (!root) continue
+    census.overlays += 1
+
+    const target = control.getBoundingClientRect()
+    if (target.width === 0 || target.height === 0) continue
+
+    let left = Infinity
+    let top = Infinity
+    let right = -Infinity
+    let bottom = -Infinity
+    for (const node of [root, ...root.querySelectorAll('*')]) {
+      if (node === control || control.contains(node)) continue
+      if (!paints(node)) continue
+      const box = node.getBoundingClientRect()
+      if (box.width === 0 || box.height === 0) continue
+      left = Math.min(left, box.left)
+      top = Math.min(top, box.top)
+      right = Math.max(right, box.right)
+      bottom = Math.max(bottom, box.bottom)
+    }
+    if (left === Infinity) continue
+    census.measured += 1
+
+    const overhang = Math.max(
+      target.left - left,
+      target.top - top,
+      right - target.right,
+      bottom - target.bottom,
+    )
+    if (overhang < 0.5) continue
+
+    // A `<label>` wrapping the input forwards a click from anywhere in its own
+    // box, so an overhang inside one is reachable rather than dead. The
+    // segmented button relies on this: its 1px border ring sits outside the
+    // input's padding-box origin and is still fully clickable.
+    let forwarded = false
+    for (let node = control.parentElement; node; node = node.parentElement) {
+      if (node.tagName !== 'LABEL') continue
+      const box = node.getBoundingClientRect()
+      if (
+        box.left <= left + 0.5 &&
+        box.top <= top + 0.5 &&
+        box.right >= right - 0.5 &&
+        box.bottom >= bottom - 0.5
+      ) {
+        forwarded = true
+        break
+      }
+    }
+    if (forwarded) continue
+
+    results.push({
+      element: `${(root.className || '').split(' ')[0]} > input.${String(control.className).split(' ')[0]}`,
+      target: `${Math.round(target.width)}x${Math.round(target.height)}`,
+      visual: `${Math.round(right - left)}x${Math.round(bottom - top)}`,
+      overhang: Math.round(overhang * 10) / 10,
+    })
+  }
+  return { results, census }
+})
+
+// This probe reports nothing when it measures nothing, and the components it
+// covers are exactly the ones whose examples could fail to render. A census
+// turns a silent no-op into a failure.
+if (uncovered.census.measured < 20) {
+  process.stderr.write(
+    `Only ${uncovered.census.measured} overlay inputs were measurable (${uncovered.census.overlays} found); ` +
+      'the hit-containment probe would pass vacuously. Check the playground for a render error.\n',
+  )
+  await browser.close()
+  server.close()
+  process.exit(1)
+}
+
+// One defective rule produces one finding per instance on the page, which for
+// Switch was six identical lines. Report each distinct geometry once.
+const uncoveredSeen = new Set()
+for (const hit of uncovered.results) {
+  const key = `${hit.element}|${hit.target}|${hit.visual}`
+  if (uncoveredSeen.has(key)) continue
+  uncoveredSeen.add(key)
+  findings.push(
+    `Painted pixels outside the hit surface: ${hit.element} is ${hit.target} under a ${hit.visual} visual, ` +
+      `overhanging by ${hit.overhang}px with nothing to forward the click. ` +
+      'Size the wrapper with max(minimum-interactive-target, <visual size>), as minimumInteractiveComponentSize does.',
+  )
+}
+
 // --- Chip source geometry ---------------------------------------------------
 // T38 translates a 32dp visual container inside a 48dp interaction target,
 // fixed 18dp icon / 24dp avatar slots, zero-width absent slots, and a flexible
@@ -2085,6 +2214,7 @@ if (findings.length > 0) {
 
 process.stdout.write(
   'Rendering audit passed: no clipped elevation shadows, undersized interactive targets outside ' +
-    'the recorded exemptions, or Chip/List Item/Slider/Divider/Badge/Bottom Sheet/App Bar/Search/Carousel/Tabs '  +
+    'the recorded exemptions, painted pixels outside an overlay input\'s hit surface, or ' +
+    'Chip/List Item/Slider/Divider/Badge/Bottom Sheet/App Bar/Search/Carousel/Tabs '  +
     'source-geometry defects\n',
 )

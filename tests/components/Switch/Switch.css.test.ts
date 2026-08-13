@@ -87,6 +87,23 @@ describe('Switch stylesheet contract', () => {
     expect(css).toContain('translate: -50% -50%;')
   })
 
+  it('grows the interaction target to hold the track instead of clamping it to the minimum', () => {
+    // `minimumInteractiveComponentSize()` is `maxOf(placeable, 48dp)` per axis,
+    // so upstream the target always contains the visual. The 52px track is
+    // wider than the 48px minimum, and `__input` is `inset: 0` inside this box,
+    // so a bare `inline-size: <minimum>` left 2px of painted track dead at each
+    // end — with nothing to forward the click, since the track is `aria-hidden`
+    // and the wrapper is a `<span>` rather than a `<label>`.
+    const root = css.match(/\.m3e-switch\s*{([\s\S]*?)}/)
+    expect(root).not.toBeNull()
+    expect(root?.[1]).toMatch(
+      /inline-size:\s*max\(\s*var\(--m3e-comp-switch-minimum-interactive-target\),\s*var\(--m3e-comp-switch-track-width\)\s*\)/,
+    )
+    expect(root?.[1]).toMatch(
+      /block-size:\s*max\(\s*var\(--m3e-comp-switch-minimum-interactive-target\),\s*var\(--m3e-comp-switch-track-height\)\s*\)/,
+    )
+  })
+
   it('uses logical layout and retains visible state in forced colors', () => {
     expect(css).toContain('inline-size:')
     expect(css).toContain('block-size:')
