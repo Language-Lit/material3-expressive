@@ -3762,8 +3762,9 @@ with painted pixels that nothing could activate.
 
 ## T60 — 1.2.2 patch release
 
-Status: prepared; publication pending
+Status: complete
 Approved: 2026-08-13 (owner request: ship the T59 repair to npm)
+Completed: 2026-08-13
 
 ### Scope
 
@@ -3804,11 +3805,35 @@ switches out in a fixed-width column.
 
 ### Completion evidence
 
-- To be completed after publication.
+- The first publish attempt failed with `E404` on the registry `PUT`; the
+  cause was an expired local npm session (`npm whoami` also returned `401`),
+  not a permissions or token-scope problem — npm answers an unauthenticated
+  publish to a *scoped* package with `404` rather than `401`, so it read like
+  a missing-package error. `npm login` cleared it and the retry succeeded,
+  matching the T34 precedent for this exact symptom.
+- Published by the owner 2026-08-13 from commit `0ab49f3`. `npm view
+  @language-lit/material3-expressive versions` confirms the registry holds
+  `1.0.0-next.0`, `1.0.0`, `1.0.2`, `1.0.3`, `1.1.0`, `1.2.0`, `1.2.1`, and
+  `1.2.2`, with `dist-tags.latest` at `1.2.2`.
+- The published artifact was verified rather than assumed: `npm pack
+  @language-lit/material3-expressive@1.2.2` re-downloaded a 476,487-byte
+  tarball — matching the size `npm run verify`'s consumer-fixture gate
+  measured before publish — with shasum `0ee59b899912d52f0acd1809a55daaf2fdcd9bcd`,
+  identical to the one `npm publish` reported at push time. Its extracted
+  `dist/styles.css` was inspected directly: `.m3e-switch` carries
+  `block-size:max(var(--m3e-comp-switch-minimum-interactive-target), var(--m3e-comp-switch-track-height))`
+  and the matching `inline-size:max(...)` rule, and the old clamped
+  `inline-size:var(--m3e-comp-switch-minimum-interactive-target)` declaration
+  is absent. A release that shipped only the version bump would have passed
+  every other check here.
+- `git tag -l` and `git ls-remote --tags origin` both show `v1.2.2` present
+  and pushed, pointing at `0ab49f3`, the commit this was published from — no
+  repeat of the T30/T58 tagging gap.
 
 ### Not done
 
-- **Publication.** Not performed from this session, and deliberately so: this
-  repository has two recorded incidents of a publishing token transmitted in an
-  assistant session (T34's follow-up, T37's refusal). The boundary since T37 is
-  that the owner runs `npm publish` and creates the tag from their own terminal.
+- The rendering audit was not re-run for the release, for the same reason
+  T34/T37 did not run it for theirs: `npm run verify` at `1.2.2` already
+  passed with no `src/`, `tests/`, or `playground/` change since T59's own
+  audited repair, so there is no new geometry, elevation, or state-layer
+  surface for a real browser to check.

@@ -5,7 +5,19 @@
 Audit date: 2026-08-13  
 Release: `@language-lit/material3-expressive@1.2.2`  
 Rollback: `@language-lit/material3-expressive@0.3.0` (tag `v0.3.0`)  
-Registry publication: not performed at the time of this audit.
+Registry publication: not performed at the time of this audit; published
+2026-08-13 from commit `0ab49f3` and confirmed as `latest`. The registry now
+holds `1.0.0-next.0`, `1.0.0`, `1.0.2`, `1.0.3`, `1.1.0`, `1.2.0`, `1.2.1`, and
+`1.2.2`. The first publish attempt `404`'d on an expired npm session
+(`npm whoami` also `401`'d); `npm login` cleared it and the retry succeeded.
+The published tarball was re-downloaded (476,487 bytes, shasum
+`0ee59b899912d52f0acd1809a55daaf2fdcd9bcd`, matching the publish output) and
+its `dist/styles.css` checked directly: `.m3e-switch` carries
+`inline-size:max(var(--m3e-comp-switch-minimum-interactive-target), var(--m3e-comp-switch-track-width))`
+and the matching `block-size:max(...)` rule, with the old clamped declaration
+absent — the T59 repair, not merely the version bump. **The `v1.2.2` tag is
+already created and pushed**, pointing at `0ab49f3`, the commit this was
+published from.
 
 The `v1.2.1` tag owed by the previous entry now exists and is pushed, pointing
 at `52ad093`, the commit `1.2.1` was published from. That gap is closed.
