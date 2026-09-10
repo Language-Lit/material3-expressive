@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react'
 import {
   Button,
   Card,
@@ -25,8 +24,7 @@ import { presetSources } from '../theme/palette'
  * claim is being made.
  */
 export function ThemeShowcase() {
-  const { sourceColor, setSourceColor, themeError } = useSiteTheme()
-  const [density, setDensity] = useState('comfortable')
+  const { sourceColor, setSourceColor, colorMode, setColorMode, themeError } = useSiteTheme()
 
   return (
     <div className="showcase">
@@ -66,9 +64,8 @@ export function ThemeShowcase() {
           </p>
         )}
         <Text as="p" variant="bodySmall" className="claim__body">
-          Tonal palettes are generated from this color, then the complete theme
-          is validated — reference integrity and role-pair contrast included —
-          before any component sees it.
+          Choose a color and watch the whole page change. You can also compare
+          the components in light and dark mode.
         </Text>
       </div>
 
@@ -85,13 +82,14 @@ export function ThemeShowcase() {
 
         <div className="showcase__row">
           <SegmentedButtonGroup
-            aria-label="Density"
-            name="showcase-density"
-            value={density}
-            onValueChange={setDensity}
+            aria-label="Demo color mode"
+            name="showcase-color-mode"
+            value={colorMode}
+            onValueChange={(value) => setColorMode(value as 'light' | 'dark' | 'system')}
             segments={[
-              { value: 'compact', label: 'Compact' },
-              { value: 'comfortable', label: 'Comfortable' },
+              { value: 'light', label: 'Light' },
+              { value: 'dark', label: 'Dark' },
+              { value: 'system', label: 'System' },
             ]}
           />
         </div>
@@ -127,11 +125,11 @@ export function ThemeShowcase() {
               and compress as column flex items. */}
           <div className="showcase__card">
             <Text as="h4" variant="titleMedium">
-              Every surface is a token
+              One theme controls every component
             </Text>
             <Text as="p" variant="bodySmall" className="claim__body">
-              Color, outline, elevation, shape, and motion all resolve through
-              the same custom properties this page is using.
+              Buttons, fields, and cards all use the same color, shape, and
+              motion tokens. Change them through the typed theme API.
             </Text>
           </div>
         </Card>

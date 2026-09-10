@@ -12,7 +12,7 @@ export const siteUrl = 'https://m3e.language-lit.com'
 export const siteName = 'Material 3 Expressive for React'
 
 export const siteDescription =
-  'A framework-neutral React implementation of Material 3 Expressive: 36 conformant components, typed theme and token APIs, native web semantics, and no runtime dependencies.'
+  'Bring Google’s Material 3 Expressive to the web with React components, expressive motion, and customizable themes. Independent, MIT licensed, and built with zero runtime dependencies.'
 
 export const packageName = '@language-lit/material3-expressive'
 

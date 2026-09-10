@@ -3837,3 +3837,77 @@ switches out in a fixed-width column.
   passed with no `src/`, `tests/`, or `playground/` change since T59's own
   audited repair, so there is no new geometry, elevation, or state-layer
   surface for a real browser to check.
+
+## T61 — Material 3 Expressive homepage positioning and live showcase
+
+Status: complete
+Approved: 2026-09-10 (owner approved the researched homepage refactor)
+Completed: 2026-09-10
+
+### Scope
+
+Lead with Google's Material 3 Expressive for React, explicitly identify this
+as an independent implementation, and demonstrate supported components in the
+hero. Reorder the homepage around experience, design context, customization,
+web behavior, and a complete setup example. Align metadata and social copy,
+remove the stale metadata count, and keep measurable claims inventory-backed.
+The source-color generator remains a site demonstration, not a package API claim.
+
+### Expected files
+
+- `site/app/page.tsx`, `site/app/globals.css`, `site/ui/ThemeShowcase.tsx`.
+- New `site/ui/HeroShowcase.tsx` for the interactive hero composition.
+- `site/content/site.ts`, `site/app/opengraph-image.tsx` and metadata if needed.
+- `docs/ACTIVE_TASK.md` for authorization and completion evidence.
+- No library API, component implementation, or generated inventory change.
+
+### Acceptance checks
+
+- `npm run check:site`, `npm run verify`, and `npm run site:build` pass.
+- Desktop and mobile production-page checks: no horizontal overflow, readable
+  light/dark themes and source-color presets, working CTAs, keyboard-operable
+  demos, reduced-motion behavior, and no browser errors.
+- Hero and social preview name Google Material 3 Expressive and React; visible
+  independent-implementation attribution and accurate dependency claims.
+- Setup snippet includes the provider and complete stylesheet import; metadata
+  has no manually maintained component count.
+- Run `npm run build && npm run playground:build` and `audit:rendering` with
+  Chromium to confirm the showcased controls retain their rendering contracts.
+
+### Completion evidence
+
+- Homepage and social preview lead with “Google’s Material 3 Expressive.
+  Built for React.” Both identify the implementation as independent.
+- Hero uses public Button, LoadingIndicator, and Switch components. Animation
+  is opt-in and can be stopped; reduced motion preserves a static indicator.
+- Theme demo now switches the actual light/dark/system preference instead of
+  offering density labels that changed no layout. Palette details are disclosed
+  on demand; setup includes React peers, stylesheet, provider, and a Next.js guide.
+- Metadata omits the old hand-maintained count. Visible component figures and
+  social-card figures still derive from the conformant inventory (41 entries).
+- Google’s 46 studies / 18,000+ participants are explicitly attributed and link
+  to https://design.google/library/expressive-material-design-google-research.
+  These describe the design research, not measured adoption or conversion gains.
+- `npm run verify` passed all 14 gates, including 225 test files / 1,632 tests,
+  the package and playground builds, and packed Next.js/Vite consumer fixtures.
+  The first sandboxed run could not write npm’s cache; the authorized retry passed.
+- `npm run site:build` passed. The initial sandboxed font fetch was blocked;
+  the authorized build succeeded. Its typecheck caught a missing controlled
+  Switch callback, corrected to the public `onCheckedChange` API before completion.
+- Production Chrome checks passed at 320, 390, 768, 1024, and 1440px with no
+  horizontal overflow. All six source-color presets passed in light and dark
+  modes without theme errors. Keyboard activation, the animation toggle,
+  reduced-motion CSS, palette disclosure, metadata, and every homepage local
+  link passed; no page errors were reported.
+- Visual review covered desktop, mobile, dark mode, and the generated social
+  image. It caught an inherited inverse-section code color that made the install
+  command unreadable; the corrected command passes 4.5:1 contrast in all twelve
+  preset/mode combinations. Headline sizing was adjusted for desktop wrapping.
+- A final copy pass kept the promotional positioning while replacing stacked
+  slogan fragments, vague filler, repeated calls to “Explore,” and em dashes in
+  homepage prose with shorter, concrete descriptions of what the library does.
+  The production page was rebuilt and rechecked at desktop and mobile widths.
+- `M3E_CHROMIUM_PATH=... npm run audit:rendering` passed against the production
+  playground, including elevation, target size, hit containment, and source geometry.
+- No public API, component implementation, inventory, or package dependency changed.
+  No deployment or publication was performed.

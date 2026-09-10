@@ -11,7 +11,7 @@ import { getConformantComponents } from '../content/inventory'
  */
 export const dynamic = 'force-static'
 
-export const alt = 'Material 3 Expressive for React'
+export const alt = 'Google’s Material 3 Expressive. Built for React. An independent implementation.'
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
@@ -42,17 +42,17 @@ export default async function OpenGraphImage() {
 
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <div style={{ fontSize: 30, color: '#cac4d0', marginBottom: 16 }}>
-            Material 3 Expressive · React 18 and 19
+            Independent implementation · React 18 &amp; 19
           </div>
-          <div style={{ fontSize: 76, fontWeight: 700, lineHeight: 1.05, letterSpacing: '-0.02em' }}>
-            The design system,
+          <div style={{ fontSize: 66, fontWeight: 700, lineHeight: 1.05, letterSpacing: '-0.02em' }}>
+            Google’s Material 3 Expressive.
           </div>
-          <div style={{ fontSize: 76, fontWeight: 700, lineHeight: 1.05, letterSpacing: '-0.02em' }}>
-            not a screenshot of it.
+          <div style={{ fontSize: 66, fontWeight: 700, lineHeight: 1.05, letterSpacing: '-0.02em' }}>
+            Built for React.
           </div>
         </div>
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 26 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 21 }}>
           <div style={{ color: '#d0bcff' }}>@language-lit/material3-expressive</div>
           {/*
            * One child node, not two. Satori requires an explicit `display` on
@@ -60,7 +60,7 @@ export default async function OpenGraphImage() {
            * children — a number and a string — not one interpolated sentence.
            */}
           <div style={{ color: '#cac4d0' }}>
-            {`${components.length} components · 0 dependencies`}
+            {`${components.length} components · MIT licensed`}
           </div>
         </div>
       </div>
