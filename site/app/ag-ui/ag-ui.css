@@ -18,18 +18,14 @@
 .agui-demo__stage { display: flex; flex-direction: column; min-inline-size: 0; }
 .agui-demo__stage-heading { padding: 1.5rem 1.5rem 1rem; display: grid; gap: 0.5rem; border-block-end: 1px solid var(--m3e-sys-color-outline-variant); }
 .agui-demo__stage-heading > p { color: var(--m3e-sys-color-on-surface-variant); }
-.agui-demo__transcript { block-size: 24rem; outline-offset: -3px; }
-.agui-demo__transcript > div { block-size: 100%; scrollbar-gutter: stable; outline-offset: -3px; }
+.agui-demo__transcript { min-block-size: 24rem; outline-offset: -3px; }
+.agui-demo__transcript > div { min-block-size: 24rem; outline-offset: -3px; }
 .agui-demo__transcript:focus-visible, .agui-demo__transcript > div:focus-visible { outline: 3px solid var(--m3e-sys-color-primary); }
 .agui-demo__empty { display: grid; gap: 0.75rem; max-inline-size: 36ch; margin-inline: auto; }
 .agui-demo__footer { padding: 1rem 1.5rem; border-block-start: 1px solid var(--m3e-sys-color-outline-variant); }
 .agui-demo__status { min-block-size: 1.5rem; font-size: 0.875rem; color: var(--m3e-sys-color-on-surface-variant); }
 .agui-demo__actions { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-block-start: 0.5rem; }
 .agui-weather, .agui-project { padding: 1.5rem; display: grid; gap: 1.25rem; }
-/* Rich cards grow with their controls instead of hiding them in a second
-   scrolling area on a small screen. The text-only scenarios stay bounded. */
-.agui-demo__stage:is([data-scenario='weather'], [data-scenario='project'], [data-scenario='approval']) .agui-demo__transcript,
-.agui-demo__stage:is([data-scenario='weather'], [data-scenario='project'], [data-scenario='approval']) .agui-demo__transcript > div { block-size: auto; min-block-size: 24rem; }
 .agui-widget__head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
 .agui-widget__title { display: grid; gap: 0.25rem; }
 .agui-weather__current { padding: 1.5rem; }
@@ -84,7 +80,6 @@
   .agui-demo__stage-heading, .agui-demo__footer, .agui-weather, .agui-project, .agui-weather__current { padding: 1rem; }
   .agui-demo__choices { flex-direction: column; }
   .agui-demo__choices > p:first-child { flex-basis: auto; }
-  .agui-demo__transcript { block-size: 25rem; }
   .agui-weather__reading { flex-wrap: wrap; }
   .agui-weather__metrics > div { padding: 0.625rem; }
   .agui-invitation { grid-template-columns: minmax(0, 1fr); }
