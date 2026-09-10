@@ -58,7 +58,7 @@ map. It runs inside `npm run verify`.
 
 ## AG-UI demo
 
-`/ag-ui/` consumes `@language-lit/material3-expressive-ag-ui@0.1.0` from npm.
+`/ag-ui/` consumes `@language-lit/material3-expressive-ag-ui` from npm.
 Its six scenarios run through a site-authored `AbstractAgent` with local AG-UI
 events. No backend, model, key, or CopilotKit runtime is involved. The weather
 card, project plan, and invitation preview are site renderers registered with
@@ -70,7 +70,7 @@ ADR 0041 records this companion dependency.
 
 Three guides under `/docs/ag-ui-*` use the existing Markdown pipeline and have
 an AG-UI navigation section. Their sources are `docs/AG_UI_*.md` and their API
-examples describe the published 0.1.0 package. The guide registry feeds the docs
+examples describe the published package. The guide registry feeds the docs
 index, search, sitemap, and machine-readable documentation.
 
 After building the site, run the production browser checks:

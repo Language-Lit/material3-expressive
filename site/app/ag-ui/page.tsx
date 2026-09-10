@@ -5,7 +5,7 @@ import { InstallCommand } from '../../ui/InstallCommand'
 import { LinkButton } from '../../ui/LinkButton'
 import { StructuredData, breadcrumbList } from '../../ui/StructuredData'
 import { absoluteUrl } from '../../content/site'
-import { agUiDescription, agUiInstall, agUiNpm, agUiPackage, agUiRelease, agUiRepository } from '../../content/ag-ui'
+import { agUiDescription, agUiInstall, agUiNpm, agUiPackage, agUiReleases, agUiRepository } from '../../content/ag-ui'
 import { agUiDocPages } from '../../content/docs'
 import '@language-lit/material3-expressive-ag-ui/styles.css'
 import './ag-ui.css'
@@ -27,7 +27,7 @@ export default function AgUiPage() {
       <section className="hero">
         <div className="section__inner agui-hero">
           <div>
-            <p className="hero__eyebrow">AG-UI for React · v0.1.0</p>
+            <p className="hero__eyebrow">AG-UI for React</p>
             <Text as="h1" variant="displayLarge" emphasis="emphasized" className="hero__title agui-hero__title">
               Give your agent a <span className="hero__accent">Material 3 Expressive interface.</span>
             </Text>
@@ -49,7 +49,7 @@ export default function AgUiPage() {
             <nav className="agui-links" aria-label="AG-UI package">
               <a href={agUiNpm}>npm</a>
               <a href={agUiRepository}>GitHub</a>
-              <a href={agUiRelease}>v0.1.0 release</a>
+              <a href={agUiReleases}>Releases</a>
             </nav>
           </div>
         </div>

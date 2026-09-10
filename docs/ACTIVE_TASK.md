@@ -13,7 +13,7 @@ Add `/ag-ui/` to the static documentation site with a concise hero, release
 links, native installation example, and six interactive scripted scenarios:
 streaming and reasoning, tool calls, weather UI, project planning, approval,
 and failed runs.
-Consume the published AG-UI package at 0.1.0. Label the simulation clearly and
+Consume the published AG-UI package. Label the simulation clearly and
 describe CopilotKit support as 1.71.x v1 only. Use existing site components,
 theme tokens, navigation, and accessibility conventions.
 
@@ -52,9 +52,9 @@ them in navigation. Replace the original demo label with two plain sentences.
 - Added the static `/ag-ui/` route with package/release links, native install
   command, stylesheet order, and CopilotKit 1.71.x v1-only guidance. Copy uses
   direct descriptions; the requested scripted-demo label is retained verbatim.
-- Installed the published companion at 0.1.0 with AG-UI 0.0.59, the SDK version
-  used by that release. RxJS matches the SDK's 7.8.1 dependency. The companion
-  remains a site dependency and the core package contract is unchanged.
+- Installed the published companion with AG-UI 0.0.59, the SDK version used by
+  that release. RxJS matches the SDK's 7.8.1 dependency. The companion remains
+  a site dependency and the core package contract is unchanged.
 - Five independently selectable scenarios use the SDK's event pipeline and
   published AgentProvider, MessageThread, and RunStatus. The weather card uses
   the public tool-renderer API. No package implementation was copied.

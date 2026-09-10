@@ -2,8 +2,8 @@
 
 Use the assembled chat for a familiar conversation layout, or compose the
 individual components around your app. The components below come from
-`@language-lit/material3-expressive-ag-ui@0.1.0`. Custom forecast, project,
-and invitation cards in the demo are examples built with the core Material
+`@language-lit/material3-expressive-ag-ui`. Custom forecast, project, and
+invitation cards in the demo are examples built with the core Material
 components, not extra exports from the AG-UI package.
 
 Start with the [setup guide](AG_UI_GETTING_STARTED.md) to install the packages,
@@ -168,11 +168,11 @@ When an approval removes the focused control, restore focus to a useful place
 in your layout. The demo returns it to the conversation. Keep motion optional
 and preserve the user's ability to scroll back while a reply arrives.
 
-## Version 0.1.0 text behavior
+## Text behavior
 
 Assistant and user text is displayed as plain text, preserving line breaks.
 It is not a Markdown renderer. Supply your own content renderer if your app
 needs rich text, and handle untrusted content appropriately.
 
-The [package source](https://github.com/Language-Lit/material3-expressive-ag-ui/tree/v0.1.0)
+The [package source](https://github.com/Language-Lit/material3-expressive-ag-ui/tree/main)
 contains the complete exported TypeScript definitions and tests.

@@ -2,7 +2,7 @@
 
 The Material adapter supports **CopilotKit 1.71.x v1 only**. It was tested with
 1.71.0. CopilotKit's v2 slot API is not supported by
-`@language-lit/material3-expressive-ag-ui@0.1.0`.
+`@language-lit/material3-expressive-ag-ui`.
 
 Use this adapter when CopilotKit already owns your conversation. For a native
 AG-UI agent, use the [getting started guide](AG_UI_GETTING_STARTED.md).
@@ -68,7 +68,7 @@ does not configure the adapter.
 CopilotKit can supply an empty generative-UI wrapper for an unregistered tool,
 so that tool may have no visible fallback. Register a catch-all with
 CopilotKit's `useDefaultTool` if every call should be visible. The
-[adapter example](https://github.com/Language-Lit/material3-expressive-ag-ui/blob/v0.1.0/playground/CopilotDemo.tsx)
+[adapter example](https://github.com/Language-Lit/material3-expressive-ag-ui/blob/main/playground/CopilotDemo.tsx)
 shows that integration with `ToolCallCard`.
 
 ## Exported slots
@@ -82,7 +82,6 @@ The entry also exports the legacy `RenderTextMessage`,
 `RenderResultMessage` slots. Their props are the AG-UI-shaped CopilotKit
 1.71.x message props, not older GraphQL message instances.
 
-Text remains plain text in version 0.1.0. The adapter does not add Markdown
-rendering. Check the
-[0.1.0 release](https://github.com/Language-Lit/material3-expressive-ag-ui/releases/tag/v0.1.0)
+Text remains plain text. The adapter does not add Markdown rendering. Check the
+[release notes](https://github.com/Language-Lit/material3-expressive-ag-ui/releases)
 before upgrading either side of the integration.

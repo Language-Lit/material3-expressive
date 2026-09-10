@@ -14,8 +14,8 @@ that companion package, which itself renders Material 3 Expressive components.
 ## Decision
 
 Allow the published AG-UI companion and its native AG-UI peers in `site/` for
-the dedicated `/ag-ui/` route. Pin the demonstrated companion to 0.1.0 and
-consume only public exports. Do not copy its implementation into this repository.
+the dedicated `/ag-ui/` route. Pin the demonstrated companion and consume only
+public exports. Do not copy its implementation into this repository.
 Keep site-authored scripts and weather content separate from package components.
 RxJS is a site dependency because AbstractAgent returns an Observable. Its
 version matches the SDK's dependency to share one instance and one type identity.

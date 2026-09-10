@@ -4,9 +4,9 @@
 Material 3 Expressive. AG-UI carries the messages, tool calls, and run events
 between your agent and the interface. The library supplies the React UI.
 
-This guide covers version **0.1.0**, with React 18 or 19 and
-`@language-lit/material3-expressive` 1.2.x. The website demonstrates it with
-AG-UI client and core 0.0.59. The package declares both AG-UI peers as >=0.0.50.
+This guide covers React 18 or 19 and `@language-lit/material3-expressive`
+1.2.x. The website demonstrates it with AG-UI client and core 0.0.59. The
+package declares both AG-UI peers as >=0.0.50.
 
 ## Try it before connecting an agent
 
@@ -113,5 +113,3 @@ directly only when you are managing the binding without `AgentProvider`.
   share state with controls, and handle approvals.
 - [CopilotKit adapter](AG_UI_COPILOTKIT.md): use the Material UI with a
   CopilotKit 1.71.x v1 application.
-- [Version 0.1.0 release](https://github.com/Language-Lit/material3-expressive-ag-ui/releases/tag/v0.1.0):
-  the published release this guide describes.
