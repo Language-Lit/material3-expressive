@@ -19,7 +19,11 @@
 .agui-demo__stage-heading { padding: 1.5rem 1.5rem 1rem; display: grid; gap: 0.5rem; border-block-end: 1px solid var(--m3e-sys-color-outline-variant); }
 .agui-demo__stage-heading > p { color: var(--m3e-sys-color-on-surface-variant); }
 .agui-demo__transcript { min-block-size: 24rem; outline-offset: -3px; }
-.agui-demo__transcript > div { min-block-size: 24rem; outline-offset: -3px; }
+/* MessageThread ships overflow-y:auto + overscroll-behavior:contain, which makes
+   it a scroll container that swallows the wheel and refuses to chain up. The
+   box grows with its content here, so it never scrolls itself: hand the scroll
+   back to the page. */
+.agui-demo__transcript > div { min-block-size: 24rem; outline-offset: -3px; overscroll-behavior: auto; }
 .agui-demo__transcript:focus-visible, .agui-demo__transcript > div:focus-visible { outline: 3px solid var(--m3e-sys-color-primary); }
 .agui-demo__empty { display: grid; gap: 0.75rem; max-inline-size: 36ch; margin-inline: auto; }
 .agui-demo__footer { padding: 1rem 1.5rem; border-block-start: 1px solid var(--m3e-sys-color-outline-variant); }
