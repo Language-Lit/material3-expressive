@@ -129,6 +129,9 @@ const allowedEntries = new Set([
   '@language-lit/material3-expressive/theme',
   '@language-lit/material3-expressive/tokens',
   '@language-lit/material3-expressive/styles.css',
+  // Published companion demo, scoped to site dependencies by ADR 0041.
+  '@language-lit/material3-expressive-ag-ui',
+  '@language-lit/material3-expressive-ag-ui/styles.css',
 ])
 
 const siteSources = (await walk(siteRoot)).filter((file) => /\.(tsx?|mjs|css)$/.test(file))
@@ -231,7 +234,7 @@ if (!(await exists(fontManifestPath))) {
 }
 
 // ---------------------------------------------------------------------------
-// 6. The site is not a dependency of the library, and ships no UI dependency.
+// 6. The site is not a dependency of the library; UI dependencies are explicit.
 // ---------------------------------------------------------------------------
 
 const libraryTrees = ['src', 'tests', 'playground']
@@ -251,6 +254,12 @@ for (const tree of libraryTrees) {
 const sitePackage = JSON.parse(await readFile(path.join(siteRoot, 'package.json'), 'utf8'))
 const allowedDependencies = new Set([
   '@language-lit/material3-expressive',
+  // Owner-approved native companion demo (ADR 0041). RxJS provides the
+  // Observable required by AbstractAgent; CopilotKit is not installed.
+  '@language-lit/material3-expressive-ag-ui',
+  '@ag-ui/client',
+  '@ag-ui/core',
+  'rxjs',
   'next',
   'react',
   'react-dom',

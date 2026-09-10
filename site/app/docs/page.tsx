@@ -1,13 +1,13 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Surface, Text } from '@language-lit/material3-expressive'
-import { docPages } from '../../content/docs'
+import { agUiDocPages, docPages } from '../../content/docs'
 import { DocsShell } from '../../ui/DocsShell'
 import { StructuredData, breadcrumbList } from '../../ui/StructuredData'
 import { absoluteUrl } from '../../content/site'
 
 const description =
-  'Installation, theming, server rendering, migration, and the deliberate web deviations.'
+  'Guides to Material 3 Expressive and its AG-UI companion: installation, theming, agent conversations, and component composition.'
 
 export const metadata: Metadata = {
   title: 'Guides',
@@ -43,14 +43,13 @@ export default function DocsIndexPage() {
           Guides
         </Text>
         <Text as="p" variant="bodyLarge">
-          Everything that is not a single component: how to install it, how to
-          theme it, how it renders on a server, and where it deliberately
-          differs from the platform APIs it implements.
+          Set up Material 3 Expressive, customize your theme, or add an agent
+          conversation with the AG-UI companion.
         </Text>
       </div>
 
       <div className="catalog__grid">
-        {docPages.map((page) => (
+        {docPages.filter((page) => !page.section).map((page) => (
           <Surface key={page.slug} as="article" color="surface-container-low" shape="large">
             <Link href={`/docs/${page.slug}/`} className="catalog__card">
               <span className="catalog__name">{page.title}</span>
@@ -61,6 +60,24 @@ export default function DocsIndexPage() {
           </Surface>
         ))}
       </div>
+      <section aria-labelledby="ag-ui-guides" style={{ marginBlockStart: '3rem' }}>
+        <div className="page-head">
+          <Text as="h2" variant="headlineMedium" id="ag-ui-guides">AG-UI</Text>
+          <Text as="p" variant="bodyLarge">
+            Build agent conversations with the Material 3 Expressive companion.
+          </Text>
+        </div>
+        <div className="catalog__grid">
+          {agUiDocPages.map((page) => (
+            <Surface key={page.slug} as="article" color="surface-container-low" shape="large">
+              <Link href={`/docs/${page.slug}/`} className="catalog__card">
+                <span className="catalog__name">{page.title}</span>
+                <span className="claim__body" style={{ fontSize: '0.8125rem', lineHeight: 1.5 }}>{page.summary}</span>
+              </Link>
+            </Surface>
+          ))}
+        </div>
+      </section>
     </DocsShell>
   )
 }

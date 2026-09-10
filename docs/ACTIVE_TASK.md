@@ -1,5 +1,118 @@
 # Active v1 task
 
+## T62 — Public AG-UI demo page
+
+Status: complete
+Approved: 2026-09-10 (owner approved the proposed scope and requested plain copy and existing M3E patterns)
+Refinement requested: 2026-09-10 (owner requested richer scripted UI, removal of em dashes, and local AG-UI documentation)
+Completed: 2026-09-10
+
+### Scope
+
+Add `/ag-ui/` to the static documentation site with a concise hero, release
+links, native installation example, and six interactive scripted scenarios:
+streaming and reasoning, tool calls, weather UI, project planning, approval,
+and failed runs.
+Consume the published AG-UI package at 0.1.0. Label the simulation clearly and
+describe CopilotKit support as 1.71.x v1 only. Use existing site components,
+theme tokens, navigation, and accessibility conventions.
+
+The refinement adds an interactive forecast, a project checklist with shared
+state and progress, and an invitation preview before approval. Add three local
+AG-UI guides through the existing Markdown documentation pipeline and group
+them in navigation. Replace the original demo label with two plain sentences.
+
+### Expected files
+
+- New `site/app/ag-ui/` page, styles, and `site/ui/ag-ui/` demo modules.
+- Site dependencies and lockfile, navigation, search, and route discovery.
+- `scripts/check-site.mjs` to recognize the companion package's public entries.
+- Site browser acceptance checks and supporting documentation.
+- ADR 0041 for the companion-library exception to ADR 0028.
+- No core public API, component inventory, or library dependency change.
+- Refinement: `docs/AG_UI_*.md`, guide grouping and metadata, updated renderers,
+  scenario events, scoped styles, and the production browser audit.
+
+### Acceptance checks
+
+- Site TypeScript check, `npm run check:site`, `npm run verify`, and
+  `npm run site:build` pass.
+- All six scenarios work with no backend, credentials, or LLM requests, including
+  partial tool arguments, approval/resume, failure, stop, and replay.
+- Desktop/mobile light/dark production rendering, keyboard controls, focus,
+  reduced motion, no horizontal overflow, and no browser errors.
+- `npm run build && npm run playground:build` and `audit:rendering` pass.
+- Copy names the published package and supported adapter version accurately.
+- Forecast unit/day controls and project checklist/progress work by keyboard.
+  Local AG-UI guides render with working internal links, search, and sitemap
+  entries. Published API types remain the basis for all documentation examples.
+
+### Initial completion evidence
+
+- Added the static `/ag-ui/` route with package/release links, native install
+  command, stylesheet order, and CopilotKit 1.71.x v1-only guidance. Copy uses
+  direct descriptions; the requested scripted-demo label is retained verbatim.
+- Installed the published companion at 0.1.0 with AG-UI 0.0.59, the SDK version
+  used by that release. RxJS matches the SDK's 7.8.1 dependency. The companion
+  remains a site dependency and the core package contract is unchanged.
+- Five independently selectable scenarios use the SDK's event pipeline and
+  published AgentProvider, MessageThread, and RunStatus. The weather card uses
+  the public tool-renderer API. No package implementation was copied.
+- Added desktop/mobile navigation, search, canonical/social metadata, sitemap,
+  and llms.txt discovery. ADR 0041 and the site dependency/import checks record
+  the approved companion integration.
+- `npm run verify` passed all 14 gates, including 225 test files / 1,632 tests,
+  package and playground builds, and packed Next.js/Vite consumer fixtures.
+  `npm --prefix site run typecheck`, `npm run check:site`, and
+  `npm run site:build` passed; the export includes `/ag-ui/index.html`.
+- `M3E_CHROMIUM_PATH=... npm --prefix site run test:ag-ui` passed on production
+  assets. Every scenario ran with the browser offline, including partial tool
+  arguments, progressive weather rendering, approval and cancellation through
+  SDK resume, deliberate failure and replay, stop, and switching mid-run.
+- Browser checks passed at 320, 390, 768, 1024, and 1440px in light and dark
+  modes with no horizontal overflow. Visual review covered desktop/mobile
+  light/dark screenshots. Keyboard play, approval focus restoration, reset
+  focus, reduced motion, mobile navigation, canonical URL, sitemap, and llms.txt
+  passed. No browser errors, external requests, or mutating requests occurred;
+  Next.js made only local GET/HEAD asset and link requests.
+- The component `audit:rendering` passed against the production playground.
+  No core component geometry, token, inventory, or public API changed.
+- The site README documents the repeatable AG-UI browser audit, which saves
+  screenshots in a temporary directory. No deployment or publication was run.
+
+### Refinement completion evidence
+
+- The forecast now has Celsius/Fahrenheit controls, a three-day tab selector,
+  and high/low/rain details. The day selector mounts with the complete argument
+  list so its indicator measures the final tab widths.
+- Added a sixth scenario with a project plan, keyboard-operable checkboxes,
+  progress, and a schedule. All views read the same local AG-UI state. Resetting
+  the demo restores the scripted initial state.
+- Approval now includes an invitation preview. Its details arrive through tool
+  arguments, and SDK resume updates the preview after approval or cancellation.
+- Rich tool cards grow with their content to keep controls visible on mobile.
+  All new UI uses public Material components and tokens. Regenerated the three
+  icon-font subsets with `generate:site-symbols` for the sun and calendar icons.
+- Replaced the original demo label with “Scripted demo. No LLM or API key
+  required.” The AG-UI page and new guides contain no em dashes.
+- Added getting-started, component/tool-renderer, and CopilotKit guides at
+  `/docs/ag-ui-getting-started/`, `/docs/ag-ui-components/`, and
+  `/docs/ag-ui-copilotkit/`. They use the existing Markdown pipeline and appear
+  in a dedicated navigation section, the docs index, search, sitemap, llms.txt,
+  and llms-full.txt. Article metadata identifies the companion package.
+- `npm run verify` passed all 14 gates and 1,632 tests. Site typecheck,
+  production build, `check:site`, and the component rendering audit passed.
+- The extended production AG-UI audit passed all six scenarios offline,
+  including unit conversion, keyboard day selection, checklist state across
+  tabs, progress values, reset, and both approval decisions. Layout checks
+  cover 320 through 1440px in light/dark modes and detect tabs clipped by cards.
+- All three guide routes, their internal document links, canonical URLs, and
+  companion metadata passed browser checks. Visual review covered the larger
+  cards and guides on desktop/mobile in light/dark modes. No unexpected browser
+  errors or external/mutating requests occurred. No deployment was performed.
+
+---
+
 ## T31 — Expressive redesign of the documentation site's marketing surfaces
 
 Status: complete

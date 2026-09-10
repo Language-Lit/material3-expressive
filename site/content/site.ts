@@ -1,5 +1,6 @@
 import { getConformantComponents } from './inventory'
 import { docPages } from './docs'
+import { agUiDescription } from './ag-ui'
 
 /**
  * The canonical origin. Every absolute URL the site emits — canonical links,
@@ -63,6 +64,13 @@ export async function getSiteRoutes(): Promise<SiteRoute[]> {
       summary: siteDescription,
       priority: 1,
       source: 'site/app/page.tsx',
+    },
+    {
+      path: '/ag-ui/',
+      title: 'AG-UI for React',
+      summary: agUiDescription,
+      priority: 0.9,
+      source: 'site/app/ag-ui/page.tsx',
     },
     {
       path: '/docs/',

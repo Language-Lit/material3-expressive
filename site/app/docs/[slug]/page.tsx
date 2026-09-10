@@ -7,6 +7,7 @@ import { DocsShell } from '../../../ui/DocsShell'
 import { Prose } from '../../../ui/Prose'
 import { StructuredData, breadcrumbList } from '../../../ui/StructuredData'
 import { absoluteUrl, packageName, siteName, siteUrl } from '../../../content/site'
+import { agUiPackage } from '../../../content/ag-ui'
 
 interface PageProps {
   params: Promise<{ slug: string }>
@@ -53,7 +54,7 @@ export default async function DocPage({ params }: PageProps) {
           url: absoluteUrl(`/docs/${page.slug}/`),
           inLanguage: 'en',
           isPartOf: { '@type': 'WebSite', name: siteName, url: siteUrl },
-          about: { '@type': 'SoftwareSourceCode', name: packageName },
+          about: { '@type': 'SoftwareSourceCode', name: page.section === 'AG-UI' ? agUiPackage : packageName },
           author: { '@type': 'Person', name: 'Romullo Queiroz' },
           license: 'https://opensource.org/licenses/MIT',
         }}
@@ -66,7 +67,7 @@ export default async function DocPage({ params }: PageProps) {
       />
       <article>
         <div className="page-head">
-          <span className="page-head__eyebrow">Guide</span>
+          <span className="page-head__eyebrow">{page.section === 'AG-UI' ? 'AG-UI guide' : 'Guide'}</span>
           <Text
             as="h1"
             variant="displaySmall"

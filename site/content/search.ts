@@ -3,6 +3,7 @@ import path from 'node:path'
 import { getConformantComponents, kindLabels } from './inventory'
 import { docPages } from './docs'
 import { componentDocsRoot, docsRoot } from './paths'
+import { agUiDescription } from './ag-ui'
 
 export interface SearchEntry {
   title: string
@@ -64,12 +65,18 @@ export async function buildSearchIndex(): Promise<SearchEntry[]> {
       return {
         title: page.title,
         href: `/docs/${page.slug}/`,
-        group: 'Guides',
+        group: page.section ?? 'Guides',
         terms: [page.title, page.summary, firstParagraph(source)].join(' ').toLowerCase(),
         excerpt,
       }
     }),
   )
 
-  return [...docEntries, ...componentEntries]
+  return [{
+    title: 'AG-UI demo',
+    href: '/ag-ui/',
+    group: 'Demos',
+    terms: `ag-ui agents ai streaming reasoning tools weather approval interrupts copilotkit ${agUiDescription}`.toLowerCase(),
+    excerpt: agUiDescription,
+  }, ...docEntries, ...componentEntries]
 }

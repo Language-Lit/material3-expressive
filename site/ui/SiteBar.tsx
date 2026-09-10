@@ -39,6 +39,9 @@ export function SiteBar({
             style it outranked the media query that hides this group, so these
             links stayed on screen below 60rem and overlapped the wordmark. */}
         <div className="bar__desktop-only">
+          <Link href="/ag-ui/" className="sidebar__link">
+            AG-UI
+          </Link>
           <Link href="/components/" className="sidebar__link">
             Components
           </Link>

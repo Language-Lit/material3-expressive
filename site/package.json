@@ -5,6 +5,8 @@
   "type": "module",
   "description": "Documentation and showcase site for @language-lit/material3-expressive",
   "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test:ag-ui": "node scripts/audit-ag-ui.mjs",
     "predev": "node ../scripts/link-self.mjs",
     "dev": "next dev --port 3000",
     "prebuild": "node ../scripts/link-self.mjs",
@@ -12,11 +14,15 @@
     "preview": "npx serve out"
   },
   "dependencies": {
+    "@ag-ui/client": "0.0.59",
+    "@ag-ui/core": "0.0.59",
     "@language-lit/material3-expressive": "file:..",
+    "@language-lit/material3-expressive-ag-ui": "0.1.0",
     "marked": "^16.4.2",
     "next": "16.2.10",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "rxjs": "7.8.1"
   },
   "devDependencies": {
     "@types/node": "20.19.43",

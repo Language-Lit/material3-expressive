@@ -7,7 +7,32 @@ export interface DocPage {
   file: string
   title: string
   summary: string
+  section?: 'AG-UI'
 }
+
+export const agUiDocPages: readonly DocPage[] = [
+  {
+    slug: 'ag-ui-getting-started',
+    file: 'AG_UI_GETTING_STARTED.md',
+    title: 'Getting started with AG-UI',
+    summary: 'Install the companion, connect an agent, and add a conversation to your app.',
+    section: 'AG-UI',
+  },
+  {
+    slug: 'ag-ui-components',
+    file: 'AG_UI_COMPONENTS.md',
+    title: 'AG-UI components and tool renderers',
+    summary: 'Compose a thread, render tools as components, share state, and handle approvals.',
+    section: 'AG-UI',
+  },
+  {
+    slug: 'ag-ui-copilotkit',
+    file: 'AG_UI_COPILOTKIT.md',
+    title: 'AG-UI with CopilotKit',
+    summary: 'Use the Material adapter with CopilotKit 1.71.x v1.',
+    section: 'AG-UI',
+  },
+]
 
 /**
  * The long-form documents published as site routes, in reading order.
@@ -54,6 +79,7 @@ export const docPages: readonly DocPage[] = [
     title: 'Release notes',
     summary: 'Versioned changes and breaking changes.',
   },
+  ...agUiDocPages,
 ]
 
 const repositoryBlob =
