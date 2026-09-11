@@ -1,13 +1,13 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Surface, Text } from '@language-lit/material3-expressive'
-import { agUiDocPages, docPages } from '../../content/docs'
+import { a2uiDocPages, agUiDocPages, docPages } from '../../content/docs'
 import { DocsShell } from '../../ui/DocsShell'
 import { StructuredData, breadcrumbList } from '../../ui/StructuredData'
 import { absoluteUrl } from '../../content/site'
 
 const description =
-  'Guides to Material 3 Expressive and its AG-UI companion: installation, theming, agent conversations, and component composition.'
+  'Guides to Material 3 Expressive and its AG-UI and A2UI companions: installation, theming, agent conversations, agent-generated surfaces, and component composition.'
 
 export const metadata: Metadata = {
   title: 'Guides',
@@ -43,8 +43,9 @@ export default function DocsIndexPage() {
           Guides
         </Text>
         <Text as="p" variant="bodyLarge">
-          Set up Material 3 Expressive, customize your theme, or add an agent
-          conversation with the AG-UI companion.
+          Set up Material 3 Expressive, customize your theme, add an agent
+          conversation with the AG-UI companion, or render agent-generated
+          surfaces with the A2UI companion.
         </Text>
       </div>
 
@@ -69,6 +70,24 @@ export default function DocsIndexPage() {
         </div>
         <div className="catalog__grid">
           {agUiDocPages.map((page) => (
+            <Surface key={page.slug} as="article" color="surface-container-low" shape="large">
+              <Link href={`/docs/${page.slug}/`} className="catalog__card">
+                <span className="catalog__name">{page.title}</span>
+                <span className="claim__body" style={{ fontSize: '0.8125rem', lineHeight: 1.5 }}>{page.summary}</span>
+              </Link>
+            </Surface>
+          ))}
+        </div>
+      </section>
+      <section aria-labelledby="a2ui-guides" style={{ marginBlockStart: '3rem' }}>
+        <div className="page-head">
+          <Text as="h2" variant="headlineMedium" id="a2ui-guides">A2UI</Text>
+          <Text as="p" variant="bodyLarge">
+            Render Google A2UI surfaces with the Material 3 Expressive companion.
+          </Text>
+        </div>
+        <div className="catalog__grid">
+          {a2uiDocPages.map((page) => (
             <Surface key={page.slug} as="article" color="surface-container-low" shape="large">
               <Link href={`/docs/${page.slug}/`} className="catalog__card">
                 <span className="catalog__name">{page.title}</span>

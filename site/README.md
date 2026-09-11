@@ -84,6 +84,36 @@ The audit plays all scenarios offline, exercises keyboard approval and reset,
 checks mobile/desktop light/dark rendering and reduced motion, and saves
 screenshots in a temporary directory for visual review.
 
+## A2UI demo
+
+`/a2ui/` consumes `@language-lit/material3-expressive-a2ui` together with
+Google's `@a2ui/web_core` runtime. Its four scenarios are site-authored A2UI
+message streams under `site/ui/a2ui/scenarios.ts`, played one step at a time
+into the published renderer's `useA2ui` hook and `A2uiSurface`. No backend,
+model, or key is involved, and the only image is an inline SVG. The page shows
+every action a surface dispatches and the JSON lines streamed so far.
+ADR 0042 records this companion dependency.
+
+Until the companion is published, `site/package.json` installs it from a
+packed tarball of the sibling `material3-expressive-a2ui` repository
+(`npm pack` there). Switch the dependency to the published version once it
+is on npm; the site checks recognize the package by name either way.
+
+Two guides under `/docs/a2ui-*` use the existing Markdown pipeline and have
+an A2UI navigation section. Their sources are `docs/A2UI_*.md`.
+
+After building the site, run the production browser checks:
+
+```bash
+npm --prefix site run typecheck
+M3E_CHROMIUM_PATH=<chromium binary> npm --prefix site run test:a2ui
+```
+
+The audit plays all four scenarios offline, exercises validation, actions,
+tabs, the modal, live path updates, surface deletion, stop, and reset, checks
+mobile/desktop light/dark rendering, verifies the guides' links and metadata,
+and saves screenshots in a temporary directory for visual review.
+
 ## Deployment
 
 Vercel, with **Root Directory** set to `site`. The build is a static export

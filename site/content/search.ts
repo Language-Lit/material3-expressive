@@ -4,6 +4,7 @@ import { getConformantComponents, kindLabels } from './inventory'
 import { docPages } from './docs'
 import { componentDocsRoot, docsRoot } from './paths'
 import { agUiDescription } from './ag-ui'
+import { a2uiDescription } from './a2ui'
 
 export interface SearchEntry {
   title: string
@@ -78,5 +79,11 @@ export async function buildSearchIndex(): Promise<SearchEntry[]> {
     group: 'Demos',
     terms: `ag-ui agents ai streaming reasoning tools weather approval interrupts copilotkit ${agUiDescription}`.toLowerCase(),
     excerpt: agUiDescription,
+  }, {
+    title: 'A2UI demo',
+    href: '/a2ui/',
+    group: 'Demos',
+    terms: `a2ui google agents generative ui surfaces catalog renderer data binding validation actions streaming ${a2uiDescription}`.toLowerCase(),
+    excerpt: a2uiDescription,
   }, ...docEntries, ...componentEntries]
 }

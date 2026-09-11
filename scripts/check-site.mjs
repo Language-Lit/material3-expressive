@@ -132,6 +132,9 @@ const allowedEntries = new Set([
   // Published companion demo, scoped to site dependencies by ADR 0041.
   '@language-lit/material3-expressive-ag-ui',
   '@language-lit/material3-expressive-ag-ui/styles.css',
+  // Published A2UI companion demo, scoped to site dependencies by ADR 0042.
+  '@language-lit/material3-expressive-a2ui',
+  '@language-lit/material3-expressive-a2ui/styles.css',
 ])
 
 const siteSources = (await walk(siteRoot)).filter((file) => /\.(tsx?|mjs|css)$/.test(file))
@@ -260,6 +263,10 @@ const allowedDependencies = new Set([
   '@ag-ui/client',
   '@ag-ui/core',
   'rxjs',
+  // Owner-approved A2UI companion demo (ADR 0042). web_core is Google's
+  // protocol runtime and the companion's peer.
+  '@language-lit/material3-expressive-a2ui',
+  '@a2ui/web_core',
   'next',
   'react',
   'react-dom',

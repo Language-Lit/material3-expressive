@@ -42,6 +42,9 @@ export function SiteBar({
           <Link href="/ag-ui/" className="sidebar__link">
             AG-UI
           </Link>
+          <Link href="/a2ui/" className="sidebar__link">
+            A2UI
+          </Link>
           <Link href="/components/" className="sidebar__link">
             Components
           </Link>

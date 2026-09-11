@@ -8,6 +8,9 @@ import { Prose } from '../../../ui/Prose'
 import { StructuredData, breadcrumbList } from '../../../ui/StructuredData'
 import { absoluteUrl, packageName, siteName, siteUrl } from '../../../content/site'
 import { agUiPackage } from '../../../content/ag-ui'
+import { a2uiPackage } from '../../../content/a2ui'
+
+const companionPackages: Record<string, string> = { 'AG-UI': agUiPackage, A2UI: a2uiPackage }
 
 interface PageProps {
   params: Promise<{ slug: string }>
@@ -54,7 +57,7 @@ export default async function DocPage({ params }: PageProps) {
           url: absoluteUrl(`/docs/${page.slug}/`),
           inLanguage: 'en',
           isPartOf: { '@type': 'WebSite', name: siteName, url: siteUrl },
-          about: { '@type': 'SoftwareSourceCode', name: page.section === 'AG-UI' ? agUiPackage : packageName },
+          about: { '@type': 'SoftwareSourceCode', name: (page.section && companionPackages[page.section]) || packageName },
           author: { '@type': 'Person', name: 'Romullo Queiroz' },
           license: 'https://opensource.org/licenses/MIT',
         }}
@@ -67,7 +70,7 @@ export default async function DocPage({ params }: PageProps) {
       />
       <article>
         <div className="page-head">
-          <span className="page-head__eyebrow">{page.section === 'AG-UI' ? 'AG-UI guide' : 'Guide'}</span>
+          <span className="page-head__eyebrow">{page.section ? `${page.section} guide` : 'Guide'}</span>
           <Text
             as="h1"
             variant="displaySmall"

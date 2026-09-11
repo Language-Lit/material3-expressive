@@ -1,7 +1,8 @@
 import { getComponentsByKind } from '../../content/inventory'
-import { agUiDocPages, docPages } from '../../content/docs'
+import { a2uiDocPages, agUiDocPages, docPages } from '../../content/docs'
 import { componentLead } from '../../content/summaries'
 import { agUiDescription } from '../../content/ag-ui'
+import { a2uiDescription } from '../../content/a2ui'
 import {
   absoluteUrl,
   npmUrl,
@@ -42,10 +43,12 @@ export async function GET() {
     '- License: MIT. This is an independent implementation; Material 3 is a',
     '  Google design system.',
     '',
-    '## Companion library',
+    '## Companion libraries',
     '',
     `- [AG-UI demo](${absoluteUrl('/ag-ui/')}): ${agUiDescription} No LLM or API key required.`,
     ...agUiDocPages.map((page) => `- [${page.title}](${absoluteUrl(`/docs/${page.slug}/`)}): ${page.summary}`),
+    `- [A2UI demo](${absoluteUrl('/a2ui/')}): ${a2uiDescription} No LLM or API key required.`,
+    ...a2uiDocPages.map((page) => `- [${page.title}](${absoluteUrl(`/docs/${page.slug}/`)}): ${page.summary}`),
     '',
     '## Guides',
     '',

@@ -1,5 +1,102 @@
 # Active v1 task
 
+## T63 — Public A2UI demo page and guides
+
+Status: complete
+Approved: 2026-09-11 (owner decided to add Google A2UI support and asked for the sibling package and site documentation)
+Completed: 2026-09-11
+
+### Scope
+
+Add `/a2ui/` to the static documentation site: a hero that states the
+positioning ("a React renderer for Google's A2UI protocol that maps every
+basic-catalog component to Material 3 Expressive"), package and release
+links, a scripted interactive demo, an architecture walkthrough, the
+supported-component table, compatibility and limits, installation with a
+code sample, and guide cards. Consume the separately built
+`@language-lit/material3-expressive-a2ui` companion and Google's
+`@a2ui/web_core` runtime. Label the simulation clearly. Use existing site
+components, theme tokens, navigation, and accessibility conventions, with no
+em dashes in page or guide copy.
+
+Add two local A2UI guides through the existing Markdown pipeline and group
+them in navigation, the docs index, search, sitemap, llms.txt, and
+llms-full.txt.
+
+### Expected files
+
+- New `site/app/a2ui/` page and styles, `site/ui/a2ui/` demo modules,
+  `site/content/a2ui.ts`, and `site/scripts/audit-a2ui.mjs`.
+- `docs/A2UI_GETTING_STARTED.md` and `docs/A2UI_COMPONENTS.md`.
+- Site dependencies and lockfile, docs registry, navigation, search, route
+  discovery, site bar, docs index, and guide metadata.
+- `scripts/check-site.mjs` to recognize the companion's public entries and
+  the two new site dependencies.
+- ADR 0042 for the companion-library exception to ADR 0028.
+- No core public API, component inventory, or library dependency change.
+
+### Acceptance checks
+
+- Site TypeScript check, `npm run check:site`, `npm run verify`, and
+  `npm run site:build` pass.
+- All four scenarios work offline with no backend, credentials, or LLM:
+  streaming placeholders, bindings and formatting functions, path updates,
+  validation gating a button, actions with resolved context, tabs, a modal,
+  a template list, a second surface, and its deletion. Stop and reset work,
+  and a replay after reset starts from the scripted data.
+- Desktop/mobile light/dark production rendering, keyboard controls, no
+  horizontal overflow, no browser errors, no external or mutating requests.
+- Guides render with working internal links, canonical URLs, companion
+  metadata, and no em dashes.
+
+### Completion evidence
+
+- Added the static `/a2ui/` route with hero positioning, npm/GitHub/release
+  and specification links, the four-scenario demo, a four-step architecture
+  walkthrough, an 18-row component table, a versions table with known
+  limits, install command, stylesheet order, a hook-and-surface code sample,
+  a note for hosts already on Google's `@a2ui/react` surface, and guide
+  cards. Demo label: "Scripted demo. No LLM or API key required."
+- The demo plays site-authored A2UI v0.9.1 message streams one step at a
+  time into the published `useA2ui` hook and `A2uiSurface`. It lists every
+  action a surface dispatches with its resolved context and shows the JSON
+  lines streamed so far. The only image is an inline SVG.
+- Installed `@a2ui/web_core` 0.10.7 and the companion from a packed
+  tarball of the sibling repository, because the companion is not yet on
+  npm. The dependency line switches to the published `0.1.0` in the task
+  that publishes it; the site checks recognize the package by name.
+- Added the "A2UI" navigation group, docs-index section, search entry,
+  route/sitemap entry, llms.txt lines, site-bar link, and section-aware
+  guide eyebrow and structured-data package name. ADR 0042 and the site
+  import and dependency checks record the approved integration.
+- The demo's browser audit found a companion defect: `@a2ui/web_core`
+  keeps `updateDataModel` values by reference and writes user input into
+  them, so replaying a form after a reset showed the previously typed name.
+  The companion's `processMessages` now copies its input, with a regression
+  test; its verification passed at 79 tests. The site consumes the rebuilt
+  tarball.
+- `npm run verify` passed all 14 gates. `npm --prefix site run typecheck`,
+  `npm run check:site`, and `npm run site:build` passed; the export includes
+  `/a2ui/index.html` and both guide routes.
+- `M3E_CHROMIUM_PATH=... npm --prefix site run test:a2ui` passed on
+  production assets with the browser offline: placeholder before content,
+  bound and formatted values, the path update, agent attribution, the
+  message viewer, stop and reset, validation messages and button gating,
+  exclusive chips, the dispatched action's context, replay from scripted
+  data after reset, keyboard tabs, the modal and its action, Escape, live
+  metric updates, template rows, a second surface and its deletion, and a
+  clean stage after switching scenarios mid-stream. Layout checks covered
+  320 through 1440px in light and dark modes with no horizontal overflow.
+  Both guides passed canonical, link, metadata, and copy checks. No browser
+  errors, external requests, or mutating requests occurred.
+- Visual review covered the hero, demo, walkthrough, component table,
+  compatibility, and install sections on desktop in dark mode, and the
+  audit's light and dark screenshots of each scenario at 1440, 390, and 320px.
+- No core public API, component implementation, inventory, or library
+  dependency changed. No deployment or publication was performed.
+
+---
+
 ## T62 — Public AG-UI demo page
 
 Status: complete

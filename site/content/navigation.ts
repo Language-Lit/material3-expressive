@@ -1,5 +1,5 @@
 import { getComponentsByKind } from './inventory'
-import { agUiDocPages, docPages } from './docs'
+import { a2uiDocPages, agUiDocPages, docPages } from './docs'
 
 export interface NavigationGroup {
   label: string
@@ -26,6 +26,13 @@ export async function buildNavigationGroups(): Promise<NavigationGroup[]> {
       links: [
         { label: 'Interactive demo', href: '/ag-ui/' },
         ...agUiDocPages.map((page) => ({ label: page.title, href: `/docs/${page.slug}/` })),
+      ],
+    },
+    {
+      label: 'A2UI',
+      links: [
+        { label: 'Interactive demo', href: '/a2ui/' },
+        ...a2uiDocPages.map((page) => ({ label: page.title, href: `/docs/${page.slug}/` })),
       ],
     },
     {

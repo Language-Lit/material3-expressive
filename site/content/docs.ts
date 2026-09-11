@@ -7,7 +7,7 @@ export interface DocPage {
   file: string
   title: string
   summary: string
-  section?: 'AG-UI'
+  section?: 'AG-UI' | 'A2UI'
 }
 
 export const agUiDocPages: readonly DocPage[] = [
@@ -31,6 +31,23 @@ export const agUiDocPages: readonly DocPage[] = [
     title: 'AG-UI with CopilotKit',
     summary: 'Use the Material adapter with CopilotKit 1.71.x v1.',
     section: 'AG-UI',
+  },
+]
+
+export const a2uiDocPages: readonly DocPage[] = [
+  {
+    slug: 'a2ui-getting-started',
+    file: 'A2UI_GETTING_STARTED.md',
+    title: 'Getting started with A2UI',
+    summary: 'Install the renderer, stream A2UI messages into surfaces, and send actions back to the agent.',
+    section: 'A2UI',
+  },
+  {
+    slug: 'a2ui-components',
+    file: 'A2UI_COMPONENTS.md',
+    title: 'A2UI components and rendering rules',
+    summary: 'How each basic-catalog component renders, plus binding, validation, templates, theming, and catalog extension.',
+    section: 'A2UI',
   },
 ]
 
@@ -80,6 +97,7 @@ export const docPages: readonly DocPage[] = [
     summary: 'Versioned changes and breaking changes.',
   },
   ...agUiDocPages,
+  ...a2uiDocPages,
 ]
 
 const repositoryBlob =
