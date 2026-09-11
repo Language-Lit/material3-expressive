@@ -19,7 +19,7 @@
     "@ag-ui/client": "0.0.59",
     "@ag-ui/core": "0.0.59",
     "@language-lit/material3-expressive": "file:..",
-    "@language-lit/material3-expressive-a2ui": "file:../../material3-expressive-a2ui/language-lit-material3-expressive-a2ui-0.1.0.tgz",
+    "@language-lit/material3-expressive-a2ui": "0.1.0",
     "@language-lit/material3-expressive-ag-ui": "0.1.0",
     "marked": "^16.4.2",
     "next": "16.2.10",

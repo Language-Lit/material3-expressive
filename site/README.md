@@ -94,10 +94,10 @@ model, or key is involved, and the only image is an inline SVG. The page shows
 every action a surface dispatches and the JSON lines streamed so far.
 ADR 0042 records this companion dependency.
 
-Until the companion is published, `site/package.json` installs it from a
-packed tarball of the sibling `material3-expressive-a2ui` repository
-(`npm pack` there). Switch the dependency to the published version once it
-is on npm; the site checks recognize the package by name either way.
+`site/package.json` pins the published companion from npm. Before its
+`0.1.0` release the site installed it from a packed tarball of the sibling
+`material3-expressive-a2ui` repository; the site checks recognize the
+package by name either way.
 
 Two guides under `/docs/a2ui-*` use the existing Markdown pipeline and have
 an A2UI navigation section. Their sources are `docs/A2UI_*.md`.

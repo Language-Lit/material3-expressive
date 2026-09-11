@@ -1,5 +1,55 @@
 # Active v1 task
 
+## T64 — Site consumes the published A2UI companion
+
+Status: complete
+Approved: 2026-09-11 (owner: "Let's publish then? Guide me.")
+Completed: 2026-09-12
+
+### Scope
+
+Replace the packed-tarball interim recorded in T63 with the companion's
+registry release. Pin `@language-lit/material3-expressive-a2ui` 0.1.0 from
+npm in `site/package.json`, refresh the lockfile so it resolves to the
+registry with an integrity hash, and update the site README and ADR 0042 to
+describe the switch. No page, guide, or core change.
+
+### Expected files
+
+- `site/package.json` and `site/package-lock.json`.
+- `site/README.md` and `docs/adr/0042-published-a2ui-companion-demo.md`.
+
+### Acceptance checks
+
+- The lockfile entry for the companion resolves to the npm registry, and the
+  site installs it with no nested copy of React or the core.
+- Site typecheck, `npm run check:site`, `npm run verify`, and
+  `npm run site:build` pass, and the production audit passes against the
+  export.
+
+### Completion evidence
+
+- The owner published `@language-lit/material3-expressive-a2ui@0.1.0` from
+  their own terminal on 2026-09-12. The companion's task T02 records the
+  registry, tarball, consumer, tag, and release checks.
+- `site/package.json` pins `0.1.0`. A plain `npm install` after editing
+  the version kept the lockfile's old `file:` resolution because the
+  installed copy already matched, so the package was uninstalled and
+  reinstalled with `--save-exact`; the lockfile now resolves to the registry
+  tarball with its integrity hash. The companion installs with no nested
+  dependencies, and React, ReactDOM, `@a2ui/web_core` 0.10.7, and the core
+  resolve once at the top level.
+- `site/README.md` and ADR 0042 now describe the tarball as the pre-release
+  interim.
+- `npm --prefix site run typecheck` and `npm run check:site` passed.
+  `npm run verify` passed all 14 gates (225 test files, 1632 tests).
+  `npm run site:build` exported 65 routes including `/a2ui/` and both
+  guides. `npm --prefix site run test:a2ui` passed against the export with
+  Chromium.
+- No core public API, component, inventory, or library dependency changed.
+
+---
+
 ## T63 — Public A2UI demo page and guides
 
 Status: complete

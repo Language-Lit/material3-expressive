@@ -26,10 +26,10 @@ installation, the message-processor hook, the surface renderer, the
 component mapping, binding, validation, actions, theming, catalog extension,
 and use under Google's `@a2ui/react` surface.
 
-Until the companion is published to npm, the site installs it from a packed
-tarball of the sibling repository. The dependency switches to the published
-version in the same task that publishes it. The site checks recognize the
-package by name, so that switch needs no other change.
+Until the companion was published to npm, the site installed it from a
+packed tarball of the sibling repository. Since the `0.1.0` release on
+2026-09-12 the dependency pins the registry version. The site checks
+recognize the package by name, so that switch needed no other change.
 
 The companion is not a core component or a core conformance claim. It stays
 out of the core inventory, export map, dependencies, and packed artifact. All
