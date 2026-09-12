@@ -34,6 +34,9 @@ export function ToolPanel({ client, uri, result }: {
   if (loading || !resource) return <p>Loading app…</p>
   return <Material3Provider>
     <McpAppFrame client={client} resource={resource} title="Tool result"
+      sandboxUrl={sandboxUrl}
+      onAuthorizeToolCall={async ({ name, arguments: args }) =>
+        name === 'refresh_result' && await mayRefresh(args)}
       toolResult={result} maxHeight={600}
       availableDisplayModes={['inline', 'fullscreen', 'pip']} />
   </Material3Provider>
@@ -62,8 +65,9 @@ Message, context-update and download capabilities are advertised only when
 their callbacks exist. Without a custom link handler, HTTP(S) links open in
 a new tab with `noopener`; other schemes are refused. The demo records link
 requests locally. The SDK proxies server tools and resources through your
-connected client. Apply authentication, tool authorization, rate limits and
-any required confirmation in your host/server policy.
+connected client. App-originated tool calls are denied unless
+`onAuthorizeToolCall` returns true. Authenticate and authorize the same call
+again on the MCP server; the browser callback is not a backend security boundary.
 
 ## Theme and style projection
 
@@ -105,19 +109,17 @@ transport is read at connection creation, not switched during an active session.
 
 ## Resource trust and sandbox policy
 
-Direct embedding uses an opaque-origin sandbox with scripts/forms enabled.
-A CSP meta element is installed before app content. Connections and nested
-frames are denied by default; resource metadata declares allowed resource,
-connection, frame and base-URI domains. Validate those requests against your
-host's trust policy before passing the resource to the frame. Metadata is not
-authorization to grant arbitrary origins or powerful browser permissions.
+Browser embedding requires `sandboxUrl`, an HTTP(S) proxy on a different origin
+from the host. The proxy performs the SDK sandbox handshake, serves the app in
+an inner iframe, and enforces resource CSP and permissions. Validate resource
+policy requests against host policy before granting them.
 
-For a separate sandbox service, pass `sandboxUrl`. Your proxy must implement
-the SDK sandbox handshake, enforce CSP/permissions, and isolate app HTML on
-an appropriate origin. The package passes policy metadata but does not supply
-the proxy server. `buildContentSecurityPolicy` builds a header value for this
-purpose. Review any `sandbox` override carefully; do not give untrusted HTML
-same-origin access on the host's origin.
+The companion repository includes a separately built service under
+`deploy/sandbox`. Its launch URL carries a signed, short-lived ticket issued by
+an authenticated host backend. Configure the service with its exact public
+origin, exact allowed host origins, and a server-side secret of at least 32
+random bytes. Never put that secret in browser code. The service uses in-memory,
+one-use views, so deploy one instance or enable sticky routing.
 
 See [Getting started](MCP_APPS_GETTING_STARTED.md) for server registration and
 the [official protocol](https://apps.extensions.modelcontextprotocol.io/api/)

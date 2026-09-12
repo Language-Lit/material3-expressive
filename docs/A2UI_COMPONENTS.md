@@ -30,7 +30,7 @@ packages, load both stylesheets, and render a surface.
 | `CheckBox` | [Checkbox](components/Checkbox.md) | Labeled. |
 | `ChoicePicker` | [Radio](components/Radio.md), [Checkbox](components/Checkbox.md), or filter [Chip](components/Chip.md) | `mutuallyExclusive` or `multipleChoice`, with an optional filter field. |
 | `Slider` | [Slider](components/Slider.md) | Decimal precision follows the range. |
-| `DateTimeInput` | Native date and time input styled with Material tokens | The design system has no picker component yet. Values are ISO 8601 in both directions and zone aware. |
+| `DateTimeInput` | `DatePicker`, `TimePicker`, or `DateTimePicker` | Uses the Material picker capability in 1.3.0-rc.1. The declared 1.2 peer line remains loadable through a native-input compatibility fallback. Explicitly zoned date-times display in local civil time and are written back as UTC instants. |
 
 ## Streaming and placeholders
 
@@ -168,7 +168,8 @@ React 19.
   ligature, which renders only if your app loads that font.
 - The Markdown subset has no tables, images, raw HTML, or nested lists. Links
   open for `http`, `https`, `mailto`, and `tel` only.
-- `DateTimeInput` uses the platform picker until the design system ships one.
+- `DateTimeInput` uses the Material picker exports in 1.3.0-rc.1 and falls back
+  to the platform input when installed with the compatible 1.2 peer line.
 - Transport, authentication, persistence, and agent orchestration are the
   application's responsibility.
 

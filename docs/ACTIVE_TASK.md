@@ -1,5 +1,25 @@
 # Active v1 task
 
+## T68 — Deploy current documentation site
+
+Status: active
+Approved: 2026-09-12 (owner: "update it")
+
+### Scope and expected files
+
+Update the documentation site's three published protocol companions to releases
+whose core-library peer ranges include `1.3.0-rc.1`, regenerate the site lockfile,
+and deploy the current static export through the existing Vercel Git integration.
+Record the deployment evidence here. Expected files: `site/package.json`,
+`site/package-lock.json`, and this task record.
+
+### Acceptance checks
+
+1. A clean site installation resolves without peer-dependency errors.
+2. `npm run site:build` succeeds and preserves the byte-verified A2UI catalog.
+3. The production deployment succeeds and serves the catalog as JSON.
+
+
 ## T67 — 1.3.0 release candidate
 
 Status: complete

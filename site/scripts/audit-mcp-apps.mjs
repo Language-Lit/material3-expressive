@@ -20,6 +20,12 @@ const server = createServer(async (request, response) => {
     if (file !== output && !file.startsWith(`${output}${path.sep}`)) throw new Error('Outside export')
     if ((await stat(file)).isDirectory()) file = path.join(file, 'index.html')
     response.setHeader('Content-Type', mime[path.extname(file)] ?? 'application/octet-stream')
+    if (pathname === '/mcp-apps/sandbox.html') {
+      response.setHeader('Content-Security-Policy', "default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; frame-src 'self'; frame-ancestors http://127.0.0.1:* http://localhost:*")
+    }
+    if (pathname === '/mcp-apps/forecast.html') {
+      response.setHeader('Content-Security-Policy', "default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; frame-ancestors http://127.0.0.1:* http://localhost:*")
+    }
     response.end(await readFile(file))
   } catch {
     response.writeHead(404).end('Not found')
@@ -27,6 +33,7 @@ const server = createServer(async (request, response) => {
 })
 await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve))
 const origin = `http://127.0.0.1:${server.address().port}`
+const proxyOrigin = `http://localhost:${server.address().port}`
 const browser = await chromium.launch({ executablePath })
 const context = await browser.newContext({ viewport: { width: 1440, height: 1000 }, colorScheme: 'light' })
 const page = await context.newPage()
@@ -37,16 +44,19 @@ page.on('request', (request) => requests.push({ url: request.url(), method: requ
 page.on('console', (message) => {
   if (message.type() === 'error') errors.push(message.text())
 })
-const frame = () => page.frameLocator('.mcp-demo iframe')
+const proxy = () => page.frameLocator('.mcp-demo iframe')
+const frame = () => proxy().frameLocator('iframe')
 const waitReady = async () => page.locator('.mcp-demo [data-status="ready"]').waitFor()
 const run = async () => {
   await page.getByRole('button', { name: 'Get forecast', exact: true }).click()
   await frame().getByRole('heading', { name: 'Lisbon', exact: true }).waitFor()
 }
 const reset = async () => {
+  await context.setOffline(false)
   await page.getByRole('button', { name: 'Reset demo', exact: true }).click()
   await waitReady()
   await frame().getByText('Waiting for the forecast.', { exact: true }).waitFor()
+  await context.setOffline(true)
 }
 const noOverflow = async () => {
   assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'Page overflow')
@@ -60,8 +70,9 @@ try {
   assert.equal(await page.locator('link[rel="canonical"]').getAttribute('href'), 'https://m3e.language-lit.com/mcp-apps/')
   assert(await page.getByText('Scripted demo. No LLM or API key required.', { exact: true }).isVisible())
   assert(!(await page.locator('main').innerText()).includes('—'))
-  assert.equal(await page.locator('.mcp-demo iframe').getAttribute('sandbox'), 'allow-scripts allow-forms')
-  assert((await frame().locator('meta[http-equiv="Content-Security-Policy"]').getAttribute('content')).includes("connect-src 'none'"))
+  assert.equal(await page.locator('.mcp-demo iframe').getAttribute('sandbox'), 'allow-scripts allow-same-origin allow-forms')
+  assert.equal(await proxy().locator('iframe').getAttribute('sandbox'), 'allow-scripts allow-forms')
+  assert.equal(new URL(page.frames()[1].url()).origin, proxyOrigin)
   assert(await frame().locator('html').evaluate(() => {
     try { return !window.parent.document } catch { return true }
   }), 'App can access host DOM')
@@ -118,7 +129,7 @@ try {
       await frame().getByText(new RegExp(`${colorScheme} theme`)).waitFor()
       await noOverflow()
       const size = await page.locator('.mcp-demo iframe').boundingBox()
-      assert(size.height > 200 && size.height <= 621, 'Inline auto size')
+      assert(size.height > 200 && size.height <= 621, `Inline auto size at ${width}px: ${JSON.stringify(size)}`)
       await page.locator('.mcp-demo').screenshot({ path: path.join(screenshots, `demo-${width}-${colorScheme}.png`) })
     }
   }
@@ -146,7 +157,7 @@ try {
     const text = await readFile(path.join(output, name), 'utf8')
     assert(text.includes('mcp-apps-getting-started') || text.includes('Getting started with MCP Apps'), name)
   }
-  assert.deepEqual(requests.filter((request) => !request.url.startsWith(origin)), [], 'External requests')
+  assert.deepEqual(requests.filter((request) => !request.url.startsWith(origin) && !request.url.startsWith(proxyOrigin)), [], 'External requests')
   assert.deepEqual(requests.filter((request) => !['GET', 'HEAD'].includes(request.method)), [], 'Mutating requests')
   assert.deepEqual(errors, [], 'Browser errors')
   process.stdout.write(`MCP Apps audit passed. Screenshots: ${screenshots}\n`)

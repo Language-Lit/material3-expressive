@@ -8,6 +8,7 @@ import { connectDemoServer, FORECAST_URI } from './server'
 
 const modes = ['inline', 'fullscreen', 'pip'] as const
 type Connection = Awaited<ReturnType<typeof connectDemoServer>>
+const productionSandbox = 'https://material3-expressive.vercel.app/mcp-apps/sandbox.html'
 
 export function McpAppsDemo() {
   const [connection, setConnection] = useState<Connection | null>(null)
@@ -20,10 +21,18 @@ export function McpAppsDemo() {
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
   const [events, setEvents] = useState<string[]>([])
+  const [sandboxUrl, setSandboxUrl] = useState('')
   const revision = useRef(0)
   const runButton = useRef<HTMLButtonElement>(null)
   const record = useCallback((value: string) => setEvents((previous) => [value, ...previous].slice(0, 30)), [])
   const { resource, error: resourceError } = useMcpAppResource(connection?.client ?? null, FORECAST_URI)
+
+  useEffect(() => {
+    const proxyOrigin = ['localhost', '127.0.0.1'].includes(window.location.hostname)
+      ? `${window.location.protocol}//${window.location.hostname === 'localhost' ? '127.0.0.1' : 'localhost'}:${window.location.port}`
+      : new URL(productionSandbox).origin
+    setSandboxUrl(`${proxyOrigin}/mcp-apps/sandbox.html?hostOrigin=${encodeURIComponent(window.location.origin)}`)
+  }, [])
 
   useEffect(() => {
     let disposed = false
@@ -98,8 +107,14 @@ export function McpAppsDemo() {
       {error || resourceError ? <Text as="p" role="alert">{error || resourceError?.message}</Text> : null}
       <div className="mcp-demo__layout">
         <div className="mcp-demo__stage">
-          {connection && resource && tool ? (
-            <McpAppFrame key={generation} client={connection.client} resource={resource} toolInfo={{ id: generation, tool }} toolInput={input} toolResult={result} title="Five-day forecast" availableDisplayModes={modes} maxHeight={620}
+          {connection && resource && tool && sandboxUrl ? (
+            <McpAppFrame key={generation} client={connection.client} resource={resource} toolInfo={{ id: generation, tool }} toolInput={input} toolResult={result} title="Five-day forecast" availableDisplayModes={modes} minHeight={360} maxHeight={620} sandboxUrl={sandboxUrl}
+              onAuthorizeToolCall={(params) => {
+                const args = params.arguments
+                const allowed = params.name === 'refresh_forecast' && typeof args?.city === 'string' && Number.isInteger(args?.seed)
+                record(`${allowed ? 'Authorized' : 'Denied'} app tool call: ${params.name}.`)
+                return allowed
+              }}
               onStatusChange={setStatus}
               onInitialized={() => record('App initialized. Host theme and capabilities received.')}
               onDisplayModeChange={(mode) => record(`Display mode: ${mode}.`)}

@@ -223,7 +223,7 @@ export default function A2uiPage() {
               <li>The basic catalog only, by default. Register other catalogs with <code>createMaterial3Catalog</code>.</li>
               <li>Icon names outside the catalog fall back to a Material Symbols ligature, which needs that font.</li>
               <li>The Markdown subset has no tables, images, raw HTML, or nested lists.</li>
-              <li><code>DateTimeInput</code> uses the platform picker until the design system ships one.</li>
+              <li><code>DateTimeInput</code> uses the Material picker exports in 1.3.0-rc.1 and keeps a platform-input fallback for the compatible 1.2 peer line.</li>
               <li><code>primaryColor</code> from the agent is exposed as a custom property. It does not re-theme the surface.</li>
               <li>Transport, authentication, persistence, and orchestration stay in your application.</li>
             </ul>

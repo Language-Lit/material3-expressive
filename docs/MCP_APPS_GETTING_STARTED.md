@@ -2,23 +2,14 @@
 
 The MCP Apps companion connects Material 3 Expressive to the official MCP Apps
 SDK. It provides a host frame for embedding apps and an app provider for building
-their contents with Material components. The preview uses version 0.1.0, which
-has not been published to npm.
+their contents with Material components. This guide targets published version 0.2.1.
 
-## Install the local preview
+## Install
 
-Build and pack the `material3-expressive-mcp-apps` companion checkout:
-
-```sh
-npm ci
-npm run build
-npm pack
-```
-
-Install that tarball in your consumer, then install its peers:
+Install the companion and its peers:
 
 ```sh
-npm install /path/to/language-lit-material3-expressive-mcp-apps-0.1.0.tgz
+npm install @language-lit/material3-expressive-mcp-apps@0.2.1
 npm install @language-lit/material3-expressive @modelcontextprotocol/client@^2.0.0 @modelcontextprotocol/ext-apps@^2.0.0 react react-dom
 ```
 
@@ -29,8 +20,9 @@ import '@language-lit/material3-expressive/styles.css'
 import '@language-lit/material3-expressive-mcp-apps/styles.css'
 ```
 
-The companion declares Material ^1.2.0, ext-apps ^2.0.0, split client ^2.0.0,
-and React/React DOM 18 or 19 peers. This demonstration tests Material 1.2.2,
+The companion supports Material 1.2.x and the 1.3 prerelease line, ext-apps
+^2.0.0, split client ^2.0.0, and React/React DOM 18 or 19 peers. This
+demonstration tests Material 1.3.0-rc.1,
 ext-apps/client/server 2.0.0 and React 19. It is not a certification of external
 host interoperability. The core Material package gains no MCP dependency.
 
@@ -111,7 +103,8 @@ static demonstration connects client and server over an in-memory transport.
 
 Create a client with `mcpAppsClientCapabilities` and await its connection.
 Read the tool's `_meta.ui.resourceUri`, then render `McpAppFrame` with the
-resource and tool result. See [Hosting and theming MCP Apps](MCP_APPS_HOSTING.md)
+resource, tool result, a separate-origin `sandboxUrl`, and an
+`onAuthorizeToolCall` policy. See [Hosting and theming MCP Apps](MCP_APPS_HOSTING.md)
 for a typed example, capabilities and sandbox policy.
 
 The app side does not require a Material host: it speaks MCP Apps through the

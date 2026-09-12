@@ -100,7 +100,7 @@ model, or key is involved, and the only image is an inline SVG. The page shows
 every action a surface dispatches and the JSON lines streamed so far.
 ADR 0042 records this companion dependency.
 
-`site/package.json` pins the published companion from npm. Before its
+`site/package.json` pins the published `0.2.1` companion from npm. Before its
 `0.1.0` release the site installed it from a packed tarball of the sibling
 `material3-expressive-a2ui` repository; the site checks recognize the
 package by name either way.
@@ -130,10 +130,8 @@ and saves screenshots in a temporary directory for visual review.
 
 ## MCP Apps demo
 
-`/mcp-apps/` consumes the unpublished `0.1.0` MCP Apps companion from the
-generated tarball committed under `site/vendor/`. ADR 0043 records the site
-dependency exception. Clean checkouts do not need a sibling repository.
-The page states that this is a local preview, not an npm release.
+`/mcp-apps/` consumes the published `0.2.1` MCP Apps companion. ADR 0043 records
+the site dependency exception.
 
 The site authors a forecast app, deterministic sample data, and an in-memory
 MCP server under `site/ui/mcp-apps/`. The app and host consume only public
@@ -141,8 +139,8 @@ companion entries. `scripts/build-mcp-app.mjs` runs before site dev/build and
 bundles app JS/CSS into the ignored `public/mcp-apps/forecast.html`. Explicit
 React aliases keep the linked core on the renderer's React instance. The app
 uses fallback fonts; it needs no cross-origin font request or CORS deployment
-change. The host fetches the document locally once; interactions then work
-offline through SDK transports and postMessage.
+change. The host fetches the document locally once; interactions then use SDK
+transports and postMessage through a separate-origin proxy.
 
 Two guides under `/docs/mcp-apps-*` are sourced from `docs/MCP_APPS_*.md` and
 appear in navigation, search, sitemap, llms.txt and llms-full.txt.
@@ -153,23 +151,19 @@ npm run site:build
 M3E_CHROMIUM_PATH=<chromium binary> npm --prefix site run test:mcp-apps
 ```
 
-The audit checks the real iframe handshake, tool result/refresh, model context,
+The audit checks the real two-origin iframe handshake, explicit tool-call
+authorization, tool result/refresh, model context,
 chat and link callbacks, modes preserving app selection, reset/replay, failed
 tool results, keyboard controls, reduced motion, light/dark 320–1440px layouts,
 and guide links/metadata. It saves screenshots in a temporary directory.
 
-To update the local artifact, first verify/build the companion, then run from
-this repository root:
-
-```bash
-npm pack ../material3-expressive-mcp-apps --pack-destination site/vendor --ignore-scripts
-npm --prefix site uninstall @language-lit/material3-expressive-mcp-apps
-npm --prefix site install --save-exact ./site/vendor/language-lit-material3-expressive-mcp-apps-0.1.0.tgz
-```
-
-Uninstall/reinstall refreshes the lockfile integrity when the preview keeps its
-version number. Never hand-edit the tarball. Switch to a pinned registry release
-only after publication is separately authorized.
+The public demo uses a fixed proxy generated beside its deterministic forecast
+app. Production loads it from the existing `material3-expressive.vercel.app`
+alias, a different origin from the canonical `m3e.language-lit.com` host.
+Vercel headers restrict the proxy to the canonical host and its inner app to
+the proxy alias. This fixed proxy serves only the checked-in demo. Hosts serving
+arbitrary MCP resources must deploy the companion's ticketed sandbox service
+and enforce their own resource and user authorization.
 
 ## Deployment
 

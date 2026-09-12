@@ -32,7 +32,8 @@ export function ToolApp({ client, uri, toolResult }) {
   if (error) return <p role="alert">{error.message}</p>
   return <Material3Provider>
     {resource && <McpAppFrame client={client} resource={resource}
-      toolResult={toolResult} title="Tool app" />}
+      toolResult={toolResult} title="Tool app" sandboxUrl={sandboxUrl}
+      onAuthorizeToolCall={authorizeToolCall} />}
   </Material3Provider>
 }`
 
@@ -44,7 +45,7 @@ export default function McpAppsPage() {
       <div><Text as="p" variant="bodyLarge">Embed MCP Apps in a Material 3 Expressive host, or build a Material app that follows its host. Tool results become an interface people can explore and act on.</Text>
         <Text as="p" variant="bodyLarge">The companion connects the official MCP Apps SDK to Material components, theme context, and display modes.</Text>
         <div className="hero__actions"><LinkButton href="#demo">Try the demo</LinkButton><LinkButton href="/docs/mcp-apps-getting-started/" variant="outlined">Read the docs</LinkButton></div>
-        <Text as="p" variant="bodySmall">Companion {mcpAppsVersions.companion}. This preview uses a locally packed build.</Text>
+        <Text as="p" variant="bodySmall">Companion {mcpAppsVersions.companion}.</Text>
         <a href={mcpAppsSpecification}>MCP Apps specification and SDK</a>
       </div>
     </div></section>
@@ -63,7 +64,7 @@ export default function McpAppsPage() {
     </div><pre className="mcp-code"><code>{sample}</code></pre><Text as="p">Load the core stylesheet before the companion stylesheet in each document. The getting-started guide covers local installation and registering an app resource.</Text></div></section>
     <section className="mcp-section"><div className="section__inner"><Text as="h2" variant="headlineLarge">Compatibility and host policy</Text>
       <Text as="p">This preview tests ext-apps and the split MCP client/server SDK at {mcpAppsVersions.sdk}, Material 3 Expressive {mcpAppsVersions.core}, and React 19. The companion declares React 18 and 19 peers. External host interoperability has not been certified.</Text>
-      <Text as="p">The host owns resource trust, tool authorization, allowed domains, and message dispatch. Direct embedding uses an opaque-origin iframe with a content security policy. A separate sandbox proxy is supported when your host supplies and operates it.</Text>
+      <Text as="p">The host owns resource trust, tool authorization, allowed domains, and message dispatch. Browser embedding requires a separate-origin sandbox proxy. App-originated tool calls are denied unless the host explicitly authorizes each call.</Text>
       <Text as="p">Full screen is a CSS display mode with exit controls, not a modal dialog. Host light or dark mode is automatic; matching a custom Material palette requires a shared theme. This companion is not part of the core Material conformance matrix.</Text>
       <nav className="mcp-links" aria-label="MCP Apps guides">{mcpAppsDocPages.map((page) => <LinkButton key={page.slug} href={`/docs/${page.slug}/`} variant="outlined">{page.title}</LinkButton>)}</nav>
     </div></section>

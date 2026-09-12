@@ -9,11 +9,12 @@ export const a2uiInstall = 'npm install @language-lit/material3-expressive-a2ui 
 
 /** The versions the companion was built and tested against. */
 export const a2uiVersions = {
+  companion: '0.2.1',
   protocol: 'v0.9.1',
   catalog: 'https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json',
   webCore: '0.10.7',
   officialReact: '0.11.0',
-  designSystem: '^1.2.0',
+  designSystem: '1.3.0-rc.1',
   react: '18 or 19',
 } as const
 
@@ -36,5 +37,5 @@ export const a2uiComponentMap: readonly { component: string; renders: string; no
   { component: 'CheckBox', renders: 'Checkbox', notes: 'Labeled.' },
   { component: 'ChoicePicker', renders: 'Radio, Checkbox, or filter Chip', notes: 'Exclusive or multiple, optional filter field.' },
   { component: 'Slider', renders: 'Slider', notes: 'Decimal precision follows the range.' },
-  { component: 'DateTimeInput', renders: 'Native date and time input', notes: 'Material tokens. ISO 8601 both ways, zone aware.' },
+  { component: 'DateTimeInput', renders: 'DatePicker, TimePicker, or DateTimePicker', notes: 'Uses the Material picker capability in 1.3.0-rc.1, with a native compatibility fallback for the 1.2 peer line.' },
 ]
