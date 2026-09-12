@@ -9,9 +9,13 @@ mistakes be corrected completely.)
 ### Scope and acceptance
 
 Make the playground typecheck create the repository's documented public-package
-self-link before resolving examples. Expected files: `package.json` and this
+self-link before resolving examples. While validating that repair, also make the
+clean CI checkout fetch the rollback tag required by the existing release audit
+and keep lifecycle output out of its `npm pack --json` channel. Expected files:
+`package.json`, `.github/workflows/ci.yml`, `scripts/check-release.mjs`, and this
 task record. A clean checkout must run `npm run typecheck:playground` without a
-pre-existing local link, and the pushed CI workflow must pass.
+pre-existing local link, the release audit must pass with colored output enabled,
+and the pushed CI workflow must pass.
 
 
 ## T68 — Deploy current documentation site

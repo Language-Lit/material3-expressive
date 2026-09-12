@@ -122,7 +122,7 @@ try {
   try {
     packResult = JSON.parse(execFileSync(
       'npm',
-      ['pack', '--json', '--ignore-scripts', '--pack-destination', temporaryDirectory],
+      ['pack', '--json', '--ignore-scripts', '--silent', '--pack-destination', temporaryDirectory],
       { cwd: root, encoding: 'utf8' },
     ))[0]
   } catch (error) {
