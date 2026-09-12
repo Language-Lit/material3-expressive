@@ -33,6 +33,14 @@ function fail(message) {
   errors.push(message)
 }
 
+function parseJsonArrayFromNoisyOutput(output) {
+  // npm 10 can forward `prepare` output before `npm pack --json` even when
+  // `--ignore-scripts --silent` is supplied. The machine-readable payload is
+  // still the final JSON array on stdout.
+  const match = /(?:^|\r?\n)(\[\s*\{[\s\S]*\]\s*)$/.exec(output)
+  return JSON.parse(match?.[1] ?? output)
+}
+
 const packageJson = JSON.parse(await read('package.json'))
 const inventory = JSON.parse(await read('docs/component-inventory.json'))
 const releaseReport = await read('docs/RELEASE_READINESS.md')
@@ -120,7 +128,7 @@ const temporaryDirectory = await mkdtemp(path.join(os.tmpdir(), 'm3e-release-aud
 try {
   let packResult
   try {
-    packResult = JSON.parse(execFileSync(
+    packResult = parseJsonArrayFromNoisyOutput(execFileSync(
       'npm',
       ['pack', '--json', '--ignore-scripts', '--silent', '--pack-destination', temporaryDirectory],
       { cwd: root, encoding: 'utf8' },
