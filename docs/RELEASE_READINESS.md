@@ -1,5 +1,36 @@
 # Release-readiness audit
 
+## 1.3.0-rc.1 — 2026-09-12
+
+Audit date: 2026-09-12
+
+Release: `@language-lit/material3-expressive@1.3.0-rc.1`
+
+Rollback: `@language-lit/material3-expressive@0.3.0` (tag `v0.3.0`)
+Registry publication: not performed at the time of this audit; this candidate
+is intended for npm's `next` tag and must not move `latest` from `1.2.2`.
+
+### Recommendation
+
+**GO for the owner-approved prerelease.** This additive candidate introduces
+the experimental DatePicker, DateRangePicker, TimePicker, and DateTimePicker
+families. Existing exports, peer dependencies, and the four public package
+paths remain compatible; zero runtime dependencies remain. The experimental
+inventory status is deliberate and prevents a stable support claim.
+
+### Automated verification
+
+| Gate | Command | Result |
+| --- | --- | --- |
+| Aggregate verification | `npm run verify` | Pass: 14 gates, 241 files / 1,735 tests |
+| Release artifact and rollback | `npm run check:release` | Pass: `1.3.0-rc.1` and `v0.3.0` rollback verified |
+| Rendering audit | `npm run audit:rendering` | Pass: picker geometry, target, and overlay checks |
+| Packed consumers | `npm run check:consumer-fixtures` | Pass: Vite and Next consumers against the packed candidate |
+
+### Publication verification
+
+Pending registry publication, clean npm installation, and pushed tag.
+
 ## 1.2.2 — 2026-08-13
 
 Audit date: 2026-08-13  

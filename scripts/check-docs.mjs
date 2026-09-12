@@ -143,7 +143,14 @@ if (!releaseNotes.includes(`## ${packageJson.version}`)) {
   errors.push(`RELEASE_NOTES.md has no section for package version ${packageJson.version}`)
 }
 if (/-/.test(packageJson.version)) {
-  errors.push(`the released package version must be stable, received ${packageJson.version}`)
+  const prereleaseSection = releaseNotes.match(
+    new RegExp(`## ${packageJson.version.replace(/[.*+?^${}()|[\\]\\]/g, '\\$&')}[\\s\\S]*?(?=\\n## |$)`),
+  )?.[0]
+  if (!prereleaseSection?.includes('npm\'s `next` tag') || !prereleaseSection.includes('`latest` remains')) {
+    errors.push(
+      `prerelease ${packageJson.version} must state its next tag and unchanged latest tag in RELEASE_NOTES.md`,
+    )
+  }
 }
 
 if (packageJson.peerDependencies?.tailwindcss || packageJson.peerDependenciesMeta?.tailwindcss) {

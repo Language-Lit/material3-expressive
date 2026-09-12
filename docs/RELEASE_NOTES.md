@@ -1,5 +1,28 @@
 # Release notes
 
+## 1.3.0-rc.1 — 2026-09-12
+
+Status: prerelease on npm's `next` tag. `latest` remains `1.2.2`. This is an
+additive test release; the picker inventory remains experimental pending a
+separate promotion review.
+
+### Added
+
+- **DatePicker and DateRangePicker.** Strict Gregorian ISO civil dates,
+  calendar and text modes, docked and modal presentation, bounds, unavailable
+  dates, locale formatting, keyboard grids, native form validation, and a
+  vertically browsable range-month window.
+- **TimePicker.** Strict `HH:mm` civil times, dial and numeric-input modes,
+  vertical and horizontal layouts, 12/24-hour presentation, exact-minute
+  selection, bounds, form validation, and native modal drafts.
+- **DateTimePicker.** A composition of the public date and time components
+  which retains civil values, validates boundary times, and submits one
+  combined ISO value.
+
+The release has no runtime dependencies, retains the four public export paths,
+and does not change existing component APIs. See ADR 0044 and the picker
+component documentation for source pins and web adaptations.
+
 ## 1.2.2 — 2026-08-13
 
 Status: prepared patch release. No export, prop, token, or dependency change;

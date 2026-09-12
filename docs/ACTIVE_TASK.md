@@ -1,5 +1,33 @@
 # Active v1 task
 
+## T67 — 1.3.0 release candidate
+
+Status: active
+Approved: 2026-09-12 (owner: "ok, do it.")
+
+### Scope and expected files
+
+Publish the completed T66 picker work as the additive prerelease
+`@language-lit/material3-expressive@1.3.0-rc.1` under npm's `next` tag. Keep
+`latest` at `1.2.2`. Record the release version in the package and lockfile,
+release gate, notes, readiness audit, and this task; create and push the
+matching `v1.3.0-rc.1` tag only after registry installation verifies the exact
+published artifact. The picker inventory remains experimental, so this is a
+test channel rather than a stable-support promotion.
+
+### Acceptance checks
+
+1. `npm run verify` and `npm run audit:rendering` pass at `1.3.0-rc.1`.
+2. `npm publish --tag next` creates exactly `1.3.0-rc.1` without moving
+   `latest`.
+3. A clean installation from npm imports the picker exports and passes a
+   minimal rendered-picker check.
+4. The pushed `v1.3.0-rc.1` tag points at the published commit.
+
+### Verification record
+
+Pending publication.
+
 ## T66 — Date/time picker families and public A2UI catalog hosting
 
 Status: complete
