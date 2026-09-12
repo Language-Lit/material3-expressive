@@ -7,8 +7,9 @@ Audit date: 2026-09-12
 Release: `@language-lit/material3-expressive@1.3.0-rc.1`
 
 Rollback: `@language-lit/material3-expressive@0.3.0` (tag `v0.3.0`)
-Registry publication: not performed at the time of this audit; this candidate
-is intended for npm's `next` tag and must not move `latest` from `1.2.2`.
+Registry publication: published on 2026-09-12 under npm's `next` tag;
+`latest` remains `1.2.2`. The annotated `v1.3.0-rc.1` tag points at published
+commit `0939945`.
 
 ### Recommendation
 
@@ -29,7 +30,11 @@ inventory status is deliberate and prevents a stable support claim.
 
 ### Publication verification
 
-Pending registry publication, clean npm installation, and pushed tag.
+The registry reports `next: 1.3.0-rc.1` and `latest: 1.2.2`. A fresh npm
+installation of the published tarball with React and React DOM resolved the
+four picker exports successfully. The registry tarball's version is
+`1.3.0-rc.1` and its published shasum is
+`ad37308383f62467d6ce147850c0156b8fbb303f`.
 
 ## 1.2.2 — 2026-08-13
 

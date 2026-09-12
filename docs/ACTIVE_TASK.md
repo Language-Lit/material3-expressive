@@ -2,8 +2,9 @@
 
 ## T67 — 1.3.0 release candidate
 
-Status: active
+Status: complete
 Approved: 2026-09-12 (owner: "ok, do it.")
+Completed: 2026-09-12
 
 ### Scope and expected files
 
@@ -26,7 +27,16 @@ test channel rather than a stable-support promotion.
 
 ### Verification record
 
-Pending publication.
+- `npm run verify` passed all 14 gates at `1.3.0-rc.1`: 241 test files / 1,735
+  tests, release audit, bundle budgets, and packed Vite/Next consumers.
+- `npm run audit:rendering` passed against the production build.
+- npm published `@language-lit/material3-expressive@1.3.0-rc.1` under `next`.
+  Registry metadata confirms `next` resolves to this candidate while `latest`
+  remains `1.2.2`.
+- A clean registry installation imported `DatePicker`, `DateRangePicker`,
+  `TimePicker`, and `DateTimePicker` successfully.
+- Annotated tag `v1.3.0-rc.1` points at published commit `0939945` and is
+  pushed to `origin`.
 
 ## T66 — Date/time picker families and public A2UI catalog hosting
 
