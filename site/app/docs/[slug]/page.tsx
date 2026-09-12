@@ -1,3 +1,4 @@
+import { mcpAppsPackage } from '../../../content/mcp-apps'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { Text } from '@language-lit/material3-expressive'
@@ -10,7 +11,7 @@ import { absoluteUrl, packageName, siteName, siteUrl } from '../../../content/si
 import { agUiPackage } from '../../../content/ag-ui'
 import { a2uiPackage } from '../../../content/a2ui'
 
-const companionPackages: Record<string, string> = { 'AG-UI': agUiPackage, A2UI: a2uiPackage }
+const companionPackages: Record<string, string> = { 'AG-UI': agUiPackage, A2UI: a2uiPackage, 'MCP Apps': mcpAppsPackage }
 
 interface PageProps {
   params: Promise<{ slug: string }>

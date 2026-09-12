@@ -114,6 +114,49 @@ tabs, the modal, live path updates, surface deletion, stop, and reset, checks
 mobile/desktop light/dark rendering, verifies the guides' links and metadata,
 and saves screenshots in a temporary directory for visual review.
 
+## MCP Apps demo
+
+`/mcp-apps/` consumes the unpublished `0.1.0` MCP Apps companion from the
+generated tarball committed under `site/vendor/`. ADR 0043 records the site
+dependency exception. Clean checkouts do not need a sibling repository.
+The page states that this is a local preview, not an npm release.
+
+The site authors a forecast app, deterministic sample data, and an in-memory
+MCP server under `site/ui/mcp-apps/`. The app and host consume only public
+companion entries. `scripts/build-mcp-app.mjs` runs before site dev/build and
+bundles app JS/CSS into the ignored `public/mcp-apps/forecast.html`. Explicit
+React aliases keep the linked core on the renderer's React instance. The app
+uses fallback fonts; it needs no cross-origin font request or CORS deployment
+change. The host fetches the document locally once; interactions then work
+offline through SDK transports and postMessage.
+
+Two guides under `/docs/mcp-apps-*` are sourced from `docs/MCP_APPS_*.md` and
+appear in navigation, search, sitemap, llms.txt and llms-full.txt.
+
+```bash
+npm --prefix site run typecheck
+npm run site:build
+M3E_CHROMIUM_PATH=<chromium binary> npm --prefix site run test:mcp-apps
+```
+
+The audit checks the real iframe handshake, tool result/refresh, model context,
+chat and link callbacks, modes preserving app selection, reset/replay, failed
+tool results, keyboard controls, reduced motion, light/dark 320–1440px layouts,
+and guide links/metadata. It saves screenshots in a temporary directory.
+
+To update the local artifact, first verify/build the companion, then run from
+this repository root:
+
+```bash
+npm pack ../material3-expressive-mcp-apps --pack-destination site/vendor --ignore-scripts
+npm --prefix site uninstall @language-lit/material3-expressive-mcp-apps
+npm --prefix site install --save-exact ./site/vendor/language-lit-material3-expressive-mcp-apps-0.1.0.tgz
+```
+
+Uninstall/reinstall refreshes the lockfile integrity when the preview keeps its
+version number. Never hand-edit the tarball. Switch to a pinned registry release
+only after publication is separately authorized.
+
 ## Deployment
 
 Vercel, with **Root Directory** set to `site`. The build is a static export

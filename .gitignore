@@ -8,3 +8,6 @@ site/.next/
 site/out/
 site/next-env.d.ts
 .vercel
+
+# Generated standalone MCP Apps demo document.
+site/public/mcp-apps/

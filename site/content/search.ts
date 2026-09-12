@@ -1,3 +1,4 @@
+import { mcpAppsDescription } from './mcp-apps'
 import { readFile } from 'node:fs/promises'
 import path from 'node:path'
 import { getConformantComponents, kindLabels } from './inventory'
@@ -85,5 +86,5 @@ export async function buildSearchIndex(): Promise<SearchEntry[]> {
     group: 'Demos',
     terms: `a2ui google agents generative ui surfaces catalog renderer data binding validation actions streaming ${a2uiDescription}`.toLowerCase(),
     excerpt: a2uiDescription,
-  }, ...docEntries, ...componentEntries]
+  }, { title: 'MCP Apps demo', href: '/mcp-apps/', group: 'Demos', terms: `mcp apps tools iframe host provider model context ${mcpAppsDescription}`.toLowerCase(), excerpt: mcpAppsDescription }, ...docEntries, ...componentEntries]
 }

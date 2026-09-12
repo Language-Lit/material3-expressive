@@ -8,11 +8,12 @@
     "typecheck": "tsc --noEmit",
     "test:ag-ui": "node scripts/audit-ag-ui.mjs",
     "test:a2ui": "node scripts/audit-a2ui.mjs",
-    "predev": "node ../scripts/link-self.mjs",
+    "predev": "node ../scripts/link-self.mjs && node scripts/build-mcp-app.mjs",
     "dev": "next dev --port 3000",
-    "prebuild": "node ../scripts/link-self.mjs",
+    "prebuild": "node ../scripts/link-self.mjs && node scripts/build-mcp-app.mjs",
     "build": "next build",
-    "preview": "npx serve out"
+    "preview": "npx serve out",
+    "test:mcp-apps": "node scripts/audit-mcp-apps.mjs"
   },
   "dependencies": {
     "@a2ui/web_core": "0.10.7",
@@ -21,16 +22,22 @@
     "@language-lit/material3-expressive": "file:..",
     "@language-lit/material3-expressive-a2ui": "0.1.0",
     "@language-lit/material3-expressive-ag-ui": "0.1.0",
+    "@language-lit/material3-expressive-mcp-apps": "file:vendor/language-lit-material3-expressive-mcp-apps-0.1.0.tgz",
+    "@modelcontextprotocol/client": "2.0.0",
+    "@modelcontextprotocol/ext-apps": "2.0.0",
+    "@modelcontextprotocol/server": "2.0.0",
     "marked": "^16.4.2",
     "next": "16.2.10",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "rxjs": "7.8.1"
+    "rxjs": "7.8.1",
+    "zod": "4.6.2"
   },
   "devDependencies": {
     "@types/node": "20.19.43",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "esbuild": "0.27.7",
     "typescript": "^5.0.0"
   }
 }

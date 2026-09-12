@@ -217,7 +217,7 @@ try {
 
   // The mobile drawer and desktop bar both expose the route.
   await page.getByRole('button', { name: 'Open navigation', exact: true }).click()
-  assert(await page.getByRole('link', { name: 'Interactive demo', exact: true }).isVisible())
+  assert(await page.getByRole('dialog').locator('a[href="/ag-ui/"]').isVisible())
   assert(await page.getByRole('dialog').getByRole('link', { name: 'AG-UI components and tool renderers', exact: true }).isVisible())
   await page.keyboard.press('Escape')
   const sitemap = await (await context.request.get(`${origin}/sitemap.xml`)).text()

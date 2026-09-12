@@ -1,5 +1,86 @@
 # Active v1 task
 
+## T65 — MCP Apps companion demonstration and guides
+
+Status: complete
+Completed: 2026-09-12
+Approved: 2026-09-12 (owner requested MCP Apps, authorized a sibling companion,
+and asked Codex to continue the existing implementation)
+
+### Scope
+
+Complete the separately developed MCP Apps companion and add a public
+`/mcp-apps/` demonstration and two local guides using its public exports.
+The demo uses an in-memory MCP server and a bundled, sandboxed Material app.
+Label it "Scripted demo. No LLM or API key required." Keep the core package,
+component inventory, and public API unchanged. Publication is a separate step.
+
+### Expected files
+
+- `site/app/mcp-apps/`, `site/ui/mcp-apps/`, `site/content/mcp-apps.ts`.
+- `site/scripts/build-mcp-app.mjs`, `site/scripts/audit-mcp-apps.mjs`,
+  site package metadata/lockfile, README, and generated-output ignore rules.
+- `docs/MCP_APPS_GETTING_STARTED.md`, `docs/MCP_APPS_HOSTING.md`, ADR 0043.
+- Guide registry, navigation, search, site routes, SiteBar, docs index and
+  guide metadata, llms.txt (llms-full.txt derives from the guide registry).
+- `scripts/check-site.mjs` for the companion and MCP SDK site dependencies.
+- Scope the existing AG-UI browser audit navigation assertion to its own
+  route now that multiple companion sections have an Interactive demo link.
+- Companion source corrections, tests, playground, docs and build scripts
+  remain in its own repository and are recorded by its T01.
+
+### Acceptance checks
+
+- Companion aggregate verification, production playground build and browser
+  checks pass; packed package consumes only its declared public peers.
+- Site typecheck, `npm run check:site`, `npm run verify`, and
+  `npm run site:build` pass.
+- Production browser audit: handshake, tool input/result, app-to-server tool
+  calls, model-context updates, chat messages, theme changes, display modes,
+  reset/replay, keyboard controls, and error handling. Desktop/mobile and
+  light/dark layouts have no horizontal overflow or unexpected browser errors.
+- Scripted interactions work offline after loading; no backend, credential,
+  model, external, or mutating requests. Guide links, canonicals, metadata,
+  search, sitemap, and machine-readable listings include the new pages.
+
+### Verification evidence
+
+- Companion T01 completed in its own repository. Its aggregate checks passed
+  at 6 files / 42 tests; production playground and real-browser checks passed.
+  Direct resource CSP now precedes app content, and a browser policy-violation
+  event proves undeclared connections are blocked. The playground builds a
+  self-contained app and has a usable narrow-screen layout.
+- Added the `/mcp-apps/` route, two guides, navigation/search/docs-index entries,
+  companion metadata, sitemap and machine-readable discovery. The preview is
+  explicitly unpublished and the core inventory/API remain unchanged.
+- The site consumes a generated 13-file companion tarball under `site/vendor/`.
+  Its final lockfile integrity matches the packed artifact. React and the MCP
+  peers are shared by the companion; the standalone app explicitly aliases
+  React to the site's instance because the linked core otherwise resolved the
+  root repository's separate development copy. The browser audit caught and
+  verified this fix.
+- `npm --prefix site run typecheck` and `npm run check:site` passed.
+  `npm run verify` passed all 14 gates and 1,632 tests. `npm run site:build`
+  exported 68 routes. The initial sandboxed attempts could not access npm's
+  cache or the existing Google Fonts build fetch; authorized reruns passed.
+- The final production MCP Apps audit passed handshake, opaque-origin isolation,
+  tool results, refresh, model-context/chat/link callbacks, state-preserving
+  display modes, reset/replay, failed tool results, keyboard actions, reduced
+  motion, guide canonicals/links/metadata, and 320–1440px light/dark layouts.
+  All scripted interactions ran offline, with no external/mutating requests
+  or unexpected browser errors. Desktop/mobile screenshots were reviewed.
+- Existing A2UI and AG-UI production audits also passed after installing the
+  MCP SDK. The AG-UI drawer check now identifies its own route instead of an
+  ambiguous Interactive demo label shared by all three companion sections.
+- Package installation reports existing Next.js/transitive advisories and an
+  esbuild advisory affecting its Windows development server (not used by this
+  build-only integration). Dependency-wide remediation is outside T65; the
+  production output is static. No MCP SDK advisory was reported.
+- No core source, public export, peer, component inventory or token changed.
+  No commit, publication or deployment was performed.
+
+---
+
 ## T64 — Site consumes the published A2UI companion
 
 Status: complete

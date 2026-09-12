@@ -1,3 +1,4 @@
+import { mcpAppsDescription } from './mcp-apps'
 import { getConformantComponents } from './inventory'
 import { docPages } from './docs'
 import { agUiDescription } from './ag-ui'
@@ -79,6 +80,10 @@ export async function getSiteRoutes(): Promise<SiteRoute[]> {
       summary: a2uiDescription,
       priority: 0.9,
       source: 'site/app/a2ui/page.tsx',
+    },
+    {
+      path: '/mcp-apps/',
+      title: 'MCP Apps for React', summary: mcpAppsDescription, priority: 0.9, source: 'site/app/mcp-apps/page.tsx',
     },
     {
       path: '/docs/',

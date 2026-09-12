@@ -1,5 +1,6 @@
+import { mcpAppsDescription } from '../../content/mcp-apps'
 import { getComponentsByKind } from '../../content/inventory'
-import { a2uiDocPages, agUiDocPages, docPages } from '../../content/docs'
+import { a2uiDocPages, agUiDocPages, mcpAppsDocPages, docPages } from '../../content/docs'
 import { componentLead } from '../../content/summaries'
 import { agUiDescription } from '../../content/ag-ui'
 import { a2uiDescription } from '../../content/a2ui'
@@ -49,6 +50,9 @@ export async function GET() {
     ...agUiDocPages.map((page) => `- [${page.title}](${absoluteUrl(`/docs/${page.slug}/`)}): ${page.summary}`),
     `- [A2UI demo](${absoluteUrl('/a2ui/')}): ${a2uiDescription} No LLM or API key required.`,
     ...a2uiDocPages.map((page) => `- [${page.title}](${absoluteUrl(`/docs/${page.slug}/`)}): ${page.summary}`),
+    '',
+    `- [MCP Apps demo](${absoluteUrl('/mcp-apps/')}): ${mcpAppsDescription}` ,
+    ...mcpAppsDocPages.map((page) => `- [${page.title}](${absoluteUrl(`/docs/${page.slug}/`)}): ${page.summary}`),
     '',
     '## Guides',
     '',

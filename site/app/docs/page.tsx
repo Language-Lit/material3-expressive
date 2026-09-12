@@ -1,13 +1,13 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Surface, Text } from '@language-lit/material3-expressive'
-import { a2uiDocPages, agUiDocPages, docPages } from '../../content/docs'
+import { a2uiDocPages, agUiDocPages, mcpAppsDocPages, docPages } from '../../content/docs'
 import { DocsShell } from '../../ui/DocsShell'
 import { StructuredData, breadcrumbList } from '../../ui/StructuredData'
 import { absoluteUrl } from '../../content/site'
 
 const description =
-  'Guides to Material 3 Expressive and its AG-UI and A2UI companions: installation, theming, agent conversations, agent-generated surfaces, and component composition.'
+  'Guides to Material 3 Expressive and its AG-UI, A2UI, and MCP Apps companions: installation, theming, agent conversations, agent-generated surfaces, and component composition.'
 
 export const metadata: Metadata = {
   title: 'Guides',
@@ -45,7 +45,7 @@ export default function DocsIndexPage() {
         <Text as="p" variant="bodyLarge">
           Set up Material 3 Expressive, customize your theme, add an agent
           conversation with the AG-UI companion, or render agent-generated
-          surfaces with the A2UI companion.
+          surfaces with A2UI, or embed interactive tools with MCP Apps.
         </Text>
       </div>
 
@@ -96,6 +96,10 @@ export default function DocsIndexPage() {
             </Surface>
           ))}
         </div>
+      </section>
+      <section aria-labelledby="mcp-apps-guides" style={{ marginBlockStart: '3rem' }}>
+        <div className="page-head"><Text as="h2" variant="headlineMedium" id="mcp-apps-guides">MCP Apps</Text><Text as="p" variant="bodyLarge">Host interactive tools and build apps with Material components.</Text></div>
+        <div className="catalog__grid">{mcpAppsDocPages.map((page) => <Surface key={page.slug} as="article" color="surface-container-low" shape="large"><Link href={`/docs/${page.slug}/`} className="catalog__card"><span className="catalog__name">{page.title}</span><span className="claim__body">{page.summary}</span></Link></Surface>)}</div>
       </section>
     </DocsShell>
   )

@@ -135,6 +135,10 @@ const allowedEntries = new Set([
   // Published A2UI companion demo, scoped to site dependencies by ADR 0042.
   '@language-lit/material3-expressive-a2ui',
   '@language-lit/material3-expressive-a2ui/styles.css',
+  // MCP Apps companion, ADR 0043.
+  '@language-lit/material3-expressive-mcp-apps',
+  '@language-lit/material3-expressive-mcp-apps/app',
+  '@language-lit/material3-expressive-mcp-apps/styles.css',
 ])
 
 const siteSources = (await walk(siteRoot)).filter((file) => /\.(tsx?|mjs|css)$/.test(file))
@@ -267,6 +271,12 @@ const allowedDependencies = new Set([
   // protocol runtime and the companion's peer.
   '@language-lit/material3-expressive-a2ui',
   '@a2ui/web_core',
+  // In-memory MCP Apps demonstration and protocol peers, ADR 0043.
+  '@language-lit/material3-expressive-mcp-apps',
+  '@modelcontextprotocol/client',
+  '@modelcontextprotocol/ext-apps',
+  '@modelcontextprotocol/server',
+  'zod',
   'next',
   'react',
   'react-dom',

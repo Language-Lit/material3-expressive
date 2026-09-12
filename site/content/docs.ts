@@ -7,7 +7,7 @@ export interface DocPage {
   file: string
   title: string
   summary: string
-  section?: 'AG-UI' | 'A2UI'
+  section?: 'AG-UI' | 'A2UI' | 'MCP Apps'
 }
 
 export const agUiDocPages: readonly DocPage[] = [
@@ -49,6 +49,11 @@ export const a2uiDocPages: readonly DocPage[] = [
     summary: 'How each basic-catalog component renders, plus binding, validation, templates, theming, and catalog extension.',
     section: 'A2UI',
   },
+]
+
+export const mcpAppsDocPages: readonly DocPage[] = [
+  { slug: 'mcp-apps-getting-started', file: 'MCP_APPS_GETTING_STARTED.md', title: 'Getting started with MCP Apps', summary: 'Install the companion, register an app resource, and connect a Material app to its host.', section: 'MCP Apps' },
+  { slug: 'mcp-apps-hosting', file: 'MCP_APPS_HOSTING.md', title: 'Hosting and theming MCP Apps', summary: 'Embed apps, pass tool results, configure capabilities and sandbox policy, and share host styles.', section: 'MCP Apps' },
 ]
 
 /**
@@ -98,6 +103,7 @@ export const docPages: readonly DocPage[] = [
   },
   ...agUiDocPages,
   ...a2uiDocPages,
+  ...mcpAppsDocPages,
 ]
 
 const repositoryBlob =

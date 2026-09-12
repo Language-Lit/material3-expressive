@@ -45,6 +45,7 @@ export function SiteBar({
           <Link href="/a2ui/" className="sidebar__link">
             A2UI
           </Link>
+          <Link href="/mcp-apps/" className="sidebar__link">MCP Apps</Link>
           <Link href="/components/" className="sidebar__link">
             Components
           </Link>

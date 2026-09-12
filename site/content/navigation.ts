@@ -1,5 +1,5 @@
 import { getComponentsByKind } from './inventory'
-import { a2uiDocPages, agUiDocPages, docPages } from './docs'
+import { a2uiDocPages, agUiDocPages, mcpAppsDocPages, docPages } from './docs'
 
 export interface NavigationGroup {
   label: string
@@ -34,6 +34,10 @@ export async function buildNavigationGroups(): Promise<NavigationGroup[]> {
         { label: 'Interactive demo', href: '/a2ui/' },
         ...a2uiDocPages.map((page) => ({ label: page.title, href: `/docs/${page.slug}/` })),
       ],
+    },
+    {
+      label: 'MCP Apps',
+      links: [{ label: 'Interactive demo', href: '/mcp-apps/' }, ...mcpAppsDocPages.map((page) => ({ label: page.title, href: `/docs/${page.slug}/` }))],
     },
     {
       label: 'Overview',

@@ -1,0 +1,48 @@
+html, body { margin: 0; }
+/* The demo app's own layout. Not part of the package. */
+.fc {
+  padding: 8px;
+}
+
+.fc--fullscreen {
+  padding: 24px;
+  max-inline-size: 720px;
+  margin-inline: auto;
+}
+
+.fc__card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+}
+
+.fc__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.fc__title,
+.fc__meta,
+.fc__temp,
+.fc__summary {
+  margin: 0;
+}
+
+.fc__meta {
+  color: var(--m3e-sys-color-on-surface-variant);
+}
+
+.fc__days {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.fc__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
