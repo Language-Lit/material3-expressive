@@ -2,7 +2,8 @@
 
 ## T66 — Date/time picker families and public A2UI catalog hosting
 
-Status: active
+Status: complete
+Completed: 2026-09-12
 Approved: 2026-09-12 (owner requested implementation of the prepared upstream
 scopes and explicitly authorized edits to this peer repository, with concurrent
 work preserved through an isolated checkout.)
@@ -77,6 +78,16 @@ artifact and generation/verification scripts, and build verification wiring.
   packed package. ADR 0044 rebases only the breached JavaScript, token CSS, and
   packed-package budgets with their existing proportional headroom; declaration
   and full-CSS ceilings remain unchanged.
+- The documentation-site production build and byte-level HTTP check passed: the
+  hosted catalog at `/a2ui/catalogs/material3/catalog.json` exactly matches the
+  generated renderer artifact.
+- Conflict-safe integration proceeded through commits `8824bb5`, `33bb4a7`,
+  and `cc9df35`; the final commit was fast-forwarded into the original peer
+  checkout without overwriting concurrent work.
+- T66 implementation is complete. Picker inventory entries remain experimental;
+  stable conformance promotion requires the separate full visual matrix review.
+  Registry publication and production deployment also remain separate,
+  explicitly authorized release and deployment steps.
 
 ## T65 — MCP Apps companion demonstration and guides
 
