@@ -11,6 +11,11 @@ const output = path.join(site, 'out')
 const executablePath = process.env.M3E_CHROMIUM_PATH
 assert(executablePath, 'Set M3E_CHROMIUM_PATH to a Chromium executable.')
 await stat(path.join(output, 'mcp-apps/index.html'))
+const vercel = JSON.parse(await readFile(path.join(site, '../vercel.json'), 'utf8'))
+const forecastHeaders = vercel.headers.find((entry) => entry.source === '/mcp-apps/forecast.html')?.headers ?? []
+const forecastCsp = forecastHeaders.find((header) => header.key === 'Content-Security-Policy')?.value ?? ''
+assert(forecastCsp.includes('https://material3-expressive.vercel.app'), 'Forecast CSP allows the sandbox alias')
+assert(forecastCsp.includes('https://m3e.language-lit.com'), 'Forecast CSP allows the full canonical ancestor chain')
 const screenshots = await mkdtemp(path.join(tmpdir(), 'm3e-mcp-apps-'))
 const mime = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.woff2': 'font/woff2', '.svg': 'image/svg+xml', '.xml': 'application/xml', '.txt': 'text/plain' }
 const server = createServer(async (request, response) => {
