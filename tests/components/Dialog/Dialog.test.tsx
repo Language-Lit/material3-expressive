@@ -232,6 +232,13 @@ describe('Dialog', () => {
     )
   })
 
+  it('does not treat an omitted defaultOpen as a conflicting controlled default', () => {
+    const warning = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+    render(<Dialog open onOpenChange={() => undefined} title="Controlled" />)
+
+    expect(warning).not.toHaveBeenCalledWith('Dialog: use either open or defaultOpen, not both.')
+  })
+
   it('drives a real open/close lifecycle end to end from application state', async () => {
     const user = userEvent.setup()
     function Fixture() {

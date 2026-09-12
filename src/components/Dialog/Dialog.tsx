@@ -65,7 +65,7 @@ function warnForInvalidProps({
 function DialogRender(
   {
     open,
-    defaultOpen = false,
+    defaultOpen,
     onOpenChange,
     modal = true,
     dismissOnEscape = true,
@@ -103,7 +103,7 @@ function DialogRender(
 
   const [resolvedOpen, setOpen] = useControllableState({
     value: open,
-    defaultValue: defaultOpen,
+    defaultValue: defaultOpen ?? false,
     onChange: onOpenChange,
   })
 
