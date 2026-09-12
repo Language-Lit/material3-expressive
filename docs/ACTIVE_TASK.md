@@ -2,9 +2,10 @@
 
 ## T69 — Clean-runner playground self-reference
 
-Status: active
+Status: complete
 Approved: 2026-09-12 (owner requested that discovered sibling and delivery
 mistakes be corrected completely.)
+Completed: 2026-09-12
 
 ### Scope and acceptance
 
@@ -20,6 +21,15 @@ and the pushed CI workflow must pass.
 All three package-inspection gates treat the final JSON array as npm's
 machine-readable result because npm 10 may forward `prepare` output before it
 despite `--ignore-scripts --silent`.
+
+### Verification record
+
+- After removing the generated self-link, `npm run typecheck:playground`
+  recreated it and passed.
+- The release, bundle-size, and packed-consumer gates passed locally with
+  foreground lifecycle scripts and forced ANSI output.
+- GitHub Actions run `34681162083` passed on clean Linux: the full build/test
+  job completed in 7m12s and the documentation-site job in 1m38s.
 
 
 ## T68 — Deploy current documentation site
