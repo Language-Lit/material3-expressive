@@ -644,3 +644,21 @@ has nothing to apply to. ADR 0040 records the single-export collapse, both porte
 engines, the scroll and snap substitutions, the APG carousel semantics, the item
 window that replaces `beyondViewportPageCount`, and the specification-sourced
 token registry the missing `CarouselTokens.kt` forced.
+
+The date and time picker families add one composition boundary without adding a
+shared picker service. `DatePicker` and `DateRangePicker` own calendar selection
+and localized date entry in one family directory and token domain; `TimePicker`
+owns wall-clock input and dial selection in a second. `DateTimePicker` imports
+only those public component barrels and coordinates their string values. It
+does not reach into either implementation, copy a panel, or own a third visual
+token family.
+
+All three values are civil strings: `YYYY-MM-DD`, `HH:mm`, and their direct
+`YYYY-MM-DDTHH:mm` composition. Strict parsing happens before fixed-width lexical
+bounds comparison. Locale selects presentation and input parsing but never an
+instant, zone, or calendar conversion. During text entry the composition keeps
+partial child drafts while exposing an empty aggregate, so neither callbacks nor
+forms receive a fabricated missing part. The child pickers own native validity
+and accept an additional `customValidity` message from a composition, avoiding
+imperative races over one input's `setCustomValidity()` state. ADR 0044 records
+the public API, civil-value, form, locale, and overlay adaptations.

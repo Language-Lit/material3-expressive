@@ -11,6 +11,7 @@ import { defaultChipTokens } from './chip'
 import { defaultCheckboxTokens } from './checkbox'
 import { defaultCircularProgressTokens } from './circular-progress'
 import { defaultDarkColorScheme, defaultLightColorScheme, defaultPalette } from './color'
+import { defaultDatePickerTokens } from './date-picker'
 import { defaultDensity } from './density'
 import { defaultDialogTokens } from './dialog'
 import { defaultDividerTokens } from './divider'
@@ -40,6 +41,7 @@ import { defaultSurfaceTokens } from './surface'
 import { defaultSwitchTokens } from './switch'
 import { defaultTabsTokens } from './tabs'
 import { defaultTextFieldTokens } from './text-field'
+import { defaultTimePickerTokens } from './time-picker'
 import { defaultTooltipTokens } from './tooltip'
 import { defaultTypography } from './typography'
 import { defaultWavyProgressTokens } from './wavy-progress'
@@ -124,6 +126,8 @@ const defaultTokenSetInput = {
     defaultAppBarTokens,
     defaultSearchBarTokens,
     defaultCarouselTokens,
+    defaultDatePickerTokens,
+    defaultTimePickerTokens,
   ],
 } satisfies FoundationTokenSet
 

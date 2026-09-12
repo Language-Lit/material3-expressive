@@ -24,6 +24,9 @@ This release contains **41 conformant components**. Only rows with
 | [`Radio`](components/Radio.md) | input | `conformant` | `T12` | — |
 | [`Switch`](components/Switch.md) | input | `conformant` | `T13` | — |
 | [`Slider`](components/Slider.md) | input | `conformant` | `T39` | — |
+| [`DatePicker`](components/DatePicker.md) | input | `experimental` | `T66` | `TextField` |
+| [`TimePicker`](components/TimePicker.md) | input | `experimental` | `T66` | `Button`, `Dialog`, `TextField` |
+| [`DateTimePicker`](components/DateTimePicker.md) | input | `experimental` | `T66` | `DatePicker`, `TimePicker` |
 | [`TextField`](components/TextField.md) | input | `conformant` | `T14` | — |
 | [`TextArea`](components/TextArea.md) | input | `conformant` | `T14` | `TextField` |
 | [`SegmentedButtonGroup`](components/SegmentedButtonGroup.md) | input | `conformant` | `T15` | — |

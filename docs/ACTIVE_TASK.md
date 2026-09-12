@@ -1,5 +1,83 @@
 # Active v1 task
 
+## T66 — Date/time picker families and public A2UI catalog hosting
+
+Status: active
+Approved: 2026-09-12 (owner requested implementation of the prepared upstream
+scopes and explicitly authorized edits to this peer repository, with concurrent
+work preserved through an isolated checkout.)
+
+### Scope and expected files
+
+Implement the general-purpose Material date and time picker families, including
+single/range date selection, docked/modal and text entry, time dial/input modes,
+and a date-time composition. Use public typed APIs, ISO civil values, locale-aware
+presentation, bounds, validation, keyboard/focus behavior, and sourced tokens.
+Freeze primary-source coverage and record web adaptations in a new ADR and the
+component conformance records. Update the component inventory, token registry,
+public root, documentation, examples, and tests. Preserve the four public entry
+points and zero runtime dependencies.
+
+Publish the A2UI package's generated catalog JSON in the documentation site's
+static output at `/a2ui/catalogs/material3/catalog.json`, with reproducible
+provenance and byte-integrity verification. This task prepares release/deployment;
+registry publication and production deployment require their normal final steps.
+
+Expected files: new picker component directories, supporting internal modules,
+token registry/domain files, `src/index.ts`, component tests and examples,
+`docs/components/`, inventory/roadmap/provenance/ADR records, site public catalog
+artifact and generation/verification scripts, and build verification wiring.
+
+### Acceptance checks
+
+1. Calendar single/range, input, dial, date-only/time-only/combined modes support
+   controlled and uncontrolled state, bounds, accessible names, forms, and ISO
+   civil values without accidental time-zone conversion.
+2. Interaction, keyboard, focus, accessibility, SSR/hydration and theme tests pass;
+   light/dark, RTL, density and reduced-motion browser checks cover the new UI.
+3. Source ledgers classify the family variants and web adaptations honestly;
+   conformance is claimed only after the required evidence passes.
+4. `npm run verify`, playground production build/rendering audit, and site build
+   pass; the static catalog has the exact bytes of the renderer artifact and no
+   new runtime dependency or package export is introduced.
+5. Integrate against the peer's current head without overwriting concurrent work.
+
+### Verification evidence
+
+- `DatePicker`/`DateRangePicker`, `TimePicker`, and their public
+  `DateTimePicker` composition now cover calendar/range, localized date input,
+  time dial/input, docked/modal, controlled/uncontrolled, native form/reset,
+  external-form, bounds, SSR/hydration, keyboard, focus, theme, forced-color,
+  and reduced-motion paths. Civil values remain strict `YYYY-MM-DD`, `HH:mm`,
+  and `YYYY-MM-DDTHH:mm` strings with no implicit time-zone conversion.
+- Executable source ledgers pin AndroidX date revision
+  `e8cac06846dd0164454bd44b77ed1c4e95ec7591` and its 92 behavior / 27
+  screenshot cases, AndroidX time revision
+  `8a0ee86845b2fb7c56fc5786971ecb687ad85527` and its 37 behavior / 8
+  screenshot cases, and the CLDR 48 first-weekday fallback. Generated-role
+  partitions freeze all 45 date-picker, 12 date-input, 53 time-picker, and 36
+  time-input declarations. The three picker inventory entries remain
+  experimental pending final promotion review.
+- Final `npm run verify` passed all 14 gates: 241 test files / 1,735 tests,
+  package and playground builds, 44 inventory entries, 47 stylesheets, 1,893
+  generated custom properties, packed Vite/Next consumers, release checks, and
+  site checks. The production Chromium rendering audit also passed after the
+  picker paint and geometry changes.
+- Real-browser review covered 390px and 320px light/dark picker layouts, modal
+  and docked containment, 48px ordinary and non-overlapping 40px compact date
+  targets, disabled bounds, RTL date-key movement, time input geometry, and
+  modal focus. Range selection traversed September through November in the
+  recentering vertical month window with one roving tab stop and valid start/end
+  form data; its centered 40px band extends beneath endpoint circles to their
+  logical centers. A required modal date-time flow selected a date and 09:30,
+  then submitted `appointment=2026-09-12T09:30` through native validity.
+- Final measured artifacts are 590,642 bytes imported JavaScript (107,133
+  gzip), 124,267 declaration bytes (28,790 gzip), 501,362 full CSS bytes
+  (55,061 gzip), 140,442 token CSS bytes (12,582 gzip), and a 557,983-byte
+  packed package. ADR 0044 rebases only the breached JavaScript, token CSS, and
+  packed-package budgets with their existing proportional headroom; declaration
+  and full-CSS ceilings remain unchanged.
+
 ## T65 — MCP Apps companion demonstration and guides
 
 Status: complete

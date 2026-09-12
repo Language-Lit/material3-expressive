@@ -1,0 +1,28 @@
+@layer m3e.components {
+  .m3e-date-time-picker,
+  .m3e-date-time-picker__fields {
+    display: grid;
+  }
+
+  .m3e-date-time-picker__fields {
+    align-items: start;
+    gap: var(--m3e-comp-date-picker-input-spacing);
+    inline-size: min(100%, var(--m3e-comp-date-picker-container-width));
+  }
+
+  .m3e-date-time-picker__date {
+    --m3e-comp-text-field-min-container-inline-size: min(
+      100%,
+      var(--m3e-comp-date-picker-container-width)
+    );
+
+    inline-size: 100%;
+  }
+
+  .m3e-date-time-picker__time {
+    --m3e-comp-text-field-min-container-inline-size: 0;
+
+    inline-size: 100%;
+    min-inline-size: 0;
+  }
+}

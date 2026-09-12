@@ -77,7 +77,7 @@ must never be projected into stable documentation as support claims.
 | 7 | [Carousel](https://m3.material.io/components/carousel/overview) | Composite | `Carousel` | Conformant | Reconcile new upstream variants at the final catalog audit; publish the `Show all` accessibility recipe |
 | 8 | [Checkbox](https://m3.material.io/components/checkbox/overview) | Primitive | `Checkbox` | Conformant | Reconcile new upstream variants at the final catalog audit |
 | 9 | [Chips](https://m3.material.io/components/chips/overview) | Primitive | `Chip` | Conformant | Reconcile new upstream variants at the final catalog audit |
-| 10 | [Date pickers](https://m3.material.io/components/date-pickers/overview) | Composite | None | Planned | Docked/modal, single/range/input modes, calendar grid, locale boundary, and validation |
+| 10 | [Date pickers](https://m3.material.io/components/date-pickers/overview) | Composite | Experimental `DatePicker`, `DateRangePicker`, and `DateTimePicker` (T66) | Planned | Complete the T66 aggregate and real-browser gates, then promote the inventory; reconcile new upstream variants at the final catalog audit |
 | 11 | [Dialogs](https://m3.material.io/components/dialogs/overview) | Composite | `Dialog` | Conformant | Reconcile new upstream variants at the final catalog audit |
 | 12 | [Divider](https://m3.material.io/components/divider/overview) | Primitive | `Divider` | Conformant | Reconcile new upstream variants at the final catalog audit |
 | 13 | [Extended FABs](https://m3.material.io/components/extended-fab/overview) | Primitive | `FloatingActionButton` extended mode | Conformant | Reconcile new upstream variants at the final catalog audit |
@@ -101,7 +101,7 @@ must never be projected into stable documentation as support claims.
 | 31 | [Switch](https://m3.material.io/components/switch/overview) | Primitive | `Switch` | Conformant | Reconcile new upstream variants at the final catalog audit |
 | 32 | [Tabs](https://m3.material.io/components/tabs/overview) | Composite | `Tabs` | Conformant | Reconcile new upstream variants at the final catalog audit |
 | 33 | [Text fields](https://m3.material.io/components/text-fields/overview) | Primitive | `TextField`, `TextArea` | Conformant | Reconcile new upstream variants at the final catalog audit |
-| 34 | [Time pickers](https://m3.material.io/components/time-pickers/overview) | Composite | None | Planned | Dial/input modes, locale boundary, validation, focus, and dialog composition |
+| 34 | [Time pickers](https://m3.material.io/components/time-pickers/overview) | Composite | Experimental `TimePicker` and `DateTimePicker` composition (T66) | Planned | Complete the T66 aggregate and real-browser gates, then promote the inventory; reconcile new upstream variants at the final catalog audit |
 | 35 | [Toolbars](https://m3.material.io/components/toolbars/overview) | Mixed | `FloatingToolbar` | Partial | Reconcile the full toolbar family, including docked/floating and expansion/overflow compositions, plus the bottom app bar the current design index files here (`BottomAppBar`/`FlexibleBottomAppBar`, pinned in row 1's `AppBar.kt`; the flexible variant already reads `DockedToolbarTokens` — T46 recorded the disposition) |
 | 36 | [Tooltips](https://m3.material.io/components/tooltips/overview) | Composite | `Tooltip` | Conformant | Reconcile new upstream variants at the final catalog audit |
 

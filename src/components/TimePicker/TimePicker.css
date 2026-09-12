@@ -1,0 +1,428 @@
+@layer m3e.components {
+  .m3e-time-picker {
+    box-sizing: border-box;
+    color: var(--m3e-comp-time-picker-time-selector-label-color);
+    display: inline-flex;
+    flex-direction: column;
+    font-family: var(--m3e-sys-typescale-baseline-body-large-font-family);
+    gap: var(--m3e-comp-time-picker-panel-gap);
+    max-inline-size: 100%;
+    min-inline-size: 0;
+  }
+
+  .m3e-time-picker__field-row {
+    align-items: center;
+    display: flex;
+    gap: var(--m3e-comp-time-picker-panel-gap);
+    max-inline-size: 100%;
+    min-inline-size: 0;
+  }
+
+  .m3e-time-picker__field {
+    flex: 1 1 var(--m3e-comp-text-field-min-container-inline-size);
+    min-inline-size: 0;
+  }
+
+  .m3e-time-picker__docked {
+    background-color: var(--m3e-comp-time-picker-container-color);
+    border-radius: var(--m3e-comp-time-picker-container-shape);
+    box-shadow: var(--m3e-comp-time-picker-container-shadow);
+    box-sizing: border-box;
+    inline-size: fit-content;
+    max-inline-size: 100%;
+    padding: var(--m3e-comp-time-picker-panel-padding);
+  }
+
+  .m3e-time-picker__dialog {
+    --m3e-comp-dialog-container-padding: min(
+      var(--m3e-comp-time-picker-panel-padding),
+      max(
+        0px,
+        calc(
+          (
+              100vw - var(--m3e-comp-time-picker-vertical-panel-width) -
+                var(--m3e-comp-time-picker-dialog-viewport-margin) * 2
+            ) / 2
+        )
+      )
+    );
+    --m3e-comp-dialog-container-viewport-margin: var(--m3e-comp-time-picker-dialog-viewport-margin);
+
+    max-inline-size: min-content;
+  }
+
+  .m3e-time-picker__panel {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: var(--m3e-comp-time-picker-panel-gap);
+    inline-size: var(--m3e-comp-time-picker-vertical-panel-width);
+    max-inline-size: 100%;
+  }
+
+  .m3e-time-picker__panel[data-m3e-layout="horizontal"][data-m3e-mode="dial"] {
+    align-items: center;
+    column-gap: var(--m3e-comp-time-picker-clock-display-gap);
+    display: grid;
+    grid-template-columns: auto var(--m3e-comp-time-picker-clock-dial-size);
+    inline-size: auto;
+    row-gap: var(--m3e-comp-time-picker-panel-gap);
+  }
+
+  .m3e-time-picker__panel[data-m3e-mode="input"] {
+    inline-size: fit-content;
+  }
+
+  .m3e-time-picker__panel[data-m3e-layout="horizontal"][data-m3e-mode="dial"]
+    .m3e-time-picker__display-row {
+    align-items: center;
+    flex-direction: column;
+    gap: var(--m3e-comp-time-picker-period-gap);
+  }
+
+  .m3e-time-picker__panel[data-m3e-layout="horizontal"][data-m3e-mode="dial"]
+    .m3e-time-picker__period {
+    block-size: var(--m3e-comp-time-picker-period-horizontal-height);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: 1fr;
+    inline-size: var(--m3e-comp-time-picker-period-horizontal-width);
+  }
+
+  .m3e-time-picker__panel[data-m3e-layout="horizontal"][data-m3e-mode="dial"]
+    .m3e-time-picker__period-option {
+    block-size: 100%;
+    min-block-size: 100%;
+  }
+
+  .m3e-time-picker__panel[data-m3e-layout="horizontal"][data-m3e-mode="dial"]
+    .m3e-time-picker__period-option
+    + .m3e-time-picker__period-option {
+    border-block-start: 0;
+    border-inline-start: var(--m3e-comp-time-picker-period-outline-width) solid
+      var(--m3e-comp-time-picker-period-outline-color);
+  }
+
+  .m3e-time-picker__panel[data-m3e-layout="horizontal"][data-m3e-mode="dial"]
+    .m3e-time-picker__panel-footer {
+    grid-column: 1 / -1;
+  }
+
+  .m3e-time-picker__display-row,
+  .m3e-time-picker__clock-display,
+  .m3e-time-picker__input-fields {
+    align-items: center;
+    display: flex;
+  }
+
+  .m3e-time-picker__display-row {
+    gap: var(--m3e-comp-time-picker-period-gap);
+    justify-content: center;
+    max-inline-size: 100%;
+  }
+
+  .m3e-time-picker__clock-display {
+    direction: ltr;
+    flex: none;
+  }
+
+  .m3e-time-picker__separator {
+    align-items: center;
+    color: var(--m3e-comp-time-picker-separator-color);
+    display: inline-flex;
+    flex: none;
+    font-family: var(--m3e-sys-typescale-baseline-display-large-font-family);
+    font-size: var(--m3e-sys-typescale-baseline-display-large-font-size);
+    font-weight: var(--m3e-sys-typescale-baseline-display-large-font-weight);
+    inline-size: var(--m3e-comp-time-picker-separator-width);
+    justify-content: center;
+    letter-spacing: var(--m3e-sys-typescale-baseline-display-large-letter-spacing);
+    line-height: var(--m3e-sys-typescale-baseline-display-large-line-height);
+  }
+
+  .m3e-time-picker__time-selector {
+    --m3e-comp-button-minimum-width: var(--m3e-comp-time-picker-time-selector-width);
+    --m3e-comp-button-small-container-height: var(--m3e-comp-time-picker-time-selector-height);
+    --m3e-comp-button-small-padding-block: 0;
+    --m3e-comp-button-small-padding-inline: 0;
+    --m3e-comp-button-small-container-shape-square: var(--m3e-comp-time-picker-time-selector-shape);
+    --m3e-comp-button-tonal-container-color: var(--m3e-comp-time-picker-time-selector-color);
+    --m3e-comp-button-tonal-content-color: var(--m3e-comp-time-picker-time-selector-label-color);
+
+    inline-size: var(--m3e-comp-time-picker-time-selector-width);
+  }
+
+  .m3e-time-picker__time-selector[aria-pressed="true"] {
+    --m3e-comp-button-tonal-container-color: var(--m3e-comp-time-picker-time-selector-selected-color);
+    --m3e-comp-button-tonal-content-color: var(--m3e-comp-time-picker-time-selector-selected-label-color);
+  }
+
+  .m3e-time-picker__period {
+    border: var(--m3e-comp-time-picker-period-outline-width) solid
+      var(--m3e-comp-time-picker-period-outline-color);
+    border-radius: var(--m3e-comp-time-picker-period-shape);
+    box-sizing: border-box;
+    block-size: var(--m3e-comp-time-picker-period-vertical-height);
+    display: grid;
+    flex: none;
+    grid-template-rows: repeat(2, minmax(0, 1fr));
+    inline-size: var(--m3e-comp-time-picker-period-vertical-width);
+    overflow: hidden;
+  }
+
+  .m3e-time-picker__period-option {
+    --m3e-comp-button-minimum-width: 100%;
+    --m3e-comp-button-small-container-height: calc(
+      var(--m3e-comp-time-picker-period-vertical-height) / 2
+    );
+    --m3e-comp-button-small-padding-block: 0;
+    --m3e-comp-button-small-padding-inline: 0;
+    --m3e-comp-button-small-container-shape-round: var(--m3e-sys-shape-corner-none);
+    --m3e-comp-button-tonal-container-color: transparent;
+    --m3e-comp-button-tonal-content-color: var(--m3e-comp-time-picker-period-label-color);
+    block-size: 100%;
+    min-block-size: 0;
+    min-inline-size: 100%;
+  }
+
+  .m3e-time-picker__period-option + .m3e-time-picker__period-option {
+    border-block-start: var(--m3e-comp-time-picker-period-outline-width) solid
+      var(--m3e-comp-time-picker-period-outline-color);
+  }
+
+  .m3e-time-picker__period-option[aria-pressed="true"] {
+    --m3e-comp-button-tonal-container-color: var(--m3e-comp-time-picker-period-selected-color);
+    --m3e-comp-button-tonal-content-color: var(--m3e-comp-time-picker-period-selected-label-color);
+  }
+
+  .m3e-time-picker__dial {
+    --m3e-time-picker-selected-index: 0;
+    --m3e-time-picker-selected-radius: var(--m3e-comp-time-picker-outer-radius);
+
+    background-color: var(--m3e-comp-time-picker-clock-dial-color);
+    border-radius: var(--m3e-comp-time-picker-clock-dial-shape);
+    block-size: var(--m3e-comp-time-picker-clock-dial-size);
+    flex: none;
+    inline-size: var(--m3e-comp-time-picker-clock-dial-size);
+    position: relative;
+    touch-action: none;
+  }
+
+  .m3e-time-picker__selector-track {
+    background-color: var(--m3e-comp-time-picker-selector-color);
+    block-size: var(--m3e-comp-time-picker-selector-track-width);
+    inline-size: calc(
+      var(--m3e-time-picker-selected-radius) -
+        var(--m3e-comp-time-picker-selector-handle-size) / 2
+    );
+    left: 50%;
+    position: absolute;
+    top: 50%;
+    transform: rotate(
+      calc(var(--m3e-time-picker-selected-index) * 30deg - 90deg)
+    );
+    transform-origin: center left;
+  }
+
+  .m3e-time-picker__selector-center {
+    background-color: var(--m3e-comp-time-picker-selector-color);
+    block-size: var(--m3e-comp-time-picker-selector-center-size);
+    border-radius: var(--m3e-comp-time-picker-clock-dial-shape);
+    inline-size: var(--m3e-comp-time-picker-selector-center-size);
+    left: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .m3e-time-picker__dial-option {
+    --m3e-time-picker-index: 0;
+    --m3e-time-picker-option-radius: var(--m3e-comp-time-picker-outer-radius);
+    --m3e-comp-button-minimum-width: var(--m3e-comp-time-picker-selector-handle-size);
+    --m3e-comp-button-small-container-height: var(--m3e-comp-time-picker-selector-handle-size);
+    --m3e-comp-button-small-padding-block: 0;
+    --m3e-comp-button-small-padding-inline: 0;
+    --m3e-comp-button-small-container-shape-round: var(--m3e-comp-time-picker-clock-dial-shape);
+    --m3e-comp-button-tonal-container-color: transparent;
+    --m3e-comp-button-tonal-content-color: var(--m3e-comp-time-picker-clock-label-color);
+    --m3e-comp-button-tonal-disabled-container-color: transparent;
+    --m3e-comp-button-tonal-disabled-container-opacity: 0;
+
+    block-size: var(--m3e-comp-time-picker-selector-handle-size);
+    inline-size: var(--m3e-comp-time-picker-selector-handle-size);
+    left: 50%;
+    min-block-size: var(--m3e-comp-time-picker-selector-handle-size);
+    min-inline-size: var(--m3e-comp-time-picker-selector-handle-size);
+    position: absolute;
+    top: 50%;
+    transform:
+      translate(-50%, -50%)
+      rotate(calc(var(--m3e-time-picker-index) * 30deg))
+      translateY(calc(-1 * var(--m3e-time-picker-option-radius)))
+      rotate(calc(-1 * var(--m3e-time-picker-index) * 30deg));
+    z-index: 1;
+  }
+
+  .m3e-time-picker__dial-option[aria-checked="true"] {
+    --m3e-comp-button-tonal-container-color: var(--m3e-comp-time-picker-selector-color);
+    --m3e-comp-button-tonal-content-color: var(--m3e-comp-time-picker-clock-selected-label-color);
+  }
+
+  .m3e-time-picker__dial-option[data-m3e-major="false"]:not([aria-checked="true"]) {
+    block-size: var(--m3e-comp-time-picker-minor-option-size);
+    clip-path: inset(50%);
+    inline-size: var(--m3e-comp-time-picker-minor-option-size);
+    min-block-size: var(--m3e-comp-time-picker-minor-option-size);
+    min-inline-size: var(--m3e-comp-time-picker-minor-option-size);
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .m3e-time-picker__dial-option[data-m3e-major="false"][aria-checked="true"]
+    .m3e-time-picker__dial-label {
+    opacity: 0;
+  }
+
+  .m3e-time-picker__dial:focus-within {
+    outline: var(--m3e-comp-time-picker-focus-ring-width) solid
+      var(--m3e-comp-time-picker-focus-ring-color);
+    outline-offset: var(--m3e-comp-time-picker-focus-ring-offset);
+  }
+
+  .m3e-time-picker__input-mode {
+    align-items: flex-start;
+    display: flex;
+    flex-direction: row;
+    gap: var(--m3e-comp-time-picker-period-gap);
+    inline-size: fit-content;
+    padding-block-end: var(--m3e-comp-time-picker-input-bottom-padding);
+  }
+
+  .m3e-time-picker__input-fields {
+    align-items: flex-start;
+    direction: ltr;
+    justify-content: center;
+  }
+
+  .m3e-time-picker__time-field {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: var(--m3e-comp-time-picker-support-label-offset);
+    inline-size: var(--m3e-comp-time-picker-time-field-width);
+    min-inline-size: var(--m3e-comp-time-picker-time-field-width);
+  }
+
+  .m3e-time-picker__time-field-input {
+    appearance: none;
+    background-color: var(--m3e-comp-time-picker-time-field-color);
+    border: 0;
+    border-radius: var(--m3e-comp-time-picker-time-field-shape);
+    block-size: var(--m3e-comp-time-picker-time-field-height);
+    box-sizing: border-box;
+    color: var(--m3e-comp-time-picker-time-field-label-color);
+    font-family: var(--m3e-sys-typescale-baseline-display-medium-font-family);
+    font-size: var(--m3e-sys-typescale-baseline-display-medium-font-size);
+    font-weight: var(--m3e-sys-typescale-baseline-display-medium-font-weight);
+    inline-size: var(--m3e-comp-time-picker-time-field-width);
+    letter-spacing: var(--m3e-sys-typescale-baseline-display-medium-letter-spacing);
+    line-height: var(--m3e-sys-typescale-baseline-display-medium-line-height);
+    min-block-size: var(--m3e-comp-time-picker-time-field-height);
+    min-inline-size: var(--m3e-comp-time-picker-time-field-width);
+    outline: 0;
+    padding: 0;
+    text-align: center;
+  }
+
+  .m3e-time-picker__time-field-input:focus-visible {
+    background-color: var(--m3e-comp-time-picker-time-field-focus-color);
+    color: var(--m3e-comp-time-picker-time-field-focus-label-color);
+    outline: var(--m3e-comp-time-picker-focus-ring-width) solid
+      var(--m3e-comp-time-picker-focus-ring-color);
+    outline-offset: var(--m3e-comp-time-picker-focus-ring-offset);
+  }
+
+  .m3e-time-picker__time-field-input:disabled {
+    opacity: var(--m3e-comp-time-picker-disabled-opacity);
+  }
+
+  .m3e-time-picker__time-field-input[aria-invalid="true"] {
+    color: var(--m3e-comp-time-picker-error-color);
+  }
+
+  .m3e-time-picker__time-field-label {
+    color: var(--m3e-comp-time-picker-time-field-supporting-color);
+    font-family: var(--m3e-sys-typescale-baseline-body-small-font-family);
+    font-size: var(--m3e-sys-typescale-baseline-body-small-font-size);
+    font-weight: var(--m3e-sys-typescale-baseline-body-small-font-weight);
+    letter-spacing: var(--m3e-sys-typescale-baseline-body-small-letter-spacing);
+    line-height: var(--m3e-sys-typescale-baseline-body-small-line-height);
+  }
+
+  .m3e-time-picker__input-mode > .m3e-time-picker__period {
+    block-size: var(--m3e-comp-time-picker-input-period-height);
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(2, minmax(0, 1fr));
+    inline-size: var(--m3e-comp-time-picker-input-period-width);
+  }
+
+  .m3e-time-picker__input-mode .m3e-time-picker__period-option {
+    --m3e-comp-button-small-container-height: calc(
+      var(--m3e-comp-time-picker-input-period-height) / 2
+    );
+
+    block-size: 100%;
+    min-block-size: 0;
+  }
+
+  .m3e-time-picker__input-mode
+    .m3e-time-picker__period-option
+    + .m3e-time-picker__period-option {
+    border-block-start: var(--m3e-comp-time-picker-period-outline-width) solid
+      var(--m3e-comp-time-picker-period-outline-color);
+    border-inline-start: 0;
+  }
+
+  .m3e-time-picker__panel-footer {
+    align-items: center;
+    color: var(--m3e-comp-time-picker-error-color);
+    display: flex;
+    font-family: var(--m3e-sys-typescale-baseline-body-small-font-family);
+    font-size: var(--m3e-sys-typescale-baseline-body-small-font-size);
+    inline-size: 100%;
+    justify-content: space-between;
+    line-height: var(--m3e-sys-typescale-baseline-body-small-line-height);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .m3e-time-picker__dial-option,
+    .m3e-time-picker__selector-track {
+      transition: none;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .m3e-time-picker__docked,
+    .m3e-time-picker__dial,
+    .m3e-time-picker__period {
+      background: Canvas;
+      border-color: CanvasText;
+      box-shadow: none;
+      color: CanvasText;
+      forced-color-adjust: none;
+    }
+
+    .m3e-time-picker__selector-center,
+    .m3e-time-picker__selector-track {
+      background: Highlight;
+    }
+
+    .m3e-time-picker__dial-option[aria-checked="true"] {
+      --m3e-comp-button-tonal-container-color: Highlight;
+      --m3e-comp-button-tonal-content-color: HighlightText;
+    }
+
+    .m3e-time-picker__dial-option:disabled {
+      --m3e-comp-button-tonal-content-color: GrayText;
+    }
+  }
+}

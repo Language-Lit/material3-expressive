@@ -63,6 +63,13 @@ built from this repository — see [`site/`](site/README.md).
 The supported-component matrix is generated from the machine-readable inventory.
 Only entries marked `conformant` are part of the advertised support surface.
 
+T66 currently stages the [date-picker family](docs/components/DatePicker.md),
+[time picker](docs/components/TimePicker.md), and
+[civil date-time composition](docs/components/DateTimePicker.md) as
+`experimental`. Their public APIs and examples are available for task
+verification, but they do not enter the advertised support count until the
+aggregate and real-browser promotion gates pass.
+
 ## Upgrading from 0.3
 
 `1.0.0` replaces the 0.3 API entirely. The Tailwind preset, the

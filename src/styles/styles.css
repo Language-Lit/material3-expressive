@@ -10,6 +10,8 @@
 @import '../components/Chip/Chip.css';
 @import '../components/Checkbox/Checkbox.css';
 @import '../components/CircularProgress/CircularProgress.css';
+@import '../components/DatePicker/DatePicker.css';
+@import '../components/DateTimePicker/DateTimePicker.css';
 @import '../components/Dialog/Dialog.css';
 @import '../components/Divider/Divider.css';
 @import '../components/FabMenu/FabMenu.css';
@@ -38,6 +40,7 @@
 @import '../components/Text/Text.css';
 @import '../components/TextArea/TextArea.css';
 @import '../components/TextField/TextField.css';
+@import '../components/TimePicker/TimePicker.css';
 @import '../components/Tooltip/Tooltip.css';
 @import '../components/WavyProgress/WavyProgress.css';
 

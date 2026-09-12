@@ -18,7 +18,9 @@ import { CarouselExample } from '../examples/Carousel.example'
 import { ChipExample } from '../examples/Chip.example'
 import { CheckboxExample } from '../examples/Checkbox.example'
 import { CircularProgressExample } from '../examples/CircularProgress.example'
+import { DatePickerExample } from '../examples/DatePicker.example'
 import { DialogExample } from '../examples/Dialog.example'
+import { DateTimePickerExample } from '../examples/DateTimePicker.example'
 import { DividerExample } from '../examples/Divider.example'
 import { FabMenuExample } from '../examples/FabMenu.example'
 import { FloatingActionButtonExample } from '../examples/FloatingActionButton.example'
@@ -46,6 +48,7 @@ import { TabsExample } from '../examples/Tabs.example'
 import { TextExample } from '../examples/Text.example'
 import { TextAreaExample } from '../examples/TextArea.example'
 import { TextFieldExample } from '../examples/TextField.example'
+import { TimePickerExample } from '../examples/TimePicker.example'
 import { TooltipExample } from '../examples/Tooltip.example'
 import { WavyProgressExample } from '../examples/WavyProgress.example'
 import './playground.css'
@@ -107,9 +110,12 @@ createRoot(root).render(
         <SwitchExample />
         <SliderExample />
         <TextFieldExample />
+        <TimePickerExample />
         <TextAreaExample />
         <SegmentedButtonGroupExample />
+        <DatePickerExample />
         <DialogExample />
+        <DateTimePickerExample />
         <MenuExample />
         <SelectExample />
         <TooltipExample />

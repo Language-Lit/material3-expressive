@@ -6,6 +6,21 @@
   font-family: system-ui, sans-serif;
 }
 
+.date-time-picker-example {
+  display: grid;
+  gap: 1rem;
+  margin-block-start: 2rem;
+  padding: clamp(0.5rem, 4vw, 1.5rem);
+}
+
+.date-picker-example,
+.time-picker-example {
+  display: grid;
+  gap: 1rem;
+  margin-block-start: 2rem;
+  padding: clamp(0.5rem, 4vw, 1.5rem);
+}
+
 .surface-example {
   margin-block-start: 2rem;
   padding: 1.5rem;

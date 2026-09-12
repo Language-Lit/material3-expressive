@@ -1,0 +1,380 @@
+@layer m3e.components {
+  .m3e-date-picker {
+    position: relative;
+  }
+
+  .m3e-date-picker__form-control {
+    block-size: var(--m3e-comp-date-picker-form-control-size);
+    clip-path: inset(50%);
+    inline-size: var(--m3e-comp-date-picker-form-control-size);
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+  }
+
+  .m3e-date-picker__popover,
+  .m3e-date-picker__dialog {
+    --m3e-comp-dialog-container-color: var(--m3e-comp-date-picker-container-color);
+    --m3e-comp-dialog-container-shape: var(--m3e-comp-date-picker-container-shape);
+    --m3e-comp-dialog-container-shadow: var(--m3e-comp-date-picker-container-shadow);
+    --m3e-comp-dialog-container-padding: var(--m3e-comp-date-picker-container-padding);
+    --m3e-comp-dialog-container-viewport-margin: var(--m3e-comp-date-picker-container-viewport-margin);
+    --m3e-comp-dialog-container-max-width: var(--m3e-comp-date-picker-container-width);
+    --m3e-comp-dialog-container-min-width: min(
+      var(--m3e-comp-date-picker-container-width),
+      calc(100vw - var(--m3e-comp-dialog-container-viewport-margin) * 2)
+    );
+    --m3e-comp-dialog-container-max-width: var(--m3e-comp-date-picker-container-width);
+
+    background: var(--m3e-comp-date-picker-container-color);
+    border-radius: var(--m3e-comp-date-picker-container-shape);
+    box-shadow: var(--m3e-comp-date-picker-container-shadow);
+    box-sizing: border-box;
+    color: var(--m3e-comp-date-picker-date-label-color);
+    inline-size: min(
+      var(--m3e-comp-date-picker-container-width),
+      calc(100vw - var(--m3e-comp-date-picker-container-viewport-margin) * 2)
+    );
+    max-block-size: min(
+      var(--m3e-comp-date-picker-container-max-height),
+      calc(100vh - var(--m3e-comp-date-picker-container-viewport-margin) * 2)
+    );
+  }
+
+  .m3e-date-picker__popover {
+    opacity: 0;
+    overflow: auto;
+    transition: opacity var(--m3e-sys-motion-expressive-fast-effects-duration)
+      var(--m3e-sys-motion-expressive-fast-effects-easing);
+    z-index: 1000;
+  }
+
+  .m3e-date-picker__popover[data-m3e-open="true"] {
+    opacity: 1;
+  }
+
+  .m3e-date-picker__popover > .m3e-date-picker__panel {
+    transform: scale(0.8);
+    transform-origin: top center;
+    transition: transform var(--m3e-sys-motion-expressive-fast-spatial-duration)
+      var(--m3e-sys-motion-expressive-fast-spatial-easing);
+  }
+
+  .m3e-date-picker__popover[data-m3e-open="true"] > .m3e-date-picker__panel {
+    transform: scale(1);
+  }
+
+  .m3e-date-picker__dialog .m3e-dialog__title {
+    box-sizing: border-box;
+    color: var(--m3e-comp-date-picker-header-supporting-color);
+    font-family: var(--m3e-sys-typescale-baseline-label-large-font-family);
+    font-size: var(--m3e-sys-typescale-baseline-label-large-font-size);
+    font-weight: var(--m3e-sys-typescale-baseline-label-large-font-weight);
+    letter-spacing: var(--m3e-sys-typescale-baseline-label-large-letter-spacing);
+    line-height: var(--m3e-sys-typescale-baseline-label-large-line-height);
+    margin: 0;
+    padding-block: var(--m3e-comp-date-picker-header-block-padding) 0;
+    padding-inline: var(--m3e-comp-date-picker-header-horizontal-padding);
+  }
+
+  .m3e-date-picker__dialog .m3e-dialog__title:not(:last-child),
+  .m3e-date-picker__dialog .m3e-dialog__content:not(:last-child) {
+    margin-block-end: 0;
+  }
+
+  .m3e-date-picker__dialog .m3e-dialog__actions {
+    padding-block: var(--m3e-comp-date-picker-header-block-padding);
+    padding-inline: var(--m3e-comp-date-picker-header-horizontal-padding);
+  }
+
+  .m3e-date-picker__panel {
+    inline-size: 100%;
+  }
+
+  .m3e-date-picker__header {
+    align-items: flex-end;
+    box-sizing: border-box;
+    color: var(--m3e-comp-date-picker-header-headline-color);
+    display: flex;
+    justify-content: space-between;
+    min-block-size: var(--m3e-comp-date-picker-header-min-height);
+    padding-block: var(--m3e-comp-date-picker-header-block-padding);
+    padding-inline: var(--m3e-comp-date-picker-header-horizontal-padding);
+  }
+
+  .m3e-date-picker__headline {
+    font-family: var(--m3e-sys-typescale-baseline-headline-large-font-family);
+    font-size: var(--m3e-sys-typescale-baseline-headline-large-font-size);
+    font-weight: var(--m3e-sys-typescale-baseline-headline-large-font-weight);
+    letter-spacing: var(--m3e-sys-typescale-baseline-headline-large-letter-spacing);
+    line-height: var(--m3e-sys-typescale-baseline-headline-large-line-height);
+    min-inline-size: 0;
+  }
+
+  .m3e-date-range-picker .m3e-date-picker__headline {
+    font-family: var(--m3e-sys-typescale-baseline-title-large-font-family);
+    font-size: var(--m3e-sys-typescale-baseline-title-large-font-size);
+    font-weight: var(--m3e-sys-typescale-baseline-title-large-font-weight);
+    letter-spacing: var(--m3e-sys-typescale-baseline-title-large-letter-spacing);
+    line-height: var(--m3e-sys-typescale-baseline-title-large-line-height);
+  }
+
+  .m3e-date-range-picker .m3e-date-picker__header {
+    min-block-size: var(--m3e-comp-date-picker-range-header-min-height);
+  }
+
+  .m3e-date-picker__navigation {
+    align-items: center;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    min-block-size: var(--m3e-comp-date-picker-navigation-height);
+    padding-inline: var(--m3e-comp-date-picker-calendar-horizontal-padding);
+  }
+
+  .m3e-date-picker__navigation > .m3e-button {
+    justify-self: center;
+    min-inline-size: 0;
+  }
+
+  .m3e-date-picker__grid {
+    padding-block-end: var(--m3e-comp-date-picker-calendar-horizontal-padding);
+    padding-inline: var(--m3e-comp-date-picker-calendar-horizontal-padding);
+  }
+
+  .m3e-date-picker__weekdays,
+  .m3e-date-picker__week {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(var(--m3e-comp-date-picker-date-container-width), 1fr));
+  }
+
+  .m3e-date-picker__weekdays > [role="columnheader"],
+  .m3e-date-picker__day-cell {
+    align-items: center;
+    block-size: var(--m3e-comp-date-picker-minimum-interactive-target);
+    display: flex;
+    justify-content: center;
+    min-inline-size: var(--m3e-comp-date-picker-minimum-interactive-target);
+  }
+
+  .m3e-date-picker__day-cell {
+    position: relative;
+  }
+
+  .m3e-date-picker__weekdays > [role="columnheader"] {
+    color: var(--m3e-comp-date-picker-weekday-label-color);
+    font-family: var(--m3e-sys-typescale-baseline-body-large-font-family);
+    font-size: var(--m3e-sys-typescale-baseline-body-large-font-size);
+    font-weight: var(--m3e-sys-typescale-baseline-body-large-font-weight);
+    letter-spacing: var(--m3e-sys-typescale-baseline-body-large-letter-spacing);
+    line-height: var(--m3e-sys-typescale-baseline-body-large-line-height);
+  }
+
+  .m3e-date-picker__day-cell[data-m3e-in-range="true"],
+  .m3e-date-picker__day-cell[data-m3e-range-start="true"],
+  .m3e-date-picker__day-cell[data-m3e-range-end="true"] {
+    color: var(--m3e-comp-date-picker-date-in-range-label-color);
+  }
+
+  .m3e-date-picker__day-cell[data-m3e-in-range="true"]::before,
+  .m3e-date-picker__day-cell[data-m3e-range-start="true"]:not([data-m3e-range-end="true"])::before,
+  .m3e-date-picker__day-cell[data-m3e-range-end="true"]:not([data-m3e-range-start="true"])::before {
+    background: var(--m3e-comp-date-picker-date-in-range-container-color);
+    block-size: var(--m3e-comp-date-picker-date-container-height);
+    content: '';
+    inset-block-start: 50%;
+    position: absolute;
+    transform: translateY(-50%);
+  }
+
+  .m3e-date-picker__day-cell[data-m3e-in-range="true"]::before {
+    inset-inline: 0;
+  }
+
+  .m3e-date-picker__day-cell[data-m3e-range-start="true"]:not([data-m3e-range-end="true"])::before {
+    inset-inline: 50% 0;
+  }
+
+  .m3e-date-picker__day-cell[data-m3e-range-end="true"]:not([data-m3e-range-start="true"])::before {
+    inset-inline: 0 50%;
+  }
+
+  .m3e-date-picker__days[data-m3e-range-months="true"] {
+    max-block-size: var(--m3e-comp-date-picker-range-month-list-max-height);
+    overflow-y: auto;
+    overscroll-behavior-block: contain;
+    position: relative;
+    scroll-snap-type: block proximity;
+  }
+
+  .m3e-date-picker__month[data-m3e-month] {
+    scroll-snap-align: start;
+  }
+
+  .m3e-date-picker__month-subhead {
+    align-items: center;
+    color: var(--m3e-comp-date-picker-range-month-subhead-color);
+    display: flex;
+    font-family: var(--m3e-sys-typescale-baseline-title-small-font-family);
+    font-size: var(--m3e-sys-typescale-baseline-title-small-font-size);
+    font-weight: var(--m3e-sys-typescale-baseline-title-small-font-weight);
+    letter-spacing: var(--m3e-sys-typescale-baseline-title-small-letter-spacing);
+    line-height: var(--m3e-sys-typescale-baseline-title-small-line-height);
+    min-block-size: var(--m3e-comp-date-picker-range-month-subhead-min-height);
+    padding-inline: var(--m3e-comp-date-picker-range-month-subhead-horizontal-padding);
+  }
+
+  .m3e-date-picker__day {
+    align-items: center;
+    appearance: none;
+    background: transparent;
+    block-size: var(--m3e-comp-date-picker-minimum-interactive-target);
+    border: 0;
+    border-radius: var(--m3e-comp-date-picker-date-container-shape);
+    box-sizing: border-box;
+    color: inherit;
+    cursor: pointer;
+    display: inline-flex;
+    font: inherit;
+    inline-size: var(--m3e-comp-date-picker-minimum-interactive-target);
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+    position: relative;
+  }
+
+  .m3e-date-picker__day::before {
+    background: var(--m3e-comp-date-picker-state-layer-color);
+    border-radius: inherit;
+    content: '';
+    block-size: var(--m3e-comp-date-picker-date-container-height);
+    inline-size: var(--m3e-comp-date-picker-date-container-width);
+    inset-block-start: 50%;
+    left: 50%;
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    transform: translate(-50%, -50%);
+  }
+
+  .m3e-date-picker__day:hover::before {
+    opacity: var(--m3e-sys-state-hover);
+  }
+
+  .m3e-date-picker__day:active::before {
+    opacity: var(--m3e-sys-state-pressed);
+  }
+
+  .m3e-date-picker__day:focus-visible {
+    outline: var(--m3e-comp-date-picker-focus-ring-width) solid var(--m3e-comp-date-picker-focus-ring-color);
+    outline-offset: var(--m3e-comp-date-picker-focus-ring-offset);
+  }
+
+  .m3e-date-picker__day-label {
+    align-items: center;
+    block-size: var(--m3e-comp-date-picker-date-container-height);
+    border-radius: var(--m3e-comp-date-picker-date-container-shape);
+    display: inline-flex;
+    inline-size: var(--m3e-comp-date-picker-date-container-width);
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .m3e-date-picker__day[data-m3e-selected="true"] .m3e-date-picker__day-label {
+    background: var(--m3e-comp-date-picker-date-selected-container-color);
+    color: var(--m3e-comp-date-picker-date-selected-label-color);
+  }
+
+  .m3e-date-picker__day[data-m3e-today="true"]:not([data-m3e-selected="true"]) .m3e-date-picker__day-label {
+    border: var(--m3e-comp-date-picker-date-today-outline-width) solid var(--m3e-comp-date-picker-date-today-outline-color);
+    color: var(--m3e-comp-date-picker-date-today-label-color);
+  }
+
+  .m3e-date-picker__day[data-m3e-disabled="true"] {
+    cursor: default;
+    opacity: var(--m3e-comp-date-picker-date-disabled-opacity);
+  }
+
+  .m3e-date-picker__years {
+    box-sizing: border-box;
+    max-block-size: calc(
+      var(--m3e-comp-date-picker-date-container-height) * 7
+    );
+    overflow: auto;
+    padding-block: var(--m3e-comp-date-picker-calendar-horizontal-padding);
+    padding-inline: var(--m3e-comp-date-picker-calendar-horizontal-padding);
+  }
+
+  .m3e-date-picker__year-row {
+    --m3e-comp-button-extra-small-container-height: var(--m3e-comp-date-picker-year-container-height);
+    --m3e-comp-button-minimum-width: var(--m3e-comp-date-picker-year-container-width);
+    --m3e-comp-button-filled-container-color: var(--m3e-comp-date-picker-year-selected-container-color);
+    --m3e-comp-button-filled-content-color: var(--m3e-comp-date-picker-year-selected-label-color);
+    --m3e-comp-button-text-content-color: var(--m3e-comp-date-picker-year-label-color);
+
+    display: grid;
+    grid-template-columns: repeat(3, minmax(var(--m3e-comp-date-picker-year-container-width), 1fr));
+  }
+
+  .m3e-date-picker__mode-content:has(.m3e-text-field) {
+    padding-block: var(--m3e-comp-date-picker-calendar-horizontal-padding);
+    padding-inline: var(--m3e-comp-date-picker-header-horizontal-padding);
+  }
+
+  .m3e-date-picker__range-inputs {
+    display: grid;
+    gap: var(--m3e-comp-date-picker-input-spacing);
+  }
+
+  @media (max-width: 359px) {
+    .m3e-date-picker__navigation,
+    .m3e-date-picker__grid {
+      padding-inline: var(--m3e-comp-date-picker-calendar-compact-horizontal-padding);
+    }
+
+    .m3e-date-picker__weekdays,
+    .m3e-date-picker__week {
+      grid-template-columns: repeat(7, minmax(var(--m3e-comp-date-picker-date-container-width), 1fr));
+    }
+
+    .m3e-date-picker__weekdays > [role="columnheader"],
+    .m3e-date-picker__day-cell {
+      block-size: var(--m3e-comp-date-picker-compact-interactive-target);
+      min-inline-size: var(--m3e-comp-date-picker-compact-interactive-target);
+    }
+
+    .m3e-date-picker__day {
+      block-size: var(--m3e-comp-date-picker-compact-interactive-target);
+      inline-size: var(--m3e-comp-date-picker-compact-interactive-target);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .m3e-date-picker__popover,
+    .m3e-date-picker__popover > .m3e-date-picker__panel {
+      transition: none;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .m3e-date-picker__popover,
+    .m3e-date-picker__dialog {
+      background: Canvas;
+      border: var(--m3e-comp-date-picker-date-today-outline-width) solid CanvasText;
+      box-shadow: none;
+      color: CanvasText;
+      forced-color-adjust: none;
+    }
+
+    .m3e-date-picker__day[data-m3e-selected="true"] {
+      background: Highlight;
+      color: HighlightText;
+    }
+
+    .m3e-date-picker__day:focus-visible {
+      outline-color: Highlight;
+    }
+  }
+}

@@ -488,7 +488,10 @@ App bars row dispositioned to it. The Carousel family entered that scope under
 approved T48 and is now conformant across all six official layouts, and is the
 first family whose token provenance is partly the design specification because
 no generated token file exists upstream; the remaining listed families are still
-deferred. The complete future boundary, including every current
+deferred. The date and time picker families entered approved T66 with a civil
+date-time composition; their inventory status remains the support claim and can
+advance only after the task's complete interaction, browser, and source-ledger
+evidence passes. The complete future boundary, including every current
 official catalog family and composition recipes such as expanding lists, is the
 [Material catalog parity roadmap](MATERIAL_CATALOG_ROADMAP.md) governed by ADR
 0033. A roadmap entry is not a stable support claim. Changes to stable core
@@ -660,6 +663,7 @@ important design choice must be resolved at its boundary.
 | T58 | 1.2.1 patch release | The T56 `Tabs` scrolled-indicator/RTL/scroll-scope repair and the T57 `Carousel` stacking-isolation repair released together as `1.2.1`; no export, prop, token, or dependency change from `1.2.0` |
 | T59 | Switch painted a track wider than its hit surface | `.m3e-switch` sized its box at the 48px minimum interactive target while the track paints 52px, leaving 2px of visible track dead at each end for a bare (unlabelled) `Switch`. CSS `inline-size` is a clamp where `minimumInteractiveComponentSize()` is a per-axis `maxOf(placeable, 48dp)`, so the target is now `max(minimum-interactive-target, track-width)` × `max(minimum-interactive-target, track-height)` and measures the source's 52×48. Adds a general hit-containment gate to the rendering audit, since the existing target-size check measures whether a target is large enough and cannot see one that is large enough and in the wrong place |
 | T60 | 1.2.2 patch release | The T59 `Switch` hit-surface repair released as `1.2.2`; no export, prop, token, or dependency change from `1.2.1`. One rendered dimension moves: a `Switch` occupies the source's 52px of inline space instead of 48px |
+| T66 | Date and time picker families | `DatePicker`/`DateRangePicker` and `TimePicker` port the AndroidX calendar, input, dial, docked, and modal paths; `DateTimePicker` composes their public APIs into one strictly validated `YYYY-MM-DDTHH:mm` civil value with boundary-date time constraints, native form validity, and no implicit time-zone conversion (ADR 0044) |
 
 ## 15. Definition of project completion
 

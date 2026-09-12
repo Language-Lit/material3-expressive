@@ -61,6 +61,28 @@ const smallTargetExemptions = [
       'tokens per size tier, so it is spec geometry rather than a layout choice. 48px tall and at least ' +
       '32px wide, which clears WCAG 2.2 SC 2.5.8 (24px).',
   },
+  {
+    selector: 'm3e-time-picker__period-option',
+    reason:
+      'Pinned TimePicker/TimeInput tokens split 52x80 and 216x38 period containers into two items, ' +
+      'and the source measure policies constrain each item to half that fixed container. The resulting ' +
+      '40px vertical or 107x36px horizontal target clears WCAG 2.2 SC 2.5.8 (24px).',
+  },
+]
+
+/**
+ * Invisible form/validity proxies that deliberately do not overlay the painted
+ * component. Their visible sibling is the interaction target; the input exists
+ * only so native constraint validation, submission, and external `form`
+ * association remain available.
+ */
+const overlayContainmentExemptions = [
+  {
+    selector: 'm3e-date-picker__form-control',
+    reason:
+      'DatePicker uses a clipped, opacity-zero type=date input only as a native form and validity proxy; ' +
+      'the visible TextField trigger owns the complete click surface.',
+  },
 ]
 
 /*
@@ -378,6 +400,8 @@ if (uncovered.census.measured < 20) {
 // Switch was six identical lines. Report each distinct geometry once.
 const uncoveredSeen = new Set()
 for (const hit of uncovered.results) {
+  const exempt = overlayContainmentExemptions.find((entry) => hit.element.includes(entry.selector))
+  if (exempt) continue
   const key = `${hit.element}|${hit.target}|${hit.visual}`
   if (uncoveredSeen.has(key)) continue
   uncoveredSeen.add(key)

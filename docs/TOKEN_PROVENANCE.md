@@ -925,3 +925,30 @@ No state-layer opacity is registered: the specs page lists enabled, hover, focus
 pressed, and disabled for a carousel item without giving any of them a value, so
 the item paints the shared `--m3e-sys-state-*` opacities and only the layer's
 colour is a carousel role.
+
+## Date and time pickers (T66)
+
+The date-picker domain is pinned to AndroidX Material 3 revision
+`e8cac06846dd0164454bd44b77ed1c4e95ec7591`, accessed 2026-09-12. Its primary
+generated source is
+[`DatePickerModalTokens.kt`](https://android.googlesource.com/platform/frameworks/support/+/e8cac06846dd0164454bd44b77ed1c4e95ec7591/compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/DatePickerModalTokens.kt).
+`DatePicker` and `DateRangePicker` share this registration because they use the
+same calendar cells, header, year grid, input spacing, and popup container.
+Generated input-modal roles with no implementation read path remain accounted
+for in the executable date source ledger rather than being assigned to an
+unrelated web element.
+
+The time-picker domain is pinned to AndroidX Material 3 revision
+`8a0ee86845b2fb7c56fc5786971ecb687ad85527`, accessed 2026-09-12. Its primary
+implementation source is
+[`TimePicker.kt`](https://android.googlesource.com/platform/frameworks/support/+/8a0ee86845b2fb7c56fc5786971ecb687ad85527/compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/TimePicker.kt),
+with generated `TimePickerTokens` and `TimeInputTokens` contributing to one web
+domain. Direct implementation geometry such as the clock radii stays in the
+same attributable registration. The source's 24-hour dial places 00–11 on the
+outer ring and 12–23 on the inner ring; the web component retains that observed
+mapping.
+
+Both registrations identify web-only viewport, focus-ring, and hidden
+form-control values explicitly. `DateTimePicker` adds no third domain: it uses
+the date input-spacing role and delegates the remaining geometry and paint to
+its public children. ADR 0044 records the composition boundary.
