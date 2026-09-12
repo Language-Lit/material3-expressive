@@ -2,8 +2,9 @@
 
 ## T68 — Deploy current documentation site
 
-Status: active
+Status: complete
 Approved: 2026-09-12 (owner: "update it")
+Completed: 2026-09-12
 
 ### Scope and expected files
 
@@ -18,6 +19,23 @@ Record the deployment evidence here. Expected files: `site/package.json`,
 1. A clean site installation resolves without peer-dependency errors.
 2. `npm run site:build` succeeds and preserves the byte-verified A2UI catalog.
 3. The production deployment succeeds and serves the catalog as JSON.
+
+### Verification record
+
+- Published peer-only compatibility patches
+  `@language-lit/material3-expressive-ag-ui@0.2.2` and
+  `@language-lit/material3-expressive-mcp-apps@0.2.1`; together with A2UI
+  `0.2.1`, a clean site `npm ci` resolves core `1.3.0-rc.1` without peer errors.
+- `npm run verify` passed all 14 core gates (241 files / 1,735 tests), and the
+  site typecheck, production export, A2UI, AG-UI, and two-origin MCP Apps
+  browser audits passed. The MCP audit covers the fixed demo proxy, nested CSP,
+  explicit tool authorization, modes, themes, callbacks, and mobile layout.
+- Vercel production deployment `6407080461` completed successfully from commit
+  `e39b082`. A live Chromium run on `m3e.language-lit.com` initialized the
+  nested MCP app, rendered a forecast, and authorized its typed refresh call.
+- The live catalog responds `200` as `application/json`; its SHA-256 is
+  `fdc8fad8fac7d65169275698e3c1a1c60ca0f1105f4bb54137b76b82ae78faf3`,
+  exactly matching the committed and locally exported artifacts.
 
 
 ## T67 — 1.3.0 release candidate
