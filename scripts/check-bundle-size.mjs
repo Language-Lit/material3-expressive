@@ -6,6 +6,8 @@ import process from 'node:process'
 import { fileURLToPath } from 'node:url'
 import { gzipSync } from 'node:zlib'
 
+import { parseNpmJsonArray } from './parse-npm-json.mjs'
+
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const budgets = JSON.parse(readFileSync(path.join(root, 'docs/bundle-budgets.json'), 'utf8'))
 const temporaryRoot = mkdtempSync(path.join(os.tmpdir(), 'm3e-size-'))
@@ -80,7 +82,7 @@ try {
       env: { ...process.env, npm_config_cache: path.join(temporaryRoot, 'npm-cache') },
     },
   )
-  const [{ size }] = JSON.parse(output)
+  const [{ size }] = parseNpmJsonArray(output)
   reports.push(checkLimit('packed package', size, budgets.artifacts.packedPackage.maxBytes))
 
   if (errors.length > 0) {

@@ -13,6 +13,8 @@ import path from 'node:path'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
 
+import { parseNpmJsonArray } from './parse-npm-json.mjs'
+
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const temporaryRoot = mkdtempSync(path.join(os.tmpdir(), 'm3e-fixtures-'))
 const rootNodeModules = path.join(root, 'node_modules')
@@ -65,7 +67,7 @@ try {
       },
     },
   )
-  const packResult = JSON.parse(packOutput)[0]
+  const packResult = parseNpmJsonArray(packOutput)[0]
   const tarball = path.join(temporaryRoot, packResult.filename)
   const packedPaths = new Set(packResult.files.map((file) => file.path))
   const requiredPaths = [

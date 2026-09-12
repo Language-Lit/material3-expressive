@@ -5,6 +5,8 @@ import path from 'node:path'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
 
+import { parseNpmJsonArray } from './parse-npm-json.mjs'
+
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const releaseVersion = '1.3.0-rc.1'
 const rollbackVersion = '0.3.0'
@@ -31,14 +33,6 @@ function equal(left, right) {
 
 function fail(message) {
   errors.push(message)
-}
-
-function parseJsonArrayFromNoisyOutput(output) {
-  // npm 10 can forward `prepare` output before `npm pack --json` even when
-  // `--ignore-scripts --silent` is supplied. The machine-readable payload is
-  // still the final JSON array on stdout.
-  const match = /(?:^|\r?\n)(\[\s*\{[\s\S]*\]\s*)$/.exec(output)
-  return JSON.parse(match?.[1] ?? output)
 }
 
 const packageJson = JSON.parse(await read('package.json'))
@@ -128,7 +122,7 @@ const temporaryDirectory = await mkdtemp(path.join(os.tmpdir(), 'm3e-release-aud
 try {
   let packResult
   try {
-    packResult = parseJsonArrayFromNoisyOutput(execFileSync(
+    packResult = parseNpmJsonArray(execFileSync(
       'npm',
       ['pack', '--json', '--ignore-scripts', '--silent', '--pack-destination', temporaryDirectory],
       { cwd: root, encoding: 'utf8' },

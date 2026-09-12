@@ -17,9 +17,9 @@ task record. A clean checkout must run `npm run typecheck:playground` without a
 pre-existing local link, the release audit must pass with colored output enabled,
 and the pushed CI workflow must pass.
 
-The release checker treats the final JSON array as npm's machine-readable
-result because npm 10 may forward `prepare` output before it despite
-`--ignore-scripts --silent`.
+All three package-inspection gates treat the final JSON array as npm's
+machine-readable result because npm 10 may forward `prepare` output before it
+despite `--ignore-scripts --silent`.
 
 
 ## T68 — Deploy current documentation site
