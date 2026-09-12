@@ -1,5 +1,19 @@
 # Active v1 task
 
+## T69 — Clean-runner playground self-reference
+
+Status: active
+Approved: 2026-09-12 (owner requested that discovered sibling and delivery
+mistakes be corrected completely.)
+
+### Scope and acceptance
+
+Make the playground typecheck create the repository's documented public-package
+self-link before resolving examples. Expected files: `package.json` and this
+task record. A clean checkout must run `npm run typecheck:playground` without a
+pre-existing local link, and the pushed CI workflow must pass.
+
+
 ## T68 — Deploy current documentation site
 
 Status: complete

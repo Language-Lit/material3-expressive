@@ -44,6 +44,7 @@
     "playground:build": "vite build --config playground/vite.config.ts",
     "playground:preview": "vite preview --config playground/vite.config.ts --port 4173 --strictPort",
     "typecheck": "tsc --noEmit",
+    "pretypecheck:playground": "node scripts/link-self.mjs",
     "typecheck:playground": "tsc --noEmit -p playground",
     "test": "vitest --run",
     "check:architecture": "node scripts/check-architecture.mjs",
