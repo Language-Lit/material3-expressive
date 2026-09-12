@@ -1,0 +1,15 @@
+{
+  "artifact": "site/public/a2ui/catalogs/material3/catalog.json",
+  "route": "/a2ui/catalogs/material3/catalog.json",
+  "catalogId": "https://m3e.language-lit.com/a2ui/catalogs/material3/catalog.json",
+  "bytes": 69596,
+  "sha256": "fdc8fad8fac7d65169275698e3c1a1c60ca0f1105f4bb54137b76b82ae78faf3",
+  "source": {
+    "repository": "https://github.com/Language-Lit/material3-expressive-a2ui.git",
+    "revision": "38af67e68f83e02dd8f78b77829ab2ba42a65973",
+    "artifact": "public/a2ui/catalogs/material3/catalog.json",
+    "generator": "scripts/generate-material-catalog.mjs",
+    "generationCommand": "npm ci && npm run catalog:generate"
+  },
+  "syncCommand": "npm run generate:site-a2ui-catalog -- --source /path/to/material3-expressive-a2ui"
+}

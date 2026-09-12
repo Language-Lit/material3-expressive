@@ -31,6 +31,16 @@ packed tarball of the sibling repository. Since the `0.1.0` release on
 2026-09-12 the dependency pins the registry version. The site checks
 recognize the package by name, so that switch needed no other change.
 
+T66 hosts the companion's generated Material catalog at its declared ID,
+`https://m3e.language-lit.com/a2ui/catalogs/material3/catalog.json`. The site
+commits an exact byte copy beside a provenance manifest containing the source
+repository, artifact-producing revision, generator, byte count, and SHA-256
+digest. A deterministic sync command accepts an explicit companion checkout
+only when updating the artifact and refuses source bytes that are not committed
+at the recorded revision. The ordinary site check validates the committed copy
+and manifest without a sibling checkout or network access; Next's static export
+copies the route unchanged.
+
 The companion is not a core component or a core conformance claim. It stays
 out of the core inventory, export map, dependencies, and packed artifact. All
 other ADR 0028 constraints remain in force.
@@ -47,3 +57,7 @@ navigation section, docs index section, search entries, sitemap entries, and
 machine-readable listings. Their examples follow the published companion's
 types. They document the integration without adding its components to the
 core conformance inventory.
+
+The hosted catalog remains a site artifact. It adds no package export or
+runtime dependency, and clean verification, build, and deployment do not
+depend on the companion repository being adjacent on disk.

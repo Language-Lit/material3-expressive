@@ -3,6 +3,7 @@ import path from 'node:path'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
 import { buildRegistrySource, registryPath } from './generate-site-demos.mjs'
+import { verifyA2uiCatalog } from './sync-a2ui-catalog.mjs'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const siteRoot = path.join(root, 'site')
@@ -41,6 +42,10 @@ const conformant = inventory.components
   .filter((component) => component.status === 'conformant')
   .map((component) => component.name)
   .sort((left, right) => left.localeCompare(right))
+const experimental = inventory.components
+  .filter((component) => component.status === 'experimental')
+  .map((component) => component.name)
+  .sort((left, right) => left.localeCompare(right))
 
 // ---------------------------------------------------------------------------
 // 1. The site presents exactly the conformant surface, and never more.
@@ -59,6 +64,8 @@ for (const name of conformant) {
 
 // ---------------------------------------------------------------------------
 // 2. Every conformant component has a demo, or a recorded reason it cannot.
+// Experimental examples may remain in the source playground while promotion
+// evidence is gathered; the generated site registry still filters them out.
 // ---------------------------------------------------------------------------
 
 const exampleNames = (await readdir(examplesRoot))
@@ -66,10 +73,10 @@ const exampleNames = (await readdir(examplesRoot))
   .map((entry) => entry.replace('.example.tsx', ''))
 
 for (const name of exampleNames) {
-  if (!conformant.includes(name)) {
+  if (!conformant.includes(name) && !experimental.includes(name)) {
     errors.push(
-      `playground/examples/${name}.example.tsx has no conformant inventory entry; ` +
-        'the site would render a demo for a component it does not advertise',
+      `playground/examples/${name}.example.tsx has neither a conformant nor experimental ` +
+        'inventory entry',
     )
   }
 }
@@ -241,7 +248,17 @@ if (!(await exists(fontManifestPath))) {
 }
 
 // ---------------------------------------------------------------------------
-// 6. The site is not a dependency of the library; UI dependencies are explicit.
+// 6. The hosted A2UI catalog matches its checked-in source provenance.
+// ---------------------------------------------------------------------------
+
+try {
+  await verifyA2uiCatalog()
+} catch (error) {
+  errors.push(error instanceof Error ? error.message : String(error))
+}
+
+// ---------------------------------------------------------------------------
+// 7. The site is not a dependency of the library; UI dependencies are explicit.
 // ---------------------------------------------------------------------------
 
 const libraryTrees = ['src', 'tests', 'playground']
@@ -308,5 +325,7 @@ if (errors.length > 0) {
 
 process.stdout.write(
   `Site checks passed: ${conformant.length} conformant components, ` +
-    `${exampleNames.length} demos, export map respected\n`,
+    `${conformant.filter((name) => exampleNames.includes(name)).length} site demos, ` +
+    `${experimental.filter((name) => exampleNames.includes(name)).length} experimental ` +
+    'playground examples, export map respected\n',
 )

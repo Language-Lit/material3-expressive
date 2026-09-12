@@ -58,6 +58,7 @@
     "check:site": "node scripts/check-site.mjs",
     "generate:site-demos": "node scripts/generate-site-demos.mjs",
     "generate:site-symbols": "node scripts/fetch-symbols-font.mjs",
+    "generate:site-a2ui-catalog": "node scripts/sync-a2ui-catalog.mjs",
     "site:dev": "npm --prefix site run dev",
     "site:build": "npm --prefix site run build",
     "submit:indexnow": "node scripts/submit-indexnow.mjs",
