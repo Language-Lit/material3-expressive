@@ -251,6 +251,73 @@ a:hover {
   display: none;
 }
 
+/* The repository link is an anchor, so it cannot be an `IconButton` — the
+   component renders a native `<button>` by contract. Its metrics are borrowed
+   from the small icon button beside it instead: a 48px interactive target
+   holding a 40px round state layer, drawn as a pseudo-element so the shape
+   stays centred on the icon and lines up with Search and Theme rather than
+   sitting flush against the gutter.
+
+   Reusing `.sidebar__link` here is what broke it: that class is sized for text
+   and its 0.75rem inline padding left a 16px content box, too narrow for the
+   24px symbol. Chrome resolves that overflow towards the end edge rather than
+   centring it, so the icon sat 4px right of the hover circle. */
+.bar__icon-link {
+  display: grid;
+  place-items: center;
+  padding: 0;
+  inline-size: var(--m3e-comp-icon-button-minimum-interactive-target);
+  block-size: var(--m3e-comp-icon-button-minimum-interactive-target);
+  flex: none;
+  color: var(--m3e-sys-color-on-surface-variant);
+  text-decoration: none;
+}
+
+.bar__icon-link::before {
+  content: '';
+  grid-area: 1 / 1;
+  inline-size: var(--m3e-comp-icon-button-small-container-width-uniform);
+  block-size: var(--m3e-comp-icon-button-small-container-height);
+  border-radius: var(--m3e-comp-icon-button-small-container-shape-round);
+  background: transparent;
+  transition: background-color var(--m3e-sys-motion-expressive-default-effects-duration)
+    var(--m3e-sys-motion-expressive-default-effects-easing);
+}
+
+.bar__icon-link > * {
+  grid-area: 1 / 1;
+}
+
+.bar__icon-link:hover {
+  color: var(--m3e-sys-color-on-surface);
+}
+
+.bar__icon-link:hover::before {
+  background: color-mix(
+    in srgb,
+    var(--m3e-sys-color-on-surface) calc(var(--m3e-sys-state-hover) * 100%),
+    transparent
+  );
+}
+
+/* The ring belongs on the 40px shape, not on the 48px target around it — the
+   same place `IconButton` draws its own, so a keyboard walk across the bar
+   traces one consistent outline. */
+.bar__icon-link:focus-visible {
+  outline: none;
+}
+
+.bar__icon-link:focus-visible::before {
+  background: color-mix(
+    in srgb,
+    var(--m3e-sys-color-on-surface) calc(var(--m3e-sys-state-focus) * 100%),
+    transparent
+  );
+  outline: var(--m3e-comp-icon-button-focus-ring-width) solid
+    var(--m3e-comp-icon-button-focus-ring-color);
+  outline-offset: var(--m3e-comp-icon-button-focus-ring-offset);
+}
+
 /* A grouping wrapper that must not become a layout box: its children are
    direct participants in the bar's flex row. Declared here rather than inline
    so the media query below can still take it out of the flow. */

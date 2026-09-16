@@ -58,14 +58,17 @@ export function SiteBar({
         <ThemeControls />
         {/* A link is an anchor. `IconButton` renders a native `<button>` by
             contract and deliberately offers no link mode, so navigation uses
-            the platform element instead of a button that fakes one. */}
+            the platform element instead of a button that fakes one.
+
+            `bar__icon-link` carries the icon-button metrics: `sidebar__link` is
+            sized for text, and its inline padding pushed this symbol off the
+            centre of its own hover shape. */}
         <a
-          className="sidebar__link"
+          className="bar__icon-link"
           href={repositoryUrl}
           target="_blank"
           rel="noreferrer"
           aria-label="Open the repository on GitHub"
-          style={{ display: 'grid', placeItems: 'center', inlineSize: '2.5rem', blockSize: '2.5rem' }}
         >
           <Icon source="code" />
         </a>
