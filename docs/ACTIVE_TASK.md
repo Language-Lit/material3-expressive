@@ -1,5 +1,153 @@
 # Active v1 task
 
+## T73 — Draggable color area without screen sampling
+
+Status: active
+Approved: 2026-09-16 (owner requested the familiar draggable color selector,
+retaining the outer button and dialog style, and explicitly requested no tests.)
+
+### Scope and acceptance
+
+Replace RGB sliders with a saturation/brightness drag area and rainbow hue
+slider. Keep hex entry, preview, Apply/Cancel, presets, and local drafts; expose
+no eyedropper. Support pointer capture, touch, and keyboard adjustment.
+Expected files: `site/ui/SourceColorSwatches.tsx`,
+`site/theme/color-selection.ts`, `site/app/globals.css`, and this record.
+Owner will visually review the implementation. Do not run tests or builds for
+this iteration, per the owner's explicit instruction.
+
+### Implementation record
+
+The gradient drag area and rainbow hue slider are implemented, with pointer
+capture, touch handling, keyboard adjustments, and synchronized hex/preview.
+The outer button, dialog, and Apply/Cancel behavior remain. No tests or builds
+were run; visual acceptance and updating the previous RGB audit are deferred
+until owner review.
+
+## T72 — Restore custom color selection without the eyedropper
+
+Status: complete
+Completed: 2026-09-16
+Approved: 2026-09-16 (owner clarified that only the screen-sampling eyedropper
+causes the freeze and confirmed that normal color selection should remain.)
+
+### Scope and acceptance
+
+Restore a custom-color control alongside the six presets in both locations.
+Use an in-page dialog with RGB sliders, a preview, hex entry, and Apply/Cancel
+so the browser-owned eyedropper cannot open. Draft edits stay local until Apply.
+Expected files: `site/ui/SourceColorSwatches.tsx`, `site/app/globals.css`,
+`site/scripts/audit-theme-picker.mjs`, and this record.
+Check valid/invalid hex, slider pointer/keyboard behavior, draft isolation,
+Apply/Cancel/Escape, nested-dialog focus, presets, Reset, persistence, and narrow
+light/dark layouts in Chromium. Run site typecheck/build, `npm run verify`, and
+the rendering audit for the added control geometry.
+
+### Verification record
+
+- Both source-color rows retain six presets and now open an in-page custom
+  color dialog using public `Dialog`, `Slider`, and `TextField` components.
+  RGB channels and validated six-digit hex entry update only a local preview;
+  Apply saves once, while Cancel and Escape discard drafts. No native color
+  input or screen-sampling API is used.
+- The native input's UI is browser/platform-owned, as documented by
+  [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/color)
+  (accessed 2026-09-16). Page-owned controls avoid exposing that panel's
+  eyedropper while retaining arbitrary color selection.
+- The production Chromium audit passed for both locations: actual pointer
+  drags, one-unit keyboard channel changes, valid/invalid hex, unchanged theme
+  tokens during edits, single Apply persistence, Cancel/Escape, reopening,
+  nested-dialog focus restoration, presets, Reset, modes, and stored preferences.
+  A guarded EyeDropper constructor was never invoked, and no native color
+  input exists in the rendered page.
+- Desktop and 320px light/dark screenshots were inspected. The hex field uses
+  a scoped public minimum-width token override so it fits narrow dialogs.
+- Site typecheck, final site production build, all 14 `npm run verify` gates
+  (241 files / 1,735 tests), and `npm run audit:rendering` passed.
+
+## T71 — Remove the native website color picker
+
+Status: complete
+Completed: 2026-09-16
+Approved: 2026-09-16 (owner reported another computer freeze after T70 and
+requested removal of the color picker.)
+
+### Scope and acceptance
+
+Remove the native custom-color input from both website locations and its unused
+styles. Keep preset colors, Reset, color modes, and saved preferences. Expected
+files: `site/ui/SourceColorSwatches.tsx`, `site/app/globals.css`, a comment in
+`site/app/providers.tsx`, `site/scripts/audit-theme-picker.mjs`, and this record.
+Regenerate `site/public/fonts/` with `npm run generate:site-symbols` to remove
+the unused picker icon, as required by the site gate.
+The production-site browser audit must confirm no native color input exists and
+exercise both preset rows, keyboard selection, Reset, modes, and persistence.
+Run site typecheck/build and `npm run verify`.
+
+### Verification record
+
+- Superseded by T72: the owner clarified that removing custom color selection
+  was too broad; only the screen-sampling eyedropper should be removed.
+- Removed the native color input, its listeners, and its dedicated styles from
+  the shared control; both locations now render only six preset buttons.
+- The production Chromium audit passed: no native color input exists, both rows
+  synchronize through all presets, keyboard activation works, and Reset,
+  light/dark mode, reload persistence, and previously saved custom colors work.
+- Site typecheck and the final production build passed. `npm run verify` passed
+  its first 13 gates (241 test files / 1,735 tests) and caught an unused
+  `colorize` glyph at the final site gate. After regenerating all three icon-font
+  subsets with the documented generator, `npm run check:site` passed as well.
+
+## T70 — Documentation color picker responsiveness
+
+Status: complete
+Completed: 2026-09-16
+Approved: 2026-09-16 (owner requested a fix for the website color picker freezing
+the computer.)
+
+### Scope and expected files
+
+Keep native color-picker drafts local and apply the site theme only on a
+committed selection. Preserve both shared picker locations, presets, Reset,
+color modes, and persisted preferences. Expected files:
+`site/ui/SourceColorSwatches.tsx`, comments in `site/app/providers.tsx`,
+`site/scripts/audit-theme-picker.mjs`, `site/package.json`, and this record.
+
+### Acceptance checks
+
+1. A sustained burst of native color `input` events causes no site-theme writes;
+   native `change` applies and persists the final value once.
+2. Both picker locations synchronize; presets, Reset, repeated selection,
+   cancelled drafts, light/dark mode, and persisted reloads still work.
+3. The production-site browser regression audit, site typecheck, site build,
+   and `npm run verify` pass.
+
+### Verification record
+
+- Follow-up: the owner still experienced a computer freeze. The DOM-event
+  checks below did not establish that the native OS panel was safe; T71 removes
+  that control rather than relying on these checks as proof of a fix.
+- Removed the shared swatch control's 60 ms throttle and React `onChange`
+  subscription. A native `change` listener commits the selection, ignores
+  duplicates, and cleans up on unmount. The uncontrolled input owns drafts;
+  source changes synchronize both copies and reopening starts from the applied
+  color. There is no delayed work left to overwrite presets or Reset.
+- This follows the distinction between React's immediate
+  [input `onChange`](https://react.dev/reference/react-dom/components/input)
+  and the browser's committed
+  [color `change` event](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/color)
+  (accessed 2026-09-16).
+- `npm --prefix site run test:theme-picker` passed against the production
+  export in Chromium: 80 draft events per location produced zero preference
+  writes and no provider-style changes. Each final selection persisted once;
+  duplicate commits, synchronized inputs, cancelled drafts, presets, Reset,
+  light/dark mode, and reload persistence passed. The audit dispatches native
+  DOM events; it does not automate the operating system's color panel.
+- `npm --prefix site run typecheck` and `npm run site:build` passed.
+  `npm run verify` passed all 14 gates, including 241 test files / 1,735 tests
+  and both packed consumer builds. The site build required font-fetch access;
+  aggregate verification required npm package/cache write access.
+
 ## T69 — Clean-runner playground self-reference
 
 Status: complete

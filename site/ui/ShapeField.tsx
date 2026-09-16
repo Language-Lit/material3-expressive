@@ -1,10 +1,8 @@
 'use client'
 
-import { useMemo } from 'react'
 import { useResolvedColorMode } from '@language-lit/material3-expressive'
-import { buildPalette } from '../theme/palette'
 import { shapePath, type ShapeName } from '../theme/shapes'
-import { useSiteTheme } from '../app/providers'
+import { useSiteSource } from '../app/providers'
 
 /**
  * The site's imagery.
@@ -109,9 +107,8 @@ const WIDTH = span(4)
 const HEIGHT = span(3)
 
 export function ShapeField() {
-  const { sourceColor } = useSiteTheme()
+  const { sourceColor, palette } = useSiteSource()
   const mode = useResolvedColorMode()
-  const palette = useMemo(() => buildPalette(sourceColor), [sourceColor])
 
   return (
     <svg
@@ -163,9 +160,8 @@ export function ShapeGlyph({
   family?: Family
   tones?: Tones
 }) {
-  const { sourceColor } = useSiteTheme()
+  const { palette } = useSiteSource()
   const mode = useResolvedColorMode()
-  const palette = useMemo(() => buildPalette(sourceColor), [sourceColor])
 
   return (
     <svg className="shape-glyph" viewBox="0 0 100 100" aria-hidden focusable="false">

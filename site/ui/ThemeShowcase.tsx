@@ -12,8 +12,8 @@ import {
   Text,
   TextField,
 } from '@language-lit/material3-expressive'
-import { useSiteTheme } from '../app/providers'
-import { presetSources } from '../theme/palette'
+import { useThemeControls } from '../app/providers'
+import { SourceColorSwatches } from './SourceColorSwatches'
 
 /**
  * A live sampler with the source-color control beside it.
@@ -24,7 +24,7 @@ import { presetSources } from '../theme/palette'
  * claim is being made.
  */
 export function ThemeShowcase() {
-  const { sourceColor, setSourceColor, colorMode, setColorMode, themeError } = useSiteTheme()
+  const { colorMode, setColorMode, themeError } = useThemeControls()
 
   return (
     <div className="showcase">
@@ -32,32 +32,7 @@ export function ThemeShowcase() {
         <Text as="h3" variant="titleSmall">
           Source color
         </Text>
-        <div className="swatches">
-          {presetSources.map((preset) => (
-            <button
-              key={preset.value}
-              type="button"
-              className="swatch"
-              style={{ background: preset.value }}
-              aria-label={preset.name}
-              aria-pressed={sourceColor === preset.value}
-              onClick={() => setSourceColor(preset.value)}
-            />
-          ))}
-          <label
-            className="swatch"
-            style={{ background: sourceColor, display: 'grid', placeItems: 'center' }}
-            title="Choose any source color"
-          >
-            <span className="visually-hidden">Custom source color</span>
-            <input
-              type="color"
-              value={sourceColor}
-              onChange={(event) => setSourceColor(event.currentTarget.value)}
-              style={{ opacity: 0, inlineSize: '100%', blockSize: '100%', cursor: 'pointer' }}
-            />
-          </label>
-        </div>
+        <SourceColorSwatches />
         {themeError && (
           <p className="theme-panel__error">
             The library rejected this theme: {themeError}

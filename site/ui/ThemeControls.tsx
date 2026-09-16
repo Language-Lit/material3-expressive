@@ -10,9 +10,9 @@ import {
   Text,
   type ColorMode,
 } from '@language-lit/material3-expressive'
-import { useSiteTheme } from '../app/providers'
-import { presetSources } from '../theme/palette'
+import { useThemeControls } from '../app/providers'
 import { Ramp } from './Ramp'
+import { SourceColorSwatches } from './SourceColorSwatches'
 
 const modeSegments = [
   { value: 'light', label: 'Light' },
@@ -29,8 +29,7 @@ const modeSegments = [
  */
 export function ThemeControls() {
   const [open, setOpen] = useState(false)
-  const { sourceColor, setSourceColor, colorMode, setColorMode, themeError, isCustomized, resetTheme } =
-    useSiteTheme()
+  const { colorMode, setColorMode, themeError, isCustomized, resetTheme } = useThemeControls()
 
   return (
     <>
@@ -82,32 +81,7 @@ export function ThemeControls() {
               Every color on this site is generated from one source color, then
               validated by the library before it is applied.
             </Text>
-            <div className="swatches">
-              {presetSources.map((preset) => (
-                <button
-                  key={preset.value}
-                  type="button"
-                  className="swatch"
-                  style={{ background: preset.value }}
-                  aria-label={preset.name}
-                  aria-pressed={sourceColor === preset.value}
-                  onClick={() => setSourceColor(preset.value)}
-                />
-              ))}
-              <label
-                className="swatch"
-                style={{ background: sourceColor, display: 'grid', placeItems: 'center' }}
-                title="Choose any source color"
-              >
-                <span className="visually-hidden">Custom source color</span>
-                <input
-                  type="color"
-                  value={sourceColor}
-                  onChange={(event) => setSourceColor(event.currentTarget.value)}
-                  style={{ opacity: 0, inlineSize: '100%', blockSize: '100%', cursor: 'pointer' }}
-                />
-              </label>
-            </div>
+            <SourceColorSwatches />
           </div>
 
           {themeError && (

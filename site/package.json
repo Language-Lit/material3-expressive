@@ -6,6 +6,7 @@
   "description": "Documentation and showcase site for @language-lit/material3-expressive",
   "scripts": {
     "typecheck": "tsc --noEmit",
+    "test:theme-picker": "node scripts/audit-theme-picker.mjs",
     "test:ag-ui": "node scripts/audit-ag-ui.mjs",
     "test:a2ui": "node scripts/audit-a2ui.mjs",
     "predev": "node ../scripts/link-self.mjs && node scripts/build-mcp-app.mjs",

@@ -1,9 +1,7 @@
 'use client'
 
-import { useMemo } from 'react'
 import { Text } from '@language-lit/material3-expressive'
-import { buildPalette } from '../theme/palette'
-import { useSiteTheme } from '../app/providers'
+import { useSiteSource } from '../app/providers'
 
 const displayTones = [10, 20, 30, 40, 50, 60, 70, 80, 90, 95, 99] as const
 const displayFamilies = [
@@ -19,8 +17,7 @@ const displayFamilies = [
  * rest of the page at the same time, which is the claim the site is making.
  */
 export function Ramp({ showTones = true }: { showTones?: boolean }) {
-  const { sourceColor } = useSiteTheme()
-  const palette = useMemo(() => buildPalette(sourceColor), [sourceColor])
+  const { sourceColor, palette } = useSiteSource()
 
   return (
     <div className="ramp" style={{ ['--ramp-columns' as string]: displayTones.length }}>
@@ -57,8 +54,7 @@ export function Ramp({ showTones = true }: { showTones?: boolean }) {
 
 /** A single-row ramp used as a section rule. */
 export function RampRule({ family = 'primary' }: { family?: string }) {
-  const { sourceColor } = useSiteTheme()
-  const palette = useMemo(() => buildPalette(sourceColor), [sourceColor])
+  const { sourceColor, palette } = useSiteSource()
   return (
     <div className="ramp-rule" aria-hidden>
       {displayTones.map((tone) => (
@@ -70,8 +66,7 @@ export function RampRule({ family = 'primary' }: { family?: string }) {
 
 /** The four-tone brand mark in the app bar. */
 export function BrandMark() {
-  const { sourceColor } = useSiteTheme()
-  const palette = useMemo(() => buildPalette(sourceColor), [sourceColor])
+  const { sourceColor, palette } = useSiteSource()
   return (
     <span className="bar__mark" aria-hidden>
       {[40, 70, 60, 90].map((tone) => (
