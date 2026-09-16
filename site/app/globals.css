@@ -1057,6 +1057,7 @@ a:hover {
 
 .swatches {
   display: flex;
+  align-items: center;
   flex-wrap: wrap;
   gap: 0.5rem;
 }
@@ -1082,6 +1083,98 @@ a:hover {
   padding: 0.75rem;
   border-radius: var(--m3e-sys-shape-corner-medium);
   font-size: 0.8125rem;
+}
+
+.source-color-editor {
+  --m3e-comp-text-field-min-container-inline-size: 0px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
+  inline-size: min(18rem, 100%);
+}
+
+.source-color-editor__preview {
+  block-size: 2.5rem;
+  border: 1px solid var(--m3e-sys-color-outline);
+  border-radius: var(--m3e-sys-shape-corner-medium);
+}
+
+.source-color-editor__channel {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.source-color-editor__plane {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--m3e-sys-shape-corner-medium);
+  background-image: linear-gradient(to top, #000, transparent),
+    linear-gradient(to right, #fff, transparent);
+  touch-action: none;
+  user-select: none;
+  cursor: crosshair;
+}
+
+.source-color-editor__cursor {
+  position: absolute;
+  inline-size: 1.125rem;
+  block-size: 1.125rem;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px #0008, 0 1px 4px #0006;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.source-color-editor__hue {
+  --source-hue-spectrum: linear-gradient(to right, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00);
+  appearance: none;
+  inline-size: 100%;
+  min-inline-size: 0;
+  block-size: 48px;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+  direction: ltr;
+}
+
+.source-color-editor__hue::-webkit-slider-runnable-track {
+  block-size: 1rem;
+  border-radius: 999px;
+  background: var(--source-hue-spectrum);
+}
+
+.source-color-editor__hue::-moz-range-track {
+  block-size: 1rem;
+  border-radius: 999px;
+  background: var(--source-hue-spectrum);
+}
+
+.source-color-editor__hue::-webkit-slider-thumb {
+  appearance: none;
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+  margin-top: -0.25rem;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  background: transparent;
+  box-shadow: 0 0 0 1px #0008, 0 1px 4px #0006;
+}
+
+.source-color-editor__hue::-moz-range-thumb {
+  box-sizing: border-box;
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  background: transparent;
+  box-shadow: 0 0 0 1px #0008, 0 1px 4px #0006;
+}
+
+.source-color-editor__plane:focus-visible,
+.source-color-editor__hue:focus-visible {
+  outline: 3px solid var(--m3e-sys-color-primary);
+  outline-offset: 4px;
 }
 
 /* ------------------------------------------------------------ link button */
