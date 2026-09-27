@@ -9,7 +9,7 @@ Release: `@language-lit/material3-expressive@1.3.0-rc.1`
 Rollback: `@language-lit/material3-expressive@0.3.0` (tag `v0.3.0`)
 Registry publication: published on 2026-09-12 under npm's `next` tag;
 `latest` remains `1.2.2`. The annotated `v1.3.0-rc.1` tag points at published
-commit `0939945`.
+commit `319e9cd`.
 
 ### Recommendation
 
@@ -42,7 +42,7 @@ Audit date: 2026-08-13
 Release: `@language-lit/material3-expressive@1.2.2`  
 Rollback: `@language-lit/material3-expressive@0.3.0` (tag `v0.3.0`)  
 Registry publication: not performed at the time of this audit; published
-2026-08-13 from commit `0ab49f3` and confirmed as `latest`. The registry now
+2026-08-13 from commit `00a7406` and confirmed as `latest`. The registry now
 holds `1.0.0-next.0`, `1.0.0`, `1.0.2`, `1.0.3`, `1.1.0`, `1.2.0`, `1.2.1`, and
 `1.2.2`. The first publish attempt `404`'d on an expired npm session
 (`npm whoami` also `401`'d); `npm login` cleared it and the retry succeeded.
@@ -52,11 +52,11 @@ its `dist/styles.css` checked directly: `.m3e-switch` carries
 `inline-size:max(var(--m3e-comp-switch-minimum-interactive-target), var(--m3e-comp-switch-track-width))`
 and the matching `block-size:max(...)` rule, with the old clamped declaration
 absent — the T59 repair, not merely the version bump. **The `v1.2.2` tag is
-already created and pushed**, pointing at `0ab49f3`, the commit this was
+already created and pushed**, pointing at `00a7406`, the commit this was
 published from.
 
 The `v1.2.1` tag owed by the previous entry now exists and is pushed, pointing
-at `52ad093`, the commit `1.2.1` was published from. That gap is closed.
+at `b4c853c`, the commit `1.2.1` was published from. That gap is closed.
 
 ### Recommendation
 
@@ -112,12 +112,12 @@ Audit date: 2026-08-04
 Release: `@language-lit/material3-expressive@1.2.1`  
 Rollback: `@language-lit/material3-expressive@0.3.0` (tag `v0.3.0`)  
 Registry publication: not performed at the time of this audit; published
-2026-08-04 from commit `52ad093` and confirmed as `latest`. The registry now
+2026-08-04 from commit `b4c853c` and confirmed as `latest`. The registry now
 holds `1.0.0-next.0`, `1.0.0`, `1.0.2`, `1.0.3`, `1.1.0`, `1.2.0`, and
 `1.2.1`. The published tarball was re-downloaded and its `dist/index.js`/
 `dist/styles.css` checked directly to carry the T56/T57 repairs, not merely
 the version bump. **The `v1.2.1` tag is not yet created** — still owed
-against `52ad093`, the commit this was published from.
+against `b4c853c`, the commit this was published from.
 
 ### Recommendation
 
@@ -171,16 +171,16 @@ Audit date: 2026-07-26
 Release: `@language-lit/material3-expressive@1.2.0`  
 Rollback: `@language-lit/material3-expressive@0.3.0` (tag `v0.3.0`)  
 Registry publication: not performed at the time of this audit; published
-2026-07-26 (`2026-07-25T16:58:46Z`) from commit `476259c` and confirmed as
+2026-07-26 (`2026-07-25T16:58:46Z`) from commit `45e86e8` and confirmed as
 `latest`. The registry now holds `1.0.0-next.0`, `1.0.0`, `1.0.2`, `1.0.3`,
 `1.1.0`, and `1.2.0`. The published tarball's shasum is
 `bf3ef69d2e238c8412e16474a737d50f8b1af15b` across 21 files, matching a local
 `npm pack` of the audited tree byte for byte, so the artifact the registry
 serves is the one the gates below verified.
 
-The `v1.2.0` tag points at `5f08395`, one commit past the `gitHead` npm
+The `v1.2.0` tag points at `833704b`, one commit past the `gitHead` npm
 recorded. That commit bumps `package-lock.json` from `1.1.0` to `1.2.0`, which
-`476259c` missed; the lockfile is outside the packed `files` list, which the
+`45e86e8` missed; the lockfile is outside the packed `files` list, which the
 matching shasum confirms. The tag was left where it is rather than moved,
 because it is already pushed and the published bytes are unaffected.
 
@@ -243,7 +243,7 @@ Audit date: 2026-07-23
 Release: `@language-lit/material3-expressive@1.1.0`  
 Rollback: `@language-lit/material3-expressive@0.3.0` (tag `v0.3.0`)  
 Registry publication: not performed at the time of this audit; published
-2026-07-23 from commit `b109c18` and confirmed as `latest`. The registry now
+2026-07-23 from commit `fb0c70f` and confirmed as `latest`. The registry now
 holds `1.0.0-next.0`, `1.0.0`, `1.0.2`, `1.0.3`, and `1.1.0`. The published
 tarball's shasum is `307848e67389e7aa8fee1b2991488aaf9c79d467`, matching the
 locally packed artifact the release audit verified.
@@ -312,7 +312,7 @@ Audit date: 2026-07-22
 Release: `@language-lit/material3-expressive@1.0.3`  
 Rollback: `@language-lit/material3-expressive@0.3.0` (tag `v0.3.0`)  
 Registry publication: not performed at the time of this audit; published
-2026-07-22 from commit `fda9cb7` and confirmed as `latest`. The registry now
+2026-07-22 from commit `4a19d7d` and confirmed as `latest`. The registry now
 holds `1.0.0-next.0`, `1.0.0`, `1.0.2`, and `1.0.3`. The published tarball was
 re-downloaded and checked to carry the T36 repair, not merely the version bump.
 
@@ -364,7 +364,7 @@ Audit date: 2026-07-22
 Release: `@language-lit/material3-expressive@1.0.2`  
 Rollback: `@language-lit/material3-expressive@0.3.0` (tag `v0.3.0`)  
 Registry publication: not performed at the time of this audit; published
-2026-07-22 from commit `7978299` and confirmed as `latest`. The registry now
+2026-07-22 from commit `3190d26` and confirmed as `latest`. The registry now
 holds `1.0.0-next.0`, `1.0.0`, and `1.0.2`.
 
 ### Recommendation
@@ -376,7 +376,7 @@ conformant components, same exports, same tokens, same dependency-free package.
 The version skips `1.0.1` deliberately. `npm view` reports the registry holds
 only `1.0.0-next.0` and `1.0.0`: the `1.0.1` audit below recorded
 "Registry publication: not performed" and no publish ever followed, while the
-`v1.0.1` tag was pushed to `origin` at `13d9449`. Republishing that tree as
+`v1.0.1` tag was pushed to `origin` at `55619c1`. Republishing that tree as
 `1.0.1` would put content in the registry that the pushed tag does not
 describe, so the release moves forward instead and `1.0.1` remains a version
 that never existed on npm. `1.0.2` therefore ships two patches, not one — a

@@ -211,7 +211,7 @@ Record the deployment evidence here. Expected files: `site/package.json`,
   browser audits passed. The MCP audit covers the fixed demo proxy, nested CSP,
   explicit tool authorization, modes, themes, callbacks, and mobile layout.
 - Vercel production deployment `6407080461` completed successfully from commit
-  `e39b082`. A live Chromium run on `m3e.language-lit.com` initialized the
+  `681cb49`. A live Chromium run on `m3e.language-lit.com` initialized the
   nested MCP app, rendered a forecast, and authorized its typed refresh call.
 - The live catalog responds `200` as `application/json`; its SHA-256 is
   `fdc8fad8fac7d65169275698e3c1a1c60ca0f1105f4bb54137b76b82ae78faf3`,
@@ -253,7 +253,7 @@ test channel rather than a stable-support promotion.
   remains `1.2.2`.
 - A clean registry installation imported `DatePicker`, `DateRangePicker`,
   `TimePicker`, and `DateTimePicker` successfully.
-- Annotated tag `v1.3.0-rc.1` points at published commit `0939945` and is
+- Annotated tag `v1.3.0-rc.1` points at published commit `319e9cd` and is
   pushed to `origin`.
 
 ## T66 — Date/time picker families and public A2UI catalog hosting
@@ -337,8 +337,8 @@ artifact and generation/verification scripts, and build verification wiring.
 - The documentation-site production build and byte-level HTTP check passed: the
   hosted catalog at `/a2ui/catalogs/material3/catalog.json` exactly matches the
   generated renderer artifact.
-- Conflict-safe integration proceeded through commits `8824bb5`, `33bb4a7`,
-  and `cc9df35`; the final commit was fast-forwarded into the original peer
+- Conflict-safe integration proceeded through commits `f72bb92`, `9c61c73`,
+  and `58039ae`; the final commit was fast-forwarded into the original peer
   checkout without overwriting concurrent work.
 - T66 implementation is complete. Picker inventory entries remain experimental;
   stable conformance promotion requires the separate full visual matrix review.
@@ -1019,7 +1019,7 @@ The audit that motivated the version number: `npm view
 @language-lit/material3-expressive versions` reports `1.0.0-next.0` and `1.0.0`
 only. `1.0.1` was prepared under T30, recorded "Registry publication: not
 performed", and no publish ever followed — but its `v1.0.1` tag *was* pushed to
-`origin` at `13d9449`. So the registry is a full patch behind what the
+`origin` at `55619c1`. So the registry is a full patch behind what the
 repository believes it shipped, and the T29 `FabMenu` repair has never reached a
 consumer either.
 
@@ -1054,11 +1054,11 @@ No export, prop, token, or dependency changes.
 - `npm run verify` passes in full at `1.0.2`: 13 gates, 165 test files, 946
   tests, `check:release` green against the new constant, packed tarball 306,961
   of 342,900 budgeted bytes, `check:site` at 32 conformant components.
-- Re-verified after `7978299`, which changed the `repository.url` field —
+- Re-verified after `3190d26`, which changed the `repository.url` field —
   a `package.json` edit lands in the published tarball, so the audit figures
   above are measured against that commit, not the release-prep commit.
 
-- Published 2026-07-22 from commit `7978299`. `npm view` confirms the registry
+- Published 2026-07-22 from commit `3190d26`. `npm view` confirms the registry
   holds `1.0.0-next.0`, `1.0.0`, and `1.0.2`, with `latest` at `1.0.2`. Tagged
   `v1.0.2`. The `FabMenu` repair reached consumers here too, a full patch late.
 - The account's 2FA mode is `auth-and-writes`, so the publish went through a
@@ -1085,14 +1085,14 @@ Completed: 2026-07-22
 
 ### Scope
 
-Every production deployment since `13a5860` has failed schema validation:
+Every production deployment since `5140acb` has failed schema validation:
 
 ```
 The `vercel.json` schema validation failed with the following message:
 `headers[0]` should NOT have additional property `comment`
 ```
 
-`13a5860` annotated both `headers` entries with a `comment` field explaining
+`5140acb` annotated both `headers` entries with a `comment` field explaining
 why each exists. JSON has no comment syntax, and Vercel's schema is closed:
 `headers.items` declares `additionalProperties: false` and allows exactly
 `source`, `headers`, `has`, and `missing` — checked against the live schema at
@@ -1283,14 +1283,14 @@ No export, prop, token, or dependency changes. `ThemeScopeContext` and
 
 - `npm run verify` passed in full at `1.0.3` before publication: 13 gates, 165
   test files, 956 tests, `check:release` green against the new constant.
-- Published by the owner 2026-07-22 from commit `fda9cb7`. `npm view` confirms
+- Published by the owner 2026-07-22 from commit `4a19d7d`. `npm view` confirms
   the registry holds `1.0.0-next.0`, `1.0.0`, `1.0.2`, and `1.0.3`, with
   `latest` at `1.0.3`.
 - The published artifact was verified rather than assumed: the `1.0.3` tarball
   was re-downloaded from the registry and its `dist/index.js` carries the
   portal-scope code. A release that shipped only the version bump would have
   passed every other check here.
-- Tagged `v1.0.3` at `fda9cb7`, the commit the publish was cut from. The
+- Tagged `v1.0.3` at `4a19d7d`, the commit the publish was cut from. The
   repository's own history motivates checking this: `v1.0.1` was tagged and
   never published, and `check:release` verifies rollback against tags, so a
   published-but-untagged version is the same class of drift in the other
@@ -4298,7 +4298,7 @@ No export, prop, token, or dependency changes.
   without the accompanying `git tag v1.2.1 && git push --tags` this
   repository's own process expects (T30/T34/T37 precedent — `1.0.1` was once
   tagged and never published, the same drift in the opposite direction).
-  Tagging `52ad093`, the commit this was published from, is still owed.
+  Tagging `b4c853c`, the commit this was published from, is still owed.
 - Confirmation that the Vercel production deployment picked up the fix is
   outside this repository's own gates, the same boundary T35 recorded — the
   owner's Vercel dashboard is the source of truth for that, not checked here.
@@ -4426,10 +4426,10 @@ with painted pixels that nothing could activate.
 - 32 Switch tests pass across its five files. `npm run verify` passes all 13
   gates, and the rendering audit passes in real Chromium after a production
   package and playground build.
-- The defect predates `1.0.0`. `b9e59a3` ("feat: add v1 expressive switch", the
+- The defect predates `1.0.0`. `033772b` ("feat: add v1 expressive switch", the
   T13 commit) already carries the clamp, at the pre-cutover path
   `src/v1/components/Switch/Switch.css`. `git log -S` against the current path
-  reports `c5eb363` instead, which is the 1.0 cutover that moved the file, not
+  reports `a3411f9` instead, which is the 1.0 cutover that moved the file, not
   the introduction. Every published version to date has a Switch whose visible
   ends do not respond to a bare tap.
 
@@ -4461,7 +4461,7 @@ and `1.2.1`, with `latest` at `1.2.1`. `1.2.2` is an ordinary next patch — no
 gap to explain, unlike T34's skip over the never-published `1.0.1`.
 
 The `v1.2.1` tag T58 recorded as owed now exists locally and on `origin`,
-pointing at `52ad093`, the commit `1.2.1` was published from. That drift is
+pointing at `b4c853c`, the commit `1.2.1` was published from. That drift is
 closed, so this release starts from a repository whose tags and registry agree.
 
 Every published version to date carries the T59 defect, so this is the first
@@ -4497,7 +4497,7 @@ switches out in a fixed-width column.
   publish to a *scoped* package with `404` rather than `401`, so it read like
   a missing-package error. `npm login` cleared it and the retry succeeded,
   matching the T34 precedent for this exact symptom.
-- Published by the owner 2026-08-13 from commit `0ab49f3`. `npm view
+- Published by the owner 2026-08-13 from commit `00a7406`. `npm view
   @language-lit/material3-expressive versions` confirms the registry holds
   `1.0.0-next.0`, `1.0.0`, `1.0.2`, `1.0.3`, `1.1.0`, `1.2.0`, `1.2.1`, and
   `1.2.2`, with `dist-tags.latest` at `1.2.2`.
@@ -4513,7 +4513,7 @@ switches out in a fixed-width column.
   is absent. A release that shipped only the version bump would have passed
   every other check here.
 - `git tag -l` and `git ls-remote --tags origin` both show `v1.2.2` present
-  and pushed, pointing at `0ab49f3`, the commit this was published from — no
+  and pushed, pointing at `00a7406`, the commit this was published from — no
   repeat of the T30/T58 tagging gap.
 
 ### Not done

@@ -117,7 +117,7 @@ classified.
 
 11. **Rebase bundle budgets on the complete T39 surface.** The pre-task
     reference is Chip-complete commit
-    `a4c1a4b1db8f358aef056366d5f89d9ac2073b16`. T39 measures a 352,500-byte
+    `9c6de46503a9ac4bc9512d373bff71bda4d84b0f`. T39 measures a 352,500-byte
     imported JavaScript closure (61,654 gzip), 81,461-byte declaration closure
     (18,976 gzip), 414,869-byte full stylesheet (45,036 gzip), 124,371-byte
     token stylesheet (10,891 gzip), and 352,618-byte packed package. The

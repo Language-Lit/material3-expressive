@@ -155,7 +155,7 @@ deployment remain separate final actions.
 ### 10. Rebase the three bundle artifacts that the complete family exceeds
 
 The pre-task package at commit
-`6a3188786395eae0ed0a069cfdc2cb6fd91ec4ea`, built with the same installed
+`4d55ab36708fac6e0b65521843a6542c7258eec5`, built with the same installed
 toolchain, measures a 475,772-byte imported JavaScript closure (84,701 gzip), a
 109,667-byte declaration closure (25,881 gzip), a 468,575-byte full stylesheet
 (51,319 gzip), a 133,408-byte token stylesheet (11,829 gzip), and a 476,487-byte
