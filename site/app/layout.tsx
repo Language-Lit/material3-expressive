@@ -55,7 +55,10 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
     default: siteName,
-    template: '%s · Material 3 Expressive',
+    // "React" is in every title because it is in every query: a page named
+    // only "Button · Material 3 Expressive" never matches "react material 3
+    // button".
+    template: '%s · Material 3 Expressive for React',
   },
   description: siteDescription,
   applicationName: siteName,
@@ -89,10 +92,11 @@ export const metadata: Metadata = {
     description: siteDescription,
     locale: 'en_US',
   },
+  // Only the card type. An explicit title or description here is inherited by
+  // every page and stops Next from filling them in from the page's own Open
+  // Graph fields, so each page would preview under the home page's title.
   twitter: {
     card: 'summary_large_image',
-    title: siteName,
-    description: siteDescription,
   },
   // Search Console and Bing Webmaster Tools each prove ownership by reading a
   // token out of the home page. Both come from the environment: a token is

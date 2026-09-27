@@ -4,7 +4,7 @@ import { AgUiDemo } from '../../ui/ag-ui/AgUiDemo'
 import { InstallCommand } from '../../ui/InstallCommand'
 import { LinkButton } from '../../ui/LinkButton'
 import { StructuredData, breadcrumbList } from '../../ui/StructuredData'
-import { absoluteUrl } from '../../content/site'
+import { absoluteUrl, openGraphDefaults } from '../../content/site'
 import { agUiDescription, agUiInstall, agUiNpm, agUiPackage, agUiReleases, agUiRepository } from '../../content/ag-ui'
 import { agUiDocPages } from '../../content/docs'
 import '@language-lit/material3-expressive-ag-ui/styles.css'
@@ -13,10 +13,11 @@ import './ag-ui.css'
 const title = 'AG-UI for React'
 
 export const metadata: Metadata = {
-  title,
+  // Already names React, so it opts out of the template that would repeat it.
+  title: { absolute: `${title} · Material 3 Expressive` },
   description: agUiDescription,
   alternates: { canonical: '/ag-ui/' },
-  openGraph: { url: absoluteUrl('/ag-ui/'), title, description: agUiDescription },
+  openGraph: { ...openGraphDefaults, url: absoluteUrl('/ag-ui/'), title, description: agUiDescription },
   twitter: { card: 'summary_large_image', title, description: agUiDescription },
 }
 

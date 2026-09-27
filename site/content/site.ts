@@ -14,8 +14,37 @@ export const siteUrl = 'https://m3e.language-lit.com'
 
 export const siteName = 'Material 3 Expressive for React'
 
+// Kept under the ~155 characters a search result shows before truncating, and
+// led by the words people search with rather than by the tagline.
 export const siteDescription =
-  'Bring Google’s Material 3 Expressive to the web with React components, expressive motion, and customizable themes. Independent, MIT licensed, and built with zero runtime dependencies.'
+  'Material 3 Expressive components for React 18 and 19. TypeScript, SSR-ready, accessible, themeable. Independent, MIT licensed, zero runtime dependencies.'
+
+/**
+ * The link-preview card `app/opengraph-image.tsx` renders. It lives here so the
+ * pages that must name it explicitly (see `openGraphDefaults`) describe the same
+ * image the route draws.
+ */
+export const socialImage = {
+  url: '/opengraph-image',
+  width: 1200,
+  height: 630,
+  alt: 'Google’s Material 3 Expressive. Built for React. An independent implementation.',
+}
+
+/**
+ * The Open Graph fields every page shares. A page that declares `openGraph`
+ * replaces its parent's object wholesale rather than merging with it, which
+ * drops the root's generated card along with the site name and locale: every
+ * page but the home page previewed as a bare title. Pages spread this and add
+ * their own URL; their title and description are inherited from the page's own
+ * metadata, template included.
+ */
+export const openGraphDefaults = {
+  type: 'website' as const,
+  siteName,
+  locale: 'en_US',
+  images: [socialImage],
+}
 
 export const packageName = '@language-lit/material3-expressive'
 

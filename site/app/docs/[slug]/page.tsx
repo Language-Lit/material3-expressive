@@ -7,7 +7,7 @@ import { renderMarkdown, stripLeadingHeading } from '../../../content/markdown'
 import { DocsShell } from '../../../ui/DocsShell'
 import { Prose } from '../../../ui/Prose'
 import { StructuredData, breadcrumbList } from '../../../ui/StructuredData'
-import { absoluteUrl, packageName, siteName, siteUrl } from '../../../content/site'
+import { absoluteUrl, openGraphDefaults, packageName, siteName, siteUrl } from '../../../content/site'
 import { agUiPackage } from '../../../content/ag-ui'
 import { a2uiPackage } from '../../../content/a2ui'
 
@@ -30,10 +30,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     description: page.summary,
     alternates: { canonical: `/docs/${page.slug}/` },
     openGraph: {
+      ...openGraphDefaults,
       type: 'article',
       url: absoluteUrl(`/docs/${page.slug}/`),
-      title: page.title,
-      description: page.summary,
     },
   }
 }

@@ -10,7 +10,7 @@ import { DocsShell } from '../../ui/DocsShell'
 import { ShapeGlyph } from '../../ui/ShapeField'
 import type { ShapeName } from '../../theme/shapes'
 import { StructuredData, breadcrumbList } from '../../ui/StructuredData'
-import { absoluteUrl } from '../../content/site'
+import { absoluteUrl, openGraphDefaults } from '../../content/site'
 
 const description =
   'Every conformant component in the package, grouped by role. Only components that pass the release gates appear here.'
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   title: 'Components',
   description,
   alternates: { canonical: '/components/' },
-  openGraph: { url: absoluteUrl('/components/'), title: 'Components', description },
+  openGraph: { ...openGraphDefaults, url: absoluteUrl('/components/') },
 }
 
 /**

@@ -4,10 +4,11 @@ import { A2uiDemo } from '../../ui/a2ui/A2uiDemo'
 import { InstallCommand } from '../../ui/InstallCommand'
 import { LinkButton } from '../../ui/LinkButton'
 import { StructuredData, breadcrumbList } from '../../ui/StructuredData'
-import { absoluteUrl } from '../../content/site'
+import { absoluteUrl, openGraphDefaults } from '../../content/site'
 import {
   a2uiComponentMap,
   a2uiDescription,
+  a2uiEcosystemListing,
   a2uiInstall,
   a2uiNpm,
   a2uiPackage,
@@ -24,10 +25,11 @@ import './a2ui.css'
 const title = 'A2UI for React'
 
 export const metadata: Metadata = {
-  title,
+  // Already names React, so it opts out of the template that would repeat it.
+  title: { absolute: `${title} · Material 3 Expressive` },
   description: a2uiDescription,
   alternates: { canonical: '/a2ui/' },
-  openGraph: { url: absoluteUrl('/a2ui/'), title, description: a2uiDescription },
+  openGraph: { ...openGraphDefaults, url: absoluteUrl('/a2ui/'), title, description: a2uiDescription },
   twitter: { card: 'summary_large_image', title, description: a2uiDescription },
 }
 
@@ -108,6 +110,7 @@ export default function A2uiPage() {
               <a href={a2uiRepository}>GitHub</a>
               <a href={a2uiReleases}>Releases</a>
               <a href={a2uiSpecification}>A2UI specification</a>
+              <a href={a2uiEcosystemListing}>Listed on a2ui.org</a>
             </nav>
           </div>
         </div>

@@ -13,7 +13,7 @@ import { DemoFrame } from '../../../ui/DemoFrame'
 import { Prose } from '../../../ui/Prose'
 import { StructuredData, breadcrumbList } from '../../../ui/StructuredData'
 import { componentDescription, componentLead } from '../../../content/summaries'
-import { absoluteUrl, packageName, siteName, siteUrl } from '../../../content/site'
+import { absoluteUrl, openGraphDefaults, packageName, siteName, siteUrl } from '../../../content/site'
 
 interface PageProps {
   params: Promise<{ component: string }>
@@ -38,10 +38,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     description,
     alternates: { canonical: `/components/${component.name}/` },
     openGraph: {
+      ...openGraphDefaults,
       type: 'article',
       url: absoluteUrl(`/components/${component.name}/`),
-      title: component.name,
-      description,
     },
   }
 }

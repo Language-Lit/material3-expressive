@@ -4,7 +4,7 @@ import { Surface, Text } from '@language-lit/material3-expressive'
 import { a2uiDocPages, agUiDocPages, mcpAppsDocPages, docPages } from '../../content/docs'
 import { DocsShell } from '../../ui/DocsShell'
 import { StructuredData, breadcrumbList } from '../../ui/StructuredData'
-import { absoluteUrl } from '../../content/site'
+import { absoluteUrl, openGraphDefaults } from '../../content/site'
 
 const description =
   'Guides to Material 3 Expressive and its AG-UI, A2UI, and MCP Apps companions: installation, theming, agent conversations, agent-generated surfaces, and component composition.'
@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   title: 'Guides',
   description,
   alternates: { canonical: '/docs/' },
-  openGraph: { url: absoluteUrl('/docs/'), title: 'Guides', description },
+  openGraph: { ...openGraphDefaults, url: absoluteUrl('/docs/') },
 }
 
 export default function DocsIndexPage() {

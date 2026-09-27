@@ -1,5 +1,6 @@
 import { ImageResponse } from 'next/og'
 import { getConformantComponents } from '../content/inventory'
+import { socialImage } from '../content/site'
 
 /**
  * The social and link-preview card, generated at build time from the same
@@ -11,8 +12,8 @@ import { getConformantComponents } from '../content/inventory'
  */
 export const dynamic = 'force-static'
 
-export const alt = 'Google’s Material 3 Expressive. Built for React. An independent implementation.'
-export const size = { width: 1200, height: 630 }
+export const alt = socialImage.alt
+export const size = { width: socialImage.width, height: socialImage.height }
 export const contentType = 'image/png'
 
 export default async function OpenGraphImage() {

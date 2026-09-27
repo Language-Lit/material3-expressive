@@ -3,7 +3,7 @@ import { Surface, Text } from '@language-lit/material3-expressive'
 import { McpAppsDemo } from '../../ui/mcp-apps/McpAppsDemo'
 import { LinkButton } from '../../ui/LinkButton'
 import { StructuredData, breadcrumbList } from '../../ui/StructuredData'
-import { absoluteUrl } from '../../content/site'
+import { absoluteUrl, openGraphDefaults } from '../../content/site'
 import { mcpAppsDescription, mcpAppsSpecification, mcpAppsVersions } from '../../content/mcp-apps'
 import { mcpAppsDocPages } from '../../content/docs'
 import '@language-lit/material3-expressive-mcp-apps/styles.css'
@@ -12,10 +12,11 @@ import './mcp-apps.css'
 const title = 'MCP Apps for React'
 
 export const metadata: Metadata = {
-  title,
+  // Already names React, so it opts out of the template that would repeat it.
+  title: { absolute: `${title} · Material 3 Expressive` },
   description: mcpAppsDescription,
   alternates: { canonical: '/mcp-apps/' },
-  openGraph: { url: absoluteUrl('/mcp-apps/'), title, description: mcpAppsDescription },
+  openGraph: { ...openGraphDefaults, url: absoluteUrl('/mcp-apps/'), title, description: mcpAppsDescription },
   twitter: { card: 'summary_large_image', title, description: mcpAppsDescription },
 }
 
