@@ -4,6 +4,8 @@ export const a2uiNpm = `https://www.npmjs.com/package/${a2uiPackage}`
 export const a2uiReleases = `${a2uiRepository}/releases`
 export const a2uiSpecification = 'https://a2ui.org'
 export const a2uiProject = 'https://github.com/a2ui-project/a2ui'
+/** The official directory that lists this renderer. */
+export const a2uiEcosystemListing = 'https://a2ui.org/ecosystem/renderers/'
 export const a2uiDescription = 'A React renderer for Google A2UI that maps every A2UI basic-catalog component to Material 3 Expressive. Stream agent-generated surfaces, bind inputs, validate, and send actions back. Try the live demo and read the guides.'
 export const a2uiInstall = 'npm install @language-lit/material3-expressive-a2ui @language-lit/material3-expressive @a2ui/web_core'
 
