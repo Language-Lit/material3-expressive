@@ -3,25 +3,27 @@ import type { ReactNode } from 'react'
 import { Roboto_Flex } from 'next/font/google'
 import { readFile } from 'node:fs/promises'
 import path from 'node:path'
-import { SiteProviders } from './providers'
+import { SiteProviders } from '../app/providers'
 import { SiteBar } from '../ui/SiteBar'
 import { buildSearchIndex } from '../content/search'
 import { buildNavigationGroups } from '../content/navigation'
 import { repoRoot } from '../content/paths'
 import { StructuredData } from '../ui/StructuredData'
+import { localeAlternates, localizePath, ogLocales, type Locale } from '../i18n/locales'
+import { shellMessages } from '../i18n/messages/shell'
 import {
+  absoluteUrl,
   npmUrl,
   packageName,
   repositoryUrl,
-  siteDescription,
-  siteName,
   siteUrl,
+  socialImage,
 } from '../content/site'
 
 // The library's complete stylesheet, imported once through its public entry —
 // exactly the line the getting-started guide tells consumers to write.
 import '@language-lit/material3-expressive/styles.css'
-import './globals.css'
+import '../app/globals.css'
 
 /*
  * The library ships no fonts by design. The typeface tokens name Roboto without
@@ -51,17 +53,16 @@ const roboto = Roboto_Flex({
   variable: '--site-font-sans',
 })
 
-export const metadata: Metadata = {
+export function rootMetadata(locale: Locale): Metadata {
+  const t = shellMessages[locale]
+  return {
   metadataBase: new URL(siteUrl),
   title: {
-    default: siteName,
-    // "React" is in every title because it is in every query: a page named
-    // only "Button · Material 3 Expressive" never matches "react material 3
-    // button".
-    template: '%s · Material 3 Expressive for React',
+    default: t.siteName,
+    template: t.titleTemplate,
   },
-  description: siteDescription,
-  applicationName: siteName,
+  description: t.siteDescription,
+  applicationName: t.siteName,
   authors: [{ name: 'Romullo Queiroz', url: repositoryUrl }],
   creator: 'Romullo Queiroz',
   keywords: [
@@ -78,7 +79,7 @@ export const metadata: Metadata = {
   // The export is one canonical host, so every route names itself. Without
   // this, a page reached through a preview deployment or a trailing-slash
   // variant has nothing pointing back at the URL that should be indexed.
-  alternates: { canonical: '/' },
+  alternates: localeAlternates(locale, '/'),
   robots: {
     index: true,
     follow: true,
@@ -86,11 +87,14 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: 'website',
-    url: siteUrl,
-    siteName,
-    title: siteName,
-    description: siteDescription,
-    locale: 'en_US',
+    url: absoluteUrl(localizePath(locale, '/')),
+    siteName: t.siteName,
+    title: t.siteName,
+    description: t.siteDescription,
+    locale: ogLocales[locale],
+    // Named explicitly: the generated card lives beside the route groups,
+    // outside either root layout, so it is not inherited.
+    images: [socialImage],
   },
   // Only the card type. An explicit title or description here is inherited by
   // every page and stops Next from filling them in from the page's own Open
@@ -113,6 +117,7 @@ export const metadata: Metadata = {
       ? { other: { 'msvalidate.01': process.env.BING_SITE_VERIFICATION } }
       : {}),
   },
+  }
 }
 
 async function getVersion(): Promise<string> {
@@ -122,25 +127,26 @@ async function getVersion(): Promise<string> {
   return packageJson.version as string
 }
 
-export default async function RootLayout({ children }: { children: ReactNode }) {
+export default async function RootLayout({ locale, children }: { locale: Locale; children: ReactNode }) {
+  const t = shellMessages[locale]
   const [version, index, groups] = await Promise.all([
     getVersion(),
-    buildSearchIndex(),
-    buildNavigationGroups(),
+    buildSearchIndex(locale),
+    buildNavigationGroups(locale),
   ])
 
   return (
-    <html lang="en" className={roboto.variable}>
+    <html lang={locale} className={roboto.variable}>
       <body>
         <StructuredData
           data={{
             '@context': 'https://schema.org',
             '@type': 'WebSite',
-            name: siteName,
+            name: t.siteName,
             alternateName: packageName,
-            url: siteUrl,
-            description: siteDescription,
-            inLanguage: 'en',
+            url: absoluteUrl(localizePath(locale, '/')),
+            description: t.siteDescription,
+            inLanguage: locale,
             license: 'https://opensource.org/licenses/MIT',
             publisher: {
               '@type': 'Person',
@@ -152,7 +158,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         />
         <SiteProviders>
           <a href="#content" className="visually-hidden">
-            Skip to content
+            {t.skipToContent}
           </a>
           <SiteBar
             version={version}
@@ -163,12 +169,9 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
           <div id="content">{children}</div>
           <footer className="footer">
             <div className="footer__inner">
-              <span>
-                MIT licensed. Material 3 Expressive is a Google design system;
-                this is an independent implementation.
-              </span>
-              <nav className="footer__links" aria-label="Footer">
-                <a href={repositoryUrl}>Repository</a>
+              <span>{t.footerNotice}</span>
+              <nav className="footer__links" aria-label={t.footerLabel}>
+                <a href={repositoryUrl}>{t.footerRepository}</a>
                 <a href={npmUrl}>npm</a>
                 <a href="https://m3.material.io/">Material 3</a>
               </nav>

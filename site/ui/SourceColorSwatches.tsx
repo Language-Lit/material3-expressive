@@ -5,9 +5,13 @@ import { Button, Dialog, Icon, IconButton, Text, TextField } from '@language-lit
 import { useSiteSource, useThemeControls } from '../app/providers'
 import { defaultSourceColor, parseHex, presetSources } from '../theme/palette'
 import { hexToHsv, hsvToHex, type HsvColor } from '../theme/color-selection'
+import { useLocale } from '../i18n/useLocale'
+import { shellMessages } from '../i18n/messages/shell'
 
 /** Source-color controls shared by the theme panel and home-page showcase. */
 export function SourceColorSwatches() {
+  const locale = useLocale()
+  const t = shellMessages[locale]
   const { sourceColor } = useSiteSource()
   const { setSourceColor } = useThemeControls()
   const [open, setOpen] = useState(false)
@@ -50,13 +54,13 @@ export function SourceColorSwatches() {
           type="button"
           className="swatch"
           style={{ background: preset.value }}
-          aria-label={preset.name}
+          aria-label={t.presetColors[presetSources.indexOf(preset)] ?? preset.name}
           aria-pressed={sourceColor === preset.value}
           onClick={() => setSourceColor(preset.value)}
         />
       ))}
       <IconButton
-        aria-label="Custom source color"
+        aria-label={t.customSourceColor}
         aria-haspopup="dialog"
         variant={isCustom ? 'filled' : 'outlined'}
         onClick={() => {
@@ -73,11 +77,11 @@ export function SourceColorSwatches() {
       <Dialog
         open={open}
         onOpenChange={setOpen}
-        title="Custom source color"
+        title={t.customSourceColor}
         actions={
           <>
-            <Button variant="text" onClick={() => setOpen(false)}>Cancel</Button>
-            <Button disabled={!validHex} onClick={apply}>Apply</Button>
+            <Button variant="text" onClick={() => setOpen(false)}>{t.cancel}</Button>
+            <Button disabled={!validHex} onClick={apply}>{t.apply}</Button>
           </>
         }
       >
@@ -87,12 +91,12 @@ export function SourceColorSwatches() {
             style={{ backgroundColor: `hsl(${hsv.h} 100% 50%)` }}
             role="slider"
             tabIndex={0}
-            aria-label="Saturation and brightness"
+            aria-label={t.saturationBrightness}
             aria-describedby={dragHintId}
             aria-valuemin={0}
             aria-valuemax={100}
             aria-valuenow={Math.round(hsv.s * 100)}
-            aria-valuetext={`${Math.round(hsv.s * 100)}% saturation, ${Math.round(hsv.v * 100)}% brightness`}
+            aria-valuetext={t.saturationBrightnessValue(Math.round(hsv.s * 100), Math.round(hsv.v * 100))}
             onPointerDown={(event) => {
               if (event.button !== 0 || pointerId.current !== null) return
               event.preventDefault()
@@ -133,11 +137,10 @@ export function SourceColorSwatches() {
             />
           </div>
           <span id={dragHintId} className="visually-hidden">
-            Left and right adjust saturation. Up and down adjust brightness.
-            Hold Shift for larger changes.
+            {t.saturationBrightnessHint}
           </span>
           <label className="source-color-editor__channel">
-            <Text as="span" variant="labelLarge">Hue</Text>
+            <Text as="span" variant="labelLarge">{t.hue}</Text>
             <input
               className="source-color-editor__hue"
               type="range"
@@ -145,19 +148,19 @@ export function SourceColorSwatches() {
               max={360}
               step={1}
               value={hsv.h}
-              aria-label="Hue"
-              aria-valuetext={`${Math.round(hsv.h)} degrees`}
+              aria-label={t.hue}
+              aria-valuetext={t.hueValue(Math.round(hsv.h))}
               onChange={(event) => selectColor({ ...hsv, h: Number(event.currentTarget.value) })}
             />
           </label>
           <div className="source-color-editor__preview" style={{ backgroundColor: draft }} aria-hidden="true" />
           <TextField
-            label="Hex color"
+            label={t.hexColor}
             value={hex}
             autoComplete="off"
             spellCheck={false}
             error={!validHex}
-            supportingText={validHex ? 'Use six hex digits, for example #6750a4.' : 'Enter a valid six-digit hex color.'}
+            supportingText={validHex ? t.hexColorHint : t.hexColorInvalid}
             onChange={(event) => editHex(event.currentTarget.value)}
             onKeyDown={(event) => {
               if (event.key === 'Enter') {

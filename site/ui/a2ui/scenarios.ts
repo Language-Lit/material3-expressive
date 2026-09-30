@@ -1,4 +1,5 @@
 import type { A2uiMessage } from '@a2ui/web_core/v0_9'
+import type { Locale } from '../../i18n/locales'
 
 // Site-authored A2UI message streams. Each step is one batch the agent would
 // send; the player feeds them to the published renderer one step at a time so
@@ -595,6 +596,83 @@ export const scenarios: readonly Scenario[] = [
     ],
   },
 ]
+
+const jaStrings: Record<string, string> = {
+  'Streaming a surface': 'サーフェスをストリーミング',
+  'The agent names the card before it sends the content, so a placeholder appears first. Data bindings, formatting functions, and a later value update fill it in.': 'エージェントはコンテンツを送る前にカード名を指定するため、まずプレースホルダーが表示されます。データバインディング、書式設定関数、後続の値の更新によって内容が表示されます。',
+  'Show me my trip to Lisbon.': 'リスボン旅行の予定を見せてください。',
+  'Trip agent': '旅行エージェント',
+  'Your trip to Lisbon': 'リスボン旅行',
+  'Confirmed. Seats 12A and 12B.': '予約が確定しました。座席は12Aと12Bです。',
+  'Tokyo (HND) to Lisbon (LIS)': '東京（HND）からリスボン（LIS）',
+  'Lisbon (LIS) to Tokyo (HND)': 'リスボン（LIS）から東京（HND）',
+  'Prices include taxes and one checked bag.': '料金には税金と受託手荷物1個分が含まれます。',
+  'Gate changed to 34. Boarding starts at 10:05.': '搭乗口が34番に変更されました。搭乗開始は10:05です。',
+  'Bind, validate, and act': 'バインド、検証、アクション',
+  'Inputs write into the surface data model. Checks keep the button disabled until the data is valid, and the action it sends carries the resolved values.': '入力値はサーフェスのデータモデルに書き込まれます。データが有効になるまでチェックによってボタンは無効になり、送信されるアクションには解決済みの値が含まれます。',
+  'Book a table for Friday.': '金曜日にテーブルを予約してください。',
+  'Dining agent': 'レストラン予約エージェント',
+  'Reserve a table': 'テーブルを予約',
+  'Fill in the details. The reservation reaches the agent as an action with these values.': '詳細を入力してください。入力した値を含むアクションとして、予約内容がエージェントに送信されます。',
+  'Name': '名前',
+  'Enter a name for the reservation': '予約者の名前を入力してください',
+  'Email': 'メールアドレス',
+  'Enter a valid email address': '有効なメールアドレスを入力してください',
+  'Date and time': '日時',
+  'Seating': '座席',
+  'Inside': '店内',
+  'Terrace': 'テラス',
+  'Counter': 'カウンター',
+  'Guests': '人数',
+  'Email me a confirmation': '確認メールを受け取る',
+  'Add a name and a valid email to reserve': '予約するには名前と有効なメールアドレスを入力してください',
+  'Reserve': '予約する',
+  'Cards, tabs, and a modal': 'カード、タブ、モーダル',
+  'A header image, Markdown text, tabs, a nested card, a list, and a modal, all from catalog components rendered with Material 3 Expressive.': 'ヘッダー画像、Markdownテキスト、タブ、入れ子のカード、リスト、モーダルを、カタログのコンポーネントからMaterial 3 Expressiveで描画します。',
+  'Plan my Saturday in Lisbon.': 'リスボンで過ごす土曜日の計画を立ててください。',
+  'Illustration of the Lisbon skyline at sunset': '夕暮れのリスボンの街並みのイラスト',
+  'Saturday in Lisbon': 'リスボンで過ごす土曜日',
+  'Morning': '午前',
+  'Afternoon': '午後',
+  'Evening': '夜',
+  '**Alfama on foot.** Start at the *Miradouro de Santa Luzia* and wander downhill.\n\n- Tram 28 at 9:00\n- Coffee at the viewpoint\n- [Lisbon Cathedral](https://en.wikipedia.org/wiki/Lisbon_Cathedral) before the crowds': '**徒歩でアルファマ地区を散策。** *Miradouro de Santa Luzia*から出発し、坂を下りながら歩きます。\n\n- 9:00にトラム28番に乗車\n- 展望台でコーヒーを飲む\n- 混雑する前に[リスボン大聖堂](https://en.wikipedia.org/wiki/Lisbon_Cathedral)へ',
+  'Belém and the river': 'ベレン地区と川沿い',
+  'Custard tarts first, then the monastery and the tower. Allow two hours and take the tram back along the water.': 'まずエッグタルトを味わい、その後、修道院と塔を訪れます。2時間ほど見込み、水辺を走るトラムで戻りましょう。',
+  'Fado show at 20:00 in Bairro Alto': '20:00にバイロ・アルトでファド鑑賞',
+  'Dinner nearby at 21:30': '21:30に近くで夕食',
+  'Night tram back to the hotel': '夜のトラムでホテルへ戻る',
+  'Show booking details': '予約の詳細を表示',
+  'Booking details': '予約の詳細',
+  'Two seats for the fado show are held under your name until 18:00.': 'ファド鑑賞の2席を、お名前で18:00まで確保しています。',
+  'Opening this dialog also sent the button action to the agent.': 'このダイアログを開くと、ボタンのアクションもエージェントに送信されます。',
+  'Live updates and a second surface': 'ライブ更新と2つ目のサーフェス',
+  'Path updates change bound values in place and add rows to a template. A second surface arrives, then the agent deletes it.': 'パスの更新によってバインド済みの値がその場で変わり、テンプレートに行が追加されます。2つ目のサーフェスが届き、その後エージェントによって削除されます。',
+  'Watch the deployment.': 'デプロイの状況を見せてください。',
+  'Ops agent': '運用エージェント',
+  'Deploying release 2.4': 'リリース2.4をデプロイ中',
+  'of 40 pods updated': '40個中のPodを更新済み',
+  'healthy': '正常',
+  'restarts': '再起動',
+  'Log': 'ログ',
+  'Rollout started.': '段階的なデプロイを開始しました。',
+  '12 of 40 pods are on 2.4.': '40個中12個のPodが2.4になりました。',
+  'One pod restarted after a health check.': 'ヘルスチェック後に1つのPodが再起動しました。',
+  'Rollout complete.': '段階的なデプロイが完了しました。',
+  'Release 2.4 is live. The agent deletes this surface in a moment.': 'リリース2.4が稼働中です。このサーフェスはまもなくエージェントによって削除されます。',
+}
+
+function translateScenarioValue<T>(value: T): T {
+  if (typeof value === 'string') return (jaStrings[value] ?? value) as T
+  if (Array.isArray(value)) return value.map((item) => translateScenarioValue(item)) as T
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, translateScenarioValue(item)])) as T
+  }
+  return value
+}
+
+export function getScenarios(locale: Locale): readonly Scenario[] {
+  return locale === 'ja' ? translateScenarioValue(scenarios) : scenarios
+}
 
 export const messageCount = (scenario: Scenario) =>
   scenario.steps.reduce((total, step) => total + step.messages.length, 0)

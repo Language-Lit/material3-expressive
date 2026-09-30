@@ -3,6 +3,8 @@ import { getConformantComponents } from './inventory'
 import { docPages } from './docs'
 import { agUiDescription } from './ag-ui'
 import { a2uiDescription } from './a2ui'
+import { shellMessages } from '../i18n/messages/shell'
+import { ogLocales, type Locale } from '../i18n/locales'
 
 /**
  * The canonical origin. Every absolute URL the site emits — canonical links,
@@ -12,12 +14,9 @@ import { a2uiDescription } from './a2ui'
  */
 export const siteUrl = 'https://m3e.language-lit.com'
 
-export const siteName = 'Material 3 Expressive for React'
+export const siteName = shellMessages.en.siteName
 
-// Kept under the ~155 characters a search result shows before truncating, and
-// led by the words people search with rather than by the tagline.
-export const siteDescription =
-  'Material 3 Expressive components for React 18 and 19. TypeScript, SSR-ready, accessible, themeable. Independent, MIT licensed, zero runtime dependencies.'
+export const siteDescription = shellMessages.en.siteDescription
 
 /**
  * The link-preview card `app/opengraph-image.tsx` renders. It lives here so the
@@ -44,6 +43,11 @@ export const openGraphDefaults = {
   siteName,
   locale: 'en_US',
   images: [socialImage],
+}
+
+/** `openGraphDefaults` in `locale`. */
+export function openGraphFor(locale: Locale) {
+  return { ...openGraphDefaults, siteName: shellMessages[locale].siteName, locale: ogLocales[locale] }
 }
 
 export const packageName = '@language-lit/material3-expressive'
@@ -94,32 +98,32 @@ export async function getSiteRoutes(): Promise<SiteRoute[]> {
       title: siteName,
       summary: siteDescription,
       priority: 1,
-      source: 'site/app/page.tsx',
+      source: 'site/views/HomePage.tsx',
     },
     {
       path: '/ag-ui/',
       title: 'AG-UI for React',
       summary: agUiDescription,
       priority: 0.9,
-      source: 'site/app/ag-ui/page.tsx',
+      source: 'site/views/AgUiPage.tsx',
     },
     {
       path: '/a2ui/',
       title: 'A2UI for React',
       summary: a2uiDescription,
       priority: 0.9,
-      source: 'site/app/a2ui/page.tsx',
+      source: 'site/views/A2uiPage.tsx',
     },
     {
       path: '/mcp-apps/',
-      title: 'MCP Apps for React', summary: mcpAppsDescription, priority: 0.9, source: 'site/app/mcp-apps/page.tsx',
+      title: 'MCP Apps for React', summary: mcpAppsDescription, priority: 0.9, source: 'site/views/McpAppsPage.tsx',
     },
     {
       path: '/docs/',
       title: 'Guides',
       summary: 'Installation, theming, server rendering, and migration guides.',
       priority: 0.9,
-      source: 'site/app/docs/page.tsx',
+      source: 'site/views/DocsIndexPage.tsx',
     },
     ...docPages.map((page) => ({
       path: `/docs/${page.slug}/`,
@@ -133,7 +137,7 @@ export async function getSiteRoutes(): Promise<SiteRoute[]> {
       title: 'Components',
       summary: `All ${components.length} conformant components, grouped by role.`,
       priority: 0.9,
-      source: 'site/app/components/page.tsx',
+      source: 'site/views/ComponentsPage.tsx',
     },
     ...components.map((component) => ({
       path: `/components/${component.name}/`,

@@ -4,7 +4,9 @@ import { useEffect, useRef, useState } from 'react'
 import type { A2uiClientAction } from '@a2ui/web_core/v0_9'
 import { Button, Surface, Text } from '@language-lit/material3-expressive'
 import { A2uiSurface, useA2ui } from '@language-lit/material3-expressive-a2ui'
-import { messageCount, scenarios, type Scenario } from './scenarios'
+import { a2uiMessages } from '../../i18n/messages/a2ui'
+import { useLocale } from '../../i18n/useLocale'
+import { getScenarios, messageCount, type Scenario } from './scenarios'
 
 const STEP_MS = 420
 
@@ -17,7 +19,7 @@ interface ActionEntry {
   readonly context: string
 }
 
-function Playback({ scenario, reset }: { scenario: Scenario; reset: () => void }) {
+function Playback({ scenario, reset, copy }: { scenario: Scenario; reset: () => void; copy: typeof a2uiMessages.en.demo }) {
   const [phase, setPhase] = useState<Phase>('idle')
   const [stepsDone, setStepsDone] = useState(0)
   const [actions, setActions] = useState<ActionEntry[]>([])
@@ -83,10 +85,10 @@ function Playback({ scenario, reset }: { scenario: Scenario; reset: () => void }
     .join('\n')
 
   const status =
-    phase === 'playing' ? `Streaming message ${sent} of ${total}.`
-      : phase === 'done' ? 'Stream complete. Use the surface, then reset to replay.'
-        : phase === 'stopped' ? 'Demo stopped. Reset to start again.'
-          : phase === 'failed' ? 'The demo could not finish. Reset it and try again.'
+    phase === 'playing' ? copy.streamingMessage(sent, total)
+      : phase === 'done' ? copy.streamComplete
+        : phase === 'stopped' ? copy.demoStopped
+          : phase === 'failed' ? copy.demoFailed
             : ''
 
   return (
@@ -95,12 +97,12 @@ function Playback({ scenario, reset }: { scenario: Scenario; reset: () => void }
         <Text as="h3" variant="titleLarge" id="a2ui-scenario-title">{scenario.title}</Text>
         <Text as="p" variant="bodyMedium" id="a2ui-scenario-description">{scenario.description}</Text>
       </div>
-      <div ref={surfacesRef} tabIndex={-1} role="region" aria-label="Agent surfaces" className="a2ui-demo__surfaces">
+      <div ref={surfacesRef} tabIndex={-1} role="region" aria-label={copy.agentSurfaces} className="a2ui-demo__surfaces">
         {surfaces.length === 0 ? (
           <div className="a2ui-demo__empty">
             <Text as="p" variant="titleMedium">{scenario.prompt}</Text>
             <Text as="p" variant="bodyMedium">
-              {phase === 'idle' ? 'Play the scenario to stream the surface.' : 'The stream has not created a surface yet.'}
+              {phase === 'idle' ? copy.playPrompt : copy.waitingForSurface}
             </Text>
           </div>
         ) : (
@@ -111,26 +113,26 @@ function Playback({ scenario, reset }: { scenario: Scenario; reset: () => void }
         <p className="a2ui-demo__status" role="status">{status}</p>
         <div className="a2ui-demo__controls">
           <Button onClick={play} disabled={phase !== 'idle'} aria-describedby="a2ui-scenario-description">
-            Play scenario
+            {copy.playScenario}
           </Button>
           {phase === 'playing' ? (
-            <Button variant="outlined" onClick={stop}>Stop</Button>
+            <Button variant="outlined" onClick={stop}>{copy.stop}</Button>
           ) : (
-            <Button variant="outlined" disabled={phase === 'idle'} onClick={reset}>Reset demo</Button>
+            <Button variant="outlined" disabled={phase === 'idle'} onClick={reset}>{copy.resetDemo}</Button>
           )}
         </div>
         <section className="a2ui-demo__log" aria-labelledby="a2ui-actions-title">
-          <Text as="h4" variant="titleSmall" id="a2ui-actions-title">Actions the agent would receive</Text>
+          <Text as="h4" variant="titleSmall" id="a2ui-actions-title">{copy.actionsReceived}</Text>
           {actions.length === 0 ? (
             <Text as="p" variant="bodySmall" className="a2ui-demo__hint">
-              None yet. Press a button inside a surface to send one.
+              {copy.noActions}
             </Text>
           ) : (
             <ul className="a2ui-demo__actions">
               {actions.map((entry) => (
                 <li key={entry.key}>
                   <Text as="p" variant="labelLarge">
-                    <code>{entry.name}</code> from <code>{entry.source}</code>
+                    <code>{entry.name}</code> {copy.actionFrom} <code>{entry.source}</code>
                   </Text>
                   <pre className="a2ui-demo__code"><code>{entry.context}</code></pre>
                 </li>
@@ -139,15 +141,15 @@ function Playback({ scenario, reset }: { scenario: Scenario; reset: () => void }
           )}
         </section>
         <details className="a2ui-demo__stream">
-          <summary>Show the A2UI messages streamed so far ({sent})</summary>
-          <pre className="a2ui-demo__code"><code>{stream || 'Nothing streamed yet.'}</code></pre>
+          <summary>{copy.showMessages(sent)}</summary>
+          <pre className="a2ui-demo__code"><code>{stream || copy.nothingStreamed}</code></pre>
         </details>
       </div>
     </Surface>
   )
 }
 
-function DemoSession({ scenario }: { scenario: Scenario }) {
+function DemoSession({ scenario, copy }: { scenario: Scenario; copy: typeof a2uiMessages.en.demo }) {
   const [revision, setRevision] = useState(0)
   const sessionRef = useRef<HTMLDivElement>(null)
   function reset() {
@@ -156,17 +158,21 @@ function DemoSession({ scenario }: { scenario: Scenario }) {
   }
   return (
     <div ref={sessionRef} className="a2ui-demo__session">
-      <Playback key={revision} scenario={scenario} reset={reset} />
+      <Playback key={revision} scenario={scenario} reset={reset} copy={copy} />
     </div>
   )
 }
 
 export function A2uiDemo() {
+  const locale = useLocale()
+  const t = a2uiMessages[locale].demo
+  const scenarios = getScenarios(locale)
   const [scenario, setScenario] = useState<Scenario>(scenarios[0])
+  useEffect(() => setScenario(scenarios[0]), [locale])
   return (
     <div className="a2ui-demo">
-      <div className="a2ui-demo__choices" role="group" aria-label="Demo scenarios">
-        <Text as="p" variant="labelLarge">Choose a scenario</Text>
+      <div className="a2ui-demo__choices" role="group" aria-label={t.scenarios}>
+        <Text as="p" variant="labelLarge">{t.chooseScenario}</Text>
         {scenarios.map((item, index) => (
           <Button key={item.id} variant={item.id === scenario.id ? 'tonal' : 'text'}
             aria-pressed={item.id === scenario.id} onClick={() => setScenario(item)}>
@@ -174,10 +180,10 @@ export function A2uiDemo() {
           </Button>
         ))}
         <Text as="p" variant="bodySmall" className="a2ui-demo__note">
-          Every message is scripted. You can stop playback at any time.
+          {t.scriptedNote}
         </Text>
       </div>
-      <DemoSession key={scenario.id} scenario={scenario} />
+      <DemoSession key={scenario.id} scenario={scenario} copy={t} />
     </div>
   )
 }

@@ -4,6 +4,8 @@ import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Dialog, Icon, IconButton, Text, TextField } from '@language-lit/material3-expressive'
 import type { SearchEntry } from '../content/search'
+import { useLocale } from '../i18n/useLocale'
+import { shellMessages } from '../i18n/messages/shell'
 
 function rank(entry: SearchEntry, query: string): number {
   const title = entry.title.toLowerCase()
@@ -16,6 +18,8 @@ function rank(entry: SearchEntry, query: string): number {
 
 export function Search({ index }: { index: SearchEntry[] }) {
   const router = useRouter()
+  const locale = useLocale()
+  const t = shellMessages[locale]
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
 
@@ -57,18 +61,18 @@ export function Search({ index }: { index: SearchEntry[] }) {
   return (
     <>
       <IconButton
-        aria-label="Search documentation"
+        aria-label={t.searchButton}
         variant="standard"
         onClick={() => setOpen(true)}
       >
         <Icon source="search" />
       </IconButton>
 
-      <Dialog open={open} onOpenChange={setOpen} title="Search">
+      <Dialog open={open} onOpenChange={setOpen} title={t.searchTitle}>
         <div className="stack">
           <TextField
             variant="outlined"
-            label="Search components and guides"
+            label={t.searchField}
             value={query}
             autoFocus
             leadingIcon={<Icon source="search" />}
@@ -83,8 +87,7 @@ export function Search({ index }: { index: SearchEntry[] }) {
 
           {results.length === 0 ? (
             <Text as="p" variant="bodyMedium">
-              Nothing matches “{query.trim()}”. Try a component name such as
-              Button, or a topic such as theming.
+              {t.searchEmpty(query.trim())}
             </Text>
           ) : (
             <ul className="sidebar__list" style={{ gap: '0.25rem' }}>

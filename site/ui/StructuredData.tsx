@@ -1,4 +1,6 @@
 import { absoluteUrl } from '../content/site'
+import { defaultLocale, localizePath, type Locale } from '../i18n/locales'
+import { shellMessages } from '../i18n/messages/shell'
 
 /**
  * Emits a JSON-LD block.
@@ -27,19 +29,21 @@ export function StructuredData({ data }: { data: Record<string, unknown> }) {
 
 /**
  * The trail from the site root to `path`, as schema.org expects it: position 1
- * is the home page, and the final item is the page itself.
+ * is the home page, and the final item is the page itself. Paths are site-root
+ * paths; they are prefixed for `locale` here.
  */
 export function breadcrumbList(
   trail: { name: string; path: string }[],
+  locale: Locale = defaultLocale,
 ): Record<string, unknown> {
   return {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
-    itemListElement: [{ name: 'Home', path: '/' }, ...trail].map((crumb, index) => ({
+    itemListElement: [{ name: shellMessages[locale].home, path: '/' }, ...trail].map((crumb, index) => ({
       '@type': 'ListItem',
       position: index + 1,
       name: crumb.name,
-      item: absoluteUrl(crumb.path),
+      item: absoluteUrl(localizePath(locale, crumb.path)),
     })),
   }
 }

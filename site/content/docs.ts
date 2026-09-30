@@ -1,6 +1,8 @@
 import { readFile } from 'node:fs/promises'
 import path from 'node:path'
-import { docsRoot } from './paths'
+import { componentDocsRoot, docsRoot } from './paths'
+import { defaultLocale, localizePath, type Locale } from '../i18n/locales'
+import { docPageText } from '../i18n/messages/docPages'
 
 export interface DocPage {
   slug: string
@@ -123,8 +125,13 @@ const repositoryOnlyDocs: Record<string, string> = {
  * when the target has no site route and no repository fallback, so the caller
  * can fail rather than emit a link that 404s on the published site.
  */
-export function resolveDocLink(href: string): string | null {
+export function resolveDocLink(href: string, locale: Locale = defaultLocale): string | null {
   if (/^(https?:)?\/\//.test(href) || href.startsWith('#')) return href
+  const route = resolveDocRoute(href)
+  return route?.startsWith('/') ? localizePath(locale, route) : route
+}
+
+function resolveDocRoute(href: string): string | null {
 
   const [target, hash = ''] = href.split('#')
   const suffix = hash ? `#${hash}` : ''
@@ -151,6 +158,30 @@ export function getDocPage(slug: string): DocPage | undefined {
   return docPages.find((page) => page.slug === slug)
 }
 
-export async function readDocSource(page: DocPage): Promise<string> {
-  return readFile(path.join(docsRoot, page.file), 'utf8')
+/**
+ * Where a published Markdown source lives in `locale`. Translations mirror the
+ * English layout under `docs/<locale>/` (ADR 0045).
+ */
+export function localizedDocPath(locale: Locale, relativePath: string): string {
+  return locale === defaultLocale
+    ? path.join(docsRoot, relativePath)
+    : path.join(docsRoot, locale, relativePath)
+}
+
+export function componentDocPath(locale: Locale, name: string): string {
+  return locale === defaultLocale
+    ? path.join(componentDocsRoot, `${name}.md`)
+    : localizedDocPath(locale, path.join('components', `${name}.md`))
+}
+
+/** A guide's title and summary in `locale`. A missing translation fails the build. */
+export function docPageCopy(page: DocPage, locale: Locale): { title: string; summary: string } {
+  if (locale === defaultLocale) return page
+  const copy = docPageText[locale]?.[page.slug]
+  if (!copy) throw new Error(`Missing ${locale} title and summary for guide "${page.slug}".`)
+  return copy
+}
+
+export async function readDocSource(page: DocPage, locale: Locale = defaultLocale): Promise<string> {
+  return readFile(localizedDocPath(locale, page.file), 'utf8')
 }

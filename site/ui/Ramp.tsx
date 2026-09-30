@@ -2,13 +2,15 @@
 
 import { Text } from '@language-lit/material3-expressive'
 import { useSiteSource } from '../app/providers'
+import { useLocale } from '../i18n/useLocale'
+import { shellMessages } from '../i18n/messages/shell'
 
 const displayTones = [10, 20, 30, 40, 50, 60, 70, 80, 90, 95, 99] as const
 const displayFamilies = [
-  { key: 'primary', label: 'Primary' },
-  { key: 'secondary', label: 'Secondary' },
-  { key: 'tertiary', label: 'Tertiary' },
-  { key: 'neutral-variant', label: 'Neutral variant' },
+  { key: 'primary', message: 'primary' },
+  { key: 'secondary', message: 'secondary' },
+  { key: 'tertiary', message: 'tertiary' },
+  { key: 'neutral-variant', message: 'neutralVariant' },
 ] as const
 
 /**
@@ -18,12 +20,14 @@ const displayFamilies = [
  */
 export function Ramp({ showTones = true }: { showTones?: boolean }) {
   const { sourceColor, palette } = useSiteSource()
+  const locale = useLocale()
+  const t = shellMessages[locale]
 
   return (
     <div className="ramp" style={{ ['--ramp-columns' as string]: displayTones.length }}>
       {displayFamilies.map((family) => (
         <div key={family.key}>
-          <span className="ramp__label">{family.label}</span>
+          <span className="ramp__label">{t[family.message]}</span>
           <div className="ramp__row">
             {displayTones.map((tone) => (
               <div
@@ -46,7 +50,7 @@ export function Ramp({ showTones = true }: { showTones?: boolean }) {
         </div>
       )}
       <Text as="p" variant="bodySmall" className="visually-hidden">
-        Tonal palettes generated from the source color {sourceColor}.
+        {t.tonalPaletteDescription(sourceColor)}
       </Text>
     </div>
   )

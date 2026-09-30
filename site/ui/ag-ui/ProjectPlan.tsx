@@ -1,6 +1,8 @@
 import { Card, Checkbox, Icon, LinearProgress, Surface, Tabs, Text } from '@language-lit/material3-expressive'
 import type { ToolRendererProps } from '@language-lit/material3-expressive-ag-ui'
 import { isRecord } from './values'
+import { useLocale } from '../../i18n/useLocale'
+import { agUiMessages } from '../../i18n/messages/agUi'
 
 interface Task {
   id: string
@@ -15,7 +17,8 @@ function isTask(value: unknown): value is Task {
 }
 
 export function ProjectPlan({ node, agent }: ToolRendererProps) {
-  const title = typeof node.args?.title === 'string' ? node.args.title : 'Preparing project'
+  const t = agUiMessages[useLocale()].projectCard
+  const title = typeof node.args?.title === 'string' ? node.args.title : t.preparing
   const tasks = Array.isArray(node.args?.tasks) ? node.args.tasks.filter(isTask) : []
   const completed: string[] = Array.isArray(agent.state?.completedTasks)
     ? agent.state.completedTasks.filter((value: unknown): value is string => typeof value === 'string') : []
@@ -30,21 +33,21 @@ export function ProjectPlan({ node, agent }: ToolRendererProps) {
   }
 
   return (
-    <Surface as="article" color="surface-container-low" shape="extra-large" className="agui-project" aria-label="Sample project plan">
+    <Surface as="article" color="surface-container-low" shape="extra-large" className="agui-project" aria-label={t.aria}>
       <div className="agui-widget__head">
         <div className="agui-widget__title">
-          <Text as="p" variant="labelMedium">Project plan</Text>
+          <Text as="p" variant="labelMedium">{t.label}</Text>
           <Text as="h4" variant="headlineSmall">{title}</Text>
         </div>
         <Icon source="check_circle" size={32} />
       </div>
       <Surface color="primary-container" shape="large" className="agui-project__progress">
-        <Text as="p" variant="titleLarge">{ready ? `${done} of ${tasks.length} tasks complete` : 'Building your checklist'}</Text>
-        <LinearProgress aria-label="Project completion" value={tasks.length ? done / tasks.length : 0} />
-        <Text as="p" variant="bodyMedium">{done === tasks.length && ready ? 'Ready for the design review.' : 'A small plan for a Friday handoff.'}</Text>
+        <Text as="p" variant="titleLarge">{ready ? t.complete(done, tasks.length) : t.building}</Text>
+        <LinearProgress aria-label={t.progress} value={tasks.length ? done / tasks.length : 0} />
+        <Text as="p" variant="bodyMedium">{done === tasks.length && ready ? t.ready : t.plan}</Text>
       </Surface>
-      <Tabs aria-label="Project view" variant="secondary" items={[
-        { value: 'checklist', label: 'Checklist', panel: (
+      <Tabs aria-label={t.projectView} variant="secondary" items={[
+        { value: 'checklist', label: t.checklist, panel: (
           <div className="agui-project__tasks">
             {tasks.map((task) => (
               <label key={task.id} className="agui-project__task" data-complete={completed.includes(task.id) || undefined}>
@@ -58,14 +61,14 @@ export function ProjectPlan({ node, agent }: ToolRendererProps) {
             ))}
           </div>
         ) },
-        { value: 'schedule', label: 'Schedule', panel: (
+        { value: 'schedule', label: t.schedule, panel: (
           <ol className="agui-project__schedule">
             {tasks.map((task) => (
               <li key={task.id}>
                 <Card variant="outlined" className="agui-project__milestone">
                   <Text as="p" variant="labelMedium">{task.day} · {task.owner}</Text>
                   <Text as="p" variant="titleSmall">{task.title}</Text>
-                  <Text as="p" variant="bodySmall">{completed.includes(task.id) ? 'Complete' : 'To do'}</Text>
+                  <Text as="p" variant="bodySmall">{completed.includes(task.id) ? t.completeLabel : t.todo}</Text>
                 </Card>
               </li>
             ))}
@@ -73,7 +76,7 @@ export function ProjectPlan({ node, agent }: ToolRendererProps) {
         ) },
       ]} />
       <Text as="p" variant="bodySmall" role="status">
-        {ready ? `${done} of ${tasks.length} complete. Check off a task to update the plan.` : 'Receiving tasks…'}
+        {ready ? t.statusComplete(done, tasks.length) : t.receiving}
       </Text>
     </Surface>
   )

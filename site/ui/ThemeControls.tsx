@@ -13,12 +13,8 @@ import {
 import { useThemeControls } from '../app/providers'
 import { Ramp } from './Ramp'
 import { SourceColorSwatches } from './SourceColorSwatches'
-
-const modeSegments = [
-  { value: 'light', label: 'Light' },
-  { value: 'dark', label: 'Dark' },
-  { value: 'system', label: 'System' },
-]
+import { useLocale } from '../i18n/useLocale'
+import { shellMessages } from '../i18n/messages/shell'
 
 /**
  * Color mode and source color, both wired to the public theme APIs.
@@ -29,13 +25,20 @@ const modeSegments = [
  */
 export function ThemeControls() {
   const [open, setOpen] = useState(false)
+  const locale = useLocale()
+  const t = shellMessages[locale]
+  const modeSegments = [
+    { value: 'light', label: t.light },
+    { value: 'dark', label: t.dark },
+    { value: 'system', label: t.system },
+  ]
   const { colorMode, setColorMode, themeError, isCustomized, resetTheme } = useThemeControls()
 
   return (
     <>
       <div className="bar__desktop-only">
         <SegmentedButtonGroup
-          aria-label="Color mode"
+          aria-label={t.colorMode}
           name="site-color-mode"
           value={colorMode}
           onValueChange={(value) => setColorMode(value as ColorMode)}
@@ -44,7 +47,7 @@ export function ThemeControls() {
       </div>
 
       <IconButton
-        aria-label={isCustomized ? 'Theme, customized' : 'Theme'}
+        aria-label={isCustomized ? t.themeButtonCustomized : t.themeButton}
         variant={isCustomized ? 'filled' : 'outlined'}
         onClick={() => setOpen(true)}
       >
@@ -54,14 +57,14 @@ export function ThemeControls() {
       <Dialog
         open={open}
         onOpenChange={setOpen}
-        title="Theme"
+        title={t.themeTitle}
         actions={
           <>
             <Button variant="text" onClick={resetTheme} disabled={!isCustomized}>
-              Reset
+              {t.themeReset}
             </Button>
             <Button variant="text" onClick={() => setOpen(false)}>
-              Done
+              {t.themeDone}
             </Button>
           </>
         }
@@ -73,36 +76,35 @@ export function ThemeControls() {
            * HTML whether or not it is open, and as headings these three sat in
            * every page's outline ahead of its `h1`.
            */}
-          <div className="theme-panel__row" role="group" aria-label="Source color">
+          <div className="theme-panel__row" role="group" aria-label={t.sourceColor}>
             <Text as="p" variant="titleSmall">
-              Source color
+              {t.sourceColor}
             </Text>
             <Text as="p" variant="bodySmall">
-              Every color on this site is generated from one source color, then
-              validated by the library before it is applied.
+              {t.sourceColorDescription}
             </Text>
             <SourceColorSwatches />
           </div>
 
           {themeError && (
             <p className="theme-panel__error">
-              The library rejected this theme: {themeError}
+              {t.sourceColorInvalidTheme(themeError)}
             </p>
           )}
 
-          <div className="theme-panel__row" role="group" aria-label="Generated palettes">
+          <div className="theme-panel__row" role="group" aria-label={t.generatedPalettes}>
             <Text as="p" variant="titleSmall">
-              Generated palettes
+              {t.generatedPalettes}
             </Text>
             <Ramp showTones={false} />
           </div>
 
-          <div className="theme-panel__row" role="group" aria-label="Color mode">
+          <div className="theme-panel__row" role="group" aria-label={t.colorMode}>
             <Text as="p" variant="titleSmall">
-              Color mode
+              {t.colorMode}
             </Text>
             <SegmentedButtonGroup
-              aria-label="Color mode"
+              aria-label={t.colorMode}
               name="site-color-mode-panel"
               value={colorMode}
               onValueChange={(value) => setColorMode(value as ColorMode)}

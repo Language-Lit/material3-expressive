@@ -2,6 +2,8 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useLocale } from '../i18n/useLocale'
+import { shellMessages } from '../i18n/messages/shell'
 
 export interface SidebarGroup {
   label: string
@@ -10,9 +12,10 @@ export interface SidebarGroup {
 
 export function Sidebar({ groups }: { groups: SidebarGroup[] }) {
   const pathname = usePathname()
+  const t = shellMessages[useLocale()]
 
   return (
-    <nav className="sidebar" aria-label="Documentation">
+    <nav className="sidebar" aria-label={t.documentationNav}>
       {groups.map((group) => (
         <div className="sidebar__group" key={group.label}>
           {/*

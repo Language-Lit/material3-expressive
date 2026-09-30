@@ -2,9 +2,11 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { Button, Surface, Text } from '@language-lit/material3-expressive'
+import { useLocale } from '../../i18n/useLocale'
+import { agUiMessages } from '../../i18n/messages/agUi'
 import { AgentProvider, MessageThread, RunStatus, useAgentContext } from '@language-lit/material3-expressive-ag-ui'
 import { DemoAgent } from './demo-agent'
-import { scenarios, type Scenario } from './scenarios'
+import { scenariosFor, type Scenario } from './scenarios'
 import { WeatherCard } from './WeatherCard'
 import { ProjectPlan } from './ProjectPlan'
 import { InvitationCard } from './InvitationCard'
@@ -12,6 +14,8 @@ import { InvitationCard } from './InvitationCard'
 const toolRenderers = { show_weather: WeatherCard, show_project: ProjectPlan, preview_invitation: InvitationCard }
 
 function Playback({ scenario, reset }: { scenario: Scenario; reset: () => void }) {
+  const locale = useLocale()
+  const t = agUiMessages[locale]
   const { agent, send, stop, isRunning, interrupts, phase, timeline } = useAgentContext()
   const [started, setStarted] = useState(false)
   const [finished, setFinished] = useState(false)
@@ -51,7 +55,7 @@ function Playback({ scenario, reset }: { scenario: Scenario; reset: () => void }
       await send(scenario.prompt)
     } catch (error) {
       if (!(error instanceof Error && error.name === 'AbortError')) {
-        setFailure('The demo could not finish. Reset it and try again.')
+        setFailure(t.failureStatus)
       }
     } finally {
       pending.current = false
@@ -59,9 +63,9 @@ function Playback({ scenario, reset }: { scenario: Scenario; reset: () => void }
     }
   }
 
-  const restingStatus = failure || (interrupts.length ? 'Waiting for your approval.'
-    : stopped ? 'Demo stopped. Reset to start again.'
-      : finished && !isRunning && phase !== 'error' ? 'Demo complete. Try another scenario or reset to replay.' : '')
+  const restingStatus = failure || (interrupts.length ? t.waitingApproval
+    : stopped ? t.stoppedStatus
+      : finished && !isRunning && phase !== 'error' ? t.completeStatus : '')
 
   return (
     <Surface color="surface" shape="extra-large" className="agui-demo__stage" data-scenario={scenario.id}>
@@ -69,25 +73,25 @@ function Playback({ scenario, reset }: { scenario: Scenario; reset: () => void }
         <Text as="h3" variant="titleLarge" id="scenario-title">{scenario.title}</Text>
         <Text as="p" variant="bodyMedium" id="scenario-description">{scenario.description}</Text>
       </div>
-      <div ref={transcriptRef} tabIndex={-1} role="region" aria-label="Demo conversation" className="agui-demo__transcript">
+      <div ref={transcriptRef} tabIndex={-1} role="region" aria-label={t.demoRegion} className="agui-demo__transcript">
         <MessageThread emptyState={
           <div className="agui-demo__empty">
             <Text as="p" variant="titleMedium">{scenario.prompt}</Text>
-            <Text as="p" variant="bodyMedium">Play the scenario to see the conversation.</Text>
+            <Text as="p" variant="bodyMedium">{t.playEmpty}</Text>
           </div>
         } />
       </div>
       <div className="agui-demo__footer">
-        <RunStatus workingLabel="Playing scripted events" />
+        <RunStatus workingLabel={t.playing} />
         <p className="agui-demo__status" role="status">{!isRunning && phase !== 'error' ? restingStatus : ''}</p>
         <div className="agui-demo__actions">
           <Button onClick={() => void play()} disabled={started} aria-describedby="scenario-description">
-            Play scenario
+            {t.playScenario}
           </Button>
           {isRunning ? (
-            <Button variant="outlined" onClick={() => { setStopped(true); stop(); transcriptRef.current?.focus() }}>Stop</Button>
+            <Button variant="outlined" onClick={() => { setStopped(true); stop(); transcriptRef.current?.focus() }}>{t.stop}</Button>
           ) : (
-            <Button variant="outlined" disabled={!started && !timeline.length} onClick={reset}>Reset demo</Button>
+            <Button variant="outlined" disabled={!started && !timeline.length} onClick={reset}>{t.resetDemo}</Button>
           )}
         </div>
       </div>
@@ -95,11 +99,11 @@ function Playback({ scenario, reset }: { scenario: Scenario; reset: () => void }
   )
 }
 
-function DemoSession({ scenario }: { scenario: Scenario }) {
-  const [session, setSession] = useState(() => ({ agent: new DemoAgent(scenario.id), revision: 0 }))
+function DemoSession({ scenario, locale }: { scenario: Scenario; locale: ReturnType<typeof useLocale> }) {
+  const [session, setSession] = useState(() => ({ agent: new DemoAgent(scenario.id, locale), revision: 0 }))
   const sessionRef = useRef<HTMLDivElement>(null)
   function reset() {
-    setSession(({ revision }) => ({ agent: new DemoAgent(scenario.id), revision: revision + 1 }))
+    setSession(({ revision }) => ({ agent: new DemoAgent(scenario.id, locale), revision: revision + 1 }))
     requestAnimationFrame(() => sessionRef.current?.querySelector<HTMLButtonElement>('button')?.focus())
   }
   return (
@@ -112,11 +116,14 @@ function DemoSession({ scenario }: { scenario: Scenario }) {
 }
 
 export function AgUiDemo() {
+  const locale = useLocale()
+  const t = agUiMessages[locale]
+  const scenarios = scenariosFor(locale)
   const [scenario, setScenario] = useState<Scenario>(scenarios[0])
   return (
     <div className="agui-demo">
-      <div className="agui-demo__choices" role="group" aria-label="Demo scenarios">
-        <Text as="p" variant="labelLarge">Choose a scenario</Text>
+      <div className="agui-demo__choices" role="group" aria-label={t.scenariosLabel}>
+        <Text as="p" variant="labelLarge">{t.chooseScenario}</Text>
         {scenarios.map((item, index) => (
           <Button key={item.id} variant={item.id === scenario.id ? 'tonal' : 'text'}
             aria-pressed={item.id === scenario.id} onClick={() => setScenario(item)}>
@@ -124,10 +131,10 @@ export function AgUiDemo() {
           </Button>
         ))}
         <Text as="p" variant="bodySmall" className="agui-demo__note">
-          Every response is scripted. You can stop playback at any time.
+          {t.note}
         </Text>
       </div>
-      <DemoSession key={scenario.id} scenario={scenario} />
+      <DemoSession key={scenario.id} scenario={scenario} locale={locale} />
     </div>
   )
 }

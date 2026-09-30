@@ -1,86 +1,90 @@
-import { mcpAppsPackage } from '../../../content/mcp-apps'
+import { mcpAppsPackage } from '../content/mcp-apps'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { Text } from '@language-lit/material3-expressive'
-import { docPages, getDocPage, readDocSource } from '../../../content/docs'
-import { renderMarkdown, stripLeadingHeading } from '../../../content/markdown'
-import { DocsShell } from '../../../ui/DocsShell'
-import { Prose } from '../../../ui/Prose'
-import { StructuredData, breadcrumbList } from '../../../ui/StructuredData'
-import { absoluteUrl, openGraphDefaults, packageName, siteName, siteUrl } from '../../../content/site'
-import { agUiPackage } from '../../../content/ag-ui'
-import { a2uiPackage } from '../../../content/a2ui'
+import { docPageCopy, docPages, getDocPage, readDocSource } from '../content/docs'
+import { renderMarkdown, stripLeadingHeading } from '../content/markdown'
+import { DocsShell } from '../ui/DocsShell'
+import { Prose } from '../ui/Prose'
+import { StructuredData, breadcrumbList } from '../ui/StructuredData'
+import { absoluteUrl, openGraphFor, packageName, siteUrl } from '../content/site'
+import { localeAlternates, localizePath, type Locale } from '../i18n/locales'
+import { shellMessages } from '../i18n/messages/shell'
+import { agUiPackage } from '../content/ag-ui'
+import { a2uiPackage } from '../content/a2ui'
 
 const companionPackages: Record<string, string> = { 'AG-UI': agUiPackage, A2UI: a2uiPackage, 'MCP Apps': mcpAppsPackage }
 
-interface PageProps {
-  params: Promise<{ slug: string }>
-}
-
-export async function generateStaticParams() {
+export async function staticParams() {
   return docPages.map((page) => ({ slug: page.slug }))
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { slug } = await params
+export async function pageMetadata(locale: Locale, slug: string): Promise<Metadata> {
   const page = getDocPage(slug)
   if (!page) return {}
+  const { title, summary } = docPageCopy(page, locale)
+  const pathname = `/docs/${page.slug}/`
   return {
-    title: page.title,
-    description: page.summary,
-    alternates: { canonical: `/docs/${page.slug}/` },
+    title,
+    description: summary,
+    alternates: localeAlternates(locale, pathname),
     openGraph: {
-      ...openGraphDefaults,
+      ...openGraphFor(locale),
       type: 'article',
-      url: absoluteUrl(`/docs/${page.slug}/`),
+      url: absoluteUrl(localizePath(locale, pathname)),
     },
   }
 }
 
-export default async function DocPage({ params }: PageProps) {
-  const { slug } = await params
+export default async function DocPage({ locale, param: slug }: { locale: Locale; param: string }) {
   const page = getDocPage(slug)
   if (!page) notFound()
 
-  const source = await readDocSource(page)
+  const t = shellMessages[locale]
+  const copy = docPageCopy(page, locale)
+  const pathname = `/docs/${page.slug}/`
+  const source = await readDocSource(page, locale)
   const { title, body } = stripLeadingHeading(source)
-  const { html } = renderMarkdown(body)
+  const { html } = renderMarkdown(body, locale)
 
   return (
-    <DocsShell>
+    <DocsShell locale={locale}>
       <StructuredData
         data={{
           '@context': 'https://schema.org',
           '@type': 'TechArticle',
-          headline: title ?? page.title,
-          description: page.summary,
-          url: absoluteUrl(`/docs/${page.slug}/`),
-          inLanguage: 'en',
-          isPartOf: { '@type': 'WebSite', name: siteName, url: siteUrl },
+          headline: title ?? copy.title,
+          description: copy.summary,
+          url: absoluteUrl(localizePath(locale, pathname)),
+          inLanguage: locale,
+          isPartOf: { '@type': 'WebSite', name: t.siteName, url: siteUrl },
           about: { '@type': 'SoftwareSourceCode', name: (page.section && companionPackages[page.section]) || packageName },
           author: { '@type': 'Person', name: 'Romullo Queiroz' },
           license: 'https://opensource.org/licenses/MIT',
         }}
       />
       <StructuredData
-        data={breadcrumbList([
-          { name: 'Guides', path: '/docs/' },
-          { name: page.title, path: `/docs/${page.slug}/` },
-        ])}
+        data={breadcrumbList(
+          [
+            { name: t.guides, path: '/docs/' },
+            { name: copy.title, path: pathname },
+          ],
+          locale,
+        )}
       />
       <article>
         <div className="page-head">
-          <span className="page-head__eyebrow">{page.section ? `${page.section} guide` : 'Guide'}</span>
+          <span className="page-head__eyebrow">{page.section ? t.sectionGuide(page.section) : t.guide}</span>
           <Text
             as="h1"
             variant="displaySmall"
             emphasis="emphasized"
             className="page-head__title"
           >
-            {title ?? page.title}
+            {title ?? copy.title}
           </Text>
           <Text as="p" variant="bodyLarge">
-            {page.summary}
+            {copy.summary}
           </Text>
         </div>
         <Prose html={html} />

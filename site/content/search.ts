@@ -1,11 +1,11 @@
-import { mcpAppsDescription } from './mcp-apps'
 import { readFile } from 'node:fs/promises'
-import path from 'node:path'
-import { getConformantComponents, kindLabels } from './inventory'
-import { docPages } from './docs'
-import { componentDocsRoot, docsRoot } from './paths'
-import { agUiDescription } from './ag-ui'
-import { a2uiDescription } from './a2ui'
+import { getConformantComponents } from './inventory'
+import { componentDocPath, docPageCopy, docPages, localizedDocPath } from './docs'
+import { localizePath, type Locale } from '../i18n/locales'
+import { shellMessages } from '../i18n/messages/shell'
+import { agUiMessages } from '../i18n/messages/agUi'
+import { a2uiMessages } from '../i18n/messages/a2ui'
+import { mcpAppsMessages } from '../i18n/messages/mcpApps'
 
 export interface SearchEntry {
   title: string
@@ -38,20 +38,18 @@ function firstParagraph(source: string): string {
  * stays small because it indexes titles, exported symbols, and one excerpt per
  * page rather than full document text.
  */
-export async function buildSearchIndex(): Promise<SearchEntry[]> {
+export async function buildSearchIndex(locale: Locale): Promise<SearchEntry[]> {
   const components = await getConformantComponents()
+  const t = shellMessages[locale]
 
   const componentEntries = await Promise.all(
     components.map(async (component): Promise<SearchEntry> => {
-      const source = await readFile(
-        path.join(componentDocsRoot, `${component.name}.md`),
-        'utf8',
-      )
+      const source = await readFile(componentDocPath(locale, component.name), 'utf8')
       const excerpt = firstParagraph(source)
       return {
         title: component.name,
-        href: `/components/${component.name}/`,
-        group: kindLabels[component.kind],
+        href: localizePath(locale, `/components/${component.name}/`),
+        group: t.kinds[component.kind],
         terms: [component.name, ...component.publicExports, excerpt]
           .join(' ')
           .toLowerCase(),
@@ -62,29 +60,37 @@ export async function buildSearchIndex(): Promise<SearchEntry[]> {
 
   const docEntries = await Promise.all(
     docPages.map(async (page): Promise<SearchEntry> => {
-      const source = await readFile(path.join(docsRoot, page.file), 'utf8')
-      const excerpt = page.summary || firstParagraph(source)
+      const source = await readFile(localizedDocPath(locale, page.file), 'utf8')
+      const { title, summary } = docPageCopy(page, locale)
+      const excerpt = summary || firstParagraph(source)
       return {
-        title: page.title,
-        href: `/docs/${page.slug}/`,
-        group: page.section ?? 'Guides',
-        terms: [page.title, page.summary, firstParagraph(source)].join(' ').toLowerCase(),
+        title,
+        href: localizePath(locale, `/docs/${page.slug}/`),
+        group: page.section ?? t.guides,
+        // The English title stays searchable, so "theming" finds テーマ設定.
+        terms: [title, page.title, summary, firstParagraph(source)].join(' ').toLowerCase(),
         excerpt,
       }
     }),
   )
 
-  return [{
-    title: 'AG-UI demo',
-    href: '/ag-ui/',
-    group: 'Demos',
-    terms: `ag-ui agents ai streaming reasoning tools weather approval interrupts copilotkit ${agUiDescription}`.toLowerCase(),
-    excerpt: agUiDescription,
-  }, {
-    title: 'A2UI demo',
-    href: '/a2ui/',
-    group: 'Demos',
-    terms: `a2ui google agents generative ui surfaces catalog renderer data binding validation actions streaming ${a2uiDescription}`.toLowerCase(),
-    excerpt: a2uiDescription,
-  }, { title: 'MCP Apps demo', href: '/mcp-apps/', group: 'Demos', terms: `mcp apps tools iframe host provider model context ${mcpAppsDescription}`.toLowerCase(), excerpt: mcpAppsDescription }, ...docEntries, ...componentEntries]
+  const demo = (
+    messages: { description: string; searchTitle: string },
+    href: string,
+    keywords: string,
+  ): SearchEntry => ({
+    title: messages.searchTitle,
+    href: localizePath(locale, href),
+    group: t.demos,
+    terms: `${keywords} ${messages.searchTitle} ${messages.description}`.toLowerCase(),
+    excerpt: messages.description,
+  })
+
+  return [
+    demo(agUiMessages[locale], '/ag-ui/', 'ag-ui agents ai streaming reasoning tools weather approval interrupts copilotkit'),
+    demo(a2uiMessages[locale], '/a2ui/', 'a2ui google agents generative ui surfaces catalog renderer data binding validation actions streaming'),
+    demo(mcpAppsMessages[locale], '/mcp-apps/', 'mcp apps tools iframe host provider model context'),
+    ...docEntries,
+    ...componentEntries,
+  ]
 }

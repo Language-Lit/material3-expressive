@@ -14,6 +14,9 @@ import {
 } from '@language-lit/material3-expressive'
 import { useThemeControls } from '../app/providers'
 import { SourceColorSwatches } from './SourceColorSwatches'
+import { homeMessages } from '../i18n/messages/home'
+import { useLocale } from '../i18n/useLocale'
+import { shellMessages } from '../i18n/messages/shell'
 
 /**
  * A live sampler with the source-color control beside it.
@@ -24,47 +27,49 @@ import { SourceColorSwatches } from './SourceColorSwatches'
  * claim is being made.
  */
 export function ThemeShowcase() {
+  const locale = useLocale()
+  const t = homeMessages[locale]
+  const shell = shellMessages[locale]
   const { colorMode, setColorMode, themeError } = useThemeControls()
 
   return (
     <div className="showcase">
       <div className="showcase__controls">
         <Text as="h3" variant="titleSmall">
-          Source color
+          {t.themeSourceColor}
         </Text>
         <SourceColorSwatches />
         {themeError && (
           <p className="theme-panel__error">
-            The library rejected this theme: {themeError}
+            {t.themeError(themeError)}
           </p>
         )}
         <Text as="p" variant="bodySmall" className="claim__body">
-          Choose a color and watch the whole page change. You can also compare
-          the components in light and dark mode.
+          {t.themeShowcaseLede}
         </Text>
       </div>
 
       <Surface as="div" color="surface-container-lowest" shape="large" className="showcase__stage">
         <div className="showcase__row">
           <Button variant="filled" leadingIcon={<Icon source="add" />}>
-            Filled
+            {t.filled}
           </Button>
-          <Button variant="tonal">Tonal</Button>
-          <Button variant="elevated">Elevated</Button>
-          <Button variant="outlined">Outlined</Button>
-          <Button variant="text">Text</Button>
+          <Button variant="tonal">{t.tonal}</Button>
+          <Button variant="elevated">{t.elevated}</Button>
+          <Button variant="outlined">{t.outlined}</Button>
+          <Button variant="text">{t.textButton}</Button>
         </div>
 
         <div className="showcase__row">
           <SegmentedButtonGroup
-            aria-label="Demo color mode"
+            aria-label={t.demoColorMode}
             name="showcase-color-mode"
             value={colorMode}
             onValueChange={(value) => setColorMode(value as 'light' | 'dark' | 'system')}
             segments={[
-              { value: 'light', label: 'Light' },
-              { value: 'dark', label: 'Dark' },
-              { value: 'system', label: 'System' },
+              { value: 'light', label: shell.light },
+              { value: 'dark', label: shell.dark },
+              { value: 'system', label: shell.system },
             ]}
           />
         </div>
@@ -73,25 +78,25 @@ export function ThemeShowcase() {
           <label style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
             <Checkbox defaultChecked name="showcase-checkbox" />
             <Text as="span" variant="bodyMedium">
-              Checkbox
+              {t.checkbox}
             </Text>
           </label>
           <label style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
             <Switch defaultChecked name="showcase-switch" />
             <Text as="span" variant="bodyMedium">
-              Switch
+              {t.switch}
             </Text>
           </label>
         </div>
 
         <TextField
           variant="outlined"
-          label="Project name"
-          supportingText="Native input, native validation"
+          label={t.projectName}
+          supportingText={t.nativeValidation}
           leadingIcon={<Icon source="folder" />}
         />
 
-        <LinearProgress value={0.62} aria-label="Example progress" />
+        <LinearProgress value={0.62} aria-label={t.exampleProgress} />
 
         <Card variant="filled">
           {/* `Card` is a container: it owns color, shape, and elevation, and
@@ -100,11 +105,10 @@ export function ThemeShowcase() {
               and compress as column flex items. */}
           <div className="showcase__card">
             <Text as="h4" variant="titleMedium">
-              One theme controls every component
+              {t.oneThemeTitle}
             </Text>
             <Text as="p" variant="bodySmall" className="claim__body">
-              Buttons, fields, and cards all use the same color, shape, and
-              motion tokens. Change them through the typed theme API.
+              {t.oneThemeBody}
             </Text>
           </div>
         </Card>

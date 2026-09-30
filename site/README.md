@@ -35,6 +35,7 @@ Nothing about a component is written twice.
 | Live demos and the source shown under them | `playground/examples/*.example.tsx` |
 | Guides | `docs/GETTING_STARTED.md` and its siblings |
 | Version, bundle sizes, browser support | `package.json`, `docs/bundle-budgets.json`, `docs/browser-support.json` |
+| Japanese pages under `/ja/` | `docs/ja/` for guides and component prose, `site/i18n/messages/` for UI strings (ADR 0045) |
 
 `npm run check:site` fails when a conformant component has no route or demo,
 when a demo exists for something the inventory does not advertise, when the

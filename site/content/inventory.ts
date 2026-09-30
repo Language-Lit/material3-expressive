@@ -1,5 +1,7 @@
 import { readFile } from 'node:fs/promises'
 import { inventoryPath } from './paths'
+import { defaultLocale, type Locale } from '../i18n/locales'
+import { shellMessages } from '../i18n/messages/shell'
 
 export type ComponentKind =
   | 'foundation'
@@ -60,24 +62,16 @@ export const kindOrder: readonly ComponentKind[] = [
   'navigation',
 ]
 
-export const kindLabels: Record<ComponentKind, string> = {
-  foundation: 'Foundations',
-  action: 'Actions',
-  containment: 'Containment',
-  input: 'Input and selection',
-  overlay: 'Overlays',
-  feedback: 'Feedback',
-  navigation: 'Navigation',
-}
+export const kindLabels: Record<ComponentKind, string> = shellMessages[defaultLocale].kinds
 
-export async function getComponentsByKind(): Promise<
+export async function getComponentsByKind(locale: Locale = defaultLocale): Promise<
   { kind: ComponentKind; label: string; components: InventoryComponent[] }[]
 > {
   const components = await getConformantComponents()
   return kindOrder
     .map((kind) => ({
       kind,
-      label: kindLabels[kind],
+      label: shellMessages[locale].kinds[kind],
       components: components.filter((component) => component.kind === kind),
     }))
     .filter((group) => group.components.length > 0)

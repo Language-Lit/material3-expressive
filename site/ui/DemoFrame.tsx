@@ -7,6 +7,8 @@ import { getDemo } from '../demos/registry'
 // demo looks the same here as it does in the workbench the components are
 // developed against.
 import '../../playground/src/playground.css'
+import { useLocale } from '../i18n/useLocale'
+import { shellMessages } from '../i18n/messages/shell'
 
 export function DemoFrame({
   component,
@@ -20,6 +22,8 @@ export function DemoFrame({
   const [showSource, setShowSource] = useState(false)
   const [copied, setCopied] = useState(false)
   const sourceId = useId()
+  const locale = useLocale()
+  const t = shellMessages[locale]
   const Demo = getDemo(component)
 
   if (!Demo) return null
@@ -42,7 +46,7 @@ export function DemoFrame({
 
       <div className="demo__bar">
         <span className="demo__label">
-          playground/examples/{component}.example.tsx
+          {t.codeExamplePath(component)}
         </span>
         <span style={{ display: 'flex', gap: '0.25rem' }}>
           <Button
@@ -53,7 +57,7 @@ export function DemoFrame({
             leadingIcon={<Icon source={showSource ? 'expand_less' : 'code'} />}
             onClick={() => setShowSource((current) => !current)}
           >
-            {showSource ? 'Hide code' : 'Show code'}
+            {showSource ? t.hideCode : t.showCode}
           </Button>
           <Button
             variant="text"
@@ -61,7 +65,7 @@ export function DemoFrame({
             leadingIcon={<Icon source={copied ? 'check' : 'content_copy'} />}
             onClick={copy}
           >
-            {copied ? 'Copied' : 'Copy'}
+            {copied ? t.copied : t.copy}
           </Button>
         </span>
       </div>

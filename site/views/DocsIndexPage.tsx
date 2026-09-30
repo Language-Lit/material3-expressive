@@ -1,61 +1,62 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Surface, Text } from '@language-lit/material3-expressive'
-import { a2uiDocPages, agUiDocPages, mcpAppsDocPages, docPages } from '../../content/docs'
-import { DocsShell } from '../../ui/DocsShell'
-import { StructuredData, breadcrumbList } from '../../ui/StructuredData'
-import { absoluteUrl, openGraphDefaults } from '../../content/site'
+import { a2uiDocPages, agUiDocPages, mcpAppsDocPages, docPageCopy, docPages } from '../content/docs'
+import { DocsShell } from '../ui/DocsShell'
+import { StructuredData, breadcrumbList } from '../ui/StructuredData'
+import { absoluteUrl, openGraphFor } from '../content/site'
+import { localeAlternates, localizePath, type Locale } from '../i18n/locales'
+import { shellMessages } from '../i18n/messages/shell'
 
-const description =
-  'Guides to Material 3 Expressive and its AG-UI, A2UI, and MCP Apps companions: installation, theming, agent conversations, agent-generated surfaces, and component composition.'
-
-export const metadata: Metadata = {
-  title: 'Guides',
-  description,
-  alternates: { canonical: '/docs/' },
-  openGraph: { ...openGraphDefaults, url: absoluteUrl('/docs/') },
+export function pageMetadata(locale: Locale): Metadata {
+  const t = shellMessages[locale]
+  return {
+    title: t.guides,
+    description: t.docsIndexDescription,
+    alternates: localeAlternates(locale, '/docs/'),
+    openGraph: { ...openGraphFor(locale), url: absoluteUrl(localizePath(locale, '/docs/')) },
+  }
 }
 
-export default function DocsIndexPage() {
+export default function DocsIndexPage({ locale }: { locale: Locale }) {
+  const t = shellMessages[locale]
   return (
-    <DocsShell>
+    <DocsShell locale={locale}>
       <StructuredData
         data={{
           '@context': 'https://schema.org',
           '@type': 'ItemList',
-          name: 'Material 3 Expressive for React guides',
-          description,
+          name: t.docsIndexListName,
+          description: t.docsIndexDescription,
           numberOfItems: docPages.length,
           itemListOrder: 'https://schema.org/ItemListOrderAscending',
           itemListElement: docPages.map((page, index) => ({
             '@type': 'ListItem',
             position: index + 1,
-            name: page.title,
-            description: page.summary,
-            url: absoluteUrl(`/docs/${page.slug}/`),
+            name: docPageCopy(page, locale).title,
+            description: docPageCopy(page, locale).summary,
+            url: absoluteUrl(localizePath(locale, `/docs/${page.slug}/`)),
           })),
         }}
       />
-      <StructuredData data={breadcrumbList([{ name: 'Guides', path: '/docs/' }])} />
+      <StructuredData data={breadcrumbList([{ name: t.guides, path: '/docs/' }], locale)} />
       <div className="page-head">
-        <span className="page-head__eyebrow">Guides</span>
+        <span className="page-head__eyebrow">{t.guides}</span>
         <Text as="h1" variant="displaySmall" emphasis="emphasized" className="page-head__title">
-          Guides
+          {t.guides}
         </Text>
         <Text as="p" variant="bodyLarge">
-          Set up Material 3 Expressive, customize your theme, add an agent
-          conversation with the AG-UI companion, or render agent-generated
-          surfaces with A2UI, or embed interactive tools with MCP Apps.
+          {t.docsIndexLede}
         </Text>
       </div>
 
       <div className="catalog__grid">
         {docPages.filter((page) => !page.section).map((page) => (
           <Surface key={page.slug} as="article" color="surface-container-low" shape="large">
-            <Link href={`/docs/${page.slug}/`} className="catalog__card">
-              <span className="catalog__name">{page.title}</span>
+            <Link href={localizePath(locale, `/docs/${page.slug}/`)} className="catalog__card">
+              <span className="catalog__name">{docPageCopy(page, locale).title}</span>
               <span className="claim__body" style={{ fontSize: '0.8125rem', lineHeight: 1.5 }}>
-                {page.summary}
+                {docPageCopy(page, locale).summary}
               </span>
             </Link>
           </Surface>
@@ -65,15 +66,15 @@ export default function DocsIndexPage() {
         <div className="page-head">
           <Text as="h2" variant="headlineMedium" id="ag-ui-guides">AG-UI</Text>
           <Text as="p" variant="bodyLarge">
-            Build agent conversations with the Material 3 Expressive companion.
+            {t.docsIndexAgUi}
           </Text>
         </div>
         <div className="catalog__grid">
           {agUiDocPages.map((page) => (
             <Surface key={page.slug} as="article" color="surface-container-low" shape="large">
-              <Link href={`/docs/${page.slug}/`} className="catalog__card">
-                <span className="catalog__name">{page.title}</span>
-                <span className="claim__body" style={{ fontSize: '0.8125rem', lineHeight: 1.5 }}>{page.summary}</span>
+              <Link href={localizePath(locale, `/docs/${page.slug}/`)} className="catalog__card">
+                <span className="catalog__name">{docPageCopy(page, locale).title}</span>
+                <span className="claim__body" style={{ fontSize: '0.8125rem', lineHeight: 1.5 }}>{docPageCopy(page, locale).summary}</span>
               </Link>
             </Surface>
           ))}
@@ -83,23 +84,23 @@ export default function DocsIndexPage() {
         <div className="page-head">
           <Text as="h2" variant="headlineMedium" id="a2ui-guides">A2UI</Text>
           <Text as="p" variant="bodyLarge">
-            Render Google A2UI surfaces with the Material 3 Expressive companion.
+            {t.docsIndexA2ui}
           </Text>
         </div>
         <div className="catalog__grid">
           {a2uiDocPages.map((page) => (
             <Surface key={page.slug} as="article" color="surface-container-low" shape="large">
-              <Link href={`/docs/${page.slug}/`} className="catalog__card">
-                <span className="catalog__name">{page.title}</span>
-                <span className="claim__body" style={{ fontSize: '0.8125rem', lineHeight: 1.5 }}>{page.summary}</span>
+              <Link href={localizePath(locale, `/docs/${page.slug}/`)} className="catalog__card">
+                <span className="catalog__name">{docPageCopy(page, locale).title}</span>
+                <span className="claim__body" style={{ fontSize: '0.8125rem', lineHeight: 1.5 }}>{docPageCopy(page, locale).summary}</span>
               </Link>
             </Surface>
           ))}
         </div>
       </section>
       <section aria-labelledby="mcp-apps-guides" style={{ marginBlockStart: '3rem' }}>
-        <div className="page-head"><Text as="h2" variant="headlineMedium" id="mcp-apps-guides">MCP Apps</Text><Text as="p" variant="bodyLarge">Host interactive tools and build apps with Material components.</Text></div>
-        <div className="catalog__grid">{mcpAppsDocPages.map((page) => <Surface key={page.slug} as="article" color="surface-container-low" shape="large"><Link href={`/docs/${page.slug}/`} className="catalog__card"><span className="catalog__name">{page.title}</span><span className="claim__body">{page.summary}</span></Link></Surface>)}</div>
+        <div className="page-head"><Text as="h2" variant="headlineMedium" id="mcp-apps-guides">MCP Apps</Text><Text as="p" variant="bodyLarge">{t.docsIndexMcpApps}</Text></div>
+        <div className="catalog__grid">{mcpAppsDocPages.map((page) => <Surface key={page.slug} as="article" color="surface-container-low" shape="large"><Link href={localizePath(locale, `/docs/${page.slug}/`)} className="catalog__card"><span className="catalog__name">{docPageCopy(page, locale).title}</span><span className="claim__body">{docPageCopy(page, locale).summary}</span></Link></Surface>)}</div>
       </section>
     </DocsShell>
   )

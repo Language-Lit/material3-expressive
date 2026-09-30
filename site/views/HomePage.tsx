@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { readFile } from 'node:fs/promises'
 import path from 'node:path'
 import { Icon, Surface, Text } from '@language-lit/material3-expressive'
@@ -16,6 +17,8 @@ import {
   siteName,
   siteUrl,
 } from '../content/site'
+import { localeAlternates, localizePath, type Locale } from '../i18n/locales'
+import { homeMessages } from '../i18n/messages/home'
 
 /**
  * Package figures are read from the repository at build time. Google research
@@ -43,8 +46,13 @@ async function getFacts() {
   }
 }
 
-export default async function HomePage() {
+export function pageMetadata(locale: Locale): Metadata {
+  return { alternates: localeAlternates(locale, '/') }
+}
+
+export default async function HomePage({ locale }: { locale: Locale }) {
   const facts = await getFacts()
+  const t = homeMessages[locale]
 
   return (
     // The docs routes get their `main` from `DocsShell`; the home page has no
@@ -80,26 +88,25 @@ export default async function HomePage() {
       <section className="hero">
         <div className="hero__grid">
           <div>
-            <p className="hero__eyebrow">Open source · Made for the web</p>
+            <p className="hero__eyebrow">{t.heroEyebrow}</p>
             <Text as="h1" variant="displayLarge" emphasis="emphasized" className="hero__title">
-              Google’s Material 3 Expressive.<br />
-              <span className="hero__accent">Built for React.</span>
+              {t.heroTitle}<br />
+              <span className="hero__accent">{t.heroTitleAccent}</span>
             </Text>
             <Text as="p" variant="bodyLarge" className="hero__lede">
-              Bring Google’s bold new Material design to the web with React
-              components, expressive motion, and a theme that fits your product.
+              {t.heroLede}
             </Text>
             <div className="hero__actions">
-              <LinkButton href="/components/" trailingIcon={<Icon source="arrow_forward" mirrored />}>
-                Try the components
+              <LinkButton href={localizePath(locale, '/components/')} trailingIcon={<Icon source="arrow_forward" mirrored />}>
+                {t.tryComponents}
               </LinkButton>
-              <LinkButton href="/docs/getting-started/" variant="outlined">Get started</LinkButton>
+              <LinkButton href={localizePath(locale, '/docs/getting-started/')} variant="outlined">{t.getStarted}</LinkButton>
             </div>
-            <ul className="hero__facts" aria-label="Library at a glance">
-              <li>React 18 &amp; 19</li><li>TypeScript</li><li>MIT licensed</li>
-              <li>{facts.runtimeDependencies} runtime dependencies</li>
+            <ul className="hero__facts" aria-label={t.libraryAtGlance}>
+              <li>{t.reactPeers}</li><li>TypeScript</li><li>{t.mitLicensed}</li>
+              <li>{t.runtimeDependencies(facts.runtimeDependencies)}</li>
             </ul>
-            <p className="hero__attribution">An independent implementation of Google’s design system.</p>
+            <p className="hero__attribution">{t.independentAttribution}</p>
           </div>
           <HeroShowcase />
         </div>
@@ -108,26 +115,23 @@ export default async function HomePage() {
       <section className="section section--research">
         <div className="section__inner research">
           <div>
-            <p className="section__eyebrow">Why expressive?</p>
+            <p className="section__eyebrow">{t.whyExpressive}</p>
             <Text as="h2" variant="headlineMedium" emphasis="emphasized" className="section__title">
-              Meet Google’s next evolution of Material Design.
+              {t.researchHeading}
             </Text>
             <Text as="p" variant="bodyLarge" className="section__lede">
-              Material 3 Expressive uses shape, color, size, and motion to draw
-              attention to the right actions. It gives familiar interfaces more
-              character without throwing away the patterns people already know.
+              {t.researchLede}
             </Text>
             <a className="research__link" href="https://design.google/library/expressive-material-design-google-research">
-              See the research from Google <span aria-hidden="true">↗</span>
+              {t.researchLink} <span aria-hidden="true">↗</span>
             </a>
           </div>
           <div className="research__evidence">
             <div className="research__numbers">
-              <p><strong>46</strong><span>research studies</span></p>
-              <p><strong>18,000+</strong><span>participants worldwide</span></p>
+              <p><strong>46</strong><span>{t.researchStudies}</span></p>
+              <p><strong>18,000+</strong><span>{t.participantsWorldwide}</span></p>
             </div>
-            <p>Google tested hundreds of designs to learn what makes an interface
-              easier to use, more distinct, and more appealing.</p>
+            <p>{t.researchEvidence}</p>
           </div>
         </div>
       </section>
@@ -135,23 +139,21 @@ export default async function HomePage() {
       <section className="section section--tinted" id="theming">
         <div className="section__inner">
           <div className="section__head">
-            <p className="section__eyebrow">Built around your brand</p>
+            <p className="section__eyebrow">{t.builtAroundBrand}</p>
             <Text as="h2" variant="headlineMedium" emphasis="emphasized" className="section__title">
-              Pick a color. The whole interface follows.
+              {t.themeHeading}
             </Text>
             <Text as="p" variant="bodyLarge" className="section__lede">
-              Choose one of our presets or use your own source color. Then try
-              the same components in light and dark mode.
+              {t.themeLede}
             </Text>
           </div>
           <ThemeShowcase />
           <details className="theme-details">
-            <summary>Show the tonal palettes behind this demo</summary>
+            <summary>{t.showPalettes}</summary>
             <figure className="ramp-readout">
               <Ramp />
               <figcaption><Text as="span" variant="bodySmall">
-                This site generates palettes from your source color and passes them
-                to the library’s typed theme API, which validates references and role-pair contrast.
+                {t.paletteCaption}
               </Text></figcaption>
             </figure>
           </details>
@@ -161,50 +163,44 @@ export default async function HomePage() {
       <section className="section">
         <div className="section__inner">
           <div className="section__head">
-            <p className="section__eyebrow">Made for real React apps</p>
+            <p className="section__eyebrow">{t.realReactApps}</p>
             <Text as="h2" variant="headlineMedium" emphasis="emphasized" className="section__title">
-              Material design that behaves properly on the web.
+              {t.webHeading}
             </Text>
             <Text as="p" variant="bodyLarge" className="section__lede">
-              Buttons are buttons. Checkboxes submit with forms. Keyboard
-              interaction, RTL, reduced motion, and forced colors are built in
-              and documented.
+              {t.webLede}
             </Text>
           </div>
           <div className="claims">
             <Surface as="article" color="primary-container" shape="extra-large" className="claim">
               <span className="claim__value">{facts.componentCount}</span>
-              <Text as="h3" variant="titleMedium">Conformant components</Text>
+              <Text as="h3" variant="titleMedium">{t.conformantComponents}</Text>
               <Text as="p" variant="bodyMedium" className="claim__body">
-                Build with buttons, inputs, navigation, overlays, and more. Every
-                component comes with a live example and conformance record.
+                {t.componentsClaim}
               </Text>
-              <a href="/components/" className="claim__link">Browse all components →</a>
+              <a href={localizePath(locale, '/components/')} className="claim__link">{t.browseComponents}</a>
             </Surface>
             <Surface as="article" color="tertiary-container" shape="large-increased" className="claim">
               <span className="claim__value">{facts.runtimeDependencies}</span>
-              <Text as="h3" variant="titleMedium">Extra runtime dependencies</Text>
+              <Text as="h3" variant="titleMedium">{t.extraRuntimeDependencies}</Text>
               <Text as="p" variant="bodyMedium" className="claim__body">
-                React and React DOM are the only peers. Styles ship as precompiled
-                CSS, with no Tailwind setup or runtime style injection.
+                {t.runtimeClaim}
               </Text>
-              <a href="/docs/getting-started/" className="claim__link">See the setup →</a>
+              <a href={localizePath(locale, '/docs/getting-started/')} className="claim__link">{t.seeSetup}</a>
             </Surface>
             <Surface as="article" color="secondary-container" shape="extra-large-increased" className="claim">
               <span className="claim__value">SSR</span>
-              <Text as="h3" variant="titleMedium">Tested with server rendering</Text>
+              <Text as="h3" variant="titleMedium">{t.serverRendering}</Text>
               <Text as="p" variant="bodyMedium" className="claim__body">
-                Built and checked with Next.js and Vite consumer fixtures.
-                Follow the guide for hydration and system color mode.
+                {t.ssrClaim}
               </Text>
-              <a href="/docs/ssr/" className="claim__link">Read the SSR guide →</a>
+              <a href={localizePath(locale, '/docs/ssr/')} className="claim__link">{t.readSsrGuide}</a>
             </Surface>
           </div>
           <div className="implementation-notes">
-            <p>See how we handle <a href="/docs/web-deviations/">Material adaptations and accessibility on the web</a>.</p>
-            <p>Bundle baselines: {facts.jsGzip} kB gzip JavaScript entry + {facts.cssGzip} kB
-              gzip complete CSS. Tracked in CI.</p>
-            <p>Supported browsers: {facts.browsers.join(', ')}.</p>
+            <p>{t.adaptationsLead}<a href={localizePath(locale, '/docs/web-deviations/')}>{t.adaptationsLink}</a>.</p>
+            <p>{t.bundleBaselines}{facts.jsGzip}{t.gzipJavaScript}{facts.cssGzip}{t.gzipCss}</p>
+            <p>{t.supportedBrowsers}{facts.browsers.join(', ')}.</p>
           </div>
         </div>
       </section>
@@ -214,23 +210,22 @@ export default async function HomePage() {
           <RampRule />
           <div className="getting-started">
             <div>
-              <p className="section__eyebrow">Try it in your project</p>
+              <p className="section__eyebrow">{t.tryProject}</p>
               <Text as="h2" variant="headlineMedium" emphasis="emphasized" className="section__title">
-                Add your first expressive component.
+                {t.firstComponent}
               </Text>
               <Text as="p" variant="bodyLarge" className="section__lede">
-                Install the package, import the stylesheet once, and add the
-                provider. The default theme is ready to use.
+                {t.installLede}
               </Text>
               <InstallCommand command="npm install @language-lit/material3-expressive react react-dom" />
               <div className="hero__actions">
-                <LinkButton href="/docs/getting-started/" variant="tonal">Read the installation guide</LinkButton>
-                <LinkButton href={repositoryUrl} variant="text" external>View on GitHub</LinkButton>
+                <LinkButton href={localizePath(locale, '/docs/getting-started/')} variant="tonal">{t.installationGuide}</LinkButton>
+                <LinkButton href={repositoryUrl} variant="text" external>{t.viewGitHub}</LinkButton>
               </div>
             </div>
             <div className="starter-code">
               <p className="starter-code__label">App.tsx</p>
-              <pre tabIndex={0} aria-label="Minimal React setup"><code>{`import {
+              <pre tabIndex={0} aria-label={t.minimalReactSetup}><code>{`import {
   Button,
   Material3Provider,
 } from '@language-lit/material3-expressive'
@@ -243,8 +238,8 @@ export default function App() {
     </Material3Provider>
   )
 }`}</code></pre>
-              <p>Using Next.js? Import the stylesheet in your root layout.
-                <a href="/docs/ssr/"> See the framework guide →</a></p>
+              <p>{t.nextJsPrompt}
+                <a href={localizePath(locale, '/docs/ssr/')}> {t.frameworkGuide}</a></p>
             </div>
           </div>
         </div>

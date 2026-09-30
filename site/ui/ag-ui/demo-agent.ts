@@ -1,11 +1,14 @@
 import { AbstractAgent } from '@ag-ui/client'
 import { EventType, type BaseEvent, type RunAgentInput } from '@ag-ui/core'
 import { Observable } from 'rxjs'
+import type { Locale } from '../../i18n/locales'
+import { agUiMessages } from '../../i18n/messages/agUi'
 import type { ScenarioId } from './scenarios'
 
 // Site-authored sample events. The SDK assembles the transcript and the
 // published companion renders it. Nothing here opens a network connection.
-function eventsFor(scenario: ScenarioId, input: RunAgentInput): BaseEvent[] {
+function eventsFor(scenario: ScenarioId, input: RunAgentInput, locale: Locale): BaseEvent[] {
+  const t = agUiMessages[locale].agent
   const events: BaseEvent[] = []
   const emit = (type: EventType, fields: Record<string, unknown> = {}) => {
     events.push({ type, ...fields })
@@ -35,67 +38,67 @@ function eventsFor(scenario: ScenarioId, input: RunAgentInput): BaseEvent[] {
     const approved = input.resume.some((entry) => entry.status === 'resolved')
     emit(EventType.STATE_SNAPSHOT, { snapshot: { ...input.state, invitationDecision: approved ? 'approved' : 'cancelled' } })
     text('decision', approved
-      ? 'Approved. In a connected app, the agent could now send the invitation. This demo has not sent anything.'
-      : 'Cancelled. The invitation will not be sent.')
+      ? t.approved
+      : t.cancelled)
   } else {
     switch (scenario) {
       case 'streaming':
-        text('notes', 'I will explain the visual changes first, then how they help someone use an interface. These are scripted reasoning notes.', true)
-        text('answer', 'Material 3 Expressive uses color, shape, and motion to help people find their way. A prominent button makes the next action easy to spot. A changing shape gives a press a visible response. You can try those same components throughout this site.')
+        text('notes', t.reasoning, true)
+        text('answer', t.expressive)
         break
       case 'tool':
-        emit(EventType.STEP_STARTED, { stepName: 'Searching sample documentation' })
+        emit(EventType.STEP_STARTED, { stepName: t.searching })
         emit(EventType.ACTIVITY_SNAPSHOT, {
-          messageId: id('activity'), activityType: 'search', content: { source: 'Sample component notes' },
+          messageId: id('activity'), activityType: 'search', content: { source: t.sampleNotes },
         })
-        text('answer', 'I will look for a component that confirms an action without interrupting the page.')
-        tool('search_components', ['{"query":', '"confirmation', ' message",', '"limit":', '1}'],
-          JSON.stringify({ component: 'Snackbar', description: 'Brief feedback about an operation.' }))
-        emit(EventType.STEP_FINISHED, { stepName: 'Searching sample documentation' })
-        text('summary', 'A Snackbar is a good fit for a short confirmation, such as “Changes saved”.')
+        text('answer', t.searchAnswer)
+        tool('search_components', [`{"query":"${t.confirmation}","limit":1}`],
+          JSON.stringify({ component: 'Snackbar', description: t.snackbar }))
+        emit(EventType.STEP_FINISHED, { stepName: t.searching })
+        text('summary', t.searchSummary)
         break
       case 'weather':
-        text('answer', 'Here is a sample forecast for Kyoto.')
+        text('answer', t.kyotoForecast)
         tool('show_weather', [
-          '{"city":', '"Kyoto",', '"temperature":24,', '"condition":"Clear skies",',
+          '{"city":', '"Kyoto",', '"temperature":24,', `"condition":"${t.clearSkies}",`,
           '"days":[',
-          '{"day":"Today","high":26,"low":18,"rain":10,"condition":"A clear afternoon. A good day for a walk along the river."},',
-          '{"day":"Tomorrow","high":23,"low":17,"rain":60,"condition":"Rain in the afternoon. Take an umbrella if you are heading out."},',
-          '{"day":"Friday","high":25,"low":19,"rain":20,"condition":"Clouds clearing by lunchtime."}',
+          `{"day":"${t.today}","high":26,"low":18,"rain":10,"condition":"${t.todayCondition}"},`,
+          `{"day":"${t.tomorrow}","high":23,"low":17,"rain":60,"condition":"${t.tomorrowCondition}"},`,
+          `{"day":"${t.friday}","high":25,"low":19,"rain":20,"condition":"${t.fridayCondition}"}`,
           ']}',
-        ], 'Sample forecast displayed.')
+        ], t.forecastDisplayed)
         break
       case 'project':
-        emit(EventType.STEP_STARTED, { stepName: 'Preparing a project plan' })
+        emit(EventType.STEP_STARTED, { stepName: t.preparingPlan })
         emit(EventType.STATE_SNAPSHOT, { snapshot: { completedTasks: ['brief'] } })
-        text('answer', 'Here is a plan for the design review. The brief is already done. You can update the remaining tasks here.')
+        text('answer', t.projectAnswer)
         tool('show_project', [
-          '{"title":"Website refresh",', '"tasks":[',
-          '{"id":"brief","title":"Agree on the brief","owner":"Alex","day":"Wednesday"},',
-          '{"id":"prototype","title":"Build the prototype","owner":"Sam","day":"Thursday"},',
-          '{"id":"review","title":"Review with the team","owner":"You","day":"Friday"}',
+          `{"title":"${t.projectTitle}",`, '"tasks":[',
+          `{"id":"brief","title":"${t.agreeBrief}","owner":"Alex","day":"${t.wednesday}"},`,
+          `{"id":"prototype","title":"${t.buildPrototype}","owner":"Sam","day":"${t.thursday}"},`,
+          `{"id":"review","title":"${t.reviewTeam}","owner":"You","day":"${t.friday}"}`,
           ']}',
-        ], 'Project plan ready.')
-        emit(EventType.STEP_FINISHED, { stepName: 'Preparing a project plan' })
+        ], t.projectReady)
+        emit(EventType.STEP_FINISHED, { stepName: t.preparingPlan })
         break
       case 'approval':
-        text('answer', 'The invitation is ready. Please confirm before I send it.')
+        text('answer', t.invitationAnswer)
         tool('preview_invitation', [
-          '{"title":"Design review",', '"day":"Friday","time":"14:00",',
-          '"timezone":"Japan time","duration":"30 minutes","location":"Online",',
+          `{"title":"${t.designReview}",`, `"day":"${t.friday}","time":"14:00",`,
+          `"timezone":"${t.japanTime}","duration":"${t.duration}","location":"${t.online}",`,
           '"attendees":["You", "Alex", "Sam"]}',
-        ], 'Invitation ready for review.')
+        ], t.invitationReady)
         emit(EventType.RUN_FINISHED, {
           ...run,
           outcome: { type: 'interrupt', interrupts: [{
             id: id('approval'), reason: 'approval_required',
-            message: 'Send Alex an invitation to the design review? This is a scripted example; no message will be sent.',
+            message: t.approvalQuestion,
           }] },
         })
         return events
       case 'failure':
-        text('answer', 'Checking the sample departures service.')
-        emit(EventType.RUN_ERROR, { message: 'The sample departures service is unavailable. This is an intentional demo error.', code: 'DEMO_UNAVAILABLE' })
+        text('answer', t.departureAnswer)
+        emit(EventType.RUN_ERROR, { message: t.departureError, code: 'DEMO_UNAVAILABLE' })
         return events
     }
   }
@@ -107,7 +110,7 @@ export class DemoAgent extends AbstractAgent {
   private cancelPlayback?: () => void
   private abortRequested = false
 
-  constructor(private readonly scenario: ScenarioId) {
+  constructor(private readonly scenario: ScenarioId, private readonly locale: Locale) {
     super({ agentId: `demo-${scenario}` })
   }
 
@@ -123,7 +126,7 @@ export class DemoAgent extends AbstractAgent {
         subscriber.error(new DOMException('Demo stopped', 'AbortError'))
         return
       }
-      const events = eventsFor(this.scenario, input)
+      const events = eventsFor(this.scenario, input, this.locale)
       let index = 0
       const timer = setInterval(() => {
         const event = events[index++]

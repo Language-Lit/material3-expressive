@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next'
 import { absoluteUrl, getSiteRoutes } from '../content/site'
 import { lastCommitDate } from '../content/lastmod'
+import { defaultLocale, localizePath, locales } from '../i18n/locales'
 
 /**
  * The export publishes forty-one routes and, before this file, advertised none
@@ -19,17 +20,30 @@ export const dynamic = 'force-static'
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const routes = await getSiteRoutes()
 
+  // Every route in every language, each naming all of its translations.
   const entries = await Promise.all(
-    routes.map(async (route) => {
-      const lastModified = await lastCommitDate(route.source)
+    routes.flatMap((route) =>
+      locales.map(async (locale) => {
+        // A translated document dates from its own commit, not the English one.
+        const source =
+          locale === defaultLocale || !route.source.startsWith('docs/')
+            ? route.source
+            : route.source.replace(/^docs\//, `docs/${locale}/`)
+        const lastModified = await lastCommitDate(source)
 
-      return {
-        url: absoluteUrl(route.path),
-        changeFrequency: 'monthly' as const,
-        priority: route.priority,
-        ...(lastModified ? { lastModified } : {}),
-      }
-    }),
+        return {
+          url: absoluteUrl(localizePath(locale, route.path)),
+          changeFrequency: 'monthly' as const,
+          priority: route.priority,
+          alternates: {
+            languages: Object.fromEntries(
+              locales.map((each) => [each, absoluteUrl(localizePath(each, route.path))]),
+            ),
+          },
+          ...(lastModified ? { lastModified } : {}),
+        }
+      }),
+    ),
   )
 
   return entries

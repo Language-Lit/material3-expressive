@@ -5,6 +5,8 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Dialog, Icon, IconButton } from '@language-lit/material3-expressive'
 import type { NavigationGroup } from '../content/navigation'
+import { useLocale } from '../i18n/useLocale'
+import { shellMessages } from '../i18n/messages/shell'
 
 /**
  * Navigation for viewports that cannot show the sidebar.
@@ -16,6 +18,7 @@ import type { NavigationGroup } from '../content/navigation'
 export function MobileNav({ groups }: { groups: NavigationGroup[] }) {
   const [open, setOpen] = useState(false)
   const pathname = usePathname()
+  const locale = useLocale()
 
   // Navigating away must close the drawer; the route change alone does not.
   useEffect(() => {
@@ -25,7 +28,7 @@ export function MobileNav({ groups }: { groups: NavigationGroup[] }) {
   return (
     <span className="bar__mobile-only">
       <IconButton
-        aria-label="Open navigation"
+        aria-label={shellMessages[locale].mobileNavigationOpen}
         aria-expanded={open}
         variant="standard"
         onClick={() => setOpen(true)}
@@ -33,8 +36,8 @@ export function MobileNav({ groups }: { groups: NavigationGroup[] }) {
         <Icon source="menu" />
       </IconButton>
 
-      <Dialog open={open} onOpenChange={setOpen} title="Navigation">
-        <nav aria-label="Documentation">
+      <Dialog open={open} onOpenChange={setOpen} title={shellMessages[locale].mobileNavigationTitle}>
+        <nav aria-label={shellMessages[locale].documentationNav}>
           {groups.map((group) => (
             <div className="sidebar__group" key={group.label}>
               {/* A group label, not a section heading — see `Sidebar`. */}

@@ -1,6 +1,7 @@
 import { Marked, type Tokens } from 'marked'
 import { escapeHtml, highlight } from './highlight'
 import { resolveDocLink } from './docs'
+import { defaultLocale, type Locale } from '../i18n/locales'
 
 export interface Heading {
   id: string
@@ -17,7 +18,8 @@ export function slugify(value: string): string {
   return value
     .toLowerCase()
     .replace(/`/g, '')
-    .replace(/[^\w\s-]/g, '')
+    // Letters in any script survive, so a Japanese heading gets an id too.
+    .replace(/[^\p{L}\p{N}_\s-]/gu, '')
     .trim()
     .replace(/\s+/g, '-')
 }
@@ -75,14 +77,16 @@ export function leadParagraph(source: string): string | null {
 export function truncateForMeta(text: string, limit = 160): string {
   if (text.length <= limit) return text
 
-  const sentenceEnd = text.slice(0, limit + 1).lastIndexOf('. ')
+  const head = text.slice(0, limit + 1)
+  // Japanese ends a sentence with 。 and puts no space after it.
+  const sentenceEnd = Math.max(head.lastIndexOf('. '), head.lastIndexOf('。'))
   if (sentenceEnd >= limit * 0.5) return text.slice(0, sentenceEnd + 1)
 
   const wordEnd = text.slice(0, limit - 1).lastIndexOf(' ')
   return `${text.slice(0, wordEnd > 0 ? wordEnd : limit - 1).trimEnd()}…`
 }
 
-export function renderMarkdown(source: string): RenderedMarkdown {
+export function renderMarkdown(source: string, locale: Locale = defaultLocale): RenderedMarkdown {
   const headings: Heading[] = []
   const used = new Map<string, number>()
   // A link the repository can resolve but the site cannot is a real defect —
@@ -104,9 +108,13 @@ export function renderMarkdown(source: string): RenderedMarkdown {
       },
 
       heading({ tokens, depth }: Tokens.Heading) {
-        const text = this.parser.parseInline(tokens)
+        // A translated heading ends in `{#id}` naming the English heading's id,
+        // so a `#fragment` link means the same section in every language.
+        const parsed = this.parser.parseInline(tokens)
+        const explicit = parsed.match(/\s*\{#([^\s{}]+)\}$/)
+        const text = explicit ? parsed.slice(0, explicit.index) : parsed
         const plain = text.replace(/<[^>]+>/g, '')
-        const base = slugify(plain)
+        const base = explicit ? explicit[1] : slugify(plain)
         const seen = used.get(base) ?? 0
         used.set(base, seen + 1)
         const id = seen === 0 ? base : `${base}-${seen}`
@@ -116,7 +124,7 @@ export function renderMarkdown(source: string): RenderedMarkdown {
 
       link({ href, title, tokens }: Tokens.Link) {
         const text = this.parser.parseInline(tokens)
-        const resolved = resolveDocLink(href)
+        const resolved = resolveDocLink(href, locale)
         if (resolved === null) {
           unresolved.push(href)
           return text

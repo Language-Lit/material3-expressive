@@ -1,6 +1,7 @@
 import { readFile } from 'node:fs/promises'
-import path from 'node:path'
-import { componentDocsRoot } from './paths'
+import { componentDocPath } from './docs'
+import { defaultLocale, type Locale } from '../i18n/locales'
+import { shellMessages } from '../i18n/messages/shell'
 import { leadParagraph, truncateForMeta } from './markdown'
 
 /**
@@ -10,17 +11,14 @@ import { leadParagraph, truncateForMeta } from './markdown'
  */
 const cache = new Map<string, Promise<string>>()
 
-/** The template that stood in before the documents themselves were read. */
-function fallback(name: string): string {
-  return `${name} — anatomy, variants, states, accessibility, and tokens in the Material 3 Expressive React package.`
-}
-
-async function read(name: string): Promise<string> {
+async function read(name: string, locale: Locale): Promise<string> {
+  // The template that stood in before the documents themselves were read.
+  const fallback = shellMessages[locale].componentFallback(name)
   try {
-    const source = await readFile(path.join(componentDocsRoot, `${name}.md`), 'utf8')
-    return leadParagraph(source) ?? fallback(name)
+    const source = await readFile(componentDocPath(locale, name), 'utf8')
+    return leadParagraph(source) ?? fallback
   } catch {
-    return fallback(name)
+    return fallback
   }
 }
 
@@ -31,12 +29,13 @@ async function read(name: string): Promise<string> {
  * its inventory entry lands, and a page that briefly describes itself
  * generically beats a build that fails on a missing paragraph.
  */
-export function componentLead(name: string): Promise<string> {
-  let pending = cache.get(name)
+export function componentLead(name: string, locale: Locale = defaultLocale): Promise<string> {
+  const key = `${locale}:${name}`
+  let pending = cache.get(key)
 
   if (!pending) {
-    pending = read(name)
-    cache.set(name, pending)
+    pending = read(name, locale)
+    cache.set(key, pending)
   }
 
   return pending
@@ -50,6 +49,6 @@ export function componentLead(name: string): Promise<string> {
  * line reading "…without mutating the document root or… Exports X, Y" spends an
  * ellipsis to save forty characters from an audience that came for the detail.
  */
-export async function componentDescription(name: string): Promise<string> {
-  return truncateForMeta(await componentLead(name))
+export async function componentDescription(name: string, locale: Locale = defaultLocale): Promise<string> {
+  return truncateForMeta(await componentLead(name, locale))
 }

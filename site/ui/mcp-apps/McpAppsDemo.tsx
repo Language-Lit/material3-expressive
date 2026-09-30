@@ -5,12 +5,16 @@ import { Button, Select, Surface, Text } from '@language-lit/material3-expressiv
 import { McpAppFrame, useMcpAppResource } from '@language-lit/material3-expressive-mcp-apps'
 import type { CallToolResult, Tool } from '@modelcontextprotocol/client'
 import { connectDemoServer, FORECAST_URI } from './server'
+import { useLocale } from '../../i18n/useLocale'
+import { mcpAppsMessages } from '../../i18n/messages/mcpApps'
 
 const modes = ['inline', 'fullscreen', 'pip'] as const
 type Connection = Awaited<ReturnType<typeof connectDemoServer>>
 const productionSandbox = 'https://material3-expressive.vercel.app/mcp-apps/sandbox.html'
 
 export function McpAppsDemo() {
+  const locale = useLocale()
+  const t = mcpAppsMessages[locale]
   const [connection, setConnection] = useState<Connection | null>(null)
   const [tool, setTool] = useState<Tool>()
   const [city, setCity] = useState('Lisbon')
@@ -41,7 +45,7 @@ export function McpAppsDemo() {
     async function connect() {
       try {
         const response = await fetch('/mcp-apps/forecast.html', { signal: controller.signal })
-        if (!response.ok) throw new Error('Could not load the demo app.')
+        if (!response.ok) throw new Error(t.loadError)
         const next = await connectDemoServer(await response.text())
         active = next
         if (disposed) { await Promise.all([next.client.close(), next.server.close()]); return }
@@ -61,7 +65,7 @@ export function McpAppsDemo() {
       void active?.client.close()
       void active?.server.close()
     }
-  }, [])
+  }, [t.loadError])
 
   const run = async () => {
     if (!connection) return
@@ -70,12 +74,12 @@ export function McpAppsDemo() {
     setError('')
     setInput({ city })
     setResult(undefined)
-    record(`Host called get_forecast for ${city}.`)
+    record(t.eventHostCall(city))
     try {
       const next = await connection.client.callTool({ name: 'get_forecast', arguments: { city } })
       if (revision.current !== current) return
       setResult(next as CallToolResult)
-      record('Tool result delivered to the app.')
+      record(t.eventDelivered)
     } catch (cause) {
       if (revision.current === current) setError(cause instanceof Error ? cause.message : String(cause))
     } finally {
@@ -98,36 +102,36 @@ export function McpAppsDemo() {
   return (
     <div className="mcp-demo">
       <div className="mcp-demo__controls">
-        <Select label="City" options={['Lisbon', 'São Paulo', 'Tokyo', 'Reykjavík'].map((value) => ({ value, label: value }))} value={city} onValueChange={setCity} />
-        <Button ref={runButton} variant="filled" onClick={() => void run()} disabled={!connection || !resource || busy}>Get forecast</Button>
-        <Button variant="outlined" onClick={reset} disabled={!resource}>Reset demo</Button>
-        <Button variant="text" disabled={!resource || busy} onClick={() => { setResult({ isError: true, content: [{ type: 'text', text: 'Scripted tool failure.' }] }); record('Tool returned a scripted error.'); }}>Show failed tool</Button>
+        <Select label={t.city} options={['Lisbon', 'São Paulo', 'Tokyo', 'Reykjavík'].map((value) => ({ value, label: value }))} value={city} onValueChange={setCity} />
+        <Button ref={runButton} variant="filled" onClick={() => void run()} disabled={!connection || !resource || busy}>{t.getForecast}</Button>
+        <Button variant="outlined" onClick={reset} disabled={!resource}>{t.resetDemo}</Button>
+        <Button variant="text" disabled={!resource || busy} onClick={() => { setResult({ isError: true, content: [{ type: 'text', text: t.scriptedFailure }] }); record(t.eventFailure); }}>{t.showFailedTool}</Button>
       </div>
-      <Text as="p" variant="bodySmall" role="status" className="mcp-demo__status">App status: {status}.</Text>
+      <Text as="p" variant="bodySmall" role="status" className="mcp-demo__status">{t.statusLabel}: {t.appStatus[status as keyof typeof t.appStatus] ?? status}.</Text>
       {error || resourceError ? <Text as="p" role="alert">{error || resourceError?.message}</Text> : null}
       <div className="mcp-demo__layout">
         <div className="mcp-demo__stage">
           {connection && resource && tool && sandboxUrl ? (
-            <McpAppFrame key={generation} client={connection.client} resource={resource} toolInfo={{ id: generation, tool }} toolInput={input} toolResult={result} title="Five-day forecast" availableDisplayModes={modes} minHeight={360} maxHeight={620} sandboxUrl={sandboxUrl}
+            <McpAppFrame key={generation} client={connection.client} resource={resource} toolInfo={{ id: generation, tool }} toolInput={input} toolResult={result} title={t.sandbox.ariaForecast(city)} locale={locale === 'ja' ? 'ja-JP' : 'en-US'} availableDisplayModes={modes} minHeight={360} maxHeight={620} sandboxUrl={sandboxUrl}
               onAuthorizeToolCall={(params) => {
                 const args = params.arguments
                 const allowed = params.name === 'refresh_forecast' && typeof args?.city === 'string' && Number.isInteger(args?.seed)
-                record(`${allowed ? 'Authorized' : 'Denied'} app tool call: ${params.name}.`)
+                record(allowed ? t.eventAuthorized(params.name) : t.eventDenied(params.name))
                 return allowed
               }}
               onStatusChange={setStatus}
-              onInitialized={() => record('App initialized. Host theme and capabilities received.')}
-              onDisplayModeChange={(mode) => record(`Display mode: ${mode}.`)}
-              onMessage={(params) => { record(`Chat message: ${params.content.map((item) => 'text' in item ? item.text : item.type).join(' ')}`) }}
-              onUpdateModelContext={(params) => { record(`Model context: ${params.content?.map((item) => 'text' in item ? item.text : item.type).join(' ') ?? ''}`) }}
-              onOpenLink={(url) => { record(`Link requested: ${url} (kept in the demo).`); return false }}
+              onInitialized={() => record(t.eventInitialized)}
+              onDisplayModeChange={(mode) => record(t.eventDisplayMode(mode))}
+              onMessage={(params) => { record(t.eventChat(params.content.map((item) => 'text' in item ? item.text : item.type).join(' '))) }}
+              onUpdateModelContext={(params) => { record(t.eventContext(params.content?.map((item) => 'text' in item ? item.text : item.type).join(' ') ?? '')) }}
+              onOpenLink={(url) => { record(t.eventLink(url)); return false }}
               onError={(cause) => setError(cause.message)}
             />
-          ) : <Text as="p">Loading the local demo…</Text>}
+          ) : <Text as="p">{t.loadingApp}</Text>}
         </div>
-        <Surface as="aside" color="surface-container-low" shape="large" className="mcp-demo__events" aria-label="Protocol events">
-          <Text as="h3" variant="titleMedium">What the host receives</Text>
-          <Text as="p" variant="bodySmall">Select a day, refresh the forecast, or add it to the chat. Requests stay in this page.</Text>
+        <Surface as="aside" color="surface-container-low" shape="large" className="mcp-demo__events" aria-label={t.protocolEvents}>
+          <Text as="h3" variant="titleMedium">{t.receivedByHost}</Text>
+          <Text as="p" variant="bodySmall">{t.eventsHelp}</Text>
           <ol>{events.map((event, index) => <li key={index}><Text as="span" variant="bodySmall">{event}</Text></li>)}</ol>
         </Surface>
       </div>

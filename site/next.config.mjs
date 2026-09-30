@@ -23,6 +23,11 @@ const nextConfig = {
   // Static export cannot negotiate a trailing slash at request time, so pin it
   // and emit `<route>/index.html` for every route.
   trailingSlash: true,
+  // Each language has its own root layout (ADR 0045), so no single layout can
+  // frame the 404 page; `app/global-not-found.tsx` does it instead.
+  experimental: {
+    globalNotFound: true,
+  },
 }
 
 export default nextConfig

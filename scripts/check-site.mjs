@@ -51,14 +51,37 @@ const experimental = inventory.components
 // 1. The site presents exactly the conformant surface, and never more.
 // ---------------------------------------------------------------------------
 
-const componentRoute = path.join(siteRoot, 'app/components/[component]/page.tsx')
+const componentRoute = path.join(siteRoot, 'app/(en)/components/[component]/page.tsx')
 if (!(await exists(componentRoute))) {
-  errors.push('Missing site/app/components/[component]/page.tsx')
+  errors.push('Missing site/app/(en)/components/[component]/page.tsx')
 }
 
 for (const name of conformant) {
   if (!(await exists(path.join(componentDocsRoot, `${name}.md`)))) {
     errors.push(`Conformant component has no documentation page: docs/components/${name}.md`)
+  }
+}
+
+// Every published document has a translation for every non-English locale
+// (ADR 0045). A missing file would otherwise fail deep inside the site build.
+const translatedLocales = ['ja']
+const docsModule = await readFile(path.join(siteRoot, 'content/docs.ts'), 'utf8')
+const publishedGuides = [...docsModule.matchAll(/file: '([A-Z0-9_]+\.md)'/g)].map((match) => match[1])
+if (publishedGuides.length === 0) {
+  errors.push('Could not read the published guide files from site/content/docs.ts')
+}
+for (const locale of translatedLocales) {
+  if (!(await exists(path.join(siteRoot, `app/(${locale})/${locale}/components/[component]/page.tsx`)))) {
+    errors.push(`Missing site/app/(${locale})/${locale}/components/[component]/page.tsx`)
+  }
+  const published = [
+    ...publishedGuides,
+    ...conformant.map((name) => `components/${name}.md`),
+  ]
+  for (const file of published) {
+    if (!(await exists(path.join(root, 'docs', locale, file)))) {
+      errors.push(`Published document has no ${locale} translation: docs/${locale}/${file}`)
+    }
   }
 }
 
@@ -189,6 +212,7 @@ const iconScanRoots = [
   path.join(root, 'playground/examples'),
   path.join(siteRoot, 'ui'),
   path.join(siteRoot, 'app'),
+  path.join(siteRoot, 'views'),
 ]
 
 const usedIcons = new Set()

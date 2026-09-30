@@ -1,28 +1,25 @@
 # Active v1 task
 
-## T73 — Draggable color area without screen sampling
+## T74 — Japanese website translation
 
 Status: active
-Approved: 2026-09-16 (owner requested the familiar draggable color selector,
-retaining the outer button and dialog style, and explicitly requested no tests.)
+Approved: 2026-09-30 (owner requested i18n starting with Japanese, the whole
+site including all published guides and component documents, under a `/ja/`
+prefix, with Markdown for long documents and a typed module for UI strings.)
 
 ### Scope and acceptance
 
-Replace RGB sliders with a saturation/brightness drag area and rainbow hue
-slider. Keep hex entry, preview, Apply/Cancel, presets, and local drafts; expose
-no eyedropper. Support pointer capture, touch, and keyboard adjustment.
-Expected files: `site/ui/SourceColorSwatches.tsx`,
-`site/theme/color-selection.ts`, `site/app/globals.css`, and this record.
-Owner will visually review the implementation. Do not run tests or builds for
-this iteration, per the owner's explicit instruction.
-
-### Implementation record
-
-The gradient drag area and rainbow hue slider are implemented, with pointer
-capture, touch handling, keyboard adjustments, and synchronized hex/preview.
-The outer button, dialog, and Apply/Cancel behavior remain. No tests or builds
-were run; visual acceptance and updating the previous RGB audit are deferred
-until owner review.
+English stays at `/`; Japanese is published at `/ja/` for every indexable
+route. UI strings live in `site/i18n/`, typed so a missing Japanese key fails
+the site typecheck. Translated Markdown mirrors published sources under
+`docs/ja/`. Pages emit the correct `<html lang>`, hreflang alternates, and
+sitemap entries; the site bar offers a language switch. Code, API names,
+component names, `llms.txt`, and `llms-full.txt` stay English.
+Expected files: `site/app/**`, `site/i18n/**`, `site/content/**`, `site/ui/**`,
+`docs/ja/**`, `scripts/check-site.mjs`, a new ADR, and this record.
+Check: `npm run check:site` fails on a missing translation; site typecheck and
+build pass; `npm run verify` passes; Japanese pages are spot-checked for
+quality and inspected in a browser in light and dark at desktop and 320px.
 
 ## T72 — Restore custom color selection without the eyedropper
 
