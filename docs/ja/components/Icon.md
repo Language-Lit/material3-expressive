@@ -20,9 +20,9 @@ function SearchIcon(props: IconSourceProps) {
 <Icon source={SearchIcon} decorative={false} label="Search results" />
 ```
 
-## 契約 {#contract}
+## 仕様 {#contract}
 
-- `source={SvgComponent}`は、SVGを1つ描画するReactコンポーネントを適合させます。ソースは渡された`className`、`aria-hidden`、`focusable` propsをルートの`<svg>`に転送する必要があります。
+- `source={SvgComponent}`は、SVGを1つ描画するReactコンポーネントに対応させます。ソースは渡された`className`、`aria-hidden`、`focusable` propsをルートの`<svg>`に転送する必要があります。
 - `source="search"`はMaterial Symbolsのリガチャを描画します。`symbolStyle`で`outlined`（既定値）、`rounded`、`sharp`を選択します。
 - `size`は正のCSSピクセル値です。既定値は仕様に基づく24です。ルートは常に装飾用の`span`で、refは`HTMLSpanElement`です。
 - `mirrored`を指定すると、RTL時に方向性のある画像を左右反転します。アイコンは名前や形状を基に自動では反転しません。

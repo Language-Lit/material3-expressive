@@ -14,12 +14,12 @@ import '@language-lit/material3-expressive/styles.css'
 </IconButton>
 ```
 
-## 契約 {#contract}
+## 仕様 {#contract}
 
 - ルートは常にネイティブの`<button>`で、refは`HTMLButtonElement`です。既定の`type`は`"button"`です。明示的なsubmit/reset、フォーム所有者、name、valueはネイティブの動作を維持します。
 - `variant`は`standard`（既定値）、`filled`、`tonal`、`outlined`から選択します。
 - `size`は`extra-small`、`small`（既定値）、`medium`、`large`、`extra-large`から選択します。
-- `width`は`narrow`、`uniform`（既定値）、`wide`から選びます。これは仕様に基づく表示コンテナの幅で、ページレイアウトや全幅表示の指定ではありません。
+- `width`は`narrow`、`uniform`（既定値）、`wide`から選びます。これは仕様に基づく表示コンテナーの幅で、ページレイアウトや全幅表示の指定ではありません。
 - `shape`は`round`（既定値）または`square`です。押下時と選択時には、現在のサイズ階層に対応する仕様のシェイプに変わります。
 - `children`は既定では装飾用の表示スロットです。`Icon`、SVG、同等の非インタラクティブな図を渡します。トグルでは、選択時に表示を変える`selectedIcon`を指定できます。
 
@@ -58,7 +58,7 @@ const [favorite, setFavorite] = useState(false)
 | `large` | 96px | 32px | 64px | 96px | 128px | 2px |
 | `extra-large` | 136px | 40px | 104px | 136px | 184px | 3px |
 
-表示コンテナが小さい場合や幅が狭い場合でも、意味上のルート要素は48×48 CSSピクセル以上を保ちます。大きいサイズ階層は目立たせるアクション向けであり、密度を上げる目的には使いません。
+表示コンテナーが小さい場合や幅が狭い場合でも、意味上のルート要素は48×48 CSSピクセル以上を保ちます。大きいサイズ階層は目立たせるアクション向けであり、密度を上げる目的には使いません。
 
 ## シェイプと色 {#shape-and-color}
 
@@ -75,7 +75,7 @@ filledのトグルは未選択時にsurface-container／on-surface-variant、選
 
 ## アクセシビリティ {#accessibility}
 
-アイコン専用ボタンには、利用者の言語に合った`aria-label`または`aria-labelledby`が必要です。どちらも空の場合は開発ビルドで警告します。表示コンテナは`aria-hidden`なので、内側の`Icon`が誤って意味を持っていても、名前が重複することはありません。表示スロットにテキストや別のインタラクティブ要素を入れないでください。
+アイコン専用ボタンには、利用者の言語に合った`aria-label`または`aria-labelledby`が必要です。どちらも空の場合は開発ビルドで警告します。表示コンテナーは`aria-hidden`なので、内側の`Icon`が誤って意味を持っていても、名前が重複することはありません。表示スロットにテキストや別のインタラクティブ要素を入れないでください。
 
 キーボードフォーカスにはトークンに基づく`:focus-visible`リングを使います。強制カラー表示ではButtonFace／ButtonText、選択状態にHighlight／HighlightText、無効状態にGrayTextを使い、すべてのバリアントに見える境界線を設けます。モーションを減らす設定ではシェイプ、色、ステートレイヤーの遷移をなくし、状態はすぐに切り替えます。
 
@@ -90,7 +90,7 @@ IconButtonのコンポーネント変数は、次のリテラルなグループ�
 - `--m3e-comp-icon-button-{size}-pressed-container-shape`
 - `--m3e-comp-icon-button-{size}-selected-container-shape-{round|square}`
 - `--m3e-comp-icon-button-{size}-outline-width`
-- バリアントごとのコンテナ、コンテンツ、選択、無効状態の色変数
+- バリアントごとのコンテナー、コンテンツ、選択、無効状態の色変数
 - 共通の無効状態の不透明度とフォーカスリング変数
 
 このコンポーネントはトークンシリアライザーが投影したExpressive default-effectsスプリングを使います。テーマの上書きは`Material3Provider`内に限定され、描画時にスタイルシートは挿入されません。

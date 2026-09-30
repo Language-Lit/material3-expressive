@@ -22,7 +22,7 @@ import '@language-lit/material3-expressive/styles.css'
 </FabMenu>
 ```
 
-## 契約 {#contract}
+## 仕様 {#contract}
 
 - `triggerLabel`（トリガーのアクセシブルな名前）、`icon`（閉じた状態で表示）、`closeIcon`（展開時に表示）は必須です。`expanded`／`defaultExpanded`／`onExpandedChange`は、`IconButton`の`selected`／`onSelectedChange`と同じ制御／非制御のトグル契約です。
 - `children`には`FabMenuItem`を渡します。各項目は`icon`、ラベルとなる`children`、`onClick`、`disabled`を受け取ります。閉じた状態の項目は`inert`になり、表示遷移のためDOMに残りながら、アクセシビリティツリーとTab順から除外されます。

@@ -16,7 +16,7 @@
 | `Row` | Flex行 | `justify`、`align`、子要素の`weight`を使います。 |
 | `Column` | Flex列 | `justify`、`align`、子要素の`weight`を使います。 |
 | `List` | リスト | 縦向きまたは横向きです。 |
-| `Card` | アウトライン付き[Card](components/Card.md) | 受動的なコンテナです。 |
+| `Card` | アウトライン付き[Card](components/Card.md) | 受動的なコンテナーです。 |
 | `Tabs` | [Tabs](components/Tabs.md) | 項目ごとにタブを1つ表示し、キーボードで操作できます。 |
 | `Modal` | [Dialog](components/Dialog.md) | トリガーでダイアログを開き、トリガー自身のアクションも送信します。 |
 | `Divider` | [Divider](components/Divider.md) | 水平または垂直です。 |

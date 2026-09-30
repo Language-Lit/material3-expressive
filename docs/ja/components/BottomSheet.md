@@ -35,13 +35,13 @@ const [value, setValue] = useState<BottomSheetState>('hidden')
 </BottomSheet>
 ```
 
-## 契約 {#contract}
+## 仕様 {#contract}
 
 `variant`でシートを選択します。既定値は`"modal"`です。
 
 `value`、`defaultValue`、`onValueChange`で、シートの位置を`"hidden" | "partiallyExpanded" | "expanded"`から指定します。これはMaterialの`SheetValue`に対応します。`onValueChange`は、Escape、スクリーン、ドラッグなどネイティブの動作による位置変更も含め、停止した位置をすべて通知します。制御コンポーネントでコールバックを無視しても、シートを強制的に元へ戻すことはありません。`<dialog>`の開閉状態をReact側で再調整できないため、これは`Dialog`で説明しているネイティブの状態を正とする規則と同じです。
 
-`partiallyExpanded`の高さはバリアントごとに異なり、Materialのソースが定める位置に合わせます。modalシートではコンテナの半分とシート自身のコンテンツ高さのうち小さい方を表示します。standardシートでは`peekHeight`分を表示します。既定値は56pxです。ソースにはmodal用のpeek位置がないため、modalシートでは指定できません。
+`partiallyExpanded`の高さはバリアントごとに異なり、Materialのソースが定める位置に合わせます。modalシートではコンテナーの半分とシート自身のコンテンツ高さのうち小さい方を表示します。standardシートでは`peekHeight`分を表示します。既定値は56pxです。ソースにはmodal用のpeek位置がないため、modalシートでは指定できません。
 
 `confirmValueChange`は遷移先を拒否できます。`false`を返すとシートは現在位置に留まり、ドラッグ、クリック、キーボード、Escape、スクリーンのいずれの操作でも新しい位置への遷移を制限します。
 
@@ -57,7 +57,7 @@ modalシートのルートはネイティブの`<dialog>`で、`showModal()`を�
 
 ハンドルの操作領域は高さ48pxです。これは仕様の4pxバーの上下に22pxずつの余白を設けたサイズであり、ソースの`DragHandleVerticalPadding`とガイダンスが要求するターゲットサイズの両方に一致します。
 
-`prefers-reduced-motion`では停止位置への遷移をなくし、シートの高さをすぐに変更します。これにより状態を把握できます。強制カラー表示では、コンテナに`CanvasText`の境界線を付けてハンドルも再描画します。作者指定の背景色が上書きされるためです。
+`prefers-reduced-motion`では停止位置への遷移をなくし、シートの高さをすぐに変更します。これにより状態を把握できます。強制カラー表示では、コンテナーに`CanvasText`の境界線を付けてハンドルも再描画します。作者指定の背景色が上書きされるためです。
 
 ## トークンとソースの境界 {#tokens-and-source-boundary}
 

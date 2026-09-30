@@ -338,6 +338,16 @@ a:hover {
   }
 }
 
+/* With the desktop links, the language switch, and the color-mode control in
+   one row, the wordmark and version no longer fit until 75rem. The mark alone
+   carries the home link in between. */
+@media (min-width: 60.0625rem) and (max-width: 75rem) {
+  .bar__version,
+  .bar__name {
+    display: none;
+  }
+}
+
 /* -------------------------------------------------------------- ramp device */
 
 /*
@@ -475,6 +485,19 @@ a:hover {
   text-decoration: none;
   font-size: 0.875rem;
   line-height: 1.4;
+}
+
+/* Bar links are single words or short phrases; wrapping split them mid-word
+   ("AG-" / "UI", "コンポーネン" / "ト") once the language switch joined the
+   bar. The brand name, which truncates, gives up the space instead. */
+.bar__actions .sidebar__link {
+  white-space: nowrap;
+}
+
+/* The language switch sits in the crowded 320px bar; "English" is its
+   widest label and overflowed by a pixel at the standard inline padding. */
+.bar__languages .sidebar__link {
+  padding-inline: 0.5rem;
 }
 
 .sidebar__link:hover {

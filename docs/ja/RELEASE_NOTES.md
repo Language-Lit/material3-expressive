@@ -55,7 +55,7 @@
 - **`Badge`と`BadgeAnchor`。** アイコンに重ねる通知マーカーです。固定リビジョン`a90df2fc27e026b9ad2ed569f203a260c1041fab`のAndroidX `Badge.kt`を移植しました（ADR 0035、T43）。ソースと同じく内容でバリアントが決まります。`<Badge />`は6pxのドット、`<Badge>3</Badge>`は数値に応じて大きくなる16pxのピルです。`BadgeAnchor`は内容に応じて変わるオフセット、RTLで反転する相対位置、アンカーが自身の内容だけを測定するフロー外サイズ処理など、ソースの配置を再現します。バッジを配置するコンポーネントはアイコンの領域をアクセシビリティツリーから隠します。そのためComposeソースにはない`label` propを設け、Webの支援技術向けにバッジ名を指定できるようにしています。
 - **ナビゲーション項目とタブ項目の`badge`。** 固定ソースでバッジの領域が用意されている5つのコンポーネント、`NavigationBar`、`NavigationRail`、`NavigationDrawer`、`NavigationSuite`、`Tabs`に、各項目の任意の`badge`を追加しました。Bar、Rail、Tabsではアイコンにアンカーします。Drawerでは末尾側のラベルとして表示します。これは`NavigationDrawerItem`自身の`badge`とは別の見せ方で、そちらはエラー色のピルではなく、項目のテキスト色で表示する末尾のカウントです。
 - **`BottomSheet`。** tranche Cで最初の複合コンポーネントです。固定リビジョン`a90df2fc27e026b9ad2ed569f203a260c1041fab`のAndroidX `BottomSheet.kt`、`ModalBottomSheet.kt`、`SheetDefaults.kt`を移植しました（ADR 0037、T45）。上流ではファミリーが「sheetかどうか」では分けられない3つの公開Composableに分かれています。そのため`variant` propでインラインサーフェスまたはモーダルを選び、スクリーン、フォーカスの閉じ込め、外側クリックと戻る操作による閉じ方も、別コンポーネントではなくバリアントに応じて設定します。ドラッグはソースと同じくハンドルだけで操作できます。`BottomSheetScaffold`はアプリシェルとしてエクスポートせず、`AppBar`とこのコンポーネントを使うレシピとして説明しています。新しいエクスポート：`BottomSheet`、`BottomSheetProps`、`BottomSheetState`、`BottomSheetVariant`。
-- **`AppBar`。** ソースの6つのトップバーComposableを1つのエクスポートで扱います。同じ固定リビジョンの`AppBar.kt`を移植しました（ADR 0038、T46）。`size`でsmall／medium／largeの段階と2行形式を選び、`titleAlignment`で中央揃えの見本に対応します。Composeの`NestedScrollConnection`によるスクロール動作にはWeb上の同等機能がないため、Webネイティブのプリミティブを使って`scrollBehavior`を再構築します。固定表示には`position: sticky`、折りたたみ表示には名前付きコンテナのスクロール位置を使い、出典に基づく色と高さの一覧を維持します。カタログ内の行は3つに分かれます。ボトムバーは対象外です（デザインカタログでToolbarsに移動し、`FlexibleBottomAppBar`はすでに`DockedToolbarTokens`を参照します）。また、Searchファミリーの出典に含まれる検索用app barはSearchファミリーから出荷します。新しいエクスポート：`AppBar`、`AppBarProps`、`AppBarScrollBehavior`、`AppBarSize`、`AppBarTitleAlignment`。
+- **`AppBar`。** ソースの6つのトップバーComposableを1つのエクスポートで扱います。同じ固定リビジョンの`AppBar.kt`を移植しました（ADR 0038、T46）。`size`でsmall／medium／largeの段階と2行形式を選び、`titleAlignment`で中央揃えの見本に対応します。Composeの`NestedScrollConnection`によるスクロール動作にはWeb上の同等機能がないため、Webネイティブのプリミティブを使って`scrollBehavior`を再構築します。固定表示には`position: sticky`、折りたたみ表示には名前付きコンテナーのスクロール位置を使い、出典に基づく色と高さの一覧を維持します。カタログ内の行は3つに分かれます。ボトムバーは対象外です（デザインカタログでToolbarsに移動し、`FlexibleBottomAppBar`はすでに`DockedToolbarTokens`を参照します）。また、Searchファミリーの出典に含まれる検索用app barはSearchファミリーから出荷します。新しいエクスポート：`AppBar`、`AppBarProps`、`AppBarScrollBehavior`、`AppBarSize`、`AppBarTitleAlignment`。
 - **`SearchBar`と`SearchAppBar`。** デザインの2つの軸に対応する2つのエクスポートです。同じ固定リビジョンの`SearchBar.kt`を移植しました（ADR 0039、T47）。ソースにある現在の6つのComposableは、`appearance`（containedまたはdivided）と`layout`（dockedまたはfull-screen）で表現できます。上流では展開された検索を`Dialog`または`Popup`に表示しますが、その実装は移植できなくても構造は移植可能です。展開したサーフェスが自身のフィールドを持ち、折りたたんだバーは背後に残ります。`layout`のデフォルトはadaptiveで、dockedとfull-screenの形式を固定値ではなくビューポートに応じて選びます。`SearchAppBar`はapp barを上部に合成せず、`AppBarTokens`の色を使うapp-bar外観です。新しいエクスポート：`SearchBar`、`SearchBarAppearance`、`SearchBarLayout`、`SearchBarProps`、`SearchAppBar`、`SearchAppBarProps`、`SearchAppBarScrollBehavior`。
 - **`Carousel`。** ソースの3つの公開Composableを1つのエクスポートで扱います。同じ固定リビジョンの19個のcarouselファイルを移植しました（ADR 0040、T48。決定6はT50、T54、T55で修正）。上流の3つのComposableはいずれも内部の`Carousel`に処理を委譲し、keylineリストと表示項目数だけが異なるため、`layout`で選びます。アスペクト比用の別エンジンもkeylineエンジンとともに移植しました。そのため`MultiAspectCarouselItem`は独立した項目型です。生成されたトークンファイルに同等項目がなかったトークンレジストリは仕様から取得しました。初期移植後、マスク形状、項目サイズの分類、アダプティブなコンテンツフェードを実際のChromiumで確認し、それぞれ修正しました。新しいエクスポート：`Carousel`、`CarouselItem`、`CarouselLayout`、`CarouselProps`、`CarouselScroll`、`MultiAspectCarouselItem`。
 
@@ -86,12 +86,12 @@
 
 ### 修正 {#fixed-3}
 
-- Portalで表示されるオーバーレイがテーマを無視していました。`Menu`、`Select`のポップアップリストボックス、`Tooltip`、`Snackbar`は`document.body`にレンダリングされます。これは`Material3Provider`がレンダリングする要素の子孫ではなく兄弟要素のため、そのスコープを継承せず、すべてのカスタムプロパティが`:root`を基準に解決されていました。`:root`はJavaScriptがない場合の表示契約として常にライトスキームを持ちます。現在は各オーバーレイのPortalルートに周囲のスコープを再構成します（ADR 0029、T36）。
+- ポータルで表示されるオーバーレイがテーマを無視していました。`Menu`、`Select`のポップアップリストボックス、`Tooltip`、`Snackbar`は`document.body`にレンダリングされます。これは`Material3Provider`がレンダリングする要素の子孫ではなく兄弟要素のため、そのスコープを継承せず、すべてのカスタムプロパティが`:root`を基準に解決されていました。`:root`はJavaScriptがない場合の表示契約として常にライトスキームを持ちます。現在は各オーバーレイのポータルルートに周囲のスコープを再構成します（ADR 0029、T36）。
 
   その結果、ユーザーに見える次の3つの問題がありました。
 
-  - **カラーモード。** ダークスコープで開いたメニューにライトスキームが描画されていました。修正前の測定値では、同じドキュメント内で`--m3e-sys-color-surface-container`がプロバイダー要素では`#211f26`、Portal内のメニューでは`#f3edf7`として解決されていました。
-  - **カスタムテーマ。** プロバイダーのインラインブロックは密度、タイポグラフィ、シェイプ、モーション、コンポーネントトークンの上書きも持つため、カスタムテーマではPortal内のオーバーレイに色だけでなく、すべての領域でデフォルトテーマが描画されていました。
+  - **カラーモード。** ダークスコープで開いたメニューにライトスキームが描画されていました。修正前の測定値では、同じドキュメント内で`--m3e-sys-color-surface-container`がプロバイダー要素では`#211f26`、ポータル内のメニューでは`#f3edf7`として解決されていました。
+  - **カスタムテーマ。** プロバイダーのインラインブロックは密度、タイポグラフィ、シェイプ、モーション、コンポーネントトークンの上書きも持つため、カスタムテーマではポータル内のオーバーレイに色だけでなく、すべての領域でデフォルトテーマが描画されていました。
   - **`Tooltip`と`Snackbar`の色が逆方向になっていました。** どちらも`inverseSurface`を描画するため、ダークページで明るく見えるのが正しい動作です。実際には誤ったスキームのinverseを使っていたため、ダークページにライトスキームの暗いチップが表示されていました。ロール自体は正しく、スキームが誤っていました。
 
   ネストしたスコープにも対応します。ネストしたプロバイダー内で開いたオーバーレイには、そのスコープが引き継がれます。上位にプロバイダーがない場合、オーバーレイはスコープを出力しません。そのため、アプリケーションが`.m3e-theme`と`data-m3e-color-mode`を`<html>`自体に設定していれば、引き続きその設定が`document.body`を制御します。
@@ -111,7 +111,7 @@
 ### 修正 {#fixed-4}
 
 - `NavigationDrawer`：`'modal'`バリアントをポインター操作で閉じられませんでした。`showModal()`／`close()`とネイティブの`close`リスナーを設定していましたが、外側クリックを処理せず、独自の閉じるコントロールも表示しませんでした。そのため、画面上に案内のないEscape操作だけが閉じる方法でした。現在はスクリーンをクリックすると閉じます。コンポーネントの説明する契約（「Escape／外側クリックで閉じる」）と、固定ソースのクリック可能なスクリーンに一致します。閉じる動作は常に行われます。無効にしたい利用者は、先に実行される`onClick`で`preventDefault()`を呼び出せます。
-- `FabMenu`（未公開の`1.0.1`から引き継ぎ）：`.m3e-fab-menu__item-slot { overflow: hidden }`によって項目のエレベーションシャドウが矩形に切られ、角だけが残るため、角丸の項目に四角い光彩が見えていました。このslotのクリップをなくしました。既定のモーション、`prefers-reduced-motion: reduce`、`forced-colors: active`のいずれでも、段階的な表示アニメーションは変わりません。
+- `FabMenu`（未公開の`1.0.1`から引き継ぎ）：`.m3e-fab-menu__item-slot { overflow: hidden }`によって項目のエレベーションシャドウが矩形に切られ、角だけが残るため、角丸の項目に四角い光彩が見えていました。このスロットのクリップをなくしました。既定のモーション、`prefers-reduced-motion: reduce`、`forced-colors: active`のいずれでも、段階的な表示アニメーションは変わりません。
 
 ### 追加 {#added-3}
 
@@ -127,7 +127,7 @@
 
 ### 修正 {#fixed-5}
 
-- `FabMenu`：`.m3e-fab-menu__item-slot { overflow: hidden }`によって項目のエレベーションシャドウが矩形に切られ、角だけが残るため、角丸の項目に四角い光彩が見えていました。このslotのクリップをなくしました。既定のモーション、`prefers-reduced-motion: reduce`、`forced-colors: active`のいずれでも、段階的な表示アニメーションは変わりません。
+- `FabMenu`：`.m3e-fab-menu__item-slot { overflow: hidden }`によって項目のエレベーションシャドウが矩形に切られ、角だけが残るため、角丸の項目に四角い光彩が見えていました。このスロットのクリップをなくしました。既定のモーション、`prefers-reduced-motion: reduce`、`forced-colors: active`のいずれでも、段階的な表示アニメーションは変わりません。
 
 ### 追加 {#added-4}
 
@@ -148,7 +148,7 @@
 - ライト、ダーク、システム、カスタム、ネストしたプロバイダースコープに対応する、検証可能でシリアライズ可能なテーマ／トークンシステムを追加しました。
 - 生成された[サポート対象コンポーネントの一覧](SUPPORTED_COMPONENTS.md)に記載の、準拠する公開コンポーネント32種類を追加しました。
 - コンポーネントの準拠ゲートで、ネイティブフォーム、キーボード操作、フォーカス、RTL、モーションの軽減、強制カラー、SSR、ハイドレーションの動作を検証します。
-- フレームワークに依存しないViteおよびNext.jsのパッケージング済みfixtureを追加しました。
+- フレームワークに依存しないViteおよびNext.jsのパッケージング済みフィクスチャを追加しました。
 - インストール、テーマ、SSR、移行、Webでの相違に関する公開ガイドを追加しました。
 
 ### 削除 {#removed}

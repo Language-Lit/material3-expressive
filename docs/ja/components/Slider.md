@@ -1,9 +1,6 @@
 # Slider
 
-`Slider` selects one value; `RangeSlider` selects an ordered pair. Both use
-native range inputs for accessible value semantics, focus, forms, labels, and
-disabled state while the visible Material track, handle, ticks, and stop
-indicators remain decorative.
+`Slider`は1つの値を選び、`RangeSlider`は順序付きの値の組を選びます。どちらもアクセシブルな値の意味付け、フォーカス、フォーム、ラベル、無効状態にはネイティブのrange入力を使い、Materialのトラック、つまみ、目盛り、停止位置の表示は装飾として描画します。
 
 ```tsx
 import {
@@ -37,103 +34,47 @@ import '@language-lit/material3-expressive/styles.css'
 />
 ```
 
-## Value contract {#value-contract}
+## 値の仕様 {#value-contract}
 
-- Use `value` plus `onValueChange` for controlled state, or `defaultValue`
-  plus an optional callback for uncontrolled state.
-- `min` and `max` default to `0` and `1`. Values are clamped to that interval.
-- `steps` is the number of allowed values *between* the endpoints. `steps={4}`
-  over `0…10` therefore permits `0, 2, 4, 6, 8, 10`. Pointer values snap to
-  the nearest tick; an exact tie follows the pinned source and selects the
-  lower tick. A native accessibility value action preserves the source
-  semantics loop's distinct exact-tie result and selects the upper tick.
-- `onValueChangeFinished` runs once after a completed tap, drag, handled key
-  release, or accessibility value action. Use `onValueChange`—not the finish
-  callback—to store the value.
-- `RangeSlider` orders an out-of-order initial pair and prevents its two
-  thumbs from crossing. A pointer selects the nearest thumb. When both thumbs
-  overlap exactly, a pointer before them selects the start thumb and every
-  other tie selects the end thumb, matching the source.
+- 制御する場合は`value`と`onValueChange`を使います。非制御の場合は`defaultValue`を指定し、必要に応じてコールバックを渡します。
+- `min`と`max`の既定値はそれぞれ`0`と`1`です。値はこの範囲内に制限されます。
+- `steps`は両端の間にある選択可能な値の数です。たとえば`0…10`の範囲で`steps={4}`を指定すると、`0, 2, 4, 6, 8, 10`を選べます。ポインター操作では最も近い目盛りに合わせ、ちょうど中間の場合は固定されたソースに従って小さい側を選びます。ネイティブのアクセシビリティ値操作ではソースのsemanticsループにある別の同点処理を維持し、大きい側を選びます。
+- 操作が完了したタップ、ドラッグ、処理済みキーの解放、またはアクセシビリティ値操作の後に`onValueChangeFinished`が1回呼び出されます。値の保存には完了コールバックではなく`onValueChange`を使ってください。
+- `RangeSlider`は順序が逆の初期値を並べ替え、2つのつまみが交差しないようにします。ポインターは近い方のつまみを選びます。つまみが完全に重なっている場合、その前方を押すと開始側、それ以外を押すと終了側を選びます。これはソースと同じです。
 
-Native input attributes such as `id`, `name`, `form`, `required`, ARIA
-relationships, and native change/focus handlers are forwarded by `Slider`.
-Its ref points to the input; `className` and `style` describe the visual root.
-For `RangeSlider`, ordinary DOM props and the forwarded ref describe the
-`role="group"` root. `startInputProps`/`endInputProps` and
-`startInputRef`/`endInputRef` address the two native inputs independently.
+`id`、`name`、`form`、`required`、ARIA関連付け、ネイティブの変更／フォーカスイベントなどの入力属性は`Slider`に渡せます。refは入力を参照し、`className`と`style`は視覚上のルートに適用されます。`RangeSlider`では通常のDOM propsとrefは`role="group"`のルートに適用されます。`startInputProps`／`endInputProps`および`startInputRef`／`endInputRef`で2つの入力を個別に指定できます。
 
-## Orientation, direction, and keyboard {#orientation-direction-and-keyboard}
+## 向き、方向、キーボード {#orientation-direction-and-keyboard}
 
-`Slider` is horizontal by default. `orientation="vertical"` maps the source's
-current `VerticalSlider` path; `topToBottom` defaults to `true`, so minimum is
-at the top. Set it to `false` for bottom-to-top. `RangeSlider` stays horizontal
-because the pinned source has no vertical range-slider API.
+`Slider`の既定の向きは横です。`orientation="vertical"`はソースの現行`VerticalSlider`経路に対応します。`topToBottom`の既定値は`true`で、最小値が上になります。下から上へ増やすには`false`にします。固定されたソースには縦方向の範囲スライダーAPIがないため、`RangeSlider`は常に横向きです。
 
-Horizontal value order follows logical direction: minimum is at inline start,
-so RTL reverses the physical track and Left/Right key delta. Home selects
-minimum and End selects maximum. Continuous sliders use the source's 1% arrow
-increment; stepped sliders use one tick. Page Up/Down moves up to ten ticks.
-The source deliberately does not reverse horizontal Page keys in RTL, and this
-implementation retains that asymmetry. Vertical Up/Down and Page keys follow
-`topToBottom`.
+横方向の値の順序は論理方向に従い、最小値はインライン開始側にあります。そのためRTLでは物理的なトラックとLeft／Rightキーによる増減が反転します。Homeで最小値、Endで最大値を選びます。連続スライダーの矢印キー増分はソースに従い1%、段階式スライダーでは1目盛りです。Page Up／Downでは最大10目盛り移動します。ソースはRTLでも横方向のPageキーを反転しないため、この非対称な動作を維持しています。縦方向のUp／DownとPageキーは`topToBottom`に従います。
 
-Pointer gestures preserve the source's slop behavior: a tap commits its
-original press coordinate on release; a same-axis move becomes a drag; an
-orthogonal touch move is left to page scrolling. Disabled inputs cannot focus
-or change.
+ポインター操作ではソースのスロップ動作を維持します。タップでは離した時に最初の押下座標を確定します。同じ軸に動かすとドラッグになり、タッチを直交方向に動かした場合はページスクロールに任せます。無効な入力にはフォーカスも変更もできません。
 
-## Track, handles, and states {#track-handles-and-states}
+## トラック、つまみ、状態 {#track-handles-and-states}
 
-The horizontal root fills its containing inline size and reserves a 48px
-minimum target. A vertical root defaults to 200×48px and can be resized with
-ordinary CSS. Inside that target:
+横方向のルートは親のインライン幅いっぱいに広がり、最低48pxの操作領域を確保します。縦方向のルートは既定で`200×48px`で、通常のCSSでサイズを変更できます。この領域内の寸法は次のとおりです。
 
-- the track is 16px thick with 8px external and 2px thumb-facing corners;
-- the default horizontal handle is 4×44px (44×4px vertically);
-- focus, press, and drag halve the handle's main-axis thickness to 2px;
-- the handle-to-track gap is 6px beyond the handle edge;
-- inset focus adds 4px to the adjacent gap without moving either handle;
-- ticks and endpoint stop indicators are 4px circles.
+- トラックの厚さは16pxで、外側の角は8px、つまみ側の角は2pxです。
+- 横方向の既定のつまみは`4×44px`です（縦方向では`44×4px`）。
+- フォーカス、押下、ドラッグ時はつまみの主軸方向の厚さを2pxに半減します。
+- つまみの端からトラックまでは6px空けます。
+- 内側のフォーカス表示では隣の隙間に4px加えますが、どちらのつまみも移動しません。
+- 目盛りと両端の停止インジケーターは直径4pxの円です。
 
-Set `centered` on a single slider to draw active progress between the geometric
-center and its value. Range active progress runs between its two thumbs.
-Discrete interior ticks and handles are inset inside the external corner
-radii, as in AndroidX; endpoints remain at the full track bounds. Ordinary
-single sliders draw a stop only at the far inactive endpoint. Centered and
-range tracks draw both inactive outer stops when those segments exist.
+単一スライダーに`centered`を指定すると、幾何学的な中心から値までをアクティブな進捗として描画します。範囲のアクティブ部分は2つのつまみの間です。AndroidXと同じく、離散値の中間目盛りとつまみは外側の角丸の内側に配置し、端点はトラックの全幅を使います。通常の単一スライダーでは非アクティブな遠端だけに停止位置を描画します。中央基準と範囲表示では、該当するセグメントがある場合に非アクティブな両端を描画します。
 
-`thumb`, `startThumb`, `endThumb`, `trackContent`, `renderTick`, and
-`renderStopIndicator` are passive visual slots inside the track's
-`aria-hidden` subtree. They cannot replace the native inputs or add another
-interactive action. `showStopIndicator={false}` matches the source's null
-stop-renderer path.
+`thumb`、`startThumb`、`endThumb`、`trackContent`、`renderTick`、`renderStopIndicator`はトラック内に配置される受動的な視覚スロットで、`aria-hidden`の配下に置かれます。ネイティブ入力を置き換えたり、別の操作を追加したりすることはできません。`showStopIndicator={false}`はソースで停止インジケーターのレンダラーがnullの場合に対応します。
 
-## Accessibility, forms, and SSR {#accessibility-forms-and-ssr}
+## アクセシビリティ、フォーム、SSR {#accessibility-forms-and-ssr}
 
-Each semantic thumb is an `<input type="range" role="slider">`. Browser-owned
-label association, numeric min/max/now state, form serialization, reset,
-disabled behavior, and independent tab stops remain available. `Slider`
-accepts wrapping labels, `label for`, `aria-label`, or `aria-labelledby`.
-`RangeSlider` requires localized `startAriaLabel` and `endAriaLabel`; its
-dynamic accessible bounds stop at the other thumb.
+意味を持つ各つまみは`<input type="range" role="slider">`です。ラベルの関連付け、数値のmin／max／now状態、フォーム送信、リセット、無効動作、独立したTab位置はブラウザーが提供します。`Slider`ではラッパーのラベル、`label for`、`aria-label`、`aria-labelledby`を使えます。`RangeSlider`ではローカライズされた`startAriaLabel`と`endAriaLabel`が必須で、動的なアクセシブル上限／下限はもう一方のつまみ位置までに制限されます。
 
-The decorative track is `aria-hidden`. Focus-visible draws a token-backed ring
-around the corresponding handle, including in forced colors. Markup is
-deterministic under SSR and hydration, and the component injects no runtime
-styles.
+装飾用トラックには`aria-hidden`を設定します。`:focus-visible`では各つまみの周囲にトークン由来のリングを描画し、強制カラーにも対応します。SSRとハイドレーションで決定的なマークアップを生成し、実行時スタイルは注入しません。
 
-## Tokens and source boundary {#tokens-and-source-boundary}
+## トークンとソースの境界 {#tokens-and-source-boundary}
 
-All visual values use `--m3e-comp-slider-*` custom properties scoped by
-`Material3Provider`. The defaults preserve the source's crossed tick colors,
-disabled handle precomposition over `surface`, and distinct disabled track
-alphas.
+視覚的な値にはすべて`Material3Provider`のスコープ内で設定される`--m3e-comp-slider-*`カスタムプロパティを使います。既定値は、ソースで目盛り色が交差する仕様、無効時のつまみ色を`surface`上に事前合成する仕様、無効トラックの不透明度がそれぞれ異なる仕様を保ちます。
 
-The implementation is pinned to AndroidX Material 3 revision
-`225f50d42bf0adeb2abf4b6109befb5ab6ce4efc`. Only the 15 generated
-`SliderTokens` names literally read by `Slider.kt` become sourced resolution
-paths; all 36 unread names remain recorded in the executable ledger instead of
-inventing behavior. Compose modifiers, interaction sources, canvas scopes,
-state holders, and deprecated compatibility overloads are adapted or excluded
-as platform machinery, while their observable output is covered by the
-component conformance record and ADR 0031.
+実装はAndroidX Material 3リビジョン`225f50d42bf0adeb2abf4b6109befb5ab6ce4efc`に固定されています。生成された`SliderTokens`のうち`Slider.kt`が文字どおり参照する15個だけをソースに基づく解決経路として扱います。未参照の36個も実行可能な台帳に記録し、定義されていない動作を作りません。Composeのmodifier、interaction source、canvas scope、state holder、非推奨の互換オーバーロードはプラットフォーム上の仕組みとして適応または対象外とし、観測可能な出力はコンポーネント準拠記録とADR 0031で扱います。

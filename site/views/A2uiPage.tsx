@@ -22,6 +22,11 @@ import { a2uiMessages } from '../i18n/messages/a2ui'
 import '@language-lit/material3-expressive-a2ui/styles.css'
 import './a2ui.css'
 
+/** Renders the backticked spans of a message as `<code>`. */
+function withCode(text: string) {
+  return text.split('`').map((part, index) => (index % 2 ? <code key={index}>{part}</code> : part))
+}
+
 export function pageMetadata(locale: Locale): Metadata {
   const t = a2uiMessages[locale]
   return {
@@ -55,7 +60,7 @@ export default function A2uiPage({ locale }: { locale: Locale }) {
   const t = a2uiMessages[locale]
   return (
     <main className="a2ui-page">
-      <StructuredData data={breadcrumbList([{ name: t.title, path: '/a2ui/' }], locale)} />
+      <StructuredData data={breadcrumbList([{ name: 'A2UI', path: '/a2ui/' }], locale)} />
       <section className="hero">
         <div className="section__inner a2ui-hero">
           <div>
@@ -186,7 +191,7 @@ export default function A2uiPage({ locale }: { locale: Locale }) {
           <Surface color="secondary-container" shape="extra-large" className="a2ui-compat__limits">
             <Text as="h3" variant="titleLarge">{t.knownLimits}</Text>
             <ul className="a2ui-list">
-              {t.limits.map((item, index) => <li key={index}>{item}</li>)}
+              {t.limits.map((item, index) => <li key={index}>{withCode(item)}</li>)}
             </ul>
           </Surface>
         </div>
@@ -215,7 +220,7 @@ import '@language-lit/material3-expressive-a2ui/styles.css'`}</code></pre>
           <Surface color="surface" shape="large" className="a2ui-official">
             <Text as="h3" variant="titleLarge">{t.officialTitle}</Text>
             <Text as="p" variant="bodyLarge">
-              {t.officialBody}
+              {withCode(t.officialBody)}
             </Text>
             <a href={localizePath(locale, '/docs/a2ui-components/#use-the-catalog-under-googles-react-surface')}>{t.registerCatalog}</a>
           </Surface>

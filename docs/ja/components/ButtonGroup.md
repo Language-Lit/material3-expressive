@@ -13,7 +13,7 @@ import '@language-lit/material3-expressive/styles.css'
 </ButtonGroup>
 ```
 
-## 契約 {#contract}
+## 仕様 {#contract}
 
 - `children`は指定どおりflex行に直接描画され、仕様に沿った`BetweenSpace`の間隔が適用されます。データ配列で項目を指定するAPIはありません。通常使う`Button`や`IconButton`などのインタラクティブ要素を渡してください。
 - 既定の`role`は`"group"`です。`"toolbar"`などを明示して上書きできます。`aria-label`または`aria-labelledby`でグループ全体に名前を付けます。子要素はそれぞれのアクセシブルな名前とネイティブのTab順を保ちます。

@@ -15,7 +15,7 @@ import '@language-lit/material3-expressive/styles.css'
 />
 ```
 
-## 契約 {#contract}
+## 仕様 {#contract}
 
 - ルートは常にネイティブの`<button>`で、refは`HTMLButtonElement`です。既定の`type`は`"button"`です。submit/reset、フォーム所有者、name、value、無効状態、ネイティブのイベントハンドラーは引き続き機能します。
 - `size`は`standard`（既定値）、`medium`、`large`から選択します。
@@ -68,7 +68,7 @@ const [open, setOpen] = useState(false)
 
 制御状態には`selected`と`onSelectedChange`を使い、非制御状態には`defaultSelected`を使います。単発のFABは`aria-pressed`を省略し、トグルFABは真偽値を公開します。利用側の`onClick`を先に実行し、`preventDefault()`で内部の状態変更を取り消せます。
 
-選択時は、色がprimary-container／on-primary-containerからprimary／on-primaryへ変わります。サイズを問わず、すべてのボタンでコンテナを56pxの完全な円形、アイコンを20pxにします。mediumとlargeは元の占有領域である80pxまたは96pxを保ちながら、選択時の表示を論理方向の右上に合わせます。これによりレイアウトを維持し、RTLでは水平方向の端が自動で反転します。
+選択時は、色がprimary-container／on-primary-containerからprimary／on-primaryへ変わります。サイズを問わず、すべてのボタンでコンテナーを56pxの完全な円形、アイコンを20pxにします。mediumとlargeは元の占有領域である80pxまたは96pxを保ちながら、選択時の表示を論理方向の右上に合わせます。これによりレイアウトを維持し、RTLでは水平方向の端が自動で反転します。
 
 ## エレベーションと状態 {#elevation-and-state}
 
@@ -96,7 +96,7 @@ hover、フォーカス、押下時のステートレイヤーはシステムの
 - `--m3e-comp-floating-action-button-{size}-extended-{leading-space|trailing-space|icon-label-space}`
 - 通常、選択されたトグル、無効状態の色変数
 - default／lowered時のステートshadow変数とLevel 0のshadow
-- 選択されたトグル用のコンテナサイズ／シェイプとアイコンサイズ
+- 選択されたトグル用のコンテナーサイズ／シェイプとアイコンサイズ
 - 最小ターゲットとフォーカスリングの変数
 
 extended FABのサイズにはExpressive fast-spatialモーションを、ラベルの不透明度にはfast-effectsを使います。トグル時のサイズ、角、アイコンにはfast-spatial、色にはfast-effectsを使います。エレベーションにはdefault-effects投影を使います。テーマの上書きは`Material3Provider`内に限定され、描画時にCSSは挿入されません。

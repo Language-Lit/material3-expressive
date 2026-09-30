@@ -4,7 +4,7 @@
 
 ```tsx
 import { useRef, useState } from 'react'
-import { Button, Icon, Menu } from '@language-lit/material3-expressive';
+import { Button, Icon, Menu } from '@language-lit/material3-expressive'
 import '@language-lit/material3-expressive/styles.css'
 
 const anchorRef = useRef<HTMLButtonElement>(null)

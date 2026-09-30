@@ -1,6 +1,6 @@
 # Checkbox
 
-`Checkbox`は`input type="checkbox"`を使い、現行Materialのコンテナ、アウトライン、チェックマーク、ステートレイヤー、モーションを備えます。ラベルは内包しないため、通常のHTMLラベルと組み合わせられます。
+`Checkbox`は`input type="checkbox"`を使い、現行Materialのコンテナー、アウトライン、チェックマーク、ステートレイヤー、モーションを備えます。ラベルは内包しないため、通常のHTMLラベルと組み合わせられます。
 
 ```tsx
 import { Checkbox } from '@language-lit/material3-expressive'
@@ -12,7 +12,7 @@ import '@language-lit/material3-expressive/styles.css'
 </label>
 ```
 
-## 契約 {#contract}
+## 仕様 {#contract}
 
 - 描画されるコントロールはネイティブのチェックボックス入力1つです。ref、`name`、`value`、`form`、`required`、`id`、ARIA属性、data属性、ネイティブのイベントハンドラーはこの入力要素に転送されます。
 - `className`と`style`はチェックボックスのルート要素に適用されます。ルート要素は、仕様に基づく18pxのボックスを囲む48pxの操作対象を持ちます。
@@ -40,7 +40,7 @@ const someChecked = items.some((item) => item.selected)
 
 ## 状態とモーション {#states-and-motion}
 
-| 状態 | コンテナ | アウトライン | チェックマーク |
+| 状態 | コンテナー | アウトライン | チェックマーク |
 | --- | --- | --- | --- |
 | unchecked | 透明 | on-surface-variant | なし |
 | checked | primary | primary | on-primary |
@@ -57,15 +57,15 @@ hover、フォーカス、押下には直径40pxの円形ステートレイヤ�
 
 ロール、チェック状態、必須状態、キーボード操作はネイティブコントロールが提供します。Spaceで操作でき、Enterでは操作しません。名前は、Checkboxを囲む`label`、`label for`、`aria-label`、`aria-labelledby`で指定します。
 
-18pxのボックスを48pxの操作対象の内側に配置します。`:focus-visible`ではボックスにトークンに基づくフォーカスリングを描画します。強制カラー表示ではアウトラインを維持し、チェック済みのコンテナとフォーカスリングにHighlight、無効状態にGrayTextを使います。レイアウトには論理方向を使い、RTLでも適切に表示します。
+18pxのボックスを48pxの操作対象の内側に配置します。`:focus-visible`ではボックスにトークンに基づくフォーカスリングを描画します。強制カラー表示ではアウトラインを維持し、チェック済みのコンテナーとフォーカスリングにHighlight、無効状態にGrayTextを使います。レイアウトには論理方向を使い、RTLでも適切に表示します。
 
 ## トークンと境界 {#tokens-and-boundaries}
 
 Checkboxは検索可能な`--m3e-comp-checkbox-*`変数を次の用途に登録します。
 
-- 最小操作対象、コンテナサイズとシェイプ、アウトライン幅、ステートレイヤーのサイズ、チェックマークの線幅とパス長、切り替え遅延。
+- 最小操作対象、コンテナーサイズとシェイプ、アウトライン幅、ステートレイヤーのサイズ、チェックマークの線幅とパス長、切り替え遅延。
 - チェックマークの通常色と無効状態の色。
-- checked状態と無効状態のコンテナ色およびそれぞれの不透明度。
+- checked状態と無効状態のコンテナー色およびそれぞれの不透明度。
 - checked、unchecked、3種類の無効状態におけるアウトライン色。
 - checkedとuncheckedのステートレイヤー色およびフォーカスリング。
 

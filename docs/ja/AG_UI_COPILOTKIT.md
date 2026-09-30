@@ -1,6 +1,6 @@
 # CopilotKitでAG-UIを使う
 
-Materialアダプターがサポートするのは**CopilotKit 1.71.x v1のみ**です。1.71.0でテストされています。CopilotKitのv2 slot APIは`@language-lit/material3-expressive-ag-ui`ではサポートされていません。
+Materialアダプターがサポートするのは**CopilotKit 1.71.x v1のみ**です。1.71.0でテストされています。CopilotKitのv2 スロット APIは`@language-lit/material3-expressive-ag-ui`ではサポートされていません。
 
 CopilotKitがすでに会話を管理している場合にこのアダプターを使います。ネイティブのAG-UIエージェントには[はじめ方ガイド](AG_UI_GETTING_STARTED.md)を使ってください。
 
@@ -35,7 +35,7 @@ export function MaterialChat() {
 }
 ```
 
-同じプリセットは`CopilotPopup`と`CopilotSidebar`でも使えます。Materialのメッセージ表示、入力コントロール、およびこれらのコンテナで使われるヘッダー、ランチャー、ダイアログが含まれています。`className`を追加する場合は、プリセットのクラスも残してください。
+同じプリセットは`CopilotPopup`と`CopilotSidebar`でも使えます。Materialのメッセージ表示、入力コントロール、およびこれらのコンテナーで使われるヘッダー、ランチャー、ダイアログが含まれています。`className`を追加する場合は、プリセットのクラスも残してください。
 
 ```tsx
 <CopilotChat
@@ -54,10 +54,10 @@ export function MaterialChat() {
 
 登録されていないツールに対して、CopilotKitが空のgenerative UIラッパーを提供することがあります。その場合、ツールの表示フォールバックがないことがあります。すべての呼び出しを表示するには、CopilotKitの`useDefaultTool`でcatch-allを登録してください。[アダプターの例](https://github.com/Language-Lit/material3-expressive-ag-ui/blob/main/playground/CopilotDemo.tsx)では、`ToolCallCard`との連携を示しています。
 
-## エクスポートされるslot {#exported-slots}
+## エクスポートされるスロット {#exported-スロット}
 
 プリセットには`AssistantMessage`、`UserMessage`、`Messages`、`Input`、`RenderMessage`、`Window`、`Button`、`Header`が含まれています。`/copilotkit`エントリから個別に読み込むこともできます。それぞれprops型がエクスポートされています。
 
-このエントリは、従来の`RenderTextMessage`、`RenderActionExecutionMessage`、`RenderAgentStateMessage`、`RenderResultMessage` slotもエクスポートします。それらのpropsはAG-UI形式のCopilotKit 1.71.xメッセージpropsであり、旧式のGraphQLメッセージインスタンスではありません。
+このエントリは、従来の`RenderTextMessage`、`RenderActionExecutionMessage`、`RenderAgentStateMessage`、`RenderResultMessage` スロットもエクスポートします。それらのpropsはAG-UI形式のCopilotKit 1.71.xメッセージpropsであり、旧式のGraphQLメッセージインスタンスではありません。
 
 テキストは引き続きプレーンテキストです。アダプターはMarkdown表示を追加しません。連携先をアップグレードする前に[リリースノート](https://github.com/Language-Lit/material3-expressive-ag-ui/releases)を確認してください。

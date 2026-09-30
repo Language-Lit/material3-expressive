@@ -1,4 +1,4 @@
-# A2UIをはじめる
+# A2UIを使い始める
 
 `@language-lit/material3-expressive-a2ui`は、Google A2UIのサーフェスをMaterial 3 Expressiveで表示します。A2UIは、エージェントがデータバインディングを持つカタログコンポーネントのツリーとしてUIを記述し、それをJSONメッセージとしてストリーミングするプロトコルです。この連携パッケージはA2UI basic catalogのすべてのコンポーネントをMaterial 3 Expressiveのコンポーネントに対応づけるため、エージェントが生成したUIもアプリの他の部分と同じテーマを使います。
 
@@ -59,13 +59,13 @@ export function AgentPanel({ send }: { send: (action: A2uiClientAction) => void 
 }
 ```
 
-companionはトランスポートを提供しません。エージェントのフレームワークからA2A、HTTP、WebSocketなどの経路でA2UIメッセージを届けてください。JSONの各行を解析し、1件ずつ、またはまとめて`processMessages`に渡します。`createSurface`メッセージの到着時にサーフェスが表示され、`deleteSurface`で削除されます。
+この連携パッケージはトランスポートを提供しません。エージェントのフレームワークからA2A、HTTP、WebSocketなどの経路でA2UIメッセージを届けてください。JSONの各行を解析し、1件ずつ、またはまとめて`processMessages`に渡します。`createSurface`メッセージの到着時にサーフェスが表示され、`deleteSurface`で削除されます。
 
 `useA2ui`は安定した関数と、サーフェスに変更があるたびに変わる`surfaces`配列を返します。結果オブジェクト全体ではなく、関数をエフェクトの依存関係にしてください。
 
 ## レンダリング可能な内容をエージェントに伝える {#tell-the-agent-what-you-can-render}
 
-最初のリクエストとともにクライアントのcapabilitiesを送信し、エージェントがbasic catalogを選べるようにします。
+最初のリクエストとともにクライアントの対応機能を送信し、エージェントがbasic catalogを選べるようにします。
 
 ```ts
 const { getClientCapabilities, getClientDataModel } = useA2ui()

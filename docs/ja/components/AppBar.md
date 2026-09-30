@@ -30,7 +30,7 @@ import '@language-lit/material3-expressive/styles.css'
 <AppBar title="Inbox" scrollBehavior="enterAlways" />
 ```
 
-## 契約 {#contract}
+## 仕様 {#contract}
 
 `size`はサイズ階層を選択し、既定値は`"small"`です。小サイズのバーは高さ64pxの1段構成です。中サイズと大サイズは2段構成で、折りたたみ時の段が64px、展開時のタイトル領域を含めると仕様値は中サイズ112px、大サイズ152pxです。`flexible`の場合は、中サイズが112px（サブタイトルなし）または136px（あり）、大サイズが120pxまたは152pxです。
 
@@ -40,7 +40,7 @@ import '@language-lit/material3-expressive/styles.css'
 
 `scrollBehavior`の既定値は`"none"`です。連動動作は次の3種類です。
 
-- `"pinned"` — バーを上部に固定し、その下でスクロールが発生するとコンテナ色をスクロール時のロールに切り替えます。
+- `"pinned"` — バーを上部に固定し、その下でスクロールが発生するとコンテナー色をスクロール時のロールに切り替えます。
 - `"enterAlways"` — 下へスクロールするとバーがスライドして隠れ、上へスクロールするとすぐに戻ります。スクロールが止まると、完全に表示または非表示の状態に落ち着きます。
 - `"exitUntilCollapsed"` — 2段構成のバーを折りたたみ段まで縮め、ページが先頭に戻るまでその状態を保ちます。折りたたむ段がない小サイズのバーでは指定できません。
 

@@ -1,4 +1,4 @@
-# MCP Appsをはじめる
+# MCP Appsを使い始める
 
 MCP Apps連携パッケージは、Material 3 Expressiveを公式のMCP Apps SDKに接続します。アプリを埋め込むホストフレームと、Materialコンポーネントでアプリの内容を構築するためのアプリプロバイダーを提供します。このガイドは公開バージョン0.2.1を対象とします。
 
@@ -50,7 +50,7 @@ export function App() {
 }
 ```
 
-リクエストが拒否された場合はUIで処理し、アクションを提示する前に該当するホストcapabilityを確認してください。`useToolCall<TArgs>()`は完全な入力、部分入力、結果、キャンセル状態を公開します。ホストフレームのpropsが渡すのは完全な入力、結果、キャンセル状態です。高度なホストは、`onBridge`で公開されるSDKブリッジを通じて部分入力を送信できます。
+リクエストが拒否された場合はUIで処理し、アクションを提示する前に該当するホストの対応機能を確認してください。`useToolCall<TArgs>()`は完全な入力、部分入力、結果、キャンセル状態を公開します。ホストフレームのpropsが渡すのは完全な入力、結果、キャンセル状態です。高度なホストは、`onBridge`で公開されるSDKブリッジを通じて部分入力を送信できます。
 
 アプリのJavaScriptとCSSを1つのHTMLドキュメントにまとめます。このパッケージのplaygroundとサイトのビルドスクリプトでは、esbuildを使った方法を確認できます。本番リソースからViteの開発専用エントリを読み込むことはできません。
 
@@ -85,6 +85,6 @@ export function createServer(html: string) {
 
 ## アプリをホストする {#host-the-app}
 
-`mcpAppsClientCapabilities`を使ってクライアントを作成し、接続完了を待ちます。ツールの`_meta.ui.resourceUri`を読み取り、リソース、ツール結果、別オリジンの`sandboxUrl`、`onAuthorizeToolCall`ポリシーを`McpAppFrame`に渡します。型付きの例、capability、サンドボックスポリシーについては[「MCP Appsのホスティングとテーマ設定」](MCP_APPS_HOSTING.md)をご覧ください。
+`mcpAppsClientCapabilities`を使ってクライアントを作成し、接続完了を待ちます。ツールの`_meta.ui.resourceUri`を読み取り、リソース、ツール結果、別オリジンの`sandboxUrl`、`onAuthorizeToolCall`ポリシーを`McpAppFrame`に渡します。型付きの例、対応機能、サンドボックスポリシーについては[「MCP Appsのホスティングとテーマ設定」](MCP_APPS_HOSTING.md)をご覧ください。
 
-アプリ側にMaterialホストは不要です。公式SDKを通じてMCP Appsと通信します。同様に、ホストフレームには他のUIフレームワークで構築されたアプリも埋め込めます。ホストの実装によって、サポートする任意のcapabilityは異なる場合があります。安定したプロトコル、SDK API、ホストの責任については[公式MCP Appsドキュメント](https://apps.extensions.modelcontextprotocol.io/api/)をご覧ください。
+アプリ側にMaterialホストは不要です。公式SDKを通じてMCP Appsと通信します。同様に、ホストフレームには他のUIフレームワークで構築されたアプリも埋め込めます。ホストの実装によって、サポートする任意の機能は異なる場合があります。安定したプロトコル、SDK API、ホストの責任については[公式MCP Appsドキュメント](https://apps.extensions.modelcontextprotocol.io/api/)をご覧ください。

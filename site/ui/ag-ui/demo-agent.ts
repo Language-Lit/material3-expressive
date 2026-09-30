@@ -52,7 +52,10 @@ function eventsFor(scenario: ScenarioId, input: RunAgentInput, locale: Locale): 
           messageId: id('activity'), activityType: 'search', content: { source: t.sampleNotes },
         })
         text('answer', t.searchAnswer)
-        tool('search_components', [`{"query":"${t.confirmation}","limit":1}`],
+        // The arguments stream in pieces, split inside the query as the English demo always was.
+        const split = t.confirmation.includes(' ') ? t.confirmation.indexOf(' ') : Math.ceil(t.confirmation.length / 2)
+        const [queryHead, queryTail] = [t.confirmation.slice(0, split), t.confirmation.slice(split)]
+        tool('search_components', ['{"query":', `"${queryHead}`, `${queryTail}",`, '"limit":', '1}'],
           JSON.stringify({ component: 'Snackbar', description: t.snackbar }))
         emit(EventType.STEP_FINISHED, { stepName: t.searching })
         text('summary', t.searchSummary)

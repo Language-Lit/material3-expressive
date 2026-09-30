@@ -107,12 +107,12 @@ export function McpAppsDemo() {
         <Button variant="outlined" onClick={reset} disabled={!resource}>{t.resetDemo}</Button>
         <Button variant="text" disabled={!resource || busy} onClick={() => { setResult({ isError: true, content: [{ type: 'text', text: t.scriptedFailure }] }); record(t.eventFailure); }}>{t.showFailedTool}</Button>
       </div>
-      <Text as="p" variant="bodySmall" role="status" className="mcp-demo__status">{t.statusLabel}: {t.appStatus[status as keyof typeof t.appStatus] ?? status}.</Text>
+      <Text as="p" variant="bodySmall" role="status" className="mcp-demo__status">{t.statusLabel}: {t.appStatus[status as keyof typeof t.appStatus] ?? status}{locale === 'ja' ? '。' : '.'}</Text>
       {error || resourceError ? <Text as="p" role="alert">{error || resourceError?.message}</Text> : null}
       <div className="mcp-demo__layout">
         <div className="mcp-demo__stage">
           {connection && resource && tool && sandboxUrl ? (
-            <McpAppFrame key={generation} client={connection.client} resource={resource} toolInfo={{ id: generation, tool }} toolInput={input} toolResult={result} title={t.sandbox.ariaForecast(city)} locale={locale === 'ja' ? 'ja-JP' : 'en-US'} availableDisplayModes={modes} minHeight={360} maxHeight={620} sandboxUrl={sandboxUrl}
+            <McpAppFrame key={generation} client={connection.client} resource={resource} toolInfo={{ id: generation, tool }} toolInput={input} toolResult={result} title={t.server.toolTitle} locale={locale === 'ja' ? 'ja-JP' : undefined} availableDisplayModes={modes} minHeight={360} maxHeight={620} sandboxUrl={sandboxUrl}
               onAuthorizeToolCall={(params) => {
                 const args = params.arguments
                 const allowed = params.name === 'refresh_forecast' && typeof args?.city === 'string' && Number.isInteger(args?.seed)

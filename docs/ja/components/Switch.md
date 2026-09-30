@@ -1,8 +1,6 @@
 # Switch
 
-`Switch` is `input type="checkbox" role="switch"` with current Material
-track, thumb, state-layer, and pressed-shape motion behavior. It owns no
-label, so it composes with ordinary HTML labelling.
+`Switch`は`input type="checkbox" role="switch"`に、Materialの最新のトラック、つまみ、ステートレイヤー、押下時のシェイプモーションを適用します。ラベルは内部に持たないため、通常のHTMLラベルと組み合わせられます。
 
 ```tsx
 import { Switch } from '@language-lit/material3-expressive'
@@ -14,30 +12,17 @@ import '@language-lit/material3-expressive/styles.css'
 </label>
 ```
 
-## Contract {#contract}
+## 仕様 {#contract}
 
-- The rendered control is one native checkbox input exposed as a switch. Its
-  ref, `name`, `value`, `form`, `required`, `id`, ARIA and data attributes,
-  and native handlers are forwarded to that input. `role` and `type` are
-  fixed and cannot be overridden.
-- `className` and `style` describe the switch root, which owns the 48px
-  interaction target around the sourced 52×32px track.
-- `checked` with `onCheckedChange` is controlled; `defaultChecked` is
-  uncontrolled and leaves checkedness to the DOM, including native form
-  reset.
-- `onChange` runs before the library updates state, and `preventDefault()`
-  cancels that update.
-- `onCheckedChange` reports the value the browser resolved, so it never
-  needs a separate toggle calculation.
+- レンダーされるのはネイティブのチェックボックス入力1つで、switchとして公開します。ref、`name`、`value`、`form`、`required`、`id`、ARIA／data属性、ネイティブのイベントハンドラーはこの入力に渡されます。`role`と`type`は固定で上書きできません。
+- `className`と`style`はSwitchのルートに適用されます。ルートはソース由来の`52×32px`トラックの周囲に`48px`の操作領域を確保します。
+- `checked`と`onCheckedChange`を使うと制御されます。`defaultChecked`を使うと非制御となり、フォームのネイティブリセットを含め、チェック状態をDOMに任せます。
+- ライブラリが状態を更新する前に`onChange`が実行されます。`preventDefault()`を呼び出すと更新を取り消せます。
+- `onCheckedChange`はブラウザーが解決した値を通知するため、別途トグル値を計算する必要はありません。
 
-## Thumb icon {#thumb-icon}
+## つまみのアイコン {#thumb-icon}
 
-`thumbIcon` reproduces the pinned `thumbContent` slot: decorative content
-drawn inside the thumb. The slot centers artwork in the sourced 16×16px box;
-a direct `Icon`, SVG, or image is constrained to that size automatically.
-Other custom content should likewise fit the 16px box. Its presence keeps the
-thumb at the selected handle size even while unchecked, matching the source's
-own `hasContent || checked` sizing rule.
+`thumbIcon`は固定されたソースの`thumbContent`スロットに対応し、つまみの内側に装飾コンテンツを表示します。スロットはソース由来の`16×16px`の枠内にコンテンツを中央配置します。`Icon`、SVG、画像は自動的にそのサイズに制限されます。ほかのカスタムコンテンツも同じ枠に収めてください。コンテンツがあると、未選択時もつまみは選択時のサイズを保ちます。これはソースの`hasContent || checked`によるサイズ決定と同じです。
 
 ```tsx
 <Switch
@@ -48,57 +33,34 @@ own `hasContent || checked` sizing rule.
 />
 ```
 
-## States and motion {#states-and-motion}
+## 状態とモーション {#states-and-motion}
 
-| State | Track | Thumb | Thumb size |
+| 状態 | トラック | つまみ | つまみのサイズ |
 | --- | --- | --- | --- |
-| unselected | surface-container-highest, outline border | outline | 16px |
-| selected | primary, no border | on-primary | 24px |
-| disabled unselected | surface-container-highest / on-surface at 0.12 | on-surface at 0.38 | 16px |
-| disabled selected | on-surface at 0.12, no border | surface | 24px |
+| 未選択 | surface-container-highest、アウトライン境界線 | outline | 16px |
+| 選択済み | primary、境界線なし | on-primary | 24px |
+| 無効、未選択 | surface-container-highest / on-surface at 0.12 | on-surface at 0.38 | 16px |
+| 無効、選択済み | on-surface at 0.12、境界線なし | surface | 24px |
 
-Hover, focus, and pressed use a 40px circular state layer centered on the
-thumb's own position, so it slides with the thumb rather than staying fixed
-at the track's center. Pressing grows the thumb to 28px instantly; releasing
-animates it back to its resting size with Expressive fast-spatial motion —
-the same asymmetry the source's own snap-while-pressed animation spec
-defines. Track and thumb color transition with Expressive default-effects
-motion. Reduced motion makes every one of those changes immediate.
+ホバー、フォーカス、押下時は、つまみの位置を中心とする直径`40px`のステートレイヤーを使います。つまみとともに移動するため、トラックの中央に固定されません。押している間はつまみが即座に28pxまで拡大します。離すとExpressive fast-spatialモーションで通常サイズに戻ります。これは押下中はスナップさせるソース独自のアニメーション仕様と同じ非対称性です。トラックとつまみの色はExpressive default-effectsモーションで遷移します。モーション低減時はすべての変化が直ちに反映されます。
 
-The resting thumb's outer-box start is 8px without an icon, 4px with an icon,
-and 24px when checked; pressed starts are 2px and 22px. These logical offsets
-mirror in RTL.
+静止時のつまみの外枠開始位置は、アイコンなしで8px、アイコンありで4px、選択時に24pxです。押下時は2pxと22pxになります。これらの論理オフセットはRTLで反転します。
 
-Current AndroidX Switch has no size, variant, or error parameter, so this
-implementation ships one form and does not invent Expressive geometry that
-the pinned source does not define.
+現行のAndroidX Switchにはサイズ、バリアント、エラー用のパラメーターがありません。そのため、この実装は1種類のみを提供し、固定されたソースにないExpressiveな形状は追加しません。
 
-## Accessibility {#accessibility}
+## アクセシビリティ {#accessibility}
 
-`role="switch"` on a native checkbox input needs no explicit `aria-checked`:
-the browser derives the accessible checked state from the native `checked`
-property the same way it does for the implicit checkbox role. Space
-activates and Enter does not. Naming comes from a wrapping `label`,
-`label for`, `aria-label`, or `aria-labelledby`.
+ネイティブのチェックボックス入力に付けた`role="switch"`では、ブラウザーがネイティブの`checked`プロパティからチェック状態を決めるため、明示的な`aria-checked`は不要です。Spaceキーで切り替わり、Enterキーでは切り替わりません。ラベルはラッパーの`label`、`label for`、`aria-label`、`aria-labelledby`で指定します。
 
-The 32px-tall track sits inside a 48px target. `:focus-visible` draws a
-token-backed focus ring on the track. Forced-colors mode keeps the track
-outline, uses Highlight for the selected track/thumb and focus ring, and
-GrayText for disabled treatment. Layout is logical, so the control behaves
-correctly in RTL.
+高さ`32px`のトラックは`48px`の操作領域に収まります。`:focus-visible`ではトークンに基づくフォーカスリングをトラックに描画します。強制カラーではトラックのアウトラインを保ち、選択中のトラック／つまみとフォーカスリングにHighlight、無効状態にGrayTextを使います。レイアウトは論理方向に対応しているため、RTLでも正しく動作します。
 
-## Tokens and boundaries {#tokens-and-boundaries}
+## トークンと境界 {#tokens-and-boundaries}
 
-Switch registers searchable `--m3e-comp-switch-*` variables for:
+Switchは検索可能な`--m3e-comp-switch-*`変数を登録します。対象は次のとおりです。
 
-- minimum target, track width/height, track outline width, unselected/
-  selected/pressed handle size, icon size, and state-layer size;
-- selected and unselected track/thumb/icon color;
-- disabled-selected and disabled-unselected thumb/icon color with their own
-  opacities, and a single shared disabled-track opacity reused by the
-  disabled track and disabled unselected border roles;
-- the focus ring.
+- 最小操作領域、トラックの幅／高さとアウトライン幅、未選択／選択／押下時のつまみサイズ、アイコンサイズ、ステートレイヤーのサイズ。
+- 選択／未選択時のトラック、つまみ、アイコンの色。
+- それぞれ異なる不透明度を持つ、無効かつ選択済み／未選択のつまみ／アイコン色、および無効トラックと無効時の未選択境界線ロールで共有する不透明度。
+- フォーカスリング。
 
-Theme overrides remain scoped to `Material3Provider`; Switch injects no
-runtime styles. It imports no Next.js, Vite, router, animation
-library, or private application code.
+テーマの上書きは`Material3Provider`のスコープ内で適用されます。Switchは実行時スタイルを注入せず、Next.js、Vite、ルーター、アニメーションライブラリ、非公開のアプリケーションコードをインポートしません。

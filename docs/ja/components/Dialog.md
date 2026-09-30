@@ -23,7 +23,7 @@ import '@language-lit/material3-expressive/styles.css'
 </Dialog>
 ```
 
-## 契約 {#contract}
+## 仕様 {#contract}
 
 - `open`／`defaultOpen`／`onOpenChange`は、ほかの状態を持つコンポーネントと同じ制御／非制御の形式です。Escape、外側のクリック、ネイティブの`<form method="dialog">`送信でダイアログが閉じたときに`onOpenChange`を呼び出します。利用側がプログラムから`open`を変更した場合には呼び出しません。
 - `icon`、`title`、本文／補足テキスト領域の`children`、`actions`はすべて任意の名前付き領域で、この順に描画されます。省略した領域は余分な間隔を残しません。

@@ -1,6 +1,6 @@
 # Card
 
-`Card`はまとまりのある内容をグループ化し、現行Materialのfilled、elevated、outlinedのいずれかの表現で描画します。用途に応じて、豊富なコンテンツを含む非インタラクティブなコンテナと、カード全体がネイティブボタンとして動作する形を、型で区別します。
+`Card`はまとまりのある内容をグループ化し、現行Materialのfilled、elevated、outlinedのいずれかの表現で描画します。用途に応じて、豊富なコンテンツを含む非インタラクティブなコンテナーと、カード全体がネイティブボタンとして動作する形を、型で区別します。
 
 ```tsx
 import { Button, Card } from '@language-lit/material3-expressive'
@@ -13,7 +13,7 @@ import '@language-lit/material3-expressive/styles.css'
 </Card>
 ```
 
-## 契約 {#contract}
+## 仕様 {#contract}
 
 - `variant`は`filled`（既定値）、`elevated`、`outlined`から選択します。
 - 既定は非インタラクティブモードです。`article`を描画し、文書上の意味に適した場合は`as="div"`、`section`、`aside`を指定できます。
@@ -38,7 +38,7 @@ import '@language-lit/material3-expressive/styles.css'
 
 ## バリアントと状態 {#variants-and-state}
 
-| バリアント | コンテナ | 通常／フォーカス／押下時 | hover時 | 枠線 |
+| バリアント | コンテナー | 通常／フォーカス／押下時 | hover時 | 枠線 |
 | --- | --- | ---: | ---: | --- |
 | `filled` | surface-container-highest | Level 0 | Level 1 | なし |
 | `elevated` | surface-container-low | Level 1 | Level 2 | なし |
@@ -46,7 +46,7 @@ import '@language-lit/material3-expressive/styles.css'
 
 すべてのバリアントでmediumの角を使い、コンテンツにはon-surfaceを使います。outlinedのフォーカス時は枠線にon-surfaceを使います。インタラクティブなカードにはMaterialのhover、フォーカス、押下時のステートレイヤーを追加し、テーマに基づく最小48pxの操作対象を確保します。無効状態の色、枠線、エレベーションは、固定されたファーストパーティのトークンファイルに従います。非インタラクティブなカードは通常のコンテンツなので、無効状態はありません。
 
-現行AndroidXにはExpressive Card用の別オーバーロードや、Expressiveのサイズ／シェイプ変化はありません。そのため、この実装では現行Cardの形状を維持し、テーマのExpressive default-effects投影をコンテナ、枠線、shadowの遷移に、fast-effectsをステートレイヤーに使います。モーションを減らす設定では、変化をすぐに適用します。
+現行AndroidXにはExpressive Card用の別オーバーロードや、Expressiveのサイズ／シェイプ変化はありません。そのため、この実装では現行Cardの形状を維持し、テーマのExpressive default-effects投影をコンテナー、枠線、shadowの遷移に、fast-effectsをステートレイヤーに使います。モーションを減らす設定では、変化をすぐに適用します。
 
 ## アクセシビリティ {#accessibility}
 
@@ -59,9 +59,9 @@ import '@language-lit/material3-expressive/styles.css'
 Cardは検索可能な`--m3e-comp-card-*`変数を次の用途に登録します。
 
 - 最小ターゲット、mediumシェイプ、フォーカスリング、無効状態のコンテンツ。
-- filled／elevated／outlinedのコンテナ色とコンテンツ色。
+- filled／elevated／outlinedのコンテナー色とコンテンツ色。
 - 通常、hover、フォーカス、押下、無効状態のshadow。
 - outlinedの通常、hover、フォーカス、押下、無効状態の枠線。
-- バリアント別の無効コンテナの合成。
+- バリアント別の無効コンテナーの合成。
 
 テーマの上書きは`Material3Provider`内に限定されます。Cardは実行時スタイルを挿入しません。Next.js、Vite、ルーター、アニメーションライブラリ、アプリケーション独自のコードは読み込みません。

@@ -4,7 +4,8 @@ import { useLocale } from '../../i18n/useLocale'
 import { agUiMessages } from '../../i18n/messages/agUi'
 
 export function InvitationCard({ node, agent }: ToolRendererProps) {
-  const t = agUiMessages[useLocale()].invitationCard
+  const locale = useLocale()
+  const t = agUiMessages[locale].invitationCard
   const title = typeof node.args?.title === 'string' ? node.args.title : t.preparing
   const attendees = Array.isArray(node.args?.attendees)
     ? node.args.attendees.filter((value: unknown): value is string => typeof value === 'string') : []
@@ -23,7 +24,7 @@ export function InvitationCard({ node, agent }: ToolRendererProps) {
         <Text as="h4" variant="titleLarge">{title}</Text>
         <Text as="p" variant="bodyMedium">{detail('duration', t.loadingDetails)} · {detail('location', '')}</Text>
         <div className="agui-invitation__people" aria-label={t.attendees}>
-          {attendees.map((person) => <span className="agui-invitation__person" key={person}>{person}</span>)}
+          {attendees.map((person) => <span className="agui-invitation__person" key={person}>{locale === 'ja' && person === 'You' ? t.you : person}</span>)}
         </div>
         <Text as="p" variant="bodySmall">
           {decision === 'approved' ? t.approved

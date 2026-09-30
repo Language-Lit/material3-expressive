@@ -19,7 +19,7 @@ import '@language-lit/material3-expressive/styles.css'
 </Button>
 ```
 
-## 契約 {#contract}
+## 仕様 {#contract}
 
 - ルートは常にネイティブの`<button>`で、refは`HTMLButtonElement`です。既定の`type`は`"button"`なので、意図しないフォーム送信を防ぎます。`submit`と`reset`を明示すると、ネイティブの動作を利用できます。
 - `variant`は`filled`（既定値）、`tonal`、`elevated`、`outlined`、`text`から選択します。
@@ -33,7 +33,7 @@ import '@language-lit/material3-expressive/styles.css'
 
 ## バリアント {#variants}
 
-| バリアント | コンテナ | コンテンツ | エレベーション |
+| バリアント | コンテナー | コンテンツ | エレベーション |
 | --- | --- | --- | --- |
 | `filled` | primary | on-primary | level 0、hover時はlevel 1 |
 | `tonal` | secondary-container | on-secondary-container | level 0、hover時はlevel 1 |
@@ -53,7 +53,7 @@ import '@language-lit/material3-expressive/styles.css'
 | `large` | 96px | 48px / 32px | 32px | 12px | headline small | large |
 | `extra-large` | 136px | 64px / 48px | 40px | 16px | headline large | large |
 
-表示コンテナには`min-block-size`を使うため、拡大表示や折り返しによってテキストが切り取られず、ボタンの高さが増えます。意味上のルート要素は別に設け、どのサイズ階層でも操作対象を48×48 CSSピクセル以上に保ちます。これにより、表示部分を32pxや40pxに保ちながら、操作対象を縮小せずに済みます。
+表示コンテナーには`min-block-size`を使うため、拡大表示や折り返しによってテキストが切り取られず、ボタンの高さが増えます。意味上のルート要素は別に設け、どのサイズ階層でも操作対象を48×48 CSSピクセル以上に保ちます。これにより、表示部分を32pxや40pxに保ちながら、操作対象を縮小せずに済みます。
 
 大サイズと特大サイズは目立たせるためのアクションです。通常のボタンを密に配置するためのサイズではありません。
 
@@ -86,7 +86,7 @@ Buttonのコンポーネント変数は、次の規則に沿ってグループ�
 - `--m3e-comp-button-{size}-outline-width`
 - `--m3e-comp-button-{variant}-container-color`
 - `--m3e-comp-button-{variant}-content-color`
-- バリアントごとの無効状態の色／不透明度とコンテナのshadow変数
+- バリアントごとの無効状態の色／不透明度とコンテナーのshadow変数
 - `--m3e-comp-button-minimum-{interactive-target|width}`
 - `--m3e-comp-button-focus-ring-{color|offset|width}`
 

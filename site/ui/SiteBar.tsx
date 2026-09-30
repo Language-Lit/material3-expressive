@@ -89,7 +89,7 @@ export function SiteBar({
           href={repositoryUrl}
           target="_blank"
           rel="noreferrer"
-          aria-label="Open the repository on GitHub"
+          aria-label={t.openRepository}
         >
           <Icon source="code" />
         </a>

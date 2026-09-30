@@ -8,7 +8,7 @@ export const docPageText: Partial<Record<Locale, Record<string, { title: string;
   ja: {
     'ag-ui-getting-started': {
       title: 'AG-UIを使い始める',
-      summary: 'コンパニオンをインストールしてエージェントに接続し、アプリに会話機能を追加します。',
+      summary: '連携パッケージをインストールしてエージェントに接続し、アプリに会話機能を追加します。',
     },
     'ag-ui-components': {
       title: 'AG-UIコンポーネントとツールレンダラー',
@@ -28,7 +28,7 @@ export const docPageText: Partial<Record<Locale, Record<string, { title: string;
     },
     'mcp-apps-getting-started': {
       title: 'MCP Appsを使い始める',
-      summary: 'コンパニオンをインストールし、アプリリソースを登録して、Materialアプリをホストに接続します。',
+      summary: '連携パッケージをインストールし、アプリリソースを登録して、Materialアプリをホストに接続します。',
     },
     'mcp-apps-hosting': {
       title: 'MCP Appsのホスティングとテーマ設定',

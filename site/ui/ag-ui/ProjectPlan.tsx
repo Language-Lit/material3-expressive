@@ -18,6 +18,7 @@ function isTask(value: unknown): value is Task {
 
 export function ProjectPlan({ node, agent }: ToolRendererProps) {
   const t = agUiMessages[useLocale()].projectCard
+  const displayOwner = (owner: string) => owner === 'You' ? t.you : owner
   const title = typeof node.args?.title === 'string' ? node.args.title : t.preparing
   const tasks = Array.isArray(node.args?.tasks) ? node.args.tasks.filter(isTask) : []
   const completed: string[] = Array.isArray(agent.state?.completedTasks)
@@ -55,7 +56,7 @@ export function ProjectPlan({ node, agent }: ToolRendererProps) {
                   onCheckedChange={(checked) => toggle(task.id, checked)} aria-label={task.title} />
                 <span className="agui-project__task-copy">
                   <Text as="span" variant="titleSmall">{task.title}</Text>
-                  <Text as="span" variant="bodySmall">{task.owner} · {task.day}</Text>
+                  <Text as="span" variant="bodySmall">{displayOwner(task.owner)} · {task.day}</Text>
                 </span>
               </label>
             ))}
@@ -66,7 +67,7 @@ export function ProjectPlan({ node, agent }: ToolRendererProps) {
             {tasks.map((task) => (
               <li key={task.id}>
                 <Card variant="outlined" className="agui-project__milestone">
-                  <Text as="p" variant="labelMedium">{task.day} · {task.owner}</Text>
+                  <Text as="p" variant="labelMedium">{task.day} · {displayOwner(task.owner)}</Text>
                   <Text as="p" variant="titleSmall">{task.title}</Text>
                   <Text as="p" variant="bodySmall">{completed.includes(task.id) ? t.completeLabel : t.todo}</Text>
                 </Card>

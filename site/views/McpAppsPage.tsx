@@ -63,7 +63,7 @@ export default function McpAppsPage({ locale }: { locale: Locale }) {
             </div>
             <nav className="mcp-links" aria-label={t.references}>
               <a href={mcpAppsSpecification}>{t.specification}</a>
-              <span className="mcp-links__note">Companion {mcpAppsVersions.companion}</span>
+              <span className="mcp-links__note">{t.companionVersion} {mcpAppsVersions.companion}</span>
             </nav>
           </div>
         </div>

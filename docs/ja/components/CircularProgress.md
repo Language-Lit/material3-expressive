@@ -10,7 +10,7 @@ import '@language-lit/material3-expressive/styles.css'
 <CircularProgress aria-label="Loading" />
 ```
 
-## 契約 {#contract}
+## 仕様 {#contract}
 
 - `[0, max]`の数値を`value`に指定すると、正確な`aria-valuenow`を持つ確定進捗を描画します。`value`を省略すると不確定モードになり、アークが回転しながら脈動します。この場合は`aria-valuenow`を設定せず、支援技術に処理中または不確定の状態を伝えます。不確定モードではトラック要素を描画しません。固定されたソースでは、不確定時のトラック色が透明です。
 - `max`の既定値は`1`です。`aria-label`または`aria-labelledby`で必須のアクセシブルな名前を指定します。`CircularProgress`自体には表示ラベルがありません。

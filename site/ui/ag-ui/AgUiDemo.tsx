@@ -6,7 +6,7 @@ import { useLocale } from '../../i18n/useLocale'
 import { agUiMessages } from '../../i18n/messages/agUi'
 import { AgentProvider, MessageThread, RunStatus, useAgentContext } from '@language-lit/material3-expressive-ag-ui'
 import { DemoAgent } from './demo-agent'
-import { scenariosFor, type Scenario } from './scenarios'
+import { scenariosFor, type Scenario, type ScenarioId } from './scenarios'
 import { WeatherCard } from './WeatherCard'
 import { ProjectPlan } from './ProjectPlan'
 import { InvitationCard } from './InvitationCard'
@@ -119,14 +119,15 @@ export function AgUiDemo() {
   const locale = useLocale()
   const t = agUiMessages[locale]
   const scenarios = scenariosFor(locale)
-  const [scenario, setScenario] = useState<Scenario>(scenarios[0])
+  const [scenarioId, setScenarioId] = useState<ScenarioId>(scenarios[0].id)
+  const scenario = scenarios.find((item) => item.id === scenarioId) ?? scenarios[0]
   return (
     <div className="agui-demo">
       <div className="agui-demo__choices" role="group" aria-label={t.scenariosLabel}>
         <Text as="p" variant="labelLarge">{t.chooseScenario}</Text>
         {scenarios.map((item, index) => (
           <Button key={item.id} variant={item.id === scenario.id ? 'tonal' : 'text'}
-            aria-pressed={item.id === scenario.id} onClick={() => setScenario(item)}>
+            aria-pressed={item.id === scenario.id} onClick={() => setScenarioId(item.id)}>
             {index + 1}. {item.title}
           </Button>
         ))}
@@ -134,7 +135,7 @@ export function AgUiDemo() {
           {t.note}
         </Text>
       </div>
-      <DemoSession key={scenario.id} scenario={scenario} locale={locale} />
+      <DemoSession key={`${locale}-${scenario.id}`} scenario={scenario} locale={locale} />
     </div>
   )
 }

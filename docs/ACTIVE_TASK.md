@@ -21,6 +21,30 @@ Check: `npm run check:site` fails on a missing translation; site typecheck and
 build pass; `npm run verify` passes; Japanese pages are spot-checked for
 quality and inspected in a browser in light and dark at desktop and 320px.
 
+### Verification record
+
+- 128 static pages export: every English route plus its `/ja/` twin, a framed
+  404, and a sitemap listing both languages with hreflang alternates. Pages
+  carry `<html lang>`, canonical, hreflang, and `og:locale` for their language.
+- English output is unchanged: the visible text and labelled attributes of all
+  English pages match the pre-translation build exactly.
+- All 13 guides and 41 component documents are translated. Their code blocks
+  and link targets match the English sources, and every heading keeps its
+  English anchor id. A separate review found the Japanese natural and
+  accurate. Its wording fixes and glossary unification (連携パッケージ, 仕様,
+  コンテナー, 使い始める) are applied.
+- Live component demos and their shown source stay English. They are the
+  library's playground examples.
+- Chromium at 320–1440px, light and dark: no horizontal overflow, no top-bar
+  wrapping or overlap, and no console errors. Bar links no longer wrap. The
+  wordmark and version hide from 60 to 75rem, where the added language switch
+  left no room for them.
+- Site typecheck, site build, `npm run check:site`, and all 14
+  `npm run verify` gates pass. `test:ag-ui` and `test:a2ui` pass.
+  `test:mcp-apps` passes intermittently; the pre-task build shows the same
+  intermittent timeout. `test:theme-picker` still expects the RGB sliders
+  that T73 replaced.
+
 ## T72 — Restore custom color selection without the eyedropper
 
 Status: complete

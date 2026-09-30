@@ -51,7 +51,7 @@ export default function AgUiPage({ locale }: { locale: Locale }) {
             <nav className="agui-links" aria-label={t.package}>
               <a href={agUiNpm}>npm</a>
               <a href={agUiRepository}>GitHub</a>
-              <a href={agUiReleases}>Releases</a>
+              <a href={agUiReleases}>{t.releases}</a>
             </nav>
           </div>
         </div>

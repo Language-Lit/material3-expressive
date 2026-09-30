@@ -1,4 +1,4 @@
-# AG-UIをはじめる
+# AG-UIを使い始める
 
 `@language-lit/material3-expressive-ag-ui`は、Material 3 Expressiveを使ってエージェントとの会話を表示します。AG-UIはエージェントとインターフェースの間で、メッセージ、ツール呼び出し、実行イベントを受け渡します。このライブラリはReact UIを提供します。
 
