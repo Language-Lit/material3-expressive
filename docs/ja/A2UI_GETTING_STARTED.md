@@ -1,8 +1,8 @@
 # A2UIをはじめる
 
-`@language-lit/material3-expressive-a2ui`は、Google A2UIのサーフェスをMaterial 3 Expressiveで表示します。A2UIは、エージェントがデータバインディングを持つカタログコンポーネントのツリーとしてUIを記述し、それをJSONメッセージとしてストリーミングするプロトコルです。このcompanionはA2UI basic catalogのすべてのコンポーネントをMaterial 3 Expressiveのコンポーネントに対応づけるため、エージェントが生成したUIもアプリの他の部分と同じテーマを使います。
+`@language-lit/material3-expressive-a2ui`は、Google A2UIのサーフェスをMaterial 3 Expressiveで表示します。A2UIは、エージェントがデータバインディングを持つカタログコンポーネントのツリーとしてUIを記述し、それをJSONメッセージとしてストリーミングするプロトコルです。この連携パッケージはA2UI basic catalogのすべてのコンポーネントをMaterial 3 Expressiveのコンポーネントに対応づけるため、エージェントが生成したUIもアプリの他の部分と同じテーマを使います。
 
-このガイドはReact 18または19、`@language-lit/material3-expressive` 1.2.x、`@a2ui/web_core` 0.10.xを通じたA2UIプロトコルv0.9.1を対象とします。このcompanionは独立したコミュニティ実装であり、Googleとは提携していません。
+このガイドはReact 18または19、`@language-lit/material3-expressive` 1.2.x、`@a2ui/web_core` 0.10.xを通じたA2UIプロトコルv0.9.1を対象とします。この連携パッケージは独立したコミュニティ実装であり、Googleとは提携していません。
 
 ## エージェントに接続する前に試す {#try-it-before-connecting-an-agent}
 
@@ -10,13 +10,13 @@
 
 ## インストール {#install}
 
-既存のReactアプリにcompanionと必須peer依存関係をインストールします。
+既存のReactアプリに連携パッケージと必須peer依存関係をインストールします。
 
 ```bash
 npm install @language-lit/material3-expressive-a2ui @language-lit/material3-expressive @a2ui/web_core
 ```
 
-`@a2ui/web_core`はGoogleのプロトコルランタイムです。メッセージを検証し、サーフェスとデータモデルを管理して、バインディングとカタログ関数を評価します。companion自体にランタイム依存関係はありません。
+`@a2ui/web_core`はGoogleのプロトコルランタイムです。メッセージを検証し、サーフェスとデータモデルを管理して、バインディングとカタログ関数を評価します。この連携パッケージ自体にランタイム依存関係はありません。
 
 ## スタイルを読み込む {#load-the-styles}
 

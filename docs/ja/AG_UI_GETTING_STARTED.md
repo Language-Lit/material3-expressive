@@ -10,7 +10,7 @@
 
 ## インストール {#install}
 
-既存のReactアプリにcompanionと必須peer依存関係をインストールします。
+既存のReactアプリに連携パッケージと必須peer依存関係をインストールします。
 
 ```bash
 npm install @language-lit/material3-expressive-ag-ui @language-lit/material3-expressive @ag-ui/client @ag-ui/core

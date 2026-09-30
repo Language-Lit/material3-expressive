@@ -115,7 +115,7 @@ const processor = new MessageProcessor([material3Catalog], onAction)
 // <A2uiSurface surface={processor.model.surfacesMap.get(surfaceId)!} />
 ```
 
-companionのテストスイートでは、`@a2ui/react` 0.11.0上でカタログをレンダリングしています。このパッケージはcompanionの依存関係ではなく、それ自体がReact 19を必要とします。
+連携パッケージのテストスイートでは、`@a2ui/react` 0.11.0上でカタログをレンダリングしています。このパッケージは連携パッケージの依存関係ではなく、それ自体がReact 19を必要とします。
 
 ## 制限事項 {#limits}
 

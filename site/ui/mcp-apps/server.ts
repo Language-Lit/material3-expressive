@@ -6,6 +6,8 @@ import { z } from 'zod'
 
 import { mcpAppsClientCapabilities } from '@language-lit/material3-expressive-mcp-apps'
 import { forecastFor } from './forecast'
+import type { Locale } from '../../i18n/locales'
+import { mcpAppsMessages } from '../../i18n/messages/mcpApps'
 
 export const FORECAST_URI = 'ui://m3e-playground/forecast.html'
 
@@ -14,7 +16,8 @@ export const FORECAST_URI = 'ui://m3e-playground/forecast.html'
  * tool the app calls back, and the UI resource, connected to a client over
  * the SDK's in-memory transport. No process, no network.
  */
-export async function connectDemoServer(html: string) {
+export async function connectDemoServer(html: string, locale: Locale) {
+  const t = mcpAppsMessages[locale].server
   const server = new McpServer({ name: 'm3e-forecast', version: '0.1.0' })
 
   registerAppResource(
@@ -31,15 +34,15 @@ export async function connectDemoServer(html: string) {
     server,
     'get_forecast',
     {
-      title: 'Five-day forecast',
-      description: 'Shows the five-day forecast for a city.',
-      inputSchema: z.object({ city: z.string().describe('City name') }),
+      title: t.toolTitle,
+      description: t.toolDescription,
+      inputSchema: z.object({ city: z.string().describe(t.cityName) }),
       _meta: { ui: { resourceUri: FORECAST_URI } },
     },
     async ({ city }) => {
       const forecast = forecastFor(city)
       return {
-        content: [{ type: 'text', text: `Forecast for ${city}: ${forecast.days.map((day) => `${day.weekday} ${day.high}°`).join(', ')}` }],
+        content: [{ type: 'text', text: t.forecastResult(city, forecast.days.map((day) => `${new Intl.DateTimeFormat(locale === 'ja' ? 'ja-JP' : 'en-US', { weekday: 'short', timeZone: 'UTC' }).format(new Date(`${day.date}T00:00:00Z`))} ${day.high}°`).join(', ')) }],
         structuredContent: forecast as unknown as Record<string, unknown>,
       }
     },
@@ -49,15 +52,15 @@ export async function connectDemoServer(html: string) {
     server,
     'refresh_forecast',
     {
-      title: 'Refresh forecast',
-      description: 'Re-reads the forecast for a city. Called by the app, not the model.',
+      title: t.refreshTitle,
+      description: t.refreshDescription,
       inputSchema: z.object({ city: z.string(), seed: z.number().int() }),
       _meta: { ui: { resourceUri: FORECAST_URI, visibility: ['app'] } },
     },
     async ({ city, seed }) => {
       const forecast = forecastFor(city, seed)
       return {
-        content: [{ type: 'text', text: `Refreshed forecast for ${city}.` }],
+        content: [{ type: 'text', text: t.refreshed(city) }],
         structuredContent: forecast as unknown as Record<string, unknown>,
       }
     },

@@ -1,10 +1,10 @@
 # MCP Appsをはじめる
 
-MCP Apps companionは、Material 3 Expressiveを公式のMCP Apps SDKに接続します。アプリを埋め込むホストフレームと、Materialコンポーネントでアプリの内容を構築するためのアプリプロバイダーを提供します。このガイドは公開バージョン0.2.1を対象とします。
+MCP Apps連携パッケージは、Material 3 Expressiveを公式のMCP Apps SDKに接続します。アプリを埋め込むホストフレームと、Materialコンポーネントでアプリの内容を構築するためのアプリプロバイダーを提供します。このガイドは公開バージョン0.2.1を対象とします。
 
 ## インストール {#install}
 
-companionとpeer依存関係をインストールします。
+連携パッケージとpeer依存関係をインストールします。
 
 ```sh
 npm install @language-lit/material3-expressive-mcp-apps@0.2.1
@@ -18,7 +18,7 @@ import '@language-lit/material3-expressive/styles.css'
 import '@language-lit/material3-expressive-mcp-apps/styles.css'
 ```
 
-companionはMaterial 1.2.xと1.3 prerelease系列、ext-apps ^2.0.0、分割されたclient ^2.0.0、React／React DOM 18または19のpeer依存関係をサポートします。このデモではMaterial 1.3.0-rc.1、ext-apps/client/server 2.0.0、React 19をテストしています。外部ホストとの相互運用性を認定するものではありません。コアMaterialパッケージにはMCP依存関係は追加されません。
+このパッケージはMaterial 1.2.xと1.3 prerelease系列、ext-apps ^2.0.0、分割されたclient ^2.0.0、React／React DOM 18または19のpeer依存関係をサポートします。このデモではMaterial 1.3.0-rc.1、ext-apps/client/server 2.0.0、React 19をテストしています。外部ホストとの相互運用性を認定するものではありません。コアMaterialパッケージにはMCP依存関係は追加されません。
 
 ## アプリを構築する {#build-the-app}
 
@@ -52,7 +52,7 @@ export function App() {
 
 リクエストが拒否された場合はUIで処理し、アクションを提示する前に該当するホストcapabilityを確認してください。`useToolCall<TArgs>()`は完全な入力、部分入力、結果、キャンセル状態を公開します。ホストフレームのpropsが渡すのは完全な入力、結果、キャンセル状態です。高度なホストは、`onBridge`で公開されるSDKブリッジを通じて部分入力を送信できます。
 
-アプリのJavaScriptとCSSを1つのHTMLドキュメントにまとめます。companionのplaygroundとサイトのビルドスクリプトでは、esbuildを使った方法を確認できます。本番リソースからViteの開発専用エントリを読み込むことはできません。
+アプリのJavaScriptとCSSを1つのHTMLドキュメントにまとめます。このパッケージのplaygroundとサイトのビルドスクリプトでは、esbuildを使った方法を確認できます。本番リソースからViteの開発専用エントリを読み込むことはできません。
 
 ## リソースとツールを登録する {#register-a-resource-and-tool}
 
