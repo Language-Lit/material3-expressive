@@ -9,7 +9,7 @@ import { buildSearchIndex } from '../content/search'
 import { buildNavigationGroups } from '../content/navigation'
 import { repoRoot } from '../content/paths'
 import { StructuredData } from '../ui/StructuredData'
-import { localeAlternates, localizePath, ogLocales, type Locale } from '../i18n/locales'
+import { localeAlternates, localizePath, ogLocaleFields, type Locale } from '../i18n/locales'
 import { shellMessages } from '../i18n/messages/shell'
 import {
   absoluteUrl,
@@ -91,7 +91,7 @@ export function rootMetadata(locale: Locale): Metadata {
     siteName: t.siteName,
     title: t.siteName,
     description: t.siteDescription,
-    locale: ogLocales[locale],
+    ...ogLocaleFields(locale),
     // Named explicitly: the generated card lives beside the route groups,
     // outside either root layout, so it is not inherited.
     images: [socialImage],

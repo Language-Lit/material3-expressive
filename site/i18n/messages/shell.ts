@@ -123,10 +123,10 @@ const en = {
 export const shellMessages: Record<Locale, typeof en> = {
   en,
   ja: {
-    siteName: 'Material 3 Expressive for React',
+    siteName: 'React向けMaterial 3 Expressive',
     siteDescription:
       'React 18・19向けのMaterial 3 Expressiveコンポーネントです。TypeScript、SSR対応、アクセシブル、テーマ設定可能。独立実装、MITライセンス、ランタイム依存なし。',
-    titleTemplate: '%s · Material 3 Expressive for React',
+    titleTemplate: '%s · React向けMaterial 3 Expressive',
     skipToContent: '本文へスキップ',
     footerNotice:
       'MITライセンスです。Material 3 ExpressiveはGoogleのデザインシステムであり、これは独立した実装です。',

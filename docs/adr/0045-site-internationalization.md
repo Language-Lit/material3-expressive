@@ -38,6 +38,15 @@ sitemap lists every route in every locale with the same alternates. The site
 bar links each page to its translation.
 
 Code, API and component names, `llms.txt`, and `llms-full.txt` remain English.
+`llms.txt` states in one line that every page also exists under `/ja/`.
+
+Visitors in Japan see Japanese by default. The export has no server, so
+`vercel.json` does it: page URLs (`/`, the section indexes, and one level
+below `/docs/` and `/components/`) redirect to their `/ja/` twin when
+Vercel's `x-vercel-ip-country` header is `JP`. Assets, RSC payloads, and
+machine-readable files never match. The redirect is temporary (307) and is
+skipped when the `m3e-locale` cookie exists. The language switch sets that
+cookie, so a reader's own choice always wins over the location guess.
 
 ## Consequences
 
@@ -46,3 +55,11 @@ does not detect a translation that has fallen behind its English source; that
 is reviewed when the English document changes. Adding a locale means adding it
 to `site/i18n/locales.ts`, a route tree, a message entry per module, and a
 `docs/<locale>/` mirror.
+
+The redirect only runs on Vercel; `site/out` served elsewhere shows English at
+`/` everywhere. Search crawlers mostly fetch from outside Japan, so they index
+the English root, and hreflang points Japanese searchers at `/ja/`. A crawler
+fetching from Japan is redirected like a reader; the redirect is temporary and
+every `/ja/` page names its English twin, so both stay indexable.
+`check:site` fails if a redirect stops skipping the cookie the language switch
+sets.

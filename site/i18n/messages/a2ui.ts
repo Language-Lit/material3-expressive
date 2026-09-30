@@ -92,7 +92,7 @@ const en = {
 }
 
 const ja: typeof en = {
-  description: 'Google A2UIの基本カタログにあるすべてのコンポーネントをMaterial 3 Expressiveに対応付けるReactレンダラーです。エージェントが生成したサーフェスをストリーミングし、入力をバインドして検証し、アクションをエージェントに返します。ライブデモとガイドをご覧ください。',
+  description: 'Google A2UIの基本カタログにあるすべてのコンポーネントをMaterial 3 Expressiveに対応付けるReactレンダラーです。エージェントが生成したサーフェスをストリーミングし、入力をバインドして検証し、アクションをエージェントに返します。',
   searchTitle: 'A2UIデモ',
   title: 'React向けA2UI',
   heroTitleBefore: 'Google A2UIを',

@@ -44,6 +44,8 @@ export async function GET() {
     '- License: MIT. This is an independent implementation; Material 3 is a',
     '  Google design system.',
     '',
+    `- Japanese: every page below also exists in Japanese under ${absoluteUrl('/ja/')} (same paths after the prefix).`,
+    '',
     '## Companion libraries',
     '',
     `- [AG-UI demo](${absoluteUrl('/ag-ui/')}): ${agUiDescription} No LLM or API key required.`,

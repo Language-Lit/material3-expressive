@@ -8,8 +8,23 @@ export type Locale = (typeof locales)[number]
 
 export const defaultLocale: Locale = 'en'
 
+/**
+ * Set when a reader picks a language. The Vercel redirect that sends visitors
+ * in Japan to `/ja/` skips anyone carrying it, so a choice outlives the guess.
+ * `vercel.json` names the same cookie.
+ */
+export const localeCookie = 'm3e-locale'
+
 /** Open Graph `og:locale` values. */
 export const ogLocales: Record<Locale, string> = { en: 'en_US', ja: 'ja_JP' }
+
+/** `og:locale` for this page plus `og:locale:alternate` for every other language. */
+export function ogLocaleFields(locale: Locale) {
+  return {
+    locale: ogLocales[locale],
+    alternateLocale: locales.filter((each) => each !== locale).map((each) => ogLocales[each]),
+  }
+}
 
 /** The name of each language, written in that language, for the switcher. */
 export const localeNames: Record<Locale, string> = { en: 'English', ja: '日本語' }

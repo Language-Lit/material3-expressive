@@ -14,9 +14,12 @@ route. UI strings live in `site/i18n/`, typed so a missing Japanese key fails
 the site typecheck. Translated Markdown mirrors published sources under
 `docs/ja/`. Pages emit the correct `<html lang>`, hreflang alternates, and
 sitemap entries; the site bar offers a language switch. Code, API names,
-component names, `llms.txt`, and `llms-full.txt` stay English.
+component names, `llms.txt`, and `llms-full.txt` stay English; `llms.txt`
+points at `/ja/`. Visitors in Japan get Japanese by default unless they
+have picked a language.
 Expected files: `site/app/**`, `site/i18n/**`, `site/content/**`, `site/ui/**`,
-`docs/ja/**`, `scripts/check-site.mjs`, a new ADR, and this record.
+`docs/ja/**`, `scripts/check-site.mjs`, `vercel.json`, a new ADR, and this
+record.
 Check: `npm run check:site` fails on a missing translation; site typecheck and
 build pass; `npm run verify` passes; Japanese pages are spot-checked for
 quality and inspected in a browser in light and dark at desktop and 320px.
@@ -44,6 +47,21 @@ quality and inspected in a browser in light and dark at desktop and 320px.
   `test:mcp-apps` passes intermittently; the pre-task build shows the same
   intermittent timeout. `test:theme-picker` still expects the RGB sliders
   that T73 replaced.
+- SEO follow-up: Japanese titles use `%s · React向けMaterial 3 Expressive`
+  and that site name; every page names its other language in
+  `og:locale:alternate`; Japanese component descriptions stop near 110
+  characters at a sentence end; `llms.txt` points at `/ja/`. All 60 Japanese
+  pages have unique titles; one description is 130 characters, a third of
+  them narrow Latin letters. English visible text is still unchanged; its head
+  gains only `og:locale:alternate`.
+- Japan default: `vercel.json` redirects page URLs to `/ja/` for
+  `x-vercel-ip-country: JP` unless the `m3e-locale` cookie exists. The
+  patterns were tested with Next's path-to-regexp in strict mode: every page
+  URL matches; assets, RSC payloads, `llms.txt`, the A2UI catalog, and the
+  MCP sandbox do not. In Chrome the switch sets `m3e-locale=en` and
+  `m3e-locale=ja`. `check:site` fails when a redirect stops skipping that
+  cookie (confirmed by renaming it). The redirect itself runs only on Vercel
+  and is checked after deploy.
 
 ## T72 — Restore custom color selection without the eyedropper
 

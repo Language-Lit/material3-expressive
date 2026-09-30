@@ -50,5 +50,7 @@ export function componentLead(name: string, locale: Locale = defaultLocale): Pro
  * ellipsis to save forty characters from an audience that came for the detail.
  */
 export async function componentDescription(name: string, locale: Locale = defaultLocale): Promise<string> {
-  return truncateForMeta(await componentLead(name, locale))
+  // A Japanese character fills about twice the width of a Latin one in a
+  // result snippet, so the same pixel budget holds fewer of them.
+  return truncateForMeta(await componentLead(name, locale), locale === 'ja' ? 110 : 160)
 }

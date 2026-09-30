@@ -4,7 +4,7 @@ import { docPages } from './docs'
 import { agUiDescription } from './ag-ui'
 import { a2uiDescription } from './a2ui'
 import { shellMessages } from '../i18n/messages/shell'
-import { ogLocales, type Locale } from '../i18n/locales'
+import { ogLocaleFields, type Locale } from '../i18n/locales'
 
 /**
  * The canonical origin. Every absolute URL the site emits — canonical links,
@@ -47,7 +47,7 @@ export const openGraphDefaults = {
 
 /** `openGraphDefaults` in `locale`. */
 export function openGraphFor(locale: Locale) {
-  return { ...openGraphDefaults, siteName: shellMessages[locale].siteName, locale: ogLocales[locale] }
+  return { ...openGraphDefaults, siteName: shellMessages[locale].siteName, ...ogLocaleFields(locale) }
 }
 
 export const packageName = '@language-lit/material3-expressive'

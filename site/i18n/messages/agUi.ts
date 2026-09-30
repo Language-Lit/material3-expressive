@@ -60,7 +60,7 @@ export const agUiMessages: Record<Locale, typeof en> = {
   en,
   ja: {
     ...en,
-    description: 'AG-UIを使ったAIエージェント向けMaterial 3 Expressiveインターフェースです。インタラクティブな天気予報、プロジェクト計画、ストリーミング返信、承認フローを試せます。独自のインターフェース構築に役立つガイドも掲載しています。',
+    description: 'AG-UIを使ったAIエージェント向けMaterial 3 Expressiveインターフェースです。インタラクティブな天気予報、プロジェクト計画、ストリーミング返信、承認フローを試せます。',
     searchTitle: 'AG-UIデモ', title: 'React向けAG-UI',
     heroPrefix: 'エージェントに', heroAccent: 'Material 3 Expressiveのインターフェースを。',
     intro: 'AG-UIを使ってAIエージェント向けのインターフェースを構築できます。返信を届いた順に表示し、ツール呼び出しを便利なUIに変換し、エージェントが操作できるタイミングをユーザーが決められるようにします。',

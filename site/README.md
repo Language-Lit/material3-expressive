@@ -172,4 +172,8 @@ Vercel, with **Root Directory** set to `site`. The build is a static export
 (`output: 'export'`), so the result is plain files under `site/out` and can be
 served by anything.
 
+`vercel.json` sends visitors in Japan from English page URLs to their `/ja/`
+twin unless they have picked a language with the switch (ADR 0045). Other
+hosts serve English at `/` to everyone.
+
 `npm ci` must run in the repository root before the site build so `dist/` exists.

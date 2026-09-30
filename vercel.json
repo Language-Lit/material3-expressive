@@ -4,6 +4,29 @@
   "installCommand": "npm install && npm install --prefix site",
   "buildCommand": "npm run site:build",
   "outputDirectory": "site/out",
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "/ja/",
+      "has": [{ "type": "header", "key": "x-vercel-ip-country", "value": "JP" }],
+      "missing": [{ "type": "cookie", "key": "m3e-locale" }],
+      "permanent": false
+    },
+    {
+      "source": "/:section(docs|components|ag-ui|a2ui|mcp-apps)/",
+      "destination": "/ja/:section/",
+      "has": [{ "type": "header", "key": "x-vercel-ip-country", "value": "JP" }],
+      "missing": [{ "type": "cookie", "key": "m3e-locale" }],
+      "permanent": false
+    },
+    {
+      "source": "/:section(docs|components)/:page/",
+      "destination": "/ja/:section/:page/",
+      "has": [{ "type": "header", "key": "x-vercel-ip-country", "value": "JP" }],
+      "missing": [{ "type": "cookie", "key": "m3e-locale" }],
+      "permanent": false
+    }
+  ],
   "headers": [
     {
       "source": "/opengraph-image",

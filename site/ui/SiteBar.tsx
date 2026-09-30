@@ -9,7 +9,7 @@ import { MobileNav } from './MobileNav'
 import { BrandMark } from './Ramp'
 import { Search } from './Search'
 import { ThemeControls } from './ThemeControls'
-import { localeNames, localizePath, locales, parseLocalePath } from '../i18n/locales'
+import { localeCookie, localeNames, localizePath, locales, parseLocalePath } from '../i18n/locales'
 import { useLocale } from '../i18n/useLocale'
 import { shellMessages } from '../i18n/messages/shell'
 
@@ -70,7 +70,16 @@ export function SiteBar({
           {locales
             .filter((each) => each !== locale)
             .map((each) => (
-              <a key={each} href={localizePath(each, path)} hrefLang={each} lang={each} className="sidebar__link">
+              <a
+                key={each}
+                href={localizePath(each, path)}
+                hrefLang={each}
+                lang={each}
+                className="sidebar__link"
+                onClick={() => {
+                  document.cookie = `${localeCookie}=${each}; path=/; max-age=31536000; samesite=lax`
+                }}
+              >
                 {localeNames[each]}
               </a>
             ))}

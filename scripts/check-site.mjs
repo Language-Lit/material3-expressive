@@ -85,6 +85,19 @@ for (const locale of translatedLocales) {
   }
 }
 
+// The geo redirect in vercel.json skips readers who picked a language. If its
+// cookie name drifts from the one the language switch sets, a reader in Japan
+// who picks English is sent straight back to Japanese.
+const localeCookie = (await readFile(path.join(siteRoot, 'i18n/locales.ts'), 'utf8')).match(
+  /localeCookie = '([^']+)'/,
+)?.[1]
+const redirects = JSON.parse(await readFile(path.join(root, 'vercel.json'), 'utf8')).redirects ?? []
+for (const redirect of redirects) {
+  if (!redirect.missing?.some((condition) => condition.type === 'cookie' && condition.key === localeCookie)) {
+    errors.push(`vercel.json redirect ${redirect.source} does not skip the ${localeCookie} cookie set by the language switch`)
+  }
+}
+
 // ---------------------------------------------------------------------------
 // 2. Every conformant component has a demo, or a recorded reason it cannot.
 // Experimental examples may remain in the source playground while promotion
