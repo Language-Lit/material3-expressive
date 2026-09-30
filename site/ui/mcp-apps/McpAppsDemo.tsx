@@ -46,7 +46,7 @@ export function McpAppsDemo() {
       try {
         const response = await fetch('/mcp-apps/forecast.html', { signal: controller.signal })
         if (!response.ok) throw new Error(t.loadError)
-        const next = await connectDemoServer(await response.text())
+        const next = await connectDemoServer(await response.text(), locale)
         active = next
         if (disposed) { await Promise.all([next.client.close(), next.server.close()]); return }
         const listed = await next.client.listTools()
@@ -65,7 +65,7 @@ export function McpAppsDemo() {
       void active?.client.close()
       void active?.server.close()
     }
-  }, [t.loadError])
+  }, [t.loadError, locale])
 
   const run = async () => {
     if (!connection) return
